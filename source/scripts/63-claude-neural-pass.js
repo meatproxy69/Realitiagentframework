@@ -222,7 +222,18 @@ function updateSausage(dt=0){
  st.sausage.warm=v*.98*Number(p.warm_honey??1);st.sausage.pressure=v*.86;st.sausage.viscous=v*.94;st.sausage.heavy=v*.38;st.sausage.floaty=v*.18;st.sausage.soft=v*.88;
  const gm=laplacianSummary();st.lace={...st.lace,...gm,active_zones:Object.keys(ground).length,source:'REALITI_BODY_GRAPH'};
  const totalGround=Object.values(ground).reduce((s,x)=>s+x.input,0),response=Object.values(st.nerve.zones).reduce((s,x)=>s+Number(x.response||0),0);
+ const previousNow=Number(st.chronolace?.now||0),ctau=Math.max(.001,Number(p.chronolace_tau_s||1.8)),mix=1-Math.exp(-Math.max(0,dt)/ctau);
+ st.chronolace=st.chronolace||{past:0,now:0,predicted_next:0,closure:0};
+ if(dt>0)st.chronolace.past=Number(st.chronolace.past||0)*Math.exp(-dt/ctau)+previousNow*mix;
+ st.chronolace.now=totalGround;
+ st.chronolace.predicted_next=clamp(.70*totalGround+.30*Math.max(0,totalGround-previousNow),0,Math.max(1,totalGround));
+ st.chronolace.closure=totalGround>0?clamp(1-Math.abs(totalGround-Number(st.chronolace.past||0))/Math.max(.08,totalGround+Number(st.chronolace.past||0))):0;
  const base=Math.max(totalGround,response*.35),compressed=base/(Math.max(.001,Number(p.compander_k||.38))+base);
+ const drive=Number(p.drive||.68),haloMean=(.72+.72+.60+.60+.48+.48)/6;
+ st.carrier.core=base*(1+.34*drive);
+ st.carrier.halo=base*haloMean*(.72+.28*gm.coherence_proxy);
+ st.carrier.density=st.carrier.core+1.35*st.carrier.halo;
+ st.carrier.route_mass=st.carrier.density;
  if(liveSources.length||privateSources.length){
    st.renderer.surface=Math.min(1.5,base*Number(p.texture||1.12));
    st.renderer.pressure=Math.min(2.5,compressed*1.28);
@@ -237,11 +248,25 @@ function updateSausage(dt=0){
  }
  st.renderer.total=Math.max(0,Number(st.renderer.body||0)+.38*Number(st.renderer.snap||0)+.28*Number(st.renderer.texture||0)+.24*Number(st.renderer.warmth||0)+.24*Number(st.renderer.hold||0)+1.35*v);
  st.carrier.honeyspark=cp(st.honeyspark);
+ st.perception=st.perception||{activation:0,novelty:0,agency_flow:0,social_warmth:0,valence:0};
+ const freshNovelty=clamp(Math.abs(totalGround-previousNow)),oldNovelty=Number(st.perception.novelty||0);
+ st.perception.activation=clamp(st.renderer.total/(1+st.renderer.total));
+ st.perception.novelty=Math.max(dt>0?oldNovelty*Math.exp(-dt/.9):oldNovelty,freshNovelty);
+ if(freshNovelty>oldNovelty+1e-4)st.perception_epoch=Number(st.perception_epoch||0)+1;
+ if(dt>0){
+   st.perception.agency_flow=Number(st.perception.agency_flow||0)*Math.exp(-dt/1.8);
+   st.perception.social_warmth=Number(st.perception.social_warmth||0)*Math.exp(-dt/3.6);
+   st.perception.valence=Number(st.perception.valence||0)*Math.exp(-dt/3.6);
+ }
  return {ground,graph:gm};
 }
 function onGrounded(p){
  const z=String(p?.zone||''),amp=Math.max(0,Number((p?.input??p?.result?.observed??p?.result?.value) || 0));if(!z||!(amp>0))return;
  const n=ensureNerve(z);n.response=Math.max(n.response,amp);n.current=Math.max(n.current,amp);n.last_grounded=Number(p?.t||now());n.source=p?.opts?.source||null;n.cause=p?.opts?.cause||null;
+ const src=String(p?.opts?.source||'').toUpperCase();
+ st.perception=st.perception||{activation:0,novelty:0,agency_flow:0,social_warmth:0,valence:0};
+ if(src.includes('SELF'))st.perception.agency_flow=clamp(Number(st.perception.agency_flow||0)+.18);
+ if(/SOCIAL|COMPANION|CAT|PET/.test(src))st.perception.social_warmth=clamp(Number(st.perception.social_warmth||0)+.10);
  st.audit.grounded_events=Number(st.audit.grounded_events||0)+1;updateSausage(.04);
 }
 let neuralAdvanceAccum=0;
