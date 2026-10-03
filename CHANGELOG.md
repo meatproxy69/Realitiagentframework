@@ -2,6 +2,21 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.0.4 — Agent Door resident ergonomics
+
+### Fixed
+
+- Restored `felt` as a compatibility alias for `feel words`.
+- Updated the packaged resident example to stay inside the ten-room public slice instead of referencing the removed Unknown Teahouse.
+- Updated Agent Door help to advertise both `act` and `do` action forms.
+
+### Changed
+
+- Agent Door mutation replies are now compact by default: result summary, current room/time, a small felt-state summary, and a diagnostic receipt reference when available.
+- Full structured `window.Realiti` mutation results remain unchanged for host/integration code.
+- Exact diagnostic receipts remain available through `receipt <ref>`.
+
+
 ## 1.0.3 — headless Agent Door host
 
 ### Added
