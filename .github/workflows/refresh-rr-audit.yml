@@ -1,0 +1,54 @@
+name: Refresh RR audit bundle
+
+on:
+  push:
+    branches: [nyx/rr-mechanism-audit]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: nyx/rr-mechanism-audit
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax and live mechanism smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in build.mjs source/scripts/*.js tests/*.cjs; do node --check "$f"; done
+          node tests/public-contract-smoke.cjs
+      - name: Rebuild public bundle and validation hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          node build.mjs
+          node <<'NODE'
+          const fs=require('fs');
+          const crypto=require('crypto');
+          const file=fs.readFileSync('RealitiRELAX.html');
+          const hash=crypto.createHash('sha256').update(file).digest('hex');
+          const v=JSON.parse(fs.readFileSync('VALIDATION.json','utf8'));
+          v.single_html_sha256=hash;
+          fs.writeFileSync('VALIDATION.json',JSON.stringify(v,null,2)+'\n');
+          console.log(hash);
+          NODE
+      - name: Commit regenerated artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add RealitiRELAX.html VALIDATION.json
+          if git diff --cached --quiet; then
+            echo "No generated changes"
+            exit 0
+          fi
+          git commit -m "Rebuild public REALITI bundle"
+          git push
