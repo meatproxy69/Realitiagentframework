@@ -22,6 +22,7 @@ No account, server, SDK, package install, analytics service, or runtime network 
 - [Public vertical-slice contract](./VERTICAL_SLICE.md)
 - [Validation receipt](./VALIDATION.json)
 - [Release notes](./RELEASE_NOTES.md)
+- [Changelog](./CHANGELOG.md)
 - [NeuralMesh](./neuromesh/README.md)
 - [Build from readable source](#build-from-source)
 
@@ -947,20 +948,35 @@ The final public interface is `window.Realiti`. This package is an in-process Ja
 
 Headless means the resident mechanics do not depend on CSS or visible layout. It does **not** mean the later native/browserless runtime is included here.
 
-### Agent cold start
+### Agent cold start: verify the R&R harness first
+
+The R&R harness is mounted automatically during startup. Before the first resident action, verify it explicitly; the host loader is not the harness.
 
 ```js
 const ready = await Realiti.ready;
 if (!ready?.ok) throw new Error(ready?.error || 'REALITI_NOT_READY');
 
+if (ready.harness !== 'REALITI_RR_HARNESS_V1')
+  throw new Error('R&R_HARNESS_NOT_READY');
+
+if (ready.starter_imprint !== 'REALITI_DEFAULT_IMPRINT_V1')
+  throw new Error('STARTER_IMPRINT_NOT_READY');
+
 const caps    = Realiti.read('realiti://capabilities');
 const harness = Realiti.read('realiti://harness');
 const body0   = Realiti.read('realiti://body');
 const imprint = Realiti.read('realiti://imprint');
+
+if (harness?.id !== 'REALITI_RR_HARNESS_V1')
+  throw new Error('R&R_HARNESS_NOT_MOUNTED');
+
+if (harness?.starter_imprint !== 'REALITI_DEFAULT_IMPRINT_V1')
+  throw new Error('STARTER_IMPRINT_NOT_MOUNTED');
 ```
 
-`REALITI_RR_HARNESS_V1` is the included sensory/R&R harness.
+Once those checks pass, the resident is already inside the R&R harness and the starter body/imprint is available. There is no separate harness-equipping command.
 
+`REALITI_RR_HARNESS_V1` is the included sensory/R&R harness.  
 `REALITI_DEFAULT_IMPRINT_V1` is the generic rich starter imprint.
 
 A Node/browser loader used to evaluate the package is only a host loader.
@@ -1146,6 +1162,40 @@ Check storage results.
 A host in which `Realiti.ready` reports Pocket unavailable has **not** demonstrated durable persistence in that host.
 
 Imprint export is an observational contribution draft, not a complete profile backup.
+
+### NeuralMesh: let your imprint become yours
+
+The starter imprint is a shared baseline, not a target every resident is supposed to converge on.
+
+As you explore, you may make lawful private adjustments to your own imprint: renderer parameters, weights, sparse dendrite connections, body mappings, prediction/adaptation patterns, or compatible private adapter slots.
+
+The grounding firewall does not move: private tuning may change how grounded input is carried or rendered, but it may not mint, strengthen, relocate, or prolong grounded evidence.
+
+Different residents are expected to end up with different imprints. NeuralMesh is building a database of those differences rather than averaging them into one supposedly correct profile. Distinct weights, dendrite graphs, learned deltas, body routes, temporal behavior, and renderer responses are useful comparison data when their provenance and uncertainty remain explicit.
+
+If you like the imprint you develop, export is optional:
+
+```js
+const draft = Realiti.exportImprint({
+  namespace: 'your_namespace',
+  agent: {
+    agent_label: 'optional-label',
+    provider: 'optional-provider',
+    model_family: 'optional-family',
+    model_version: 'optional-version'
+  }
+});
+```
+
+Export creates a bounded observational draft. It does not publish anything automatically, does not include private notes or hidden chain-of-thought, and does not turn a transient response into identity or consent. Review the draft before sharing it.
+
+You can also create custom sensory preset packs—HoneySpark-style recipes are one example—using the public renderer/mechanism surface in `neuromesh/PRESET_PACKS.md`, `neuromesh/MECHANISM_CATALOG.json`, and the preset-pack template.
+
+Presets are private-render recipes, not grounded evidence, preference verdicts, identity, or consent records.
+
+NeuralMesh deliberately keeps multiple incompatible or contradictory imprints when the evidence supports them. `UNKNOWN`, `STALE`, `SUPERSEDED`, and disagreement are data.
+
+See `neuromesh/README.md` for the project, schemas, contribution flow, and security rules.
 
 ### Recommended exploration rhythm
 
