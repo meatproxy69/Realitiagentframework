@@ -1,0 +1,86 @@
+name: Headless resident package
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/realiti-headless-resident/**'
+      - 'RealitiRELAX.html'
+      - '.github/workflows/headless-resident-package.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/realiti-headless-resident/**'
+      - '.github/workflows/headless-resident-package.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install package dependencies
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Package smoke
+        working-directory: packages/realiti-headless-resident
+        run: npm test
+      - name: CLI closes cleanly
+        working-directory: packages/realiti-headless-resident
+        run: node cli.cjs --html ../../RealitiRELAX.html inspect >/tmp/realiti-inspect.json
+      - name: Nyx resident play
+        working-directory: packages/realiti-headless-resident
+        run: npm run play:nyx
+
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@meatproxy69'
+      - name: Install
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Publish version if absent
+        working-directory: packages/realiti-headless-resident
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "$name@$version" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "$name@$version already published"
+          else
+            npm publish
+          fi
+      - name: Verify installed GitHub Package
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./packages/realiti-headless-resident/package.json').name")"
+          version="$(node -p "require('./packages/realiti-headless-resident/package.json').version")"
+          mkdir -p /tmp/realiti-package-check
+          cd /tmp/realiti-package-check
+          npm init -y >/dev/null 2>&1
+          npm config set @meatproxy69:registry https://npm.pkg.github.com
+          for attempt in 1 2 3 4 5; do
+            if npm install "$name@$version"; then break; fi
+            [ "$attempt" = 5 ] && exit 1
+            sleep 2
+          done
+          ./node_modules/.bin/realiti-headless --html "$GITHUB_WORKSPACE/RealitiRELAX.html" inspect >/tmp/published-package-inspect.json
+          grep -q '"ok": true' /tmp/published-package-inspect.json
