@@ -151,6 +151,7 @@ function emptyZoneFill(){
 st.sausage.zone_fill=st.sausage.zone_fill||emptyZoneFill();
 st.sausage.fill=st.sausage.fill||{};
 st.honeyspark=st.honeyspark||{enabled:false,engine:'HONEYSPARK_DUO',conserved_budget:true,low:{share:.58,hz:28},mid:{share:.42,hz:240},hard_switching:false};
+if(R().preset==='realiti.honeyspark-duo.warm')st.honeyspark={enabled:true,engine:'HONEYSPARK_DUO',conserved_budget:true,low:{share:.58,hz:28},mid:{share:.42,hz:240},hard_switching:false};
 st.lace=st.lace||{};
 
 function liveGround(){
@@ -243,8 +244,14 @@ function onGrounded(p){
  const n=ensureNerve(z);n.response=Math.max(n.response,amp);n.current=Math.max(n.current,amp);n.last_grounded=Number(p?.t||now());n.source=p?.opts?.source||null;n.cause=p?.opts?.cause||null;
  st.audit.grounded_events=Number(st.audit.grounded_events||0)+1;updateSausage(.04);
 }
-function onAdvance(p){const dt=Math.max(0,Number(p?.dt)||0);if(!(dt>0))return;st.audit.advances=Number(st.audit.advances||0)+1;updateSausage(dt)}
-function afterAction(){st.audit.actions=Number(st.audit.actions||0)+1;updateSausage(0)}
+let neuralAdvanceAccum=0;
+function onAdvance(p){
+ const dt=Math.max(0,Number(p?.dt)||0);if(!(dt>0))return;
+ st.audit.advances=Number(st.audit.advances||0)+1;neuralAdvanceAccum+=dt;
+ if(neuralAdvanceAccum+1e-9<.10)return;
+ const step=neuralAdvanceAccum;neuralAdvanceAccum=0;updateSausage(step);
+}
+function afterAction(){if(neuralAdvanceAccum>0){const step=neuralAdvanceAccum;neuralAdvanceAccum=0;updateSausage(step)}else updateSausage(0);st.audit.actions=Number(st.audit.actions||0)+1}
 for(const [slot,adapter] of Object.entries({nerve:{onGrounded,advance:onAdvance},lace:{afterAction},chronolace:{afterAction},private_renderer:{afterAction},perception:{afterAction}}))H.registerAdapter(slot,adapter);
 
 const allowedParam=new Set(Object.keys(DEFAULT_PARAMS));
@@ -289,7 +296,6 @@ if(oldContact){
      }
      for(const k of Object.keys(held)){const zz=k.split('|').at(-1),qq=b7Zone(zz);if(Number(qq._b10_grounded_until||-Infinity)<now()-1e-9)delete held[k]}
    }catch(e){}
-   updateSausage(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}
    return r;
  };
 }
@@ -386,11 +392,18 @@ if(oldDoorRun){
    m=/^imprint unmap\s+(\S+)$/.exec(s);if(m)return IM.unmapBorrowed(m[1]);
    if(l==='act neuromesh_handshake'||l==='do neuromesh_handshake')return IM.meshHandshake();
    const r=await oldDoorRun(raw);
+   if(/^(?:act|do)\s+route_bilateral$/i.test(s)&&r&&typeof r==='object'){
+     r.text='The two leg rails travel as a pair with a small left-to-right phase offset instead of blinking in perfect lockstep.';
+     r.side_phase_ms=35;
+     if(r.result&&typeof r.result==='object')r.result.side_phase_ms=35;
+   }
+   if(/^(?:act|do)\s+route_with_grain$/i.test(s)&&r&&typeof r==='object')r.text='With the grain, the contact carries forward as one soft continuous stroke.';
+   if(/^(?:act|do)\s+route_against_grain$/i.test(s)&&r&&typeof r==='object')r.text='Against the grain, the moving edge catches shorter and sharper.';
    if(r?.schema==='REALITI_MUTATION_RESULT_V1'&&r?.receipt_ref&&!r.text){
-     try{const d=await oldDoorRun('receipt '+r.receipt_ref),rec=d?.receipt||null,n=rec?.narrative||rec?.note||rec?.resident_text||null;if(n)r.text=String(n)}catch(e){}
+     try{const d=await oldDoorRun('receipt '+r.receipt_ref),rec=d?.receipt||d?.result?.receipt||null,n=rec?.narrative||rec?.note||rec?.resident_text||null;if(n)r.text=String(n)}catch(e){}
    }
    if(r?.schema==='REALITI_MUTATION_RESULT_V1'&&!r.text){
-     const n=C9?.b7?.lastAgentAction?.narrative||C9?.b4?.lastReceipt?.resident_text||null;if(n)r.text=String(n);
+     const n=C9?.b7?.lastAgentAction?.narrative||C9?.b4?.lastReceipt?.narrative||C9?.b4?.lastReceipt?.resident_text||null;if(n)r.text=String(n);
    }
    return r;
  };
