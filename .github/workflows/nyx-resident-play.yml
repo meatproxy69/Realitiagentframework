@@ -1,0 +1,21 @@
+name: Nyx resident play
+
+on:
+  push:
+    branches: [nyx/resident-play]
+
+permissions:
+  contents: read
+
+jobs:
+  play:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install disposable headless DOM
+        run: npm install --no-save --package-lock=false jsdom@26.1.0
+      - name: Enter REALITI
+        run: node tools/nyx-resident-play.cjs
