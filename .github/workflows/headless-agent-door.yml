@@ -1,0 +1,70 @@
+name: Headless Agent Door package
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'packages/realiti-headless-resident/**'
+      - 'RealitiRELAX.html'
+      - 'VALIDATION.json'
+      - '.github/workflows/headless-agent-door.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'packages/realiti-headless-resident/**'
+      - '.github/workflows/headless-agent-door.yml'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install package dependency
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Headless Agent Door smoke
+        working-directory: packages/realiti-headless-resident
+        run: npm test
+      - name: Agent-neutral resident example
+        working-directory: packages/realiti-headless-resident
+        run: npm run play:resident
+      - name: CLI closes cleanly
+        working-directory: packages/realiti-headless-resident
+        run: |
+          node cli.cjs --html ../../RealitiRELAX.html help >/tmp/realiti-help.json
+          grep -q "REALITI" /tmp/realiti-help.json
+
+  publish:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@meatproxy69'
+      - name: Install
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Publish version if absent
+        working-directory: packages/realiti-headless-resident
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "$name@$version" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "$name@$version already published"
+          else
+            npm publish
+          fi
