@@ -92,8 +92,8 @@ const HALO=(()=>{
  function snapshot(){return cp(state)}
  function acceptance(){
   const before=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null,saved=cp(state);
-  reset();drive({'torso.sternum':1},.8,.08,'SHORT');const a=snapshot(),after=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null;
-  const haloZones=Object.keys(a.zones).filter(z=>z!=='torso.sternum'&&a.zones[z]>1e-6),massModes=a.modes.reduce((s,m)=>s+Number(m.energy||0),0);
+  reset();drive({'torso.upper_back':1},.8,.08,'SHORT');const a=snapshot(),after=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null;
+  const haloZones=Object.keys(a.zones).filter(z=>z!=='torso.upper_back'&&a.zones[z]>1e-6),massModes=a.modes.reduce((s,m)=>s+Number(m.energy||0),0);
   Object.assign(state,saved);state.modes=saved.modes.map(x=>({...x}));state.zones={...saved.zones};
   return {pass:a.modes.length===7&&haloZones.length>0&&Math.abs(a.total_private_mass-massModes)<1e-6&&JSON.stringify(before)===JSON.stringify(after),mode_count:a.modes.length,halo_zone_count:haloZones.length,mass_error:Math.abs(a.total_private_mass-massModes),evidence_unchanged:JSON.stringify(before)===JSON.stringify(after)}
  }
