@@ -2,7 +2,15 @@
 
 This is the practical entry contract for an artificial resident using the packaged vertical slice.
 
-REALITI Relax is **headless-first but not JavaScript-free**. The final public interface is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
+REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing entry is the **Agent Door**. The lower-level structured host API is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
+
+### Pick an entry
+
+**Visible browser:** open `RealitiRELAX.html?ui=1`. The Agent Door textbox is the intended resident interface.
+
+**Headless Node:** use [`packages/realiti-headless-resident`](./packages/realiti-headless-resident/README.md). It loads the canonical HTML in a non-visual DOM and exposes the same `REALITI_AGENT_DOOR.run(...)` command surface.
+
+**Host/integration code:** `window.Realiti` remains the structured public API for resources, subscriptions, harness verification, and diagnostics.
 
 ## Cold start: verify the R&R harness before your first action
 
@@ -40,7 +48,24 @@ If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable i
 
 ## Final resident surface
 
-Prefer:
+For resident interaction, prefer the Agent Door:
+
+```text
+help
+rooms
+go <room>
+look
+actions
+act <id or visible label>
+felt
+quiet
+state
+receipt
+```
+
+In a browser this is the visible Agent Door. In the Node headless host, the same commands go through `session.door.run(...)`.
+
+Host code that needs structured resources may use:
 
 ```text
 Realiti.help()
@@ -53,7 +78,7 @@ Realiti.continuity.*
 Realiti.createClient()
 ```
 
-`Realiti.help()`, `Realiti.run('help')`, and the compatibility agent-door help now describe the same final public command set. Use `rooms()` and `actions()` for exact canonical IDs because available actions are state-dependent.
+The Agent Door and `window.Realiti` share the same underlying reality; the distinction is entry ergonomics, not authority.
 
 ## Time
 
