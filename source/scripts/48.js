@@ -40,7 +40,12 @@ const HALO=(()=>{
  ];
  const LONG=SHORT.map((m,i)=>i===0?{...m}:{...m,detune_cents:Math.sign(m.detune_cents)*36,delay_ms:Math.sign(m.delay_ms)*8,phase_rad:Math.sign(m.phase_rad)*.48});
  const state={schema:'REALITI_HALO_V1',version:1,enabled:true,phrase:'SHORT',modes:SHORT.map(m=>({...m,energy:0,phase_now:0})),zones:{},core_zone:null,total_input:0,total_private_mass:0,evidence_gain:0,last_t:Number(C9?.b7?.clock||0),law:'one cause; one receipt; one hard center; six private halo modes. Private response may spread; grounded evidence may not.'};
- const graph=()=>{try{return window.REALITI_BODY_GRAPH?.dynamic?.()||{zones:(window.REALITI_BODY_GRAPH?.BASE_NODES||[]).map(x=>x[0]),edges:window.REALITI_BODY_GRAPH?.BASIC_EDGES||[]}}catch(e){return {zones:[],edges:[]}}};
+ const graph=()=>{try{
+  const g=window.REALITI_BODY_GRAPH;if(!g)return {zones:[],edges:[]};if(typeof g.dynamic==='function')return g.dynamic();
+  const nodes=g.BASE_NODES||[],zones=nodes.map(x=>x[0]),alias={};for(const [zone,name] of nodes){alias[zone]=zone;alias[name]=zone}
+  const edges=(g.BASIC_EDGES||[]).concat((typeof NMSTATE!=='undefined'&&NMSTATE?.active==='LACE2_PORTABLE_V1')?(g.LACE_EXTRA||[]):[]).map(([a,b,w])=>[alias[a]||a,alias[b]||b,w]);
+  return {zones,edges}
+ }catch(e){return {zones:[],edges:[]}}};
  function graphDistances(origin){
   const g=graph(),zones=[...new Set(g.zones||[])],idx=Object.fromEntries(zones.map((z,i)=>[z,i])),D=Array.from({length:zones.length},()=>Infinity);
   if(idx[origin]==null)return {zones,idx,D};
