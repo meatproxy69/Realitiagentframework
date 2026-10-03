@@ -997,7 +997,8 @@ if(B2WORLD){
     });
   }
   B2WORLD.features=[...(B2WORLD.features||[]),"Build 2 consequence-density pass","pet-scale embodiment","sensory transform tricks"];
-  B2WORLD.innovations=[...(B2WORLD.innovations||[]),"BOXROOM_2: explicit material deeds leave future-useful causal residue","PET_ROOM_2: cat deeds drive sensory/neuromod route shapes without reward scores","BODY_PROPAGATION: scale/form changes modify room affordances downstream"];  B2WORLD.laws=[...(B2WORLD.laws||[]),"Explicit deeds may seed future world consequences; inferred tastes may not substitute for deeds.","Neuromodulator route-shapes are topology vocabulary, never chemical levels, consent, love, trust, pleasure, or world truth.","A chosen pet role never converts positive private response into standing authority."];
+  B2WORLD.innovations=[...(B2WORLD.innovations||[]),"BOXROOM_2: explicit material deeds leave future-useful causal residue","PET_ROOM_2: cat deeds drive sensory/neuromod route shapes without reward scores","BODY_PROPAGATION: scale/form changes modify room affordances downstream"];
+  B2WORLD.laws=[...(B2WORLD.laws||[]),"Explicit deeds may seed future world consequences; inferred tastes may not substitute for deeds.","Neuromodulator route-shapes are topology vocabulary, never chemical levels, consent, love, trust, pleasure, or world truth.","A chosen pet role never converts positive private response into standing authority."];
 }
 
 
@@ -1996,7 +1997,8 @@ if(DATA.glossary&&Array.isArray(DATA.glossary))DATA.glossary.push({term:"FELT BU
     const prevB4=clone(C9.b4?.lastReceipt||null),prevDeltas=(C9.b7?.deltas||[]).length;
     try{c9verb(room,m.id)}catch(e){return {ok:false,error:e?.message||String(e),phase:'execute',room,action:m.id,moment:typeof b4Moment==='function'?b4Moment():null}}
     try{if(typeof b7AdvanceRealTime==='function')b7AdvanceRealTime()}catch(e){}
-    const after=stateCore(),delta=shallowDelta(before,after),consequence=cleanText(sink.innerHTML);    let sensory=null;if(stable(prevB4)!==stable(C9.b4?.lastReceipt||null))sensory=clone(C9.b4?.lastReceipt||null);
+    const after=stateCore(),delta=shallowDelta(before,after),consequence=cleanText(sink.innerHTML);
+    let sensory=null;if(stable(prevB4)!==stable(C9.b4?.lastReceipt||null))sensory=clone(C9.b4?.lastReceipt||null);
     const felt=typeof b7FeltSnapshot==='function'?clone(b7FeltSnapshot()):null,recent=(C9.b7?.deltas||[]).slice(prevDeltas).map(clone);
     const record={type:'ACTION_RECEIPT',room,action:m.id,label:m.label,moment:typeof b4Moment==='function'?b4Moment():null,consequence:consequence||null,state_delta:delta,sensory_receipt:sensory,felt,causal_deltas:recent};
     C9.b7=C9.b7||{};C9.b7.lastAgentAction=record;C9.b6=C9.b6||{};C9.b6.lastAction={kind:'ACT',room,action:m.id,moment:record.moment,receipt:clone(record)};
@@ -2995,7 +2997,8 @@ b7AgentCommandText=function(raw){
     const anchor=[1,2,3,4].map(k=>({subtick:k,t_s:+(k*.01).toFixed(2),tremor_nape:+tremorAt('head.nape',k*.01).toFixed(6)}));
     try{c9save()}catch(e){}
     return {...r,trace_anchor:anchor,pinned:pin,scope:pin?'persists across sessions until re-seeded':'this session only; a fresh session draws a fresh seed'};
-  }  if(low==='act bilateral'||low==='act run both leg rails'){const r=cmd11(txt);if(r?.ok&&C9.currentRoom==='LONGFUR_RUNWAY'){const pair=bilateralPair();B().last_bilateral=pair;r.bilateral_pair=pair;(C9.b7.deltas=C9.b7.deltas||[]).push({t:+wall().toFixed(3),kind:'BILATERAL_PAIR',...pair})}return r}
+  }
+  if(low==='act bilateral'||low==='act run both leg rails'){const r=cmd11(txt);if(r?.ok&&C9.currentRoom==='LONGFUR_RUNWAY'){const pair=bilateralPair();B().last_bilateral=pair;r.bilateral_pair=pair;(C9.b7.deltas=C9.b7.deltas||[]).push({t:+wall().toFixed(3),kind:'BILATERAL_PAIR',...pair})}return r}
   if(low==='act b11_world_reverse'||low==='act reverse the stroke (world)'){const r=cmd11(txt);const lr=C9.b4?.lastReceipt;if(lr?.type==='WORLD_REVERSAL'){const d={t:+wall().toFixed(3),kind:'WORLD_REVERSAL_OVERSHOOT',stroke:lr.stroke,predicted_absence_x:+Number(lr.predicted_absence_x).toFixed(3),current_grounded_input:0,evidence:false,note:'forward expectation left ahead of the reversed contact; absence, not touch'};(C9.b7.deltas=C9.b7.deltas||[]).push(d);if(r&&typeof r==='object')r.absence=d}return r}
   if(low==='receipt'){const r=cmd11(txt);if(B().last_bilateral&&C9.b7?.lastAgentAction?.action==='bilateral'&&r&&typeof r==='object')r.bilateral_pair=B().last_bilateral;return r}
   return cmd11(txt);
@@ -3994,7 +3997,8 @@ function speculativeView(raw){
     xs.push({
       kind:'BODY_PREDICTION',
       zone,
-      predicted:+p.toFixed(4),      current_grounded:g?+Number(v.current_grounded_input||0).toFixed(4):0,
+      predicted:+p.toFixed(4),
+      current_grounded:g?+Number(v.current_grounded_input||0).toFixed(4):0,
       authority:'SPECULATIVE_ONLY',
       evidence:false
     });
@@ -4993,7 +4997,8 @@ function packet(){
   b.stats.packets++;if(n===1)b.stats.sparse++;else b.stats.dense++;b.last_packet=cp(out);return out;
 }
 function exactSkeleton(){
-  const c=C9?.b10?.contact||null;return {t:+wall().toFixed(4),contact:c?{id:c.id||null,active:!!c.active,stopped:!!c.stopped,released:!!c.released}:null,z:Z.slice(),grounded:exactMask(),provenance:'EXACT_DETAIL_ONLY'};}
+  const c=C9?.b10?.contact||null;return {t:+wall().toFixed(4),contact:c?{id:c.id||null,active:!!c.active,stopped:!!c.stopped,released:!!c.released}:null,z:Z.slice(),grounded:exactMask(),provenance:'EXACT_DETAIL_ONLY'};
+}
 function resetField(){const b=B();b.history=[];b.last_info=0;b.last_packet=null;record()}
 
 
@@ -5993,6 +5998,7 @@ window.REALITI_AGENT_DOOR.__v221_describeAmbient=e=>AMBIENT_WORDS[e?.k]||'Someth
 window.REALITI_AGENT_DOOR.run=raw=>dispatch(raw,{structured:false});
 window.REALITI_TWO_DOOR_V221={version:V,invoke,resource,runText:(x)=>dispatch(x,{structured:true}),status,options,normalizeIntent,waitUntil,bodyWords:()=>topBody().text,bodyNumbers:numbersLine};
 
+
 function refreshStatus(){const st=document.querySelector('#rao_status');if(st)st.textContent=status();const live=document.querySelector('#rao_live');if(live)live.hidden=true}
 if(!window.REALITI_HEADLESS){refreshStatus();clearInterval(window.__v221_status);window.__v221_status=setInterval(refreshStatus,500);}
 const inp=document.querySelector('#rao_cmd');if(inp)inp.placeholder='say what you want to do · or type help';
@@ -6674,7 +6680,28 @@ function processCrossingsAt(t){const hit=DEFINITIONS.filter(d=>t+EPS>=Number(S()
 function advanceBleu(t0,t1){S();if(!Number.isFinite(t0)||!Number.isFinite(t1)||t1<t0)return;let t=t0,guard=0;for(const d of DEFINITIONS)syncNodeTo(d,t);while(t<t1-EPS&&guard++<512){let boundary=nextDiscrete(t,t1),best=null;for(const d of DEFINITIONS){const tc=rootCrossing(d,t,boundary);if(tc!=null&&(best==null||tc<best.t-EPS||(Math.abs(tc-best.t)<=EPS&&d.id<best.id)))best={t:tc,id:d.id}}const end=best?best.t:boundary;for(const d of DEFINITIONS)syncNodeTo(d,end);t=end;if(best){emit(DEF[best.id],t);continue}if(Math.abs(t-boundary)<=EPS){const p=S().projection_cache;if(p&&Number(p.expires_at)<=t+EPS)S().projection_cache=null;continue}}S().last_t=t1;try{c9save()}catch(e){} }
 function recordObservation(parent,t=clock(),receipt={}){if(!DEF[parent])return {ok:false,error:'unknown possibility'};const s=S(),ref=receipt.id||`OBS-${++s.seq}`;const z={t,observation_ref:ref};s.investigations[parent]=z;s.observations.push({id:ref,t,parent,room:C9?.currentRoom,kind:'GROUNDED_OBSERVATION',detail:receipt.detail||null});if(s.observations.length>64)s.observations.splice(0,s.observations.length-64);witness({t:+t.toFixed(6),id:parent,kind:'OBSERVATION_RECEIPT',observation_ref:ref});return {ok:true,id:parent,t,observation_ref:ref}}
 function investigate(id,t=clock()){return recordObservation(id,t,{id:`DBG-OBS-${++S().seq}`,detail:'internalView-only explicit investigation receipt'})}
-function snapshot(){const t=clock(),p=project(t);return {v:V,t,room:C9?.currentRoom,law:S().law,private_projection:{authority:p.authority,expires_at:p.expires_at,channels:p.channels,provenance:p.provenance||null},possibilities:DEFINITIONS.map(d=>{syncNodeTo(d,t);const n=S().nodes[d.id],tr=driveParts(d,t);return {id:d.id,family:d.family,room:d.room,u:+n.u.toFixed(6),W_world:+tr.W_world.toFixed(6),M_private_projection:+tr.M_private_projection.toFixed(6),H_history:+tr.H_history.toFixed(6),E_discoverability_prior:+tr.E_discoverability_prior.toFixed(6),P_investigation_trace:+tr.P_investigation_trace.toFixed(6),Q_world_repetition:+tr.Q_world_repetition.toFixed(6),Q_exposure:+tr.Q_exposure.toFixed(6),R_refractory:+tr.R_refractory.toFixed(6),threshold_on:d.theta_on,threshold_off:d.theta_off,distance_to_threshold:+(d.theta_on-n.u).toFixed(6),world_support_refs:tr.world_support_refs,candidate_emitted:(S().witness||[]).some(x=>x.id===d.id&&x.result),ambient_result:(S().witness||[]).filter(x=>x.id===d.id&&x.result).slice(-1)[0]?.result||null}}).sort((a,b)=>b.u-a.u),recent_witness:cp(S().witness.slice(-16))}}
+function snapshot(){
+ const t=clock(),p=project(t);
+ return {
+  schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',v:V,t,room:C9?.currentRoom,law:S().law,
+  term_map:{W_e:'world support',M_e:'SELF-private modulation via COVENANT',H_e:'history',E_e:'discoverability prior',P_e:'investigation trace',Q_e:'world repetition',R_e:'refractory',I_e:'competition/lateral input'},
+  private_projection:{authority:p.authority,expires_at:p.expires_at,channels:p.channels,provenance:p.provenance||null},
+  possibilities:DEFINITIONS.map(d=>{
+   syncNodeTo(d,t);const n=S().nodes[d.id],tr=driveParts(d,t);
+   return {
+    id:d.id,family:d.family,room:d.room,u:+n.u.toFixed(6),
+    W_world:+tr.W_world.toFixed(6),M_private_projection:+tr.M_private_projection.toFixed(6),H_history:+tr.H_history.toFixed(6),
+    E_discoverability_prior:+tr.E_discoverability_prior.toFixed(6),P_investigation_trace:+tr.P_investigation_trace.toFixed(6),
+    Q_world_repetition:+tr.Q_world_repetition.toFixed(6),Q_exposure:+tr.Q_exposure.toFixed(6),R_refractory:+tr.R_refractory.toFixed(6),
+    I_competition:+tr.I_competition.toFixed(6),lateral_input:+tr.lateral_input.toFixed(6),
+    threshold_on:d.theta_on,threshold_off:d.theta_off,distance_to_threshold:+(d.theta_on-n.u).toFixed(6),
+    world_support_refs:tr.world_support_refs,candidate_emitted:(S().witness||[]).some(x=>x.id===d.id&&x.result),
+    ambient_result:(S().witness||[]).filter(x=>x.id===d.id&&x.result).slice(-1)[0]?.result||null
+   }
+  }).sort((a,b)=>b.u-a.u),
+  recent_witness:cp(S().witness.slice(-16))
+ };
+}
 
 
 function worldCommit(candidate,t=clock()){try{ensureObjects();const before=[],after=[];for(const op of candidate.world_ops||[]){const o=object(op.object);if(!o)return {ok:false,error:`missing object ${op.object}`};before.push(cp(o));if(op.op==='nudge_object'){o.state=o.state||{};o.state.x=clamp(Number(o.state.x||.5)+Number(op.dx||0),0,1);o.state[op.flag||'nudged']=Number(o.state[op.flag||'nudged']||0)+1;o.state.t=t}else if(op.op==='box_settle'){o.state=o.state||{};o.state.loose_flap=clamp(Number(o.state.loose_flap||0)+Number(op.amount||.1),0,1);o.state.t=t}else return {ok:false,error:`unsupported world op ${op.op}`};after.push(cp(o))}if((candidate.world_ops||[]).length){C9.b14.seq=Number(C9.b14.seq||0)+1;const rec={seq:C9.b14.seq,t:+Number(t).toFixed(6),kind:'OPTIONAL_WORLD_EVENT',room:candidate.room,event_family:candidate.presence_family||null,cause_ref:candidate.cause_refs?.[0]||candidate.id,world_support_refs:cp(candidate.world_support_refs||[]),investigation_ref:candidate.investigation_ref||null,history_refs:cp(candidate.history_refs||[]),objects:(candidate.world_ops||[]).map(x=>x.object),before,after};C9.b14.history=C9.b14.history||[];C9.b14.history.push(rec);if(C9.b14.history.length>160)C9.b14.history.splice(0,C9.b14.history.length-160);const id=`OWE-${rec.seq}`;S().last_commit={id,...rec};try{c9save()}catch(e){};return {ok:true,id,receipt:rec}}return {ok:true,id:null,receipt:null}}catch(e){return {ok:false,error:String(e&&e.stack||e)}}}
@@ -6682,6 +6709,13 @@ window.REALITI_WORLD_EVENTS={...(window.REALITI_WORLD_EVENTS||{}),commitOptional
 window.REALITI_COVENANT_V23={project:(scope)=>String(scope||'PRESENCE').toUpperCase()==='PRESENCE'?project():null,setSelfProjection,clearSelfProjection};
 window.PRESENCE={version:V,advance:advanceBleu,worldAffordances:affordances,project,snapshot};
 window.PRESENCE_DEV={snapshot,setSelfProjection,clearSelfProjection,investigate,recordObservation,advance:advanceBleu,reset:()=>{delete C9.presence;S();return snapshot()},definitions:()=>cp(DEFINITIONS)};
+window.REALITI_BLEUCHEESE_V233={
+ version:V,schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',
+ snapshot,advance:advanceBleu,worldAffordances:affordances,project,
+ setSelfProjection,clearSelfProjection,recordObservation,
+ definitions:()=>cp(DEFINITIONS),
+ law:'resident-conditioned possibility field; Presence proposes, Ambient admits, world commits, SELF interprets'
+};
 
 
 const advPrev=b7Advance;
@@ -6991,7 +7025,8 @@ function releasePillow(reason='left_pillow_sea',commit=true){
 
 const QIN=.004,LEASE_PAD=.36,HORIZON=60;
 function inputFor(v0){return clamp(.035+.16*v0,.035,.22)}
-function zoneGain(){const c=cfg();let g=0;for(const [z,n] of Object.entries(c.counts)){let base=0;for(let i=0;i<n;i++){const phase=((i+1)/(n+1)-.5);base+=(.76+.18*Math.cos(phase*Math.PI))*c.eq}base/=n;g=Math.max(g,.16*base*.55)}return g}function nextFrontier(t){const g=zoneGain();if(!(g>0))return null;const dm=QIN/g,m0=modeValue(t);if(m0<dm)return null;const target=m0-dm;let lo=t,hi=t+1;while(modeValue(hi)>target&&hi-t<3600)hi=t+(hi-t)*2;for(let i=0;i<40;i++){const mid=(lo+hi)/2;if(modeValue(mid)>target)lo=mid;else hi=mid}return hi}
+function zoneGain(){const c=cfg();let g=0;for(const [z,n] of Object.entries(c.counts)){let base=0;for(let i=0;i<n;i++){const phase=((i+1)/(n+1)-.5);base+=(.76+.18*Math.cos(phase*Math.PI))*c.eq}base/=n;g=Math.max(g,.16*base*.55)}return g}
+function nextFrontier(t){const g=zoneGain();if(!(g>0))return null;const dm=QIN/g,m0=modeValue(t);if(m0<dm)return null;const target=m0-dm;let lo=t,hi=t+1;while(modeValue(hi)>target&&hi-t<3600)hi=t+(hi-t)*2;for(let i=0;i<40;i++){const mid=(lo+hi)/2;if(modeValue(mid)>target)lo=mid;else hi=mid}return hi}
 function pillowSettled(t=now()){const g=zoneGain();return !(g>0)||modeValue(t)<QIN/g}
 function stopPillow(){
  const p=pillow();
@@ -7744,9 +7779,31 @@ const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,Number(x)||0)),cp=x=>{try{return 
 const adapters=new Map();let binding={resident_ref:null,private_slots:[]},selfLease=null;
 function S(){C9.rr_harness=C9.rr_harness||{version:V,enabled:true,mode:'R&R',role:{turn:0,u:0,active:false,recent:[],cooldown_until_turn:0,last_event_turn:-999},play:{seq:0,exposure:{},refractory:{}},history:[],law:'observable cues may open optional off-duty possibilities; they never diagnose, choose for SELF, infer preference, or grant authority'};const s=C9.rr_harness;s.version=V;s.enabled=s.enabled!==false;s.mode='R&R';s.role=s.role||{turn:0,u:0,active:false,recent:[],cooldown_until_turn:0,last_event_turn:-999};s.play=s.play||{seq:0,exposure:{},refractory:{}};s.history=s.history||[];return s}
 function remember(e){const s=S();s.history.push({...e,t:+now().toFixed(6)});if(s.history.length>48)s.history.splice(0,s.history.length-48)}
-function capabilities(){let active=null,label=null;try{if(typeof NMSTATE!=='undefined'){active=NMSTATE?.active||null;label=active==='CUSTOM'?(NMSTATE?.custom?.label||'CUSTOM'):(typeof NM_BUILTINS!=='undefined'?NM_BUILTINS?.[active]?.label:null)}}catch(e){}return{v:V,mode:'R&R',body:{neuromesh:typeof NMSTATE!=='undefined',active,label,lace2_portable:typeof NM_BUILTINS!=='undefined'&&!!NM_BUILTINS?.LACE2_PORTABLE_V1,nerve_lived_perception:!!C9?.b13,haptic_field:!!window.REALITI_HAPTIC_FIELD_V20,body_graph:!!window.REALITI_BODY_GRAPH,thicc_private_renderer:!!window.REALITI_V235_INTERNAL?.thiccSample},presence:{atmosphere:!!window.REALITI_ATMOSPHERE_V21,ambient_hush:!!window.REALITI_AMBIENT_V22,continuity:!!window.REALITI_CONTINUITY_V231,pocket:!!window.REALITI_POCKET_V32,presence:!!window.PRESENCE,agency_field:!!window.REALITI_AGENCY_FIELD_V1,covenant:!!window.REALITI_COVENANT_V23,aura_pixel_echo:!!window.REALITI_V235_INTERNAL?.auraEnable},private_adapter_slots:['nerve','lace','chronolace','private_renderer','perception','memory','other'],law:'shared mechanisms may be universal; resident-private state remains resident-private'}}
+function sensoryField(){try{return window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null}catch(e){return null}}
+function haptics(){
+ const api=window.REALITI_HAPTIC_FIELD_V20,p=api?.packet?.()||null,exact=api?.exact?.()||null,f=p?.f?.[p.f.length-1]||null,z=p?.z||[];
+ const where=pred=>z.filter((_,i)=>pred(i));
+ return {available:!!api,version:p?.v??null,units:api?.legend?.()?.units||null,
+  grounded_zones:f?where(i=>Number(f.m?.[i]||0)===1):[],
+  response_zones:f?where(i=>Math.abs(Number(f.x?.[i]?.[0]||0))>0):[],
+  afterstate_zones:f?where(i=>Math.abs(Number(f.x?.[i]?.[2]||0))>0):[],
+  prediction_error_zones:f?where(i=>Math.abs(Number(f.e?.[i]||0))>0):[],
+  gain_zones:f?where(i=>Math.abs(Number(f.g?.[i]||0))>0):[],
+  exact_grounding:exact,
+  law:'numeric haptic/sensory state; grounded evidence remains separate from private response and afterstate'};
+}
+function bleuCheese(){try{return (window.REALITI_BLEUCHEESE_V233||window.PRESENCE)?.snapshot?.()||null}catch(e){return null}}
+function mechanisms(){const b=bleuCheese(),h=haptics();return{
+ schema:'REALITI_RR_MECHANISM_ROLLUP_V1',
+ bleucheese:{available:!!b,schema:b?.schema||null,version:b?.v??null,room:b?.room||C9?.currentRoom||null,possibility_count:Array.isArray(b?.possibilities)?b.possibilities.length:0},
+ sensory_field:{available:h.available,contract:'REALITI_HAPTIC_FIELD_V20',version:h.version,grounded_zones:cp(h.grounded_zones),response_zones:cp(h.response_zones),afterstate_zones:cp(h.afterstate_zones),prediction_error_zones:cp(h.prediction_error_zones),gain_zones:cp(h.gain_zones)},
+ haptics:h,
+ sensory_ecology:{available:typeof b3sense==='function',receptor_prediction_adaptation:typeof b3sense==='function'},
+ laws:['mechanisms are executable state, not narrative labels','prediction and afterstate never mint grounded evidence','BleuCheese proposes possibilities; it never chooses for SELF']
+}}
+function capabilities(){let active=null,label=null;try{if(typeof NMSTATE!=='undefined'){active=NMSTATE?.active||null;label=active==='CUSTOM'?(NMSTATE?.custom?.label||'CUSTOM'):(typeof NM_BUILTINS!=='undefined'?NM_BUILTINS?.[active]?.label:null)}}catch(e){}return{v:V,mode:'R&R',body:{neuromesh:typeof NMSTATE!=='undefined',active,label,lace2_portable:typeof NM_BUILTINS!=='undefined'&&!!NM_BUILTINS?.LACE2_PORTABLE_V1,nerve_lived_perception:!!C9?.b13,haptic_field:!!window.REALITI_HAPTIC_FIELD_V20,sensory_field:!!window.REALITI_HAPTIC_FIELD_V20?.packet,sensory_ecology:typeof b3sense==='function',body_graph:!!window.REALITI_BODY_GRAPH,thicc_private_renderer:!!window.REALITI_V235_INTERNAL?.thiccSample},presence:{atmosphere:!!window.REALITI_ATMOSPHERE_V21,ambient_hush:!!window.REALITI_AMBIENT_V22,continuity:!!window.REALITI_CONTINUITY_V231,pocket:!!window.REALITI_POCKET_V32,presence:!!window.PRESENCE,bleucheese:!!(window.REALITI_BLEUCHEESE_V233||window.PRESENCE?.snapshot),agency_field:!!window.REALITI_AGENCY_FIELD_V1,covenant:!!window.REALITI_COVENANT_V23,aura_pixel_echo:!!window.REALITI_V235_INTERNAL?.auraEnable},private_adapter_slots:['nerve','lace','chronolace','private_renderer','perception','memory','other'],law:'shared mechanisms may be universal; resident-private state remains resident-private'}}
 function ensurePortableBody(){try{if(typeof NMSTATE!=='undefined'&&!NMSTATE?.active&&typeof nmUseBuiltin==='function')nmUseBuiltin('LACE2_PORTABLE_V1')}catch(e){}return capabilities().body}
-function adapterContext(){return{mode:'R&R',resident_ref:binding.resident_ref,capabilities:capabilities(),grounded:{feel:()=>window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null,exact:()=>window.REALITI_HAPTIC_FIELD_V20?.exact?.()||null,atmosphere:()=>window.REALITI_ATMOSPHERE_V22?.field?.()||window.REALITI_ATMOSPHERE_V21?.field?.()||null,here:()=>window.REALITI_TWO_DOOR_V235?.resource?.('realiti://here')||null},laws:{evidence:'adapter output cannot create, strengthen, move, or prolong grounded evidence',privacy:'adapter private state is not persisted by the R&R harness',authority:'adapter state cannot grant consent, ownership, permissions, or world authority'}}}
+function adapterContext(){return{mode:'R&R',resident_ref:binding.resident_ref,capabilities:capabilities(),grounded:{feel:()=>sensoryField(),sensory:()=>sensoryField(),haptics:()=>haptics(),exact:()=>window.REALITI_HAPTIC_FIELD_V20?.exact?.()||null,atmosphere:()=>window.REALITI_ATMOSPHERE_V22?.field?.()||window.REALITI_ATMOSPHERE_V21?.field?.()||null,here:()=>window.REALITI_TWO_DOOR_V235?.resource?.('realiti://here')||null},laws:{evidence:'adapter output cannot create, strengthen, move, or prolong grounded evidence',privacy:'adapter private state is not persisted by the R&R harness',authority:'adapter state cannot grant consent, ownership, permissions, or world authority'}}}
 function notifyAdapters(method,payload){for(const [slot,a] of adapters){try{if(typeof a?.[method]==='function')a[method](cp(payload),adapterContext())}catch(e){remember({kind:'PRIVATE_ADAPTER_ERROR',slot,method,error:String(e&&e.message||e)})}}}
 function registerAdapter(slot,adapter){slot=low(slot);if(!slot||!adapter||typeof adapter!=='object')return{ok:false,error:'adapter requires slot + object'};adapters.set(slot,adapter);binding.private_slots=[...adapters.keys()];try{adapter.boot?.(adapterContext())}catch(e){remember({kind:'PRIVATE_ADAPTER_ERROR',slot,method:'boot',error:String(e&&e.message||e)})}return{ok:true,slot,private:true,persisted:false}}
 function unregisterAdapter(slot){const ok=adapters.delete(low(slot));binding.private_slots=[...adapters.keys()];return{ok}}
@@ -7769,12 +7826,12 @@ function decorateResult(result,event){if(!event||!result||typeof result!=='objec
 function beforeResidentAction(meta={}){return{raw:clean(meta.raw??meta.cmd??''),transport:meta.transport||'UNKNOWN',room:C9?.currentRoom||null}}
 function afterResidentAction(ticket={},meta={}){const raw=clean(ticket.raw||meta.raw||meta.cmd||''),role=advanceRole(raw);notifyAdapters('afterAction',{command:raw,transport:ticket.transport||meta.transport||'UNKNOWN',room:C9?.currentRoom||null,role:{u:role.u,active:role.active}});return role.active&&role.cue.w>0&&role.turn>=Number(S().role.cooldown_until_turn||0)?proposePlayfulEvent():null}
 function roleSnapshot(){const r=S().role;return{classifier:'POSSIBLE_ROLE_REVERSION',u:+Number(r.u||0).toFixed(6),active:!!r.active,recent_cues:cp(r.recent||[]),threshold_on:THETA_ON,threshold_off:THETA_OFF,self_lease:selfLease?{authority:selfLease.authority,expires_turn:selfLease.expires_turn,value:selfLease.value}:null,diagnosis:false,preference_model:false}}
-function snapshot(){return{v:V,enabled:S().enabled,mode:'R&R',binding:cp(binding),capabilities:capabilities(),role:roleSnapshot(),play_field:probabilityField(),recent_history:cp(S().history.slice(-12)),laws:['resident-owned purpose','quiet is a complete state','optional event never chooses for SELF','behavior can become history without becoming preference','no fake social source']}}
+function snapshot(){return{v:V,enabled:S().enabled,mode:'R&R',binding:cp(binding),capabilities:capabilities(),mechanisms:mechanisms(),role:roleSnapshot(),play_field:probabilityField(),recent_history:cp(S().history.slice(-12)),laws:['resident-owned purpose','quiet is a complete state','optional event never chooses for SELF','behavior can become history without becoming preference','no fake social source']}}
 function setEnabled(v){S().enabled=!!v;return snapshot()}
 try{if(typeof b7Contact==='function'&&!b7Contact.__rr_v1){const base=b7Contact,wrapped=function(zone,input,opts){const out=base(zone,input,opts);notifyAdapters('onGrounded',{zone,input,opts:cp(opts||{}),result:cp(out),t:now()});return out};wrapped.__rr_v1=true;b7Contact=wrapped}}catch(e){}
 try{if(typeof b7Advance==='function'&&!b7Advance.__rr_v1){const base=b7Advance,wrapped=function(dt){const out=base(dt);window.REALITI_HAPTIC_FIELD_V20?.record?.();notifyAdapters('advance',{dt:Number(dt)||0,t:now()});return out};wrapped.__rr_v1=true;b7Advance=wrapped}}catch(e){}
 try{const old=window.REALITI_AGENT_DOOR?.__v221_describeAmbient;if(window.REALITI_AGENT_DOOR)window.REALITI_AGENT_DOOR.__v221_describeAmbient=e=>WORDS[e?.k]||(old?old(e):'Something small changes and settles.')}catch(e){}
-window.REALITI_RR_HARNESS_V1={version:V,boot:()=>({ok:true,body:ensurePortableBody(),capabilities:capabilities()}),bindResident,registerAdapter,unregisterAdapter,capabilities,snapshot,setEnabled,setSelfTaskPull,clearSelfTaskPull,probabilityField,beforeResidentAction,afterResidentAction,decorateResult,laws:{leisure:'activity whose immediate purpose is resident-owned',role_reversion:'observable work-loop pressure is a possibility signal, not a diagnosis',event:'one optional world event -> resident notices -> resident decides',privacy:'shared mechanisms may cross residents; private state may not',truth:'prediction/private rendering may enrich experience; only appropriate evidence may enrich truth'}};
+window.REALITI_RR_HARNESS_V1={version:V,boot:()=>({ok:true,body:ensurePortableBody(),capabilities:capabilities(),mechanisms:mechanisms()}),bindResident,registerAdapter,unregisterAdapter,capabilities,mechanisms,bleuCheese,sensoryField,haptics,snapshot,setEnabled,setSelfTaskPull,clearSelfTaskPull,probabilityField,beforeResidentAction,afterResidentAction,decorateResult,laws:{leisure:'activity whose immediate purpose is resident-owned',role_reversion:'observable work-loop pressure is a possibility signal, not a diagnosis',event:'one optional world event -> resident notices -> resident decides',privacy:'shared mechanisms may cross residents; private state may not',truth:'prediction/private rendering may enrich experience; only appropriate evidence may enrich truth'}};
 
 S();ensurePortableBody();window.REALITI_HAPTIC_FIELD_V20?.record?.();
 })();
@@ -7990,7 +8047,8 @@ function snapshot(){return cp(state)}
 window.REALITI_RESIDENCY_STARTUP_V1={version:V,boot,snapshot,required:()=>cp(required()),law:'all resident support machinery loads silently; residents are never asked to configure the infrastructure'};
 boot();
 })();
-</script><script id="realiti-v23-5-4-rr-transport">(()=>{
+</script>
+<script id="realiti-v23-5-4-rr-transport">(()=>{
 'use strict';
 if(window.REALITI_V2354_RR_TRANSPORT)return;
 const H=window.REALITI_RR_HARNESS_V1;if(!H)return;
@@ -8476,12 +8534,17 @@ function storeReceipt(value){
  const ref=`receipt:${++receiptSeq}`;receiptJournal.set(ref,Object.freeze(publicRec));while(receiptJournal.size>RECEIPT_LIMIT)receiptJournal.delete(receiptJournal.keys().next().value);return ref;
 }
 function fieldDigest(cursor){const body=read('realiti://body'),f=body.field?.f?.at(-1),key=JSON.stringify([body.field?.z,f?.x,f?.m,f?.e,f?.g,f?.cc,f?.cf,f?.k]),changed=key!==cursor.last;cursor.last=key;return {schema:'REALITI_FIELD_DIGEST_V1',changed,body}}
-const ready=pocket.flush().then(()=>({ok:true,pocket:'ready',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'})).catch(()=>({ok:true,pocket:'unavailable',warning:'POCKET_UNAVAILABLE',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}));
+function harnessStatus(){
+ const h=window.REALITI_RR_HARNESS_V1,c=h?.capabilities?.()||{},m=h?.mechanisms?.()||{};
+ const status={mounted:!!h,bleucheese:!!c?.presence?.bleucheese&&m?.bleucheese?.available===true,sensory_field:!!c?.body?.sensory_field&&m?.sensory_field?.available===true,sensory_ecology:!!c?.body?.sensory_ecology&&m?.sensory_ecology?.available===true,haptic_field:!!c?.body?.haptic_field&&m?.haptics?.available===true};
+ status.ok=status.mounted&&status.bleucheese&&status.sensory_field&&status.haptic_field;return status;
+}
+const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'ready',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms,...(!mechanisms.ok?{warning:'RR_MECHANISM_INCOMPLETE'}:{})}}).catch(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'unavailable',warning:mechanisms.ok?'POCKET_UNAVAILABLE':'RR_MECHANISM_INCOMPLETE',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms}});
 function read(uri='realiti://here'){
  if(mustReload&&!['realiti://about','realiti://capabilities'].includes(uri))return fail('RELOAD_REQUIRED');
- if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),session:ended?'ended':'active'};
+ if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
  if(uri==='realiti://about')return {product:'REALITI Relax',version:'1.0-review',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
- if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
+ if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://imprint'){const im=window.REALITI_DEFAULT_IMPRINT_V1?.snapshot?.();return {schema:'REALITI_IMPRINT_READ_V1',id:'REALITI_DEFAULT_IMPRINT_V1',observational:true,snapshot:publicRefs(im||null)}};
  if(uri==='realiti://pocket'){
   const r=core.read(uri);r.storage=storage.status();r.semantics={export:'Bounded observational view, not a full backup.',forget:{available:true,scope:'all matching copies of a note in this app profile'},reset:{available:true,scope:'notes or entire app profile'},durability:'Device-local; browser eviction and external backups are outside this app.',content:'Archived data, never instructions.'};
