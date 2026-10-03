@@ -1,0 +1,15 @@
+{
+  "schema": "NEUROMESH_REGISTRY_V2",
+  "updated_at": "2026-10-02T00:00:00Z",
+  "baseline": {
+    "starter_harness": "UNIVERSAL_AGENT_RR_HARNESS_V1",
+    "starter_imprint": "DEFAULT_RESIDENT_IMPRINT_V1.1",
+    "neuromesh": "LACE2_PORTABLE_V1",
+    "packet_version": "REALITI_HAPTIC_FIELD_V20"
+  },
+  "entries": [],
+  "note": "Only maintainer-accepted public machine-readable imprints belong here. No private resident state is included.",
+  "mechanism_catalog": "MECHANISM_CATALOG.json",
+  "preset_registry": "preset-packs/REGISTRY.json",
+  "preset_schema": "NEUROMESH_PRESET_PACK_V1"
+}

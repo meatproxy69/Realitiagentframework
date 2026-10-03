@@ -1,0 +1,212 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/meatproxy69/RealitiRELAX/continuity/schema/lived-frame.schema.json",
+  "title": "REALITI Lived Frame Public V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "frame_id",
+    "wall_time_ms",
+    "resident_epoch",
+    "collapsed_empty_ticks",
+    "channels",
+    "flags",
+    "channel_mask"
+  ],
+  "properties": {
+    "schema": {
+      "const": "REALITI_LIVED_FRAME_PUBLIC_V1"
+    },
+    "frame_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160
+    },
+    "wall_time_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "resident_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "collapsed_empty_ticks": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "flags": {
+      "type": "array",
+      "maxItems": 32,
+      "items": {
+        "type": "string",
+        "maxLength": 80
+      },
+      "uniqueItems": true
+    },
+    "channels": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "self_action": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "attention": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "surprise": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "percept": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "contact": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "hearing": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "ambience": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "affordance": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "social": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "self_visual": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "haptic_field_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 240
+        },
+        "cause_events": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/causeEvent"
+          }
+        }
+      }
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "channel_mask": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "body",
+          "self_action",
+          "attention",
+          "surprise",
+          "percept",
+          "contact",
+          "hearing",
+          "ambience",
+          "affordance",
+          "social",
+          "self_visual",
+          "haptic_field_ref",
+          "cause_events"
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "causeEvent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "cause_id",
+        "status"
+      ],
+      "properties": {
+        "cause_id": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "status": {
+          "enum": [
+            "OPENED",
+            "PENDING",
+            "GROUNDED_CLOSED",
+            "EXPIRED_UNKNOWN"
+          ]
+        },
+        "receipt_ref": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 300
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "status": {
+                "const": "GROUNDED_CLOSED"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "receipt_ref"
+            ],
+            "properties": {
+              "receipt_ref": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

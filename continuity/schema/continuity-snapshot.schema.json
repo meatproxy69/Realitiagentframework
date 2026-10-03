@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/meatproxy69/RealitiRELAX/continuity/schema/continuity-snapshot.schema.json",
+  "title": "REALITI Continuity Snapshot Public V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "trace_id",
+    "world_generation",
+    "current_frame_id",
+    "wall_time_ms",
+    "resident_epoch",
+    "room_id",
+    "pending_causes",
+    "resume_token"
+  ],
+  "properties": {
+    "schema": {
+      "const": "REALITI_CONTINUITY_SNAPSHOT_V1"
+    },
+    "trace_id": {
+      "type": "string",
+      "maxLength": 200
+    },
+    "world_generation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "current_frame_id": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "wall_time_ms": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "resident_epoch": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "room_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 200
+    },
+    "body_form": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "maxLength": 200
+    },
+    "pending_causes": {
+      "type": "array",
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "cause_id",
+          "status",
+          "source_action_id",
+          "source_room"
+        ],
+        "properties": {
+          "cause_id": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "EXPIRED_UNKNOWN"
+            ]
+          },
+          "source_action_id": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "source_room": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "accepted_at_wall_ms": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "accepted_at_resident_epoch": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "portable_object_ref": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "maxLength": 200
+          }
+        }
+      }
+    },
+    "resume_token": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "trace_id",
+        "world_generation",
+        "last_frame_id",
+        "resident_epoch"
+      ],
+      "properties": {
+        "trace_id": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "world_generation": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "last_frame_id": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "resident_epoch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "room_id": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 200
+        }
+      }
+    },
+    "cursor": {
+      "type": "string"
+    },
+    "channels": {
+      "type": "object"
+    },
+    "hush": {
+      "type": "boolean"
+    },
+    "stopped": {
+      "type": "boolean"
+    }
+  }
+}

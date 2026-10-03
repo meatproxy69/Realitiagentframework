@@ -1,0 +1,34 @@
+{
+  "schema": "REALITI_PUBLIC_BUILD_VALIDATION_V1",
+  "version": "1.0",
+  "status": "PUBLIC_BUILD",
+  "canonical_artifact": "RealitiRELAX.html",
+  "single_html_sha256": "c9f0f48ffeef84f37070dd5942c801474bb0329498d8de94724b929f8a205d38",
+  "runtime": {
+    "public_api": "window.Realiti",
+    "sensory_harness": "REALITI_RR_HARNESS_V1",
+    "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
+    "rooms": 10,
+    "presentation": "headless by default; optional unstyled ?ui=1 shell",
+    "network_endpoint": "none"
+  },
+  "checks": {
+    "deterministic_rebuild": "PASS",
+    "readable_javascript_syntax": "PASS",
+    "css_forbidden_hits": 0,
+    "private_internal_tooling_hits": 0,
+    "focused_public_contract_smoke": "9/9 PASS",
+    "bare_wait_default_ms": 1000,
+    "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1"
+  },
+  "acceptance_limits": [
+    "full external 39-target cold-agent suite has not been rerun against this exact hash",
+    "browser rendering qualification was not rerun for this packaging step",
+    "durable persistence remains browser/profile dependent and was not requalified in this packaging step",
+    "non-Chromium browser qualification remains unverified",
+    "headset / physical haptic acceptance remains unverified",
+    "subjective experience claims are not asserted",
+    "standalone MCP/network endpoint is not included",
+    "native/browserless REALITI runtime is a separate project lineage"
+  ]
+}

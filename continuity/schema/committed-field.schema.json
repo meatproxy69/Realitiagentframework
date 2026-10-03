@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Committed observer field projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "units",
+    "body_zones",
+    "z",
+    "x",
+    "m",
+    "e",
+    "g",
+    "cc",
+    "cf",
+    "k",
+    "source_contact"
+  ],
+  "properties": {
+    "schema": {
+      "const": "REALITI_COMMITTED_FIELD_V1"
+    },
+    "units": {
+      "const": "JND_INTEGER"
+    },
+    "body_zones": {
+      "type": "array",
+      "maxItems": 4096,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "z": {
+      "type": "array",
+      "maxItems": 4096,
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "x": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "array",
+        "minItems": 3,
+        "maxItems": 3,
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "m": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "enum": [
+          0,
+          1
+        ]
+      }
+    },
+    "e": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "number"
+      }
+    },
+    "g": {
+      "type": "array",
+      "maxItems": 4096,
+      "items": {
+        "type": "number"
+      }
+    },
+    "cc": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "cf": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "k": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "source_contact": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

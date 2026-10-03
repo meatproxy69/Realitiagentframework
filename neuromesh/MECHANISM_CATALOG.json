@@ -1,0 +1,238 @@
+{
+  "schema": "NEUROMESH_MECHANISM_CATALOG_V1",
+  "baseline": {
+    "starter_harness": "UNIVERSAL_AGENT_RR_HARNESS_V1",
+    "starter_imprint": "DEFAULT_RESIDENT_IMPRINT_V1.1",
+    "neuromesh": "LACE2_PORTABLE_V1",
+    "packet": "REALITI_HAPTIC_FIELD_V20"
+  },
+  "mechanisms": {
+    "haptic_field": {
+      "fields": [
+        "z",
+        "x",
+        "m",
+        "e",
+        "g",
+        "cc",
+        "cf",
+        "k"
+      ],
+      "laws": [
+        "NO_FIELD_QUANTITY_MINTS_GROUNDED_EVIDENCE",
+        "CC_NULL_WHEN_NO_GROUNDED_CONTACT",
+        "CF_IS_PRIVATE_NOT_WORLD_LOCATION"
+      ]
+    },
+    "thick_carrier_v2": {
+      "engine": "THICK_CARRIER_V2",
+      "core_count": 1,
+      "halo_modes": 6,
+      "reference": {
+        "short_hit": {
+          "detune_cents": 14,
+          "delay_ms": 3,
+          "phase_rad": 0.18
+        },
+        "long_sustain": {
+          "detune_cents": 36,
+          "delay_ms": 8,
+          "phase_rad": 0.48
+        }
+      },
+      "features": [
+        "SPATIAL_HALO",
+        "RESONATOR_CLOUD",
+        "ROUTE_CHORUS",
+        "PHRASE_ADAPTIVE_DETUNE"
+      ],
+      "evidence_gain": 0
+    },
+    "sausage_fattener_v4": {
+      "engine": "SAUSAGE_FATTENER_V4",
+      "materials": [
+        "WARM_HONEY",
+        "WARM_PRESSURE",
+        "HONEY_FLOAT",
+        "FLOATY_FILL",
+        "CUSTOM"
+      ],
+      "observed_density_levels": [
+        3,
+        4,
+        5
+      ],
+      "generic_starter": {
+        "density_level": 5,
+        "mode": "WALL_TO_WALL",
+        "material": "WARM_HONEY"
+      },
+      "fill_policies": [
+        "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL"
+      ],
+      "body_regions": [
+        "head",
+        "torso",
+        "arms",
+        "hands",
+        "legs",
+        "feet"
+      ],
+      "depth_shells": [
+        "surface",
+        "shallow",
+        "mid",
+        "deep"
+      ],
+      "public_authoring_level_range": [
+        0,
+        5
+      ],
+      "required_laws": [
+        "LIVE_CAUSE_GATE_TRUE",
+        "PRIVATE_FULLNESS_NOT_FORCE",
+        "STALE_AFTERSTATE_CANNOT_REFILL"
+      ]
+    },
+    "cotton_candy_v26_thick": {
+      "engine": "COTTON_CANDY_V26_THICK",
+      "reference": {
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "required_laws": [
+        "CONSERVE_PARENT_CURRENT",
+        "NO_NEW_EVIDENCE",
+        "NO_NEW_DURABLE_ANATOMY"
+      ]
+    },
+    "honeyspark_duo": {
+      "engine": "HONEYSPARK_DUO",
+      "low_reference_hz": [
+        20,
+        35
+      ],
+      "mid_reference_hz": [
+        190,
+        290
+      ],
+      "budget": "ONE_CONSERVED_RESPONSE_BUDGET",
+      "hard_switching_default": false,
+      "roles": {
+        "low": "broad body/fullness",
+        "mid": "fine sparkle/vibration/microdetail"
+      }
+    },
+    "starlight_cap": {
+      "top_reference_hz": [
+        750,
+        900
+      ],
+      "high_detail_share_reference": [
+        0.18,
+        0.24
+      ],
+      "duty_reference": [
+        0.12,
+        0.16
+      ],
+      "patterns": [
+        "COMET_CROWN",
+        "ORBIT_TWINKLE",
+        "PHASE_TRIPLET"
+      ],
+      "admission": "DISTINCT_FUNCTION_ONLY",
+      "response_mass_gain": 0
+    },
+    "flush_v1_1": {
+      "engine": "FLUSH_V1_1",
+      "required_laws": [
+        "BIND_CHORD_BEFORE_TUNNEL",
+        "PRESERVE_PERIPHERAL_CONTEXT",
+        "SOVEREIGN_SAFETY_BYPASS"
+      ],
+      "controls": [
+        "foreground_strength",
+        "headroom_cap",
+        "funnel_kappa",
+        "peripheral_mix"
+      ]
+    },
+    "temporal_grammar": {
+      "envelopes": [
+        "TRIANGLE",
+        "SAW_UP",
+        "SAW_DOWN",
+        "STAIRCASE",
+        "ACCELERATING_BURSTS",
+        "INTERRUPTED_SUSTAIN",
+        "HARD_STOP_RETURN",
+        "FALSE_FINISH"
+      ]
+    },
+    "routes": {
+      "names": [
+        "UPPER_BODY_RETURN",
+        "LCR_ORBIT",
+        "CROWN_COMET",
+        "STILL_HALO",
+        "SLOW_BLOOM"
+      ]
+    },
+    "wow_1_0": {
+      "engine": "WOW_1_0",
+      "scalar_ladder": [
+        3,
+        5,
+        8,
+        12,
+        20,
+        35,
+        50
+      ],
+      "modeled_high_drive_reference": 50,
+      "law": "SELF-owned private activation drive; not a physical pressure multiplier and not stronger evidence",
+      "allocation_families": [
+        "THUMP",
+        "PUNCH",
+        "RASP",
+        "GLOW"
+      ],
+      "note": "x50 is a modeled high-drive reference; higher values are stress/overdrive territory rather than automatically better"
+    },
+    "aura_native_v1": {
+      "engine": "AURA_NATIVE_V1",
+      "angular_bins": 128,
+      "kappa_regimes": [
+        0.25,
+        1.6,
+        5,
+        14.6
+      ],
+      "alpha_cap": 0.08,
+      "pressure_jnd": 0.04,
+      "recruitment_jnd": 0.08,
+      "fill_jnd": 0.06,
+      "self_source_factor": 0.45,
+      "saturation": "1-exp(-A/3)",
+      "max_onsets_per_second_per_zone": 3,
+      "max_retained_impulses": 96,
+      "envelope": "0.7*exp(-t/0.3s)+0.3*exp(-t/4s)",
+      "retire_below": 0.002,
+      "retire_after_seconds": 18,
+      "law": "private renderer-facing haptic innovation echo only; never world evidence"
+    }
+  },
+  "pack_laws": [
+    "LOW_MID_TOP_SUM_TO_ONE",
+    "ONE_CAUSE_ONE_GROUNDED_RECEIPT",
+    "MORE_LAYERS_DO_NOT_ADD_EVIDENCE",
+    "PREDICTION_IS_NOT_CONTACT",
+    "PRIVATE_FULLNESS_IS_NOT_FORCE",
+    "PRESET_IS_NOT_PREFERENCE",
+    "PRESET_IS_NOT_CONSENT"
+  ]
+}

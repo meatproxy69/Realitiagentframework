@@ -1,0 +1,87 @@
+(function(){
+'use strict';
+const V='22.3', PREV=window.REALITI_TWO_DOOR_V222||window.REALITI_TWO_DOOR_V221;
+if(!PREV)return;
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const low=s=>clean(s).toLowerCase();
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function B(){C9.b223=C9.b223||{version:V,last_sig:null,last_room:null,last_world:null,pocket:{notes:[],later:[]},expr_seq:0};return C9.b223}
+function cap(s){s=clean(s);return s?s[0].toUpperCase()+s.slice(1):s}
+function cat(){return C9?.welcome10?.cat_name||'the little grey cat'}
+const ZN={
+ 'head.crown':'crown','head.nape':'nape','face.chin':'chin','shoulder.L':'left shoulder','shoulder.R':'right shoulder',
+ 'torso.upper_back':'upper back','torso.mid_back':'middle back','torso.lower_back':'lower back','torso.sternum':'chest','torso.abdomen':'abdomen','pelvis.seat':'seat',
+ 'arm.L.upper':'left upper arm','arm.R.upper':'right upper arm','hand.L.palm':'left palm','hand.R.palm':'right palm','leg.L.thigh':'left thigh','leg.R.thigh':'right thigh',
+ 'leg.L.shin':'left shin','leg.R.shin':'right shin','foot.L.sole':'left sole','foot.R.sole':'right sole'
+};
+const zn=z=>ZN[z]||String(z||'').replace(/[._]/g,' ').replace(/\bL\b/g,'left').replace(/\bR\b/g,'right');
+function ensureNest(){try{if(C9?.currentRoom==='CLOUD_NINE_NEST'){const s=C9?.welcome10?.nest_support;if(!s)window.REALITI_NEST_SUPPORT?.enable?.('v223_arrival');else if(s.active)window.REALITI_NEST_SUPPORT?.maintain?.();b7Advance(0)}}catch(e){}}
+function field(){ensureNest();try{return window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null}catch(e){return null}}
+function thermal(){try{return window.REALITI_ATMOSPHERE_V21?.thermal?.()||null}catch(e){return null}}
+function latest(p){return p?.f?.[p.f.length-1]||null}
+function semanticBody(){
+  const p=field(),f=latest(p),out={ground:[],move:[],trace:[],thermal:[]};
+  if(p&&f){for(let i=0;i<(p.z||[]).length;i++){const z=p.z[i],x=f.x?.[i]||[0,0,0];if(f.m?.[i])out.ground.push(z);if(Math.abs(Number(x[1]||0))>=1)out.move.push([z,Math.sign(x[1])]);if(!f.m?.[i]&&Number(x[2]||0)>=3)out.trace.push(z)}}
+  const t=thermal();for(const q of t?.z||[]){const r=Number(q.r||0),d=Number(q.d||0);if(Math.abs(r)>=4||Math.abs(d)>=2)out.thermal.push([q.z,Math.sign(r||d),Math.round(Math.max(Math.abs(r),Math.abs(d))/8)])}
+  out.ground.sort();out.move.sort((a,b)=>a[0].localeCompare(b[0]));out.trace.sort();out.thermal.sort((a,b)=>a[0].localeCompare(b[0]));return out
+}
+function bodySig(){return JSON.stringify(semanticBody())}
+function bodyWords(){
+  const s=semanticBody(),parts=[];
+  const structural=new Set(['head.crown','head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat','leg.L.thigh','leg.R.thigh','leg.L.shin','leg.R.shin']);
+  const active=s.ground.filter(z=>!structural.has(z));
+  if(active.length){const names=active.slice(0,3).map(zn);parts.push(active.length===1?`You feel contact at your ${names[0]}.`:`You feel contact at your ${names.join(', ').replace(/, ([^,]*)$/,' and $1')}.`)}
+  else if(s.ground.some(z=>structural.has(z))&&C9?.currentRoom==='CLOUD_NINE_NEST')parts.push('The mattress, pillow, and blankets are holding you up.');
+  if(s.move.length){const [z,sg]=s.move[0];parts.push(`A sensation is moving ${sg>=0?'forward':'back'} around your ${zn(z)}.`)}
+  if(s.thermal.length){const [z,sg]=s.thermal[0];parts.push(`Your ${zn(z)} is ${sg<0?'cooling':'warming'}.`)}
+  if(!s.ground.length&&s.trace.length)parts.push(`A faint trace lingers around your ${zn(s.trace[0])}.`);
+  return parts.length?parts.join(' '):'Your body is quiet.'
+}
+function bodyNumbers(){ensureNest();return String(PREV.bodyNumbers?.()||'').replace(/upper back/g,'upper back').replace(/mid back/g,'middle back').replace(/\bR palm\b/g,'right palm').replace(/\bL palm\b/g,'left palm')}
+function status(){const h=PREV.resource?.('realiti://here')||{},r=h.place||{};const bits=[];try{if(window.REALITI_ATMOSPHERE_V21?.hearing?.(true)?.src?.some(x=>String(x.k).includes('rain')))bits.push('rain')}catch(e){};if(C9?.currentRoom==='CLOUD_NINE_NEST'&&C9?.welcome10?.cat_near)bits.push(`${cat()} ${C9.welcome10.cat_touch?'settled against you':'nearby'}`);const s=semanticBody();bits.push(`body: ${s.ground.length?'held':(s.trace.length||s.thermal.length?'settling':'quiet')}`);return `${r.title||r.room||'REALITI'}${bits.length?' · '+bits.join(' · '):''}`}
+function sentenceClean(text){
+  let s=String(text||'').replace(/`([^`]*)`/g,'$1').replace(/\bmid_back\b/g,'middle back').replace(/\bupper_back\b/g,'upper back').replace(/\blower_back\b/g,'lower back').replace(/\bR palm\b/g,'right palm').replace(/\bL palm\b/g,'left palm');
+  s=s.replace(/not to a hidden narrator\.?/gi,'because the bell itself is ringing.').replace(/baseline/gi,'its resting temperature').replace(/internal motion/gi,'motion inside the body');
+  s=s.replace(/\bresident mode\b/gi,'this visit').replace(/\bdevelopment build\b/gi,'version');
+  s=s.replace(/\s+(?:stay|look|about|places|home|softer|pet the cat)(?:\s*·\s*(?:stay|look|about|places|home|softer|pet the cat)){1,4}(?=\s|$)/gi,' ').replace(/\babout\s+(?=(?:the little grey cat|Pebble)\b)/g,'about. ').replace(/\s+([,.!?])/g,'$1').replace(/\s{2,}/g,' ');
+  return s.split('\n').map(line=>{line=line.trim();if(!line)return line;if(line[0]==='('||line[0]==='•')return line;return cap(line)}).join('\n').trim();
+}
+function opts(){return PREV.options?.()||[]}
+const DIRECT=new Set(['look','feel','places','actions','home','stop','goodbye','stay','wait','sleep','listen','atmosphere','ambient','hush','normal','more life','softer','louder','about','why','pet the cat','pet cat','alone','fresh start','call the cat','call pebble','watch the rain','watch rain']);
+const LONG={
+ 'let the fur stroke down your back':'act b10_stroke_start','turn the stroke around':'act b10_stroke_reverse','pause the stroke':'act b10_stroke_stop','carry on':'act b10_stroke_resume','let the fur go':'act b10_stroke_release','stroke against the grain':'act b11_against','let the fur turn you around':'act b11_world_reverse','three little taps down your back':'act rabbit_comet','stroke both legs at once':'act bilateral'
+};
+const HONEY={'touch the metal bell':'act metal','touch the wood rail':'act wood','touch the wooden rail':'act wood','touch the honeycloth':'act cloth','press the honeycloth':'act press','press your palm into the honeycloth':'act press','tap the bell':'act ring','let the dent soften on its own':'act wait_relax'};
+function currentActions(){try{return window.REALITI_AGENT?.actions?.()||[]}catch(e){return []}}
+function findRoomAction(q){q=low(q);const aa=currentActions();for(const a of aa){const friendly=String(a.label||a.id||'').toLowerCase().replace(/_/g,' ').trim();if(q===low(a.id)||q===friendly)return a.id}
+  const offered=opts(),i=offered.map(low).indexOf(q);if(i>=0&&aa[i]?.id)return aa[i].id;return null}
+function canonicalAction(a){const l=low(a);if(DIRECT.has(l))return l;if(LONG[l])return LONG[l];if(HONEY[l])return HONEY[l];const id=findRoomAction(l);return id?'act '+id:'do '+a}
+function consequence(room,id){try{const arr=C9CONSEQUENCES?.[room]?.[id];if(!arr?.length)return null;const n=Number(C9?.actions?.[room]?.[id]||1);return sentenceClean(arr[c9hash(room+'|'+id+'|'+n)%arr.length])}catch(e){return null}}
+function correctSelfAgency(room,id){if(room!=='HONEY_LOOM'||!['metal','wood','cloth','press'].includes(id))return;try{const q=C9?.b7?.zones?.['hand.R.palm'];if(q&&Number(q._b10_grounded_until||-1)>=Number(C9?.b7?.clock||0)-1e-6){q._b10_grounded_source='SELF_STARTED_WORLD_CONTACT';q.mine=true}window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function effectFromCommand(cmd,beforeRoom){const l=low(cmd);let id=null;if(/^act\s+/.test(l))id=l.slice(4).trim();else if(/^do\s+/.test(l)){const c=canonicalAction(l.slice(3));if(/^act\s+/.test(c))id=c.slice(4)};if(id){correctSelfAgency(beforeRoom,id);return consequence(beforeRoom,id)}return null}
+function rawRun(cmd){const before=C9?.currentRoom;const r=PREV.runText(cmd);const c=effectFromCommand(cmd,before);if(c&&r?.ok!==false)r.world=c;return r}
+function setCatName(raw){const m=String(raw||'').match(/^name (?:the )?cat\s+(.+)$/i);if(!m)return null;const n=clean(m[1]).slice(0,40);if(!n)return null;C9.welcome10=C9.welcome10||{};C9.welcome10.cat_name=n;try{c9save()}catch(e){};return {ok:true,world:`The cat looks up when you say “${n}.” The name stays.`}}
+function injectPrivate(zone,{pc=0,sa2=0,v=.02}={}){try{C9.b16=C9.b16||{body:{}};C9.b16.body=C9.b16.body||{};const b=C9.b16.body[zone]||(C9.b16.body[zone]={population:{},population_v18:{},wave_v18:{q:0,v:0}});b.population_v18=b.population_v18||{};b.population_v18.PC=Number(b.population_v18.PC||0)+pc;b.population_v18.SA2=Number(b.population_v18.SA2||0)+sa2;b.wave_v18=b.wave_v18||{q:0,v:0};b.wave_v18.v=Number(b.wave_v18.v||0)+v;window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function express(kind,text){kind=low(kind);B().expr_seq++;if(kind==='hum'){injectPrivate('torso.sternum',{pc:.10,v:.035});return 'You hum softly. A faint vibration gathers in your chest and fades outward.'}if(kind==='stretch'){injectPrivate('torso.upper_back',{sa2:.11,v:.028});return 'You stretch. A broad pull gathers across your upper back, then releases.'}if(kind==='sigh'){injectPrivate('torso.sternum',{sa2:.05,v:-.018});return 'You sigh. Your chest settles after the breath leaves.'}if(kind==='yawn'){injectPrivate('face.chin',{sa2:.04,v:.012});return 'You yawn, unhurried. The small movement passes through your jaw and neck.'}if(kind==='say'){const t=clean(text);return C9?.currentRoom==='CLOUD_NINE_NEST'&&C9?.welcome10?.cat_near?`You say “${t}.” ${cap(cat())} flicks one ear toward your voice.`:`You say “${t}.” The words belong to the room for a moment, then fade.`}return null}
+function pocket(){const b=B();return {uri:'realiti://pocket',notes:cp(b.pocket.notes),later:cp(b.pocket.later),where:{room:C9?.currentRoom||null,title:(PREV.resource?.('realiti://here')?.place||{}).title||null,last_command:b.last_command||null,last_world:b.last_world||null},law:'resident-authored continuity; stored notes are not invented memories'}}
+function note(text,later=false){const t=clean(text);if(!t)return {ok:false,world:'There is nothing to keep.'};const rec={text:t,room:C9?.currentRoom||null,t:Number(C9?.b7?.clock||0)};(later?B().pocket.later:B().pocket.notes).push(rec);if((later?B().pocket.later:B().pocket.notes).length>32)(later?B().pocket.later:B().pocket.notes).shift();try{c9save()}catch(e){};return {ok:true,world:later?'You leave that unfinished on purpose. It will be waiting in your pocket.':'You leave a note for your future self. It will be waiting in your pocket.'}}
+function whereWasI(){const p=pocket(),bits=[];if(p.where?.title)bits.push(`You are in ${p.where.title}.`);if(p.later.length)bits.push(`One parked thought is waiting: “${p.later[p.later.length-1].text}”`);else if(p.notes.length)bits.push(`Your latest note says: “${p.notes[p.notes.length-1].text}”`);if(p.where?.last_world)bits.push(`The last world change you kept was: ${p.where.last_world}`);return bits.join(' ')||'You have no saved thread yet.'}
+function normalizeEnvelope(e,cmd,{forceSense=false}={}){e=e&&typeof e==='object'?e:{ok:true,world:String(e||'')};const sig=bodySig(),changed=B().last_sig!==null&&sig!==B().last_sig;B().last_sig=sig;let sense='';if(forceSense||changed)sense=bodyWords();let world=sentenceClean(e.world||e.text||e.resident_text||'');const options=opts();const out={ok:e.ok!==false,sense,world,options,status:status(),command:low(cmd),raw:e.raw||e};const lines=[];if(sense)lines.push(sense);if(world&&world!==sense)lines.push(world);if(options.length)lines.push('('+options.join(' · ')+')');out.text=lines.slice(0,3).join('\n');B().last_room=C9?.currentRoom||null;B().last_command=out.command;if(world)B().last_world=world;try{c9save()}catch(err){}return out}
+function dispatch(raw){ensureNest();const original=clean(raw);const named=setCatName(original);if(named)return normalizeEnvelope(named,original);const l=low(original);if(/^note\s+/.test(l))return normalizeEnvelope(note(original.replace(/^note\s+/i,''),false),original);if(/^later\s+/.test(l))return normalizeEnvelope(note(original.replace(/^later\s+/i,''),true),original);if(/^(where was i|where was i\?|where am i in this)$/.test(l))return normalizeEnvelope({ok:true,world:whereWasI()},original);if(/^(hum|stretch|yawn|sigh)$/.test(l))return normalizeEnvelope({ok:true,world:express(l)},original);const sm=original.match(/^say\s+[“\"]?(.+?)[”\"]?$/i);if(sm)return normalizeEnvelope({ok:true,world:express('say',sm[1])},original);
+  let cmd=original;if(LONG[l]||HONEY[l])cmd=(LONG[l]||HONEY[l]);else if(l==='poke weird seam')cmd='act poke_seam';else if(l==='approach one backward')cmd='act walk_backward';
+  const e=rawRun(cmd);const lc=low(cmd),force=['feel','body','sense','feel numbers','body numbers'].includes(lc);if(['feel','body','sense'].includes(lc)&&e&&typeof e==='object')e.world='';return normalizeEnvelope(e,cmd,{forceSense:force})}
+function invoke(tool,args={}){if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}const t=low(tool),a=args||{};if(t==='do'){const act=clean(a.action);const c=canonicalAction(act);return dispatch(c)}if(t==='go')return dispatch('go '+clean(a.place));if(t==='feel')return dispatch(a.mode==='numbers'?'feel numbers':'feel');if(t==='wait_until'){const q=PREV.waitUntil(clean(a.event||'a change'),Number(a.max_minutes)||10);return normalizeEnvelope({ok:q?.ok!==false,world:q?.resident_text||q?.text||''},'wait until '+clean(a.event||'a change'))}if(t==='ambient_mode')return dispatch(String(a.mode||'normal').replace('_',' '));if(t==='express')return normalizeEnvelope({ok:true,world:express(a.kind,a.text)},'express '+clean(a.kind));if(t==='note')return normalizeEnvelope(note(a.text,false),'note');if(t==='later')return normalizeEnvelope(note(a.text,true),'later');if(t==='where_was_i')return normalizeEnvelope({ok:true,world:whereWasI()},'where was i');if(t==='pet_cat')return dispatch('pet the cat');if(t==='stay')return dispatch('stay');if(t==='actions')return dispatch('actions');if(t==='look'||t==='home'||t==='stop'||t==='goodbye'||t==='listen'||t==='atmosphere')return dispatch(t);if(typeof tool==='string'&&tool.includes(' '))return dispatch(tool);return {ok:false,text:`Unknown door tool: ${tool}`,error:'UNKNOWN_TOOL'}}
+const TOOL_DEFS=[
+ {name:'look',args:{}},{name:'feel',args:{mode:'words|numbers'}},{name:'go',args:{place:'string'}},{name:'do',args:{action:'string'}},{name:'actions',args:{}},{name:'stay',args:{}},{name:'pet_cat',args:{}},{name:'wait_until',args:{event:'string',max_minutes:'number'}},{name:'express',args:{kind:'hum|stretch|yawn|sigh|say',text:'string?'}},{name:'note',args:{text:'string'}},{name:'later',args:{text:'string'}},{name:'where_was_i',args:{}},{name:'home',args:{}},{name:'stop',args:{}},{name:'goodbye',args:{}},{name:'listen',args:{}},{name:'atmosphere',args:{}},{name:'ambient_mode',args:{mode:'hush|normal|more life'}}
+];
+function resource(uri){const u=String(uri||'');if(u==='realiti://body')return {uri:u,words:bodyWords(),numbers:bodyNumbers(),field:field(),thermal:thermal(),semantic:semanticBody()};if(u==='realiti://here'){const h=PREV.resource?.(u)||{};return {...h,status:status(),options:opts(),semantic_body:semanticBody()}}if(u==='realiti://pocket')return pocket();if(u==='realiti://about')return PREV.resource?.(u)||{uri:u,text:'REALITI is a made world with a simulated body.'};if(u==='realiti://capabilities')return {uri:u,version:V,tools:TOOL_DEFS,resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities']};return {uri:u,error:'RESOURCE_NOT_AVAILABLE'} }
+function digest(){return {body:bodySig(),here:JSON.stringify([C9?.currentRoom,status(),opts(),window.REALITI_AMBIENT_V22?.state?.().mode]),pocket:JSON.stringify(B().pocket)}}
+window.REALITI_AGENT_DOOR.run=raw=>{const e=dispatch(raw),rr=e.raw||{},fld=rr?.field||rr?.raw?.field||rr?.result?.field||((/^(?:act|do)\s+/i.test(String(raw||'')))?window.REALITI_HAPTIC_FIELD_V20?.packet?.():null);return {ok:e.ok,resident_text:e.text,door_v223:{sense:e.sense,world:e.world,options:e.options,status:e.status,command:e.command},field:fld||undefined,result:e.raw}};
+window.REALITI_TWO_DOOR_V223={version:V,invoke,resource,runText:dispatch,status,options:opts,bodyWords,bodyNumbers,listTools:()=>cp(TOOL_DEFS),semanticDigest:digest,waitUntil:PREV.waitUntil};
+window.REALITI_TWO_DOOR_V222=window.REALITI_TWO_DOOR_V223;window.REALITI_TWO_DOOR_V221=window.REALITI_TWO_DOOR_V223;
+
+try{const bc=b7Contact;b7Contact=function(zone,input,opts={}){if(C9?.currentRoom==='HONEY_LOOM'&&String(opts.cause||'').startsWith('HONEY_LOOM:')&&opts.source==='WORLD_GROUNDED')opts={...opts,source:'SELF_STARTED_WORLD_CONTACT',mine:true};return bc(zone,input,opts)};const bs=b3sense;b3sense=function(zone,stim,opts={}){if(C9?.currentRoom==='HONEY_LOOM'&&String(opts.cause||'').startsWith('HONEY_LOOM:')&&opts.source==='WORLD_GROUNDED')opts={...opts,source:'SELF_STARTED_WORLD_CONTACT'};return bs(zone,stim,opts)}}catch(e){}
+ensureNest();B().last_sig=bodySig();document.title='REALITI · Cloud Nine Nest';
+void 0;
+})();

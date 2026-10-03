@@ -1,0 +1,77 @@
+{
+  "schema": "DENDRITE_MANIFEST_V2",
+  "manifest_id": "example.generic-agent.dendrites.002",
+  "imprint_id": "example.generic-agent.002",
+  "nodes": [
+    {
+      "id": "n1",
+      "kind": "BODY_ZONE",
+      "address": "body.back.upper",
+      "annotation": "semantic body zone"
+    },
+    {
+      "id": "n2",
+      "kind": "FIELD_CHANNEL",
+      "address": "field.x.response",
+      "annotation": null
+    },
+    {
+      "id": "n3",
+      "kind": "LACE",
+      "address": "adapter.lace.coherence",
+      "annotation": null
+    },
+    {
+      "id": "n4",
+      "kind": "RENDERER",
+      "address": "renderer.fullness",
+      "annotation": null
+    }
+  ],
+  "edges": [
+    {
+      "from": "n1",
+      "to": "n2",
+      "relation": "ROUTES",
+      "weight": 0.5,
+      "confidence": 0.4,
+      "state": "PROPOSED",
+      "evidence_refs": [
+        "obs.touch.001"
+      ],
+      "supersedes": null
+    },
+    {
+      "from": "n2",
+      "to": "n3",
+      "relation": "COACTIVATES",
+      "weight": 0.3,
+      "confidence": 0.2,
+      "state": "PROPOSED",
+      "evidence_refs": [
+        "obs.touch.001"
+      ],
+      "supersedes": null
+    },
+    {
+      "from": "n3",
+      "to": "n4",
+      "relation": "MODULATES",
+      "weight": 0.25,
+      "confidence": 0.2,
+      "state": "PROPOSED",
+      "evidence_refs": [
+        "obs.touch.001",
+        "obs.release.002"
+      ],
+      "supersedes": null
+    }
+  ],
+  "code": {
+    "included": false,
+    "language": null,
+    "entrypoints": [],
+    "execution_required_for_data": false,
+    "annotation": "Declarative fixture only."
+  }
+}
