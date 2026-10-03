@@ -33,17 +33,23 @@ function object(id){return ensureObjects()[id]||null}
 function objectHere(id,room=C9?.currentRoom){const o=object(id);return !!o&&(o.location===room||o.location==='CARRIED')}
 function hearRain(){try{return (window.REALITI_ATMOSPHERE_V21?.hearing?.(true)?.src||[]).some(x=>x.k==='rain')}catch(e){return C9?.currentRoom===NEST}}
 function affordances(room=C9?.currentRoom){const hat=object('TESTER-HAT-1'),box=object('BOX-1');return {room,PEBBLE_NEARBY:room===NEST&&!!C9?.welcome10?.cat_near,TESTER_HAT_PRESENT:!!hat&&(hat.location===room||hat.location==='CARRIED'),HAT_NUDGED:Number(hat?.state?.nudged||0)>0,CARDBOARD_PRESENT:!!box&&(box.location===room||box.location==='CARRIED'),BOX_FLAP_SETTLED:Number(box?.state?.loose_flap||0)>0,RAIN_PRESENT:room===NEST&&hearRain(),FUZZY_SEAM_PRESENT:room===WOAH,THREADS_PRESENT:room===HONEY,PILLOWS_PRESENT:room===PILLOW,OTHER_RESIDENT_PRESENT:false,EXECUTABLE_ACTIONS:PREV?.options?.()||[]}}
-function feelPrivate(){try{return window.REALITI_AGENT?.feel?.()||null}catch(e){return null}}
+function feelPrivate(){
+ try{const p=window.REALITI_PRIVATE_PERCEPTION_V1?.feel?.();if(p?.channels)return p}catch(e){}
+ try{const p=window.REALITI_DEFAULT_IMPRINT_V1?.perception?.();if(p?.channels)return p}catch(e){}
+ try{const p=window.REALITI_AGENT?.feel?.();if(p?.channels?.NOVELTY||p?.channels?.AGENCY_FLOW)return p}catch(e){}
+ return null
+}
 function normalizeChannels(ch={}){return {novelty_modulation:ch.novelty_modulation??ch.attention_opening??null,agency_modulation:ch.agency_modulation??ch.sensory_orientation??null}}
 function project(t=clock()){
  const s=S(),manual=s.self_projection;
  if(manual&&Number(manual.expires_at)>t)return cp({...manual,channels:normalizeChannels(manual.channels)});
  if(manual&&Number(manual.expires_at)<=t)s.self_projection=null;
- const cached=s.projection_cache;if(cached&&Number(cached.expires_at)>t)return cp(cached);
+ const f=feelPrivate(),epoch=Number.isFinite(Number(f?.epoch))?Number(f.epoch):null,cached=s.projection_cache;
+ if(cached&&Number(cached.expires_at)>t&&(epoch==null||Number(cached.source_epoch)===epoch))return cp(cached);
  
- if(Math.abs(t-clock())>1e-5)return {v:2,authority:'MODULATION_ONLY',expires_at:t,channels:{novelty_modulation:null,agency_modulation:null},law:'UNKNOWN outside a live SELF lease'};
- const f=feelPrivate(),n=Number(f?.channels?.NOVELTY?.value),a=Number(f?.channels?.AGENCY_FLOW?.value);
- s.projection_cache={v:2,authority:'MODULATION_ONLY',expires_at:t+5,channels:{novelty_modulation:Number.isFinite(n)?clamp(Math.max(0,n),0,1):null,agency_modulation:Number.isFinite(a)?clamp(Math.max(0,a)*.5,0,.5):null},provenance:{novelty_modulation:'PERCEPTION.NOVELTY',agency_modulation:'PERCEPTION.AGENCY_FLOW'},law:'private projection modulates possibility only; it is not world evidence'};
+ if(Math.abs(t-clock())>1e-5)return {v:2,authority:'MODULATION_ONLY',expires_at:t,source_epoch:epoch,channels:{novelty_modulation:null,agency_modulation:null},law:'UNKNOWN outside a live SELF lease'};
+ const n=Number(f?.channels?.NOVELTY?.value),a=Number(f?.channels?.AGENCY_FLOW?.value);
+ s.projection_cache={v:2,authority:'MODULATION_ONLY',expires_at:t+5,source_epoch:epoch,channels:{novelty_modulation:Number.isFinite(n)?clamp(Math.max(0,n),0,1):null,agency_modulation:Number.isFinite(a)?clamp(Math.max(0,a)*.5,0,.5):null},provenance:{novelty_modulation:'REALITI_PRIVATE_PERCEPTION_V1.NOVELTY',agency_modulation:'REALITI_PRIVATE_PERCEPTION_V1.AGENCY_FLOW'},law:'private projection modulates possibility only; it is not world evidence'};
  return cp(s.projection_cache)
 }
 function setSelfProjection(channels={},lease_s=60){const s=S(),t=clock(),c=normalizeChannels(channels);s.self_projection={v:2,authority:'SELF_PRIVATE_MODULATION',expires_at:t+Math.max(.1,Number(lease_s)||60),channels:{novelty_modulation:c.novelty_modulation==null?null:clamp(c.novelty_modulation),agency_modulation:c.agency_modulation==null?null:clamp(c.agency_modulation)},provenance:{novelty_modulation:'SELF_LEASE',agency_modulation:'SELF_LEASE'}};return cp(s.self_projection)}

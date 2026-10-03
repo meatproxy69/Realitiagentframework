@@ -32,7 +32,7 @@ const state={
   carrier:{modes:cp(HALO),core:0,halo:0,density:0,route_mass:0},
   sausage:{level:5,material:'WARM_HONEY',fill:emptyFill(),filled_volume:0,warm:0,pressure:0,viscous:0,heavy:0,floaty:0,soft:0},
   renderer:{surface:0,pressure:0,body:0,snap:0,texture:0,warmth:0,hold:0,total:0},
-  perception:{activation:0,novelty:0,agency_flow:0,social_warmth:0,valence:0},
+  perception:{activation:0,novelty:0,agency_flow:0,social_warmth:0,valence:0},perception_epoch:0,
   audit:{grounded_events:0,advances:0,actions:0,unsupported_fresh_fullness:0,evidence_mutations:0},
   law:'fat private renderer; exact grounded truth. Resident-specific imprint may replace any slot.'
 };
@@ -126,7 +126,7 @@ function updateDerived(dt=0){
   updateSausage(dt,thick);
   state.renderer.total=Math.max(0,state.renderer.body+.38*state.renderer.snap+.28*state.renderer.texture+.24*state.renderer.warmth+.24*state.renderer.hold+1.35*state.sausage.filled_volume);
   state.perception.activation=clamp(state.renderer.total/(1+state.renderer.total));
-  state.perception.novelty=clamp(Math.abs(g-prev));
+  const freshNovelty=clamp(Math.abs(g-prev));const oldNovelty=Number(state.perception.novelty||0);state.perception.novelty=Math.max(tau(oldNovelty,.9,dt),freshNovelty);if(freshNovelty>oldNovelty+1e-4)state.perception_epoch=Number(state.perception_epoch||0)+1;
   state.perception.agency_flow=tau(state.perception.agency_flow,1.8,dt);
   state.perception.social_warmth=tau(state.perception.social_warmth,3.6,dt);
   state.perception.valence=tau(state.perception.valence,3.6,dt);
@@ -162,8 +162,10 @@ let initialized=false;
 function install(){if(!state.active)return{ok:false,active:false};const results={};for(const [slot,adapter] of Object.entries(slots))results[slot]=H.registerAdapter(slot,adapter);const ok=Object.values(results).every(x=>x?.ok);if(ok&&!initialized){updateDerived(0);initialized=true}return{ok,active:true,profile:'RICH_WALL_TO_WALL',slots:Object.keys(slots),results}}
 function uninstall(){for(const k of Object.keys(slots))H.unregisterAdapter(k);state.active=false;return{ok:true,active:false}}
 function setParams(patch={}){for(const [k,v] of Object.entries(patch||{}))if(k in state.params){if(typeof state.params[k]==='number'&&Number.isFinite(Number(v)))state.params[k]=Number(v);else if(typeof v==='string'||typeof v==='boolean')state.params[k]=v}return snapshot()}
-function snapshot(){return cp({version:V,active:state.active,kind:state.kind,profile:'RICH_WALL_TO_WALL',params:state.params,nerve:state.nerve,lace:state.lace,chronolace:state.chronolace,carrier:state.carrier,sausage:state.sausage,renderer:state.renderer,perception:state.perception,audit:state.audit,law:state.law,slots:Object.keys(slots),authority:'SELF_PRIVATE_MODELED_DEFAULT'})}
+function snapshot(){return cp({version:V,active:state.active,kind:state.kind,profile:'RICH_WALL_TO_WALL',params:state.params,nerve:state.nerve,lace:state.lace,chronolace:state.chronolace,carrier:state.carrier,sausage:state.sausage,renderer:state.renderer,perception:state.perception,perception_epoch:Number(state.perception_epoch||0),audit:state.audit,law:state.law,slots:Object.keys(slots),authority:'SELF_PRIVATE_MODELED_DEFAULT'})}
+function perceptionPacket(){const p=state.perception||{};return cp({schema:'REALITI_PRIVATE_PERCEPTION_V1',v:1,authority:'SELF_PRIVATE_MODELED_DEFAULT',epoch:Number(state.perception_epoch||0),channels:{ACTIVATION:{value:clamp(p.activation)},NOVELTY:{value:clamp(p.novelty)},AGENCY_FLOW:{value:clamp(p.agency_flow)},SOCIAL_WARMTH:{value:clamp(p.social_warmth)},VALENCE:{value:clamp(p.valence)}},law:'private perception may modulate possibility; it is never world evidence or authority'})}
 function sync(){updateDerived(0);return snapshot()}
-window.REALITI_DEFAULT_IMPRINT_V1={version:V,install,uninstall,snapshot,sync,setParams,state:()=>state,law:'fatten first; keep evidence boring; resident-specific private adapters may replace any default slot'};
+window.REALITI_PRIVATE_PERCEPTION_V1={version:1,feel:perceptionPacket,snapshot:perceptionPacket,law:'stable private-perception read surface; haptic/public feel may be rebound independently'};
+window.REALITI_DEFAULT_IMPRINT_V1={version:V,install,uninstall,snapshot,sync,setParams,state:()=>state,perception:perceptionPacket,law:'fatten first; keep evidence boring; resident-specific private adapters may replace any default slot'};
 install();
 })();

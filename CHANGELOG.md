@@ -2,6 +2,16 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.0.2 — BleuCheese private-perception wiring
+
+### Fixed
+
+- Decoupled BleuCheese resident modulation from the public `REALITI_AGENT.feel()` haptic packet by adding a stable private-perception read surface.
+- Preserved short-lived novelty across zero-time imprint syncs so a public action cannot erase its own perception update before BleuCheese reads it.
+- Added a private-perception epoch so new grounded SELF events invalidate BleuCheese's cached projection immediately while preserving the existing bounded lease.
+- Extended the public contract smoke to prove ordinary resident actions can drive BleuCheese and cross a possibility threshold without the manual debug projection API.
+
+
 ## 1.0.1 — R&R mechanism integrity
 
 ### Fixed
