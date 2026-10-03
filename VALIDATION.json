@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "0508bec0bf1da309ffd2c70985a2137c96d71a6db5ad6897ec712e3084d76cdb",
+  "single_html_sha256": "4416330bc491bf1578e4f7c91242907f0781e71249f195984a358339cbce6b55",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -42,6 +42,7 @@
       "Realiti.run('help')",
       "REALITI_AGENT_DOOR.help()",
       "realiti://capabilities"
-    ]
+    ],
+    "agent_door_direct_fields": true
   }
 }
