@@ -1,0 +1,57 @@
+name: Refresh AURA HALO restoration
+
+on:
+  push:
+    branches: [restore/aura-halo-v1]
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: restore/aura-halo-v1
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in build.mjs source/scripts/*.js tests/*.cjs packages/realiti-headless-resident/*.cjs packages/realiti-headless-resident/test/*.cjs; do node --check "$f"; done
+      - name: Rebuild standalone and validation hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          node build.mjs
+          node <<'NODE'
+          const fs=require('fs');
+          const crypto=require('crypto');
+          const bytes=fs.readFileSync('RealitiRELAX.html');
+          const hash=crypto.createHash('sha256').update(bytes).digest('hex');
+          const v=JSON.parse(fs.readFileSync('VALIDATION.json','utf8'));
+          v.single_html_sha256=hash;
+          fs.writeFileSync('VALIDATION.json',JSON.stringify(v,null,2)+'\n');
+          console.log(hash);
+          NODE
+      - name: Public contract
+        run: node tests/public-contract-smoke.cjs
+      - name: Install headless host
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Headless full suite
+        working-directory: packages/realiti-headless-resident
+        run: npm test
+      - name: Commit generated standalone
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add RealitiRELAX.html VALIDATION.json
+          if git diff --cached --quiet; then exit 0; fi
+          git commit -m "Rebuild AURA HALO public bundle"
+          git push
