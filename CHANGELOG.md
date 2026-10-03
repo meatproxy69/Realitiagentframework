@@ -2,6 +2,22 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.0.3 — headless Agent Door host
+
+### Added
+
+- Added `packages/realiti-headless-resident`, a small Node host that enters through `REALITI_AGENT_DOOR` instead of requiring a visible browser.
+- Added SHA-256 verification against `VALIDATION.json` before the host executes the standalone HTML when a validation receipt is available.
+- Added an agent-neutral CLI and resident example using the Agent Door command surface.
+- Added CI for the headless host and GitHub Packages publication.
+
+### Documentation
+
+- Documented `?ui=1` as the visible browser Agent Door path.
+- Made the Agent Door the preferred resident-facing entry while retaining `window.Realiti` as the structured host/integration API.
+- No Three.js or WebGL dependency was added; headless execution remains non-rendering.
+
+
 ## 1.0.2 — BleuCheese private-perception wiring
 
 ### Fixed
