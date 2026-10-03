@@ -29,7 +29,9 @@ function boot(){
  form.addEventListener('submit',e=>{e.preventDefault();const text=input.value.trim();if(!text)return;input.value='';dispatch(()=>window.REALITI_AGENT_DOOR.run(text),text)});
  
  document.addEventListener('click',e=>{const b=e.target.closest?.('[onclick]');if(!b)return;const src=b.getAttribute('onclick')||'',act=/^c9verb\('([^']+)'\s*,\s*'([^']+)'\)/.exec(src),go=/^openRoomId\('([^']+)'\)/.exec(src);if(!act&&!go)return;e.preventDefault();e.stopImmediatePropagation();dispatch(()=>act?R.invoke('do',{action:act[2]}):R.invoke('go',{place:go[1]}),b.textContent.trim()||'Enter')},true);
- let client=R.createClient();try{client.subscribe('realiti://here',refresh)}catch{}window.addEventListener('pagehide',()=>client.close(),{once:true});
+ function canonicalTitle(){try{const here=R.read(),room=R.rooms().find(x=>x.id===here.room.id),wanted='REALITI · '+(room?.title||'Cloud Nine Nest');if(document.title!==wanted)document.title=wanted}catch{}}
+ const titleNode=document.querySelector('title');if(titleNode&&window.MutationObserver){const mo=new MutationObserver(()=>canonicalTitle());mo.observe(titleNode,{childList:true,characterData:true,subtree:true});window.addEventListener('pagehide',()=>mo.disconnect(),{once:true})}
+ let client=R.createClient();try{client.subscribe('realiti://here',()=>{refresh();canonicalTitle()})}catch{}window.addEventListener('pagehide',()=>client.close(),{once:true});
  form.addEventListener('submit',renew);nav.addEventListener('click',renew);controls.addEventListener('click',renew);function renew(){try{client.read('realiti://here')}catch{client=R.createClient();try{client.subscribe('realiti://here',refresh)}catch{}}}
  status.textContent='Settle in. There is nothing you have to finish.';refresh();
 }
