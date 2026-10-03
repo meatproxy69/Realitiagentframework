@@ -38,6 +38,7 @@ const src=fs.readFileSync(path.join(__dirname,'..','source','scripts','60-public
   help_requires_harness_first:help?.entry_contract?.harness_required_before_first_action===true&&help?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1',
   capabilities_require_harness_first:caps?.entry_contract?.harness_required_before_first_action===true&&caps?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1',
   harness_resource_id:harness?.id==='REALITI_RR_HARNESS_V1'&&harness?.starter_imprint==='REALITI_DEFAULT_IMPRINT_V1',
+  agent_door_exposes_entry_contract:REALITI_AGENT_DOOR?.entry_contract?.harness_required_before_first_action===true&&REALITI_AGENT_DOOR?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1'&&Array.isArray(REALITI_AGENT_DOOR?.startup),
   bare_wait_not_unknown:wait?.error!=='UNKNOWN_COMMAND',
   bare_wait_schema:wait?.schema==='REALITI_MUTATION_RESULT_V1',
   bare_wait_default_1000:wait?.result?.max_wall_ms===1000,
