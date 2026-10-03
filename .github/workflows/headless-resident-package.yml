@@ -30,9 +30,9 @@ jobs:
       - name: CLI closes cleanly
         working-directory: packages/realiti-headless-resident
         run: node cli.cjs --html ../../RealitiRELAX.html inspect >/tmp/realiti-inspect.json
-      - name: Nyx resident play
+      - name: Resident play
         working-directory: packages/realiti-headless-resident
-        run: npm run play:nyx
+        run: npm run play:resident
 
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
