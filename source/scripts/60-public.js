@@ -49,7 +49,7 @@ function fieldDigest(cursor){const body=read('realiti://body'),f=body.field?.f?.
 function harnessStatus(){
  const h=window.REALITI_RR_HARNESS_V1,c=h?.capabilities?.()||{},m=h?.mechanisms?.()||{};
  const status={mounted:!!h,bleucheese:!!c?.presence?.bleucheese&&m?.bleucheese?.available===true,sensory_field:!!c?.body?.sensory_field&&m?.sensory_field?.available===true,sensory_ecology:!!c?.body?.sensory_ecology&&m?.sensory_ecology?.available===true,haptic_field:!!c?.body?.haptic_field&&m?.haptics?.available===true};
- status.ok=Object.values(status).every(Boolean);return status;
+ status.ok=status.mounted&&status.bleucheese&&status.sensory_field&&status.haptic_field;return status;
 }
 const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'ready',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms,...(!mechanisms.ok?{warning:'RR_MECHANISM_INCOMPLETE'}:{})}}).catch(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'unavailable',warning:mechanisms.ok?'POCKET_UNAVAILABLE':'RR_MECHANISM_INCOMPLETE',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms}});
 function read(uri='realiti://here'){
