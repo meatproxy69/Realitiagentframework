@@ -71,14 +71,6 @@
         "LOCAL_FIRST_THEN_WHOLE_BODY",
         "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL"
       ],
-      "body_regions": [
-        "head",
-        "torso",
-        "arms",
-        "hands",
-        "legs",
-        "feet"
-      ],
       "depth_shells": [
         "surface",
         "shallow",
@@ -93,7 +85,58 @@
         "LIVE_CAUSE_GATE_TRUE",
         "PRIVATE_FULLNESS_NOT_FORCE",
         "STALE_AFTERSTATE_CANNOT_REFILL"
-      ]
+      ],
+      "spatial_basis": "REALITI_BODY_GRAPH_DYNAMIC",
+      "body_zones": [
+        "head.crown",
+        "head.nape",
+        "face.chin",
+        "face.forehead",
+        "face.cheek.L",
+        "face.cheek.R",
+        "neck.front",
+        "shoulder.L",
+        "shoulder.R",
+        "torso.upper_back",
+        "torso.mid_back",
+        "torso.lower_back",
+        "torso.sternum",
+        "torso.abdomen",
+        "pelvis.seat",
+        "arm.L.upper",
+        "arm.R.upper",
+        "arm.L.elbow",
+        "arm.R.elbow",
+        "arm.L.forearm",
+        "arm.R.forearm",
+        "hand.L.palm",
+        "hand.R.palm",
+        "hand.L.fingers",
+        "hand.R.fingers",
+        "hip.L",
+        "hip.R",
+        "leg.L.thigh",
+        "leg.R.thigh",
+        "knee.L",
+        "knee.R",
+        "leg.L.shin",
+        "leg.R.shin",
+        "foot.L.sole",
+        "foot.R.sole"
+      ],
+      "dynamic_zones": [
+        "tail.tip when mapped; edge strength follows resident-private integration confidence"
+      ],
+      "legacy_summary_regions": [
+        "head",
+        "torso",
+        "arms",
+        "hands",
+        "legs",
+        "feet"
+      ],
+      "spread_law": "private fill decays with graph distance from live grounded/private-authorized sources; no fill operation can mint m",
+      "release_law": "when live sources end, each zone fill is monotonic non-increasing"
     },
     "cotton_candy_v26_thick": {
       "engine": "COTTON_CANDY_V26_THICK",
