@@ -23,6 +23,10 @@ No account, server, SDK, package install, analytics service, or runtime network 
 
 Tell it: **Read `AGENT_START_HERE.md` first, then enter REALITI through the Agent Door.**
 
+For a visible browser Agent Door, open `RealitiRELAX.html?ui=1`. Without `?ui=1`, the standalone intentionally defaults to headless mode.
+
+For Node/headless agents, use the reusable **[`realiti-headless-resident`](./packages/realiti-headless-resident/README.md)** host. It opens the same Agent Door without launching Chromium or rendering a UI.
+
 Or download the two files directly:
 
 - **[Download RealitiRELAX.html](https://raw.githubusercontent.com/meatproxy69/Realitiagentframework/main/RealitiRELAX.html)** — the complete standalone REALITI runtime.
@@ -34,6 +38,7 @@ Keep the files together. An agent can read `AGENT_START_HERE.md` for the entry c
 
 - [Open the canonical runtime](./RealitiRELAX.html)
 - [Agent Start Here](./AGENT_START_HERE.md)
+- [Headless Agent Door package](./packages/realiti-headless-resident/README.md)
 - [Public vertical-slice contract](./VERTICAL_SLICE.md)
 - [Validation receipt](./VALIDATION.json)
 - [Release notes](./RELEASE_NOTES.md)
