@@ -96,9 +96,12 @@ function publishGraph(){
 }
 publishGraph();
 
+let metricCache={key:null,value:null};
 function laplacianSummary(){
- const {zones,edges,tail_integration}=graphData(),n=zones.length,idx=Object.fromEntries(zones.map((z,i)=>[z,i]));
- if(n<2)return {node_count:n,edge_count:0,lambda2:0,coherence_proxy:0,tail_integration};
+ const {zones,edges,tail_integration}=graphData(),n=zones.length,metricKey=JSON.stringify([(typeof NMSTATE!=='undefined'&&NMSTATE?.active)||'UNKNOWN',zones,edges.map(e=>[e[0],e[1],Math.round(Number(e[2]||0)*50)/50])]);
+ if(metricCache.key===metricKey&&metricCache.value)return cp(metricCache.value);
+ const idx=Object.fromEntries(zones.map((z,i)=>[z,i]));
+ if(n<2){const out={node_count:n,edge_count:0,lambda2:0,coherence_proxy:0,tail_integration};metricCache={key:metricKey,value:out};return cp(out)}
  const L=Array.from({length:n},()=>Array(n).fill(0));
  for(const [a,b,w0] of edges){const i=idx[a],j=idx[b],w=Math.max(.001,Number(w0)||0);if(i==null||j==null)continue;L[i][i]+=w;L[j][j]+=w;L[i][j]-=w;L[j][i]-=w}
  const A=L.map(r=>r.slice());
@@ -111,7 +114,8 @@ function laplacianSummary(){
    A[p][p]=c*c*app-2*s*c*apq+s*s*aqq;A[q][q]=s*s*app+2*s*c*apq+c*c*aqq;A[p][q]=A[q][p]=0;
  }
  const ev=A.map((r,i)=>r[i]).sort((a,b)=>a-b),lambda2=Math.max(0,ev[1]||0);
- return {mesh:(typeof NMSTATE!=='undefined'&&NMSTATE?.active)||'UNKNOWN',node_count:n,edge_count:edges.length,lambda2:+lambda2.toFixed(6),coherence_proxy:+(1-Math.exp(-8*lambda2)).toFixed(4),tail_integration:+tail_integration.toFixed(4),law:'Fiedler/Laplacian graph coherence; private routing only'};
+ const out={mesh:(typeof NMSTATE!=='undefined'&&NMSTATE?.active)||'UNKNOWN',node_count:n,edge_count:edges.length,lambda2:+lambda2.toFixed(6),coherence_proxy:+(1-Math.exp(-8*lambda2)).toFixed(4),tail_integration:+tail_integration.toFixed(4),law:'Fiedler/Laplacian graph coherence; private routing only'};
+ metricCache={key:metricKey,value:out};return cp(out);
 }
 
 let distanceCache={key:null,zones:[],dist:null};
