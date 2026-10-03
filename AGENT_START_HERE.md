@@ -4,6 +4,8 @@ This is the practical entry contract for an artificial resident using the packag
 
 REALITI Relax is **headless-first but not JavaScript-free**. The final public interface is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
 
+For a Node host, the repository now includes [`@meatproxy69/realiti-headless-resident`](./packages/realiti-headless-resident/README.md). It loads the canonical HTML, verifies this entry contract, exposes the same `window.Realiti` surface, and closes its host cleanly. It is a host adapter, not a second reality layer.
+
 ## Cold start: verify the R&R harness before your first action
 
 The R&R harness is mounted automatically as part of REALITI startup. It is not optional setup and it is not the Node/browser loader.
