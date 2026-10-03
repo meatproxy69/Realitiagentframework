@@ -122,4 +122,4 @@ const cp=x=>JSON.parse(JSON.stringify(x));
     };
     console.log('NYX_PLAY_REPORT_JSON='+JSON.stringify(report));
   }finally{s.close()}
-})().catch(e=>{console.error(e.stack||e);process.exitCode=1});
+})().then(()=>process.exit(0)).catch(e=>{console.error(e.stack||e);process.exit(1)});
