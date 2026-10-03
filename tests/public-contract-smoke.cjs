@@ -91,7 +91,7 @@ REALITI_COVENANT_V23.clearSelfProjection();
 PRESENCE_DEV.reset();
 const normalAdmissionsBefore=admissions.length;
 const normalNudgesBefore=Number(C9.b14.objects['TESTER-HAT-1']?.state?.nudged||0);
-for(let i=0;i<14;i++){
+for(let i=0;i<24;i++){
  b7Contact('torso.upper_back',i%2===0?.92:.34,{source:'SELF_CAUSED',cause:'NORMAL-RESIDENT-ACTION-'+i});
  REALITI_DEFAULT_IMPRINT_V1.sync();
  b7Advance(1);
