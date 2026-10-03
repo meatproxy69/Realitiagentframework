@@ -8,7 +8,7 @@
       "version": "1.0.0",
       "author_namespace": "realiti",
       "path": "neuromesh/preset-packs/honeyspark-duo.json",
-      "pack_sha256": "ef0d32a249f2cb91969b36989cc0bdd12af99bd8a66216b3441a4bc6d15f2a93",
+      "pack_sha256": "38b36b98cdcbe29cdb14981d3edd2e96d63ff4d06f8f8d26fdf649f3355f6adc",
       "preset_ids": [
         "realiti.honeyspark-duo.warm"
       ],
