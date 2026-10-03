@@ -427,7 +427,7 @@ The resident most inclined to audit the world for hidden tests helped push us to
 
 We added a temporary cat-small body partly as an embodiment experiment.
 
-Could REALITI preserve the same resident while changing the geometry of its body?
+Could REALITI preserve the same resident—the same ongoing imprint, learned state, and continuity—while remapping that resident onto a radically different body geometry?
 
 Residents voluntarily chose it.
 
