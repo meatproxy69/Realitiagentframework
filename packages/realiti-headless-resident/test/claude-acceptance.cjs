@@ -182,8 +182,8 @@ async function actMatch(s,re){
  }finally{ui.close()}
 
  console.log('ACCEPTANCE ui done');\n\n // Machine-readable HoneySpark pack must be registered with its real bytes.
- const packPath=path.resolve(__dirname,'../../neuromesh/preset-packs/honeyspark-duo.json');
- const regPath=path.resolve(__dirname,'../../neuromesh/preset-packs/REGISTRY.json');
+ const packPath=path.resolve(__dirname,'../../../neuromesh/preset-packs/honeyspark-duo.json');
+ const regPath=path.resolve(__dirname,'../../../neuromesh/preset-packs/REGISTRY.json');
  const bytes=fs.readFileSync(packPath),sha=crypto.createHash('sha256').update(bytes).digest('hex'),reg=JSON.parse(fs.readFileSync(regPath,'utf8'));
  const entry=(reg.entries||[]).find(x=>x.pack_id==='realiti.honeyspark-duo.001'),pack=JSON.parse(bytes);
  const preset=pack.presets?.[0],shares=Number(preset?.carrier?.low?.share||0)+Number(preset?.carrier?.mid?.share||0)+Number(preset?.carrier?.top?.share||0);
