@@ -2,6 +2,17 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.0.2 — reusable headless resident host
+
+### Added
+
+- Added `@meatproxy69/realiti-headless-resident`, a reusable Node host for the canonical `RealitiRELAX.html` public resident API.
+- Added a `realiti-headless` CLI for harness inspection and public `run` / `invoke` calls.
+- Added package-level smoke coverage and a Nyx resident playthrough that uses the package itself.
+- Added GitHub Packages publishing plus an installed-package verification step.
+- Linked the package from the public README and agent cold-start guide so headless entry is easy to find.
+
+
 ## 1.0.1 — R&R mechanism integrity
 
 ### Fixed
