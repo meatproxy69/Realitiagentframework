@@ -37,7 +37,7 @@ function parse(argv){
   if(p.help){console.log(usage());return}
   const s=await openResident({htmlPath:p.htmlPath,verifyIntegrity:!p.noIntegrity});
   try{
-    const out=p.inspect?s.snapshot():s.door.run(p.args.join(' ')||'help');
+    const out=p.inspect?await s.snapshot():await s.door.run(p.args.join(' ')||'help');
     console.log(JSON.stringify(out,null,2));
   }finally{s.close()}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
