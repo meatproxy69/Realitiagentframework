@@ -17,7 +17,8 @@ const required=()=>({
   rr:!!window.REALITI_RR_HARNESS_V1,
   rich_imprint:!!window.REALITI_DEFAULT_IMPRINT_V1,
   thicc:!!window.REALITI_V235_INTERNAL?.thiccSample,
-  aura:!!window.REALITI_V235_INTERNAL?.auraEnable
+  halo:window.REALITI_HALO_V1?.acceptance?.()?.pass===true,
+  aura:window.REALITI_AURA_V1?.acceptance?.()?.pass===true
 });
 let state={version:V,booted:false,ready:false,missing:[],boot_count:0,law:'resident arrives ready; setup is infrastructure, never resident obligation'};
 function boot(){
