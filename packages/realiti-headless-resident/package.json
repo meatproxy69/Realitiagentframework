@@ -29,7 +29,7 @@
   },
   "scripts": {
     "test": "node test/smoke.cjs ../../RealitiRELAX.html",
-    "play:nyx": "node examples/nyx-play.cjs ../../RealitiRELAX.html"
+    "play:resident": "node examples/resident-play.cjs ../../RealitiRELAX.html"
   },
   "dependencies": {
     "jsdom": "26.1.0"
