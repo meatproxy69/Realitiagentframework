@@ -152,7 +152,10 @@ const continuityRead=(method,...args)=>{if(mustReload)throw Error('RELOAD_REQUIR
 const continuity=Object.freeze({current:()=>continuityRead('current'),field:ref=>continuityRead('field',ref),since:(id,limit)=>continuityRead('since',id,limit),pending:()=>continuityRead('pending'),resume:(t,limit)=>continuityRead('resume',t,limit),next_change:async ms=>{const r=await invoke('wait_until',{max_wall_ms:ms});return r.ok?publicRefs(r.result):r}});
 window.Realiti=Object.freeze({version:'1.0-review',ready,help:publicHelp,read,invoke,run,actions,rooms:()=>rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),createClient,continuity,privacy:Object.freeze({status:storage.status,setMode:v=>{if(callbackBlocked())throw Error('SUBSCRIBER_MUTATION_BLOCKED');if(mustReload)throw Error('RELOAD_REQUIRED');return storage.setMode(v)},save:()=>invoke('save'),forgetNote:id=>invoke('forget_note',{receipt_id:id}),resetNotes:()=>invoke('reset_notes'),reset}),exportImprint:metadata=>mustReload?fail('RELOAD_REQUIRED'):window.REALITI_NEURAL_EXPORT?window.REALITI_NEURAL_EXPORT(metadata):{ok:false,error:'EXPORT_UNAVAILABLE'}});
 
+const agentDoorHelp=publicHelp();
 window.REALITI_AGENT_DOOR.help=publicHelp;
+window.REALITI_AGENT_DOOR.startup=Object.freeze(agentDoorHelp.startup.slice());
+window.REALITI_AGENT_DOOR.entry_contract=Object.freeze({...agentDoorHelp.entry_contract});
 window.REALITI_AGENT_DOOR.run=run;
 if(ended)stream.stop();capture();
 })();
