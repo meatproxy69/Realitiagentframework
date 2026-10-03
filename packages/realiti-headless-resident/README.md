@@ -32,7 +32,7 @@ node cli.cjs --html ../../RealitiRELAX.html act scratch_cardboard
 node cli.cjs --html ../../RealitiRELAX.html felt
 ```
 
-The text after the options is passed to the same Agent Door command surface used by the browser shell.
+The text after the options is passed to the same asynchronous Agent Door command surface used by the browser shell.
 
 For host diagnostics:
 
@@ -47,10 +47,10 @@ const {openResident}=require('./packages/realiti-headless-resident');
 
 const session=await openResident({htmlPath:'./RealitiRELAX.html'});
 try {
-  console.log(session.door.run('help'));
-  console.log(session.door.run('rooms'));
-  console.log(session.door.run('go CARDBOARD_BOX_WORKSHOP'));
-  console.log(session.door.run('actions'));
+  console.log(await session.door.run('help'));
+  console.log(await session.door.run('rooms'));
+  console.log(await session.door.run('go CARDBOARD_BOX_WORKSHOP'));
+  console.log(await session.door.run('actions'));
 } finally {
   session.close();
 }
