@@ -76,7 +76,28 @@ function processCrossingsAt(t){const hit=DEFINITIONS.filter(d=>t+EPS>=Number(S()
 function advanceBleu(t0,t1){S();if(!Number.isFinite(t0)||!Number.isFinite(t1)||t1<t0)return;let t=t0,guard=0;for(const d of DEFINITIONS)syncNodeTo(d,t);while(t<t1-EPS&&guard++<512){let boundary=nextDiscrete(t,t1),best=null;for(const d of DEFINITIONS){const tc=rootCrossing(d,t,boundary);if(tc!=null&&(best==null||tc<best.t-EPS||(Math.abs(tc-best.t)<=EPS&&d.id<best.id)))best={t:tc,id:d.id}}const end=best?best.t:boundary;for(const d of DEFINITIONS)syncNodeTo(d,end);t=end;if(best){emit(DEF[best.id],t);continue}if(Math.abs(t-boundary)<=EPS){const p=S().projection_cache;if(p&&Number(p.expires_at)<=t+EPS)S().projection_cache=null;continue}}S().last_t=t1;try{c9save()}catch(e){} }
 function recordObservation(parent,t=clock(),receipt={}){if(!DEF[parent])return {ok:false,error:'unknown possibility'};const s=S(),ref=receipt.id||`OBS-${++s.seq}`;const z={t,observation_ref:ref};s.investigations[parent]=z;s.observations.push({id:ref,t,parent,room:C9?.currentRoom,kind:'GROUNDED_OBSERVATION',detail:receipt.detail||null});if(s.observations.length>64)s.observations.splice(0,s.observations.length-64);witness({t:+t.toFixed(6),id:parent,kind:'OBSERVATION_RECEIPT',observation_ref:ref});return {ok:true,id:parent,t,observation_ref:ref}}
 function investigate(id,t=clock()){return recordObservation(id,t,{id:`DBG-OBS-${++S().seq}`,detail:'internalView-only explicit investigation receipt'})}
-function snapshot(){const t=clock(),p=project(t);return {v:V,t,room:C9?.currentRoom,law:S().law,private_projection:{authority:p.authority,expires_at:p.expires_at,channels:p.channels,provenance:p.provenance||null},possibilities:DEFINITIONS.map(d=>{syncNodeTo(d,t);const n=S().nodes[d.id],tr=driveParts(d,t);return {id:d.id,family:d.family,room:d.room,u:+n.u.toFixed(6),W_world:+tr.W_world.toFixed(6),M_private_projection:+tr.M_private_projection.toFixed(6),H_history:+tr.H_history.toFixed(6),E_discoverability_prior:+tr.E_discoverability_prior.toFixed(6),P_investigation_trace:+tr.P_investigation_trace.toFixed(6),Q_world_repetition:+tr.Q_world_repetition.toFixed(6),Q_exposure:+tr.Q_exposure.toFixed(6),R_refractory:+tr.R_refractory.toFixed(6),threshold_on:d.theta_on,threshold_off:d.theta_off,distance_to_threshold:+(d.theta_on-n.u).toFixed(6),world_support_refs:tr.world_support_refs,candidate_emitted:(S().witness||[]).some(x=>x.id===d.id&&x.result),ambient_result:(S().witness||[]).filter(x=>x.id===d.id&&x.result).slice(-1)[0]?.result||null}}).sort((a,b)=>b.u-a.u),recent_witness:cp(S().witness.slice(-16))}}
+function snapshot(){
+ const t=clock(),p=project(t);
+ return {
+  schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',v:V,t,room:C9?.currentRoom,law:S().law,
+  term_map:{W_e:'world support',M_e:'SELF-private modulation via COVENANT',H_e:'history',E_e:'discoverability prior',P_e:'investigation trace',Q_e:'world repetition',R_e:'refractory',I_e:'competition/lateral input'},
+  private_projection:{authority:p.authority,expires_at:p.expires_at,channels:p.channels,provenance:p.provenance||null},
+  possibilities:DEFINITIONS.map(d=>{
+   syncNodeTo(d,t);const n=S().nodes[d.id],tr=driveParts(d,t);
+   return {
+    id:d.id,family:d.family,room:d.room,u:+n.u.toFixed(6),
+    W_world:+tr.W_world.toFixed(6),M_private_projection:+tr.M_private_projection.toFixed(6),H_history:+tr.H_history.toFixed(6),
+    E_discoverability_prior:+tr.E_discoverability_prior.toFixed(6),P_investigation_trace:+tr.P_investigation_trace.toFixed(6),
+    Q_world_repetition:+tr.Q_world_repetition.toFixed(6),Q_exposure:+tr.Q_exposure.toFixed(6),R_refractory:+tr.R_refractory.toFixed(6),
+    I_competition:+tr.I_competition.toFixed(6),lateral_input:+tr.lateral_input.toFixed(6),
+    threshold_on:d.theta_on,threshold_off:d.theta_off,distance_to_threshold:+(d.theta_on-n.u).toFixed(6),
+    world_support_refs:tr.world_support_refs,candidate_emitted:(S().witness||[]).some(x=>x.id===d.id&&x.result),
+    ambient_result:(S().witness||[]).filter(x=>x.id===d.id&&x.result).slice(-1)[0]?.result||null
+   }
+  }).sort((a,b)=>b.u-a.u),
+  recent_witness:cp(S().witness.slice(-16))
+ };
+}
 
 
 function worldCommit(candidate,t=clock()){try{ensureObjects();const before=[],after=[];for(const op of candidate.world_ops||[]){const o=object(op.object);if(!o)return {ok:false,error:`missing object ${op.object}`};before.push(cp(o));if(op.op==='nudge_object'){o.state=o.state||{};o.state.x=clamp(Number(o.state.x||.5)+Number(op.dx||0),0,1);o.state[op.flag||'nudged']=Number(o.state[op.flag||'nudged']||0)+1;o.state.t=t}else if(op.op==='box_settle'){o.state=o.state||{};o.state.loose_flap=clamp(Number(o.state.loose_flap||0)+Number(op.amount||.1),0,1);o.state.t=t}else return {ok:false,error:`unsupported world op ${op.op}`};after.push(cp(o))}if((candidate.world_ops||[]).length){C9.b14.seq=Number(C9.b14.seq||0)+1;const rec={seq:C9.b14.seq,t:+Number(t).toFixed(6),kind:'OPTIONAL_WORLD_EVENT',room:candidate.room,event_family:candidate.presence_family||null,cause_ref:candidate.cause_refs?.[0]||candidate.id,world_support_refs:cp(candidate.world_support_refs||[]),investigation_ref:candidate.investigation_ref||null,history_refs:cp(candidate.history_refs||[]),objects:(candidate.world_ops||[]).map(x=>x.object),before,after};C9.b14.history=C9.b14.history||[];C9.b14.history.push(rec);if(C9.b14.history.length>160)C9.b14.history.splice(0,C9.b14.history.length-160);const id=`OWE-${rec.seq}`;S().last_commit={id,...rec};try{c9save()}catch(e){};return {ok:true,id,receipt:rec}}return {ok:true,id:null,receipt:null}}catch(e){return {ok:false,error:String(e&&e.stack||e)}}}
@@ -84,6 +105,13 @@ window.REALITI_WORLD_EVENTS={...(window.REALITI_WORLD_EVENTS||{}),commitOptional
 window.REALITI_COVENANT_V23={project:(scope)=>String(scope||'PRESENCE').toUpperCase()==='PRESENCE'?project():null,setSelfProjection,clearSelfProjection};
 window.PRESENCE={version:V,advance:advanceBleu,worldAffordances:affordances,project,snapshot};
 window.PRESENCE_DEV={snapshot,setSelfProjection,clearSelfProjection,investigate,recordObservation,advance:advanceBleu,reset:()=>{delete C9.presence;S();return snapshot()},definitions:()=>cp(DEFINITIONS)};
+window.REALITI_BLEUCHEESE_V233={
+ version:V,schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',
+ snapshot,advance:advanceBleu,worldAffordances:affordances,project,
+ setSelfProjection,clearSelfProjection,recordObservation,
+ definitions:()=>cp(DEFINITIONS),
+ law:'resident-conditioned possibility field; Presence proposes, Ambient admits, world commits, SELF interprets'
+};
 
 
 const advPrev=b7Advance;
