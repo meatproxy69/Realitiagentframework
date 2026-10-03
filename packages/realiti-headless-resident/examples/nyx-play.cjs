@@ -26,13 +26,24 @@ const cp=x=>JSON.parse(JSON.stringify(x));
   function mark(kind,data={}){
     trail.push({n:trail.length+1,kind,room:here()?.room?.title||here()?.room?.id||null,body:body(),...cp(data)});
   }
+  async function bounded(label,promise,ms=5000){
+    let timer;
+    try{
+      return await Promise.race([
+        Promise.resolve(promise),
+        new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error('RESIDENT_STEP_TIMEOUT '+label)),ms)})
+      ]);
+    }finally{if(timer)clearTimeout(timer)}
+  }
   async function run(text){
-    const out=await R.run(text);
+    console.log('NYX_STEP run '+text);
+    const out=await bounded('run '+text,R.run(text));
     mark('run',{text,out});
     return out;
   }
   async function invoke(name,args={}){
-    const out=await R.invoke(name,args);
+    console.log('NYX_STEP invoke '+name+' '+JSON.stringify(args));
+    const out=await bounded('invoke '+name,R.invoke(name,args));
     mark('invoke',{name,args,out});
     return out;
   }
