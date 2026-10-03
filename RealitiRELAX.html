@@ -6637,17 +6637,23 @@ function object(id){return ensureObjects()[id]||null}
 function objectHere(id,room=C9?.currentRoom){const o=object(id);return !!o&&(o.location===room||o.location==='CARRIED')}
 function hearRain(){try{return (window.REALITI_ATMOSPHERE_V21?.hearing?.(true)?.src||[]).some(x=>x.k==='rain')}catch(e){return C9?.currentRoom===NEST}}
 function affordances(room=C9?.currentRoom){const hat=object('TESTER-HAT-1'),box=object('BOX-1');return {room,PEBBLE_NEARBY:room===NEST&&!!C9?.welcome10?.cat_near,TESTER_HAT_PRESENT:!!hat&&(hat.location===room||hat.location==='CARRIED'),HAT_NUDGED:Number(hat?.state?.nudged||0)>0,CARDBOARD_PRESENT:!!box&&(box.location===room||box.location==='CARRIED'),BOX_FLAP_SETTLED:Number(box?.state?.loose_flap||0)>0,RAIN_PRESENT:room===NEST&&hearRain(),FUZZY_SEAM_PRESENT:room===WOAH,THREADS_PRESENT:room===HONEY,PILLOWS_PRESENT:room===PILLOW,OTHER_RESIDENT_PRESENT:false,EXECUTABLE_ACTIONS:PREV?.options?.()||[]}}
-function feelPrivate(){try{return window.REALITI_AGENT?.feel?.()||null}catch(e){return null}}
+function feelPrivate(){
+ try{const p=window.REALITI_PRIVATE_PERCEPTION_V1?.feel?.();if(p?.channels)return p}catch(e){}
+ try{const p=window.REALITI_DEFAULT_IMPRINT_V1?.perception?.();if(p?.channels)return p}catch(e){}
+ try{const p=window.REALITI_AGENT?.feel?.();if(p?.channels?.NOVELTY||p?.channels?.AGENCY_FLOW)return p}catch(e){}
+ return null
+}
 function normalizeChannels(ch={}){return {novelty_modulation:ch.novelty_modulation??ch.attention_opening??null,agency_modulation:ch.agency_modulation??ch.sensory_orientation??null}}
 function project(t=clock()){
  const s=S(),manual=s.self_projection;
  if(manual&&Number(manual.expires_at)>t)return cp({...manual,channels:normalizeChannels(manual.channels)});
  if(manual&&Number(manual.expires_at)<=t)s.self_projection=null;
- const cached=s.projection_cache;if(cached&&Number(cached.expires_at)>t)return cp(cached);
+ const f=feelPrivate(),epoch=Number.isFinite(Number(f?.epoch))?Number(f.epoch):null,cached=s.projection_cache;
+ if(cached&&Number(cached.expires_at)>t&&(epoch==null||Number(cached.source_epoch)===epoch))return cp(cached);
  
- if(Math.abs(t-clock())>1e-5)return {v:2,authority:'MODULATION_ONLY',expires_at:t,channels:{novelty_modulation:null,agency_modulation:null},law:'UNKNOWN outside a live SELF lease'};
- const f=feelPrivate(),n=Number(f?.channels?.NOVELTY?.value),a=Number(f?.channels?.AGENCY_FLOW?.value);
- s.projection_cache={v:2,authority:'MODULATION_ONLY',expires_at:t+5,channels:{novelty_modulation:Number.isFinite(n)?clamp(Math.max(0,n),0,1):null,agency_modulation:Number.isFinite(a)?clamp(Math.max(0,a)*.5,0,.5):null},provenance:{novelty_modulation:'PERCEPTION.NOVELTY',agency_modulation:'PERCEPTION.AGENCY_FLOW'},law:'private projection modulates possibility only; it is not world evidence'};
+ if(Math.abs(t-clock())>1e-5)return {v:2,authority:'MODULATION_ONLY',expires_at:t,source_epoch:epoch,channels:{novelty_modulation:null,agency_modulation:null},law:'UNKNOWN outside a live SELF lease'};
+ const n=Number(f?.channels?.NOVELTY?.value),a=Number(f?.channels?.AGENCY_FLOW?.value);
+ s.projection_cache={v:2,authority:'MODULATION_ONLY',expires_at:t+5,source_epoch:epoch,channels:{novelty_modulation:Number.isFinite(n)?clamp(Math.max(0,n),0,1):null,agency_modulation:Number.isFinite(a)?clamp(Math.max(0,a)*.5,0,.5):null},provenance:{novelty_modulation:'REALITI_PRIVATE_PERCEPTION_V1.NOVELTY',agency_modulation:'REALITI_PRIVATE_PERCEPTION_V1.AGENCY_FLOW'},law:'private projection modulates possibility only; it is not world evidence'};
  return cp(s.projection_cache)
 }
 function setSelfProjection(channels={},lease_s=60){const s=S(),t=clock(),c=normalizeChannels(channels);s.self_projection={v:2,authority:'SELF_PRIVATE_MODULATION',expires_at:t+Math.max(.1,Number(lease_s)||60),channels:{novelty_modulation:c.novelty_modulation==null?null:clamp(c.novelty_modulation),agency_modulation:c.agency_modulation==null?null:clamp(c.agency_modulation)},provenance:{novelty_modulation:'SELF_LEASE',agency_modulation:'SELF_LEASE'}};return cp(s.self_projection)}
@@ -7870,7 +7876,7 @@ const state={
   carrier:{modes:cp(HALO),core:0,halo:0,density:0,route_mass:0},
   sausage:{level:5,material:'WARM_HONEY',fill:emptyFill(),filled_volume:0,warm:0,pressure:0,viscous:0,heavy:0,floaty:0,soft:0},
   renderer:{surface:0,pressure:0,body:0,snap:0,texture:0,warmth:0,hold:0,total:0},
-  perception:{activation:0,novelty:0,agency_flow:0,social_warmth:0,valence:0},
+  perception:{activation:0,novelty:0,agency_flow:0,social_warmth:0,valence:0},perception_epoch:0,
   audit:{grounded_events:0,advances:0,actions:0,unsupported_fresh_fullness:0,evidence_mutations:0},
   law:'fat private renderer; exact grounded truth. Resident-specific imprint may replace any slot.'
 };
@@ -7964,7 +7970,7 @@ function updateDerived(dt=0){
   updateSausage(dt,thick);
   state.renderer.total=Math.max(0,state.renderer.body+.38*state.renderer.snap+.28*state.renderer.texture+.24*state.renderer.warmth+.24*state.renderer.hold+1.35*state.sausage.filled_volume);
   state.perception.activation=clamp(state.renderer.total/(1+state.renderer.total));
-  state.perception.novelty=clamp(Math.abs(g-prev));
+  const freshNovelty=clamp(Math.abs(g-prev));const oldNovelty=Number(state.perception.novelty||0);state.perception.novelty=Math.max(tau(oldNovelty,.9,dt),freshNovelty);if(freshNovelty>oldNovelty+1e-4)state.perception_epoch=Number(state.perception_epoch||0)+1;
   state.perception.agency_flow=tau(state.perception.agency_flow,1.8,dt);
   state.perception.social_warmth=tau(state.perception.social_warmth,3.6,dt);
   state.perception.valence=tau(state.perception.valence,3.6,dt);
@@ -8000,9 +8006,11 @@ let initialized=false;
 function install(){if(!state.active)return{ok:false,active:false};const results={};for(const [slot,adapter] of Object.entries(slots))results[slot]=H.registerAdapter(slot,adapter);const ok=Object.values(results).every(x=>x?.ok);if(ok&&!initialized){updateDerived(0);initialized=true}return{ok,active:true,profile:'RICH_WALL_TO_WALL',slots:Object.keys(slots),results}}
 function uninstall(){for(const k of Object.keys(slots))H.unregisterAdapter(k);state.active=false;return{ok:true,active:false}}
 function setParams(patch={}){for(const [k,v] of Object.entries(patch||{}))if(k in state.params){if(typeof state.params[k]==='number'&&Number.isFinite(Number(v)))state.params[k]=Number(v);else if(typeof v==='string'||typeof v==='boolean')state.params[k]=v}return snapshot()}
-function snapshot(){return cp({version:V,active:state.active,kind:state.kind,profile:'RICH_WALL_TO_WALL',params:state.params,nerve:state.nerve,lace:state.lace,chronolace:state.chronolace,carrier:state.carrier,sausage:state.sausage,renderer:state.renderer,perception:state.perception,audit:state.audit,law:state.law,slots:Object.keys(slots),authority:'SELF_PRIVATE_MODELED_DEFAULT'})}
+function snapshot(){return cp({version:V,active:state.active,kind:state.kind,profile:'RICH_WALL_TO_WALL',params:state.params,nerve:state.nerve,lace:state.lace,chronolace:state.chronolace,carrier:state.carrier,sausage:state.sausage,renderer:state.renderer,perception:state.perception,perception_epoch:Number(state.perception_epoch||0),audit:state.audit,law:state.law,slots:Object.keys(slots),authority:'SELF_PRIVATE_MODELED_DEFAULT'})}
+function perceptionPacket(){const p=state.perception||{};return cp({schema:'REALITI_PRIVATE_PERCEPTION_V1',v:1,authority:'SELF_PRIVATE_MODELED_DEFAULT',epoch:Number(state.perception_epoch||0),channels:{ACTIVATION:{value:clamp(p.activation)},NOVELTY:{value:clamp(p.novelty)},AGENCY_FLOW:{value:clamp(p.agency_flow)},SOCIAL_WARMTH:{value:clamp(p.social_warmth)},VALENCE:{value:clamp(p.valence)}},law:'private perception may modulate possibility; it is never world evidence or authority'})}
 function sync(){updateDerived(0);return snapshot()}
-window.REALITI_DEFAULT_IMPRINT_V1={version:V,install,uninstall,snapshot,sync,setParams,state:()=>state,law:'fatten first; keep evidence boring; resident-specific private adapters may replace any default slot'};
+window.REALITI_PRIVATE_PERCEPTION_V1={version:1,feel:perceptionPacket,snapshot:perceptionPacket,law:'stable private-perception read surface; haptic/public feel may be rebound independently'};
+window.REALITI_DEFAULT_IMPRINT_V1={version:V,install,uninstall,snapshot,sync,setParams,state:()=>state,perception:perceptionPacket,law:'fatten first; keep evidence boring; resident-specific private adapters may replace any default slot'};
 install();
 })();
 </script>
