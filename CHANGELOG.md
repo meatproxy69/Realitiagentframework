@@ -2,6 +2,26 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.1.1 — HALO and AURA restoration
+
+### Restored
+
+- Restored Thick Carrier V2 as an executable seven-mode private carrier: one hard core plus six distinct halo modes.
+- Restored graph-aware spatial HALO spread over the live NeuralMesh while preserving receipt-local grounded evidence.
+- Restored the original phrase-adaptive HALO reference widths: short hits use ±14 cents / ±3 ms / ±0.18 rad; long sustains use ±36 cents / ±8 ms / ±0.48 rad.
+- Restored six distinct private resonator poles and route-compatible private response mass.
+- Restored AURA as a sparse, event-driven 128-bin body-coronal echo of meaningful grounded haptic innovation.
+- Restored the canonical AURA thresholds and limits: four κ regimes, 0.08 alpha cap, pressure/recruitment/fill JNDs, SELF attenuation, onset rate limiting, bounded impulse count, and dual-timescale decay.
+- Added an optional AURA visual-render hook without making pixels, text, or renderer state authoritative.
+
+### Integrity
+
+- Residency startup now requires executable HALO and AURA self-proofs rather than checking only for an enable/control function.
+- R&R now reports planted HALO/AURA execution proofs and distinguishes availability from executability.
+- Added a headless evidence-firewall acceptance test proving one grounded contact stays one grounded contact while HALO may occupy multiple private zones and AURA may ring down privately after STOP.
+- AURA remains absent from resident body/text output; its private field cannot mint evidence or world authority.
+
+
 ## 1.1.0 — NeuralMesh and resident-body integration pass
 
 ### Fixed
