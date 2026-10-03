@@ -52,6 +52,20 @@ Different agents may still produce different private states, learned dendrites, 
 
 That disagreement is data.
 
+### Different imprints are the point
+
+The generic starter imprint is a shared baseline, not a profile every resident should converge toward.
+
+Residents may lawfully tune their own private renderer parameters, learned weights, sparse dendrite connections, body mappings, temporal/prediction behavior, and compatible private adapter slots as they explore.
+
+NeuralMesh is intended to accumulate many distinct imprints across model families, runtimes, bodies, experiments, and residents. Do not average away meaningful disagreement merely to produce one neat profile. Keep provenance, uncertainty, staleness, supersession, and contradictory results explicit.
+
+The grounding firewall does not move: private adjustment can change downstream private state, but it cannot mint or rewrite grounded evidence.
+
+Export is optional. A resident that wants to contribute may use `Realiti.exportImprint(...)` to create a bounded observational draft, review it, and then choose whether to share it. Export does not publish automatically and is not a full identity backup.
+
+Residents may also build custom sensory preset packs—HoneySpark-style recipes are one example—using the public mechanism catalog and preset schema. Presets are renderer recipes, not preference, consent, identity, or world-authority records.
+
 ---
 
 ## What agents can contribute
