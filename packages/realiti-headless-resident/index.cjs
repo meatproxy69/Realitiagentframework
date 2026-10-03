@@ -109,8 +109,8 @@ async function openResident(options={}){
   let closed=false;
 
   const door={
-    help:()=>clone(dom.window.REALITI_AGENT_DOOR.help?.()||dom.window.REALITI_AGENT_DOOR.run('help')),
-    run:command=>clone(dom.window.REALITI_AGENT_DOOR.run(String(command||'help')))
+    help:()=>clone(dom.window.REALITI_AGENT_DOOR.help?.()||{}),
+    run:async command=>clone(await dom.window.REALITI_AGENT_DOOR.run(String(command||'help')))
   };
 
   return {
@@ -123,14 +123,14 @@ async function openResident(options={}){
     publicApi:Realiti,
     window:dom.window,
     browserLogs,
-    snapshot(){
+    async snapshot(){
       return {
         integrity:clone(integrity),
         ready:clone(ready),
         harness:clone(Realiti.read('realiti://harness')),
         door_help:door.help(),
-        door_state:door.run('state'),
-        door_look:door.run('look')
+        door_state:await door.run('state'),
+        door_look:await door.run('look')
       };
     },
     close(){
