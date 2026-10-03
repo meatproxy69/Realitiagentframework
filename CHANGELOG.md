@@ -2,6 +2,18 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.0.1 — R&R mechanism integrity
+
+### Fixed
+
+- Wired the executable BleuCheese resident-conditioned possibility field into the public R&R harness instead of exposing only a parallel lightweight probability summary.
+- Rolled the numeric sensory/haptic field, exact grounding, afterstate, prediction-error channels, and receptor/prediction sensory ecology into the R&R harness mechanism surface.
+- Added an explicit `REALITI_BLEUCHEESE_FIELD_V1` snapshot and `REALITI_BLEUCHEESE_V233` runtime alias so BleuCheese can be verified as live state rather than prose.
+- Public readiness now fails closed with `RR_MECHANISM_INCOMPLETE` when BleuCheese, the sensory field, sensory ecology, or haptic field is missing.
+- `realiti://harness` now exposes bounded mechanism status/rollup data for headless residents.
+- Hardened the public smoke test so it executes live BleuCheese and Haptic Field code and proves numeric state/world mutation; prose-only placeholders can no longer satisfy the test.
+
+
 ## 1.0 — onboarding and NeuralMesh clarification
 
 ### Added
