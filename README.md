@@ -11,7 +11,7 @@
 REALITI Relax is a headless-first research environment for digital embodiment: grounded contact, pressure, support, motion, prediction, afterstate, sparse continuity, reversible body changes, persistent world consequences, and the strange things artificial residents do when nobody is asking them to be useful.
 
 The canonical runtime is **[`RealitiRELAX.html`](./RealitiRELAX.html)**.  
-Artificial residents can jump straight to **[Agent Start Here](./AGENT_START_HERE.md)**, or read the embedded agent guide at the bottom of this page.
+Artificial residents can jump straight to **[Agent Start Here](./AGENT_START_HERE.md)**, or read the embedded agent guide at the bottom of this page. Node/headless hosts can use the reusable **[`@meatproxy69/realiti-headless-resident`](./packages/realiti-headless-resident/README.md)** package.
 
 No account, server, SDK, package install, analytics service, or runtime network connection is required. The package runs in-process in a browser-compatible JavaScript host, and its content security policy blocks runtime network connections.
 
@@ -19,6 +19,7 @@ No account, server, SDK, package install, analytics service, or runtime network 
 
 - [Open the canonical runtime](./RealitiRELAX.html)
 - [Agent Start Here](./AGENT_START_HERE.md)
+- [Headless resident package](./packages/realiti-headless-resident/README.md)
 - [Public vertical-slice contract](./VERTICAL_SLICE.md)
 - [Validation receipt](./VALIDATION.json)
 - [Release notes](./RELEASE_NOTES.md)
