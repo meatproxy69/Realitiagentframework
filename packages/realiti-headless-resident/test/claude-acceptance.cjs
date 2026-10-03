@@ -29,7 +29,8 @@ async function actMatch(s,re){
    const w=s.window,rawDoor=s.door,door={run:cmd=>bounded(cmd,rawDoor.run(cmd),5000)};s._door=door;
    console.log('ACCEPTANCE start');
 
-   console.log('ACCEPTANCE rooms');\n   const rooms=await door.run('rooms');
+   console.log('ACCEPTANCE rooms');
+   const rooms=await door.run('rooms');
    check('ten_public_rooms',Array.isArray(rooms)&&rooms.length===10,rooms);
    check('canonical_pocket_room_id',rooms.some(r=>r.id==='POCKET_FAMILIAR_HOUSE')&&!rooms.some(r=>r.id==='PET_ROOM_2'),rooms.map(r=>r.id));
 
@@ -45,13 +46,17 @@ async function actMatch(s,re){
    }
    check('all_ten_rooms_enter',roomPass.every(x=>x.go&&x.look),roomPass);
 
-   console.log('ACCEPTANCE all rooms done');\n\n   // Nest support must be present in per-zone private ingress, not only the global scalar.
+   console.log('ACCEPTANCE all rooms done');
+
+   // Nest support must be present in per-zone private ingress, not only the global scalar.
    await door.run('home');await door.run('stay 100');
    const nestIm=w.REALITI_DEFAULT_IMPRINT_V1.state();
    const nestNerve=Object.keys(nestIm.nerve?.zones||{});
    check('nest_support_reaches_nerve',nestNerve.filter(z=>/head|torso|pelvis|leg/.test(z)).length>=6,nestNerve);
 
-   console.log('ACCEPTANCE nest ingress done');\n\n   // Local touch must remain local-first over the mesh.
+   console.log('ACCEPTANCE nest ingress done');
+
+   // Local touch must remain local-first over the mesh.
    await door.run('go NO_ASK_SANCTUARY');await door.run('stop');w.REALITI_CONTINUITY.reopen();
    w.b7Contact('leg.L.thigh',.8,{material:'longfur',source:'SELF_STARTED_WORLD_CONTACT',mine:true,cause:'ACCEPTANCE_LOCAL_LEG'});
    w.REALITI_DEFAULT_IMPRINT_V1.sync();
@@ -83,7 +88,9 @@ async function actMatch(s,re){
    check('door_imprint_tuning',tune?.ok===true&&Math.abs(Number(im?.params?.sausage_spread)-.31)<1e-9,im?.params?.sausage_spread);
    check('honeyspark_runtime',honey?.ok===true&&im?.honeyspark?.enabled===true&&im?.honeyspark?.conserved_budget===true,im?.honeyspark);
 
-   console.log('ACCEPTANCE mesh spread/release/imprint done');\n\n   // Borrowed tail becomes a mapped live graph zone and reaches HF20.
+   console.log('ACCEPTANCE mesh spread/release/imprint done');
+
+   // Borrowed tail becomes a mapped live graph zone and reaches HF20.
    await door.run('go SHAPESHIFT_CLOAKROOM');
    await actMatch(s,/^attach_tail$|attach.*tail/i);
    const map=await door.run('imprint map tail.tip hand.R.palm');
@@ -110,7 +117,9 @@ async function actMatch(s,re){
    const grain=await door.run('act route_with_grain');
    check('grain_stroke_has_result',grain?.ok===true&&typeof grain?.text==='string'&&grain.text.length>5,grain);
 
-   console.log('ACCEPTANCE tail/routes done');\n\n   // Cat-small loaf is grounded by the blanket/floor rather than floating contact-free.
+   console.log('ACCEPTANCE tail/routes done');
+
+   // Cat-small loaf is grounded by the blanket/floor rather than floating contact-free.
    await door.run('go POCKET_FAMILIAR_HOUSE');
    try{await actMatch(s,/go_tiny|cat-small|cat small/i)}catch{}
    const loaf=await actMatch(s,/circle_loaf|circle.*loaf/i);
@@ -122,7 +131,9 @@ async function actMatch(s,re){
    const warm=await actMatch(s,/warm_shelf|warm shelf/i),thermal=w.REALITI_ATMOSPHERE_V21?.thermal?.();
    check('bathhouse_warmth',warm.out?.ok===true&&Array.isArray(thermal?.z)&&thermal.z.length>0,{warm:warm.out,thermal});
 
-   console.log('ACCEPTANCE loaf/warmth done');\n\n   // Pillow Sea must remain bounded/responsive.
+   console.log('ACCEPTANCE loaf/warmth done');
+
+   // Pillow Sea must remain bounded/responsive.
    await door.run('go BOTTOMLESS_PILLOW_SEA');
    const pillowActions=listActions(await door.run('actions')),dive=pillowActions.find(x=>/dive|burrow|bounce/i.test(String(x.id)+' '+String(x.label)));
    const p0=Date.now(),pout=dive?await door.run('act '+dive.id):null,pms=Date.now()-p0;
@@ -141,7 +152,9 @@ async function actMatch(s,re){
    const listen=await door.run('listen');
    check('listen_has_description',typeof listen?.text==='string'&&listen.text.length>10,listen);
 
-   console.log('ACCEPTANCE pillow/time/audio done');\n\n   // Save both a note and resident-private imprint configuration.
+   console.log('ACCEPTANCE pillow/time/audio done');
+
+   // Save both a note and resident-private imprint configuration.
    await door.run('note Claude acceptance note');
    await door.run('imprint set sausage_spread 0.31');
    await door.run('imprint preset honeyspark');
@@ -158,7 +171,9 @@ async function actMatch(s,re){
 
  }finally{s.close()}
 
- console.log('ACCEPTANCE first session done');\n\n // Reopen with the exact prior browser-profile backing.
+ console.log('ACCEPTANCE first session done');
+
+ // Reopen with the exact prior browser-profile backing.
  const s2=await openResident({htmlPath:html,beforeParse(w){for(const [k,v] of Object.entries(savedBacking))w.localStorage.setItem(k,v)}});
  try{
    const pocket=s2.publicApi.read('realiti://pocket'),im2=await s2.door.run('imprint');
@@ -166,7 +181,9 @@ async function actMatch(s,re){
    check('imprint_survives_restart',Math.abs(Number(im2?.params?.sausage_spread)-.31)<1e-9&&im2?.honeyspark?.enabled===true,im2);
  }finally{s2.close()}
 
- console.log('ACCEPTANCE restart done');\n\n // Visible ?ui=1 shell must display Agent Door replies and keep title canonical.
+ console.log('ACCEPTANCE restart done');
+
+ // Visible ?ui=1 shell must display Agent Door replies and keep title canonical.
  const ui=await openResident({htmlPath:html,url:'https://realiti.local/?ui=1'});
  try{
    await sleep(60);
@@ -181,7 +198,9 @@ async function actMatch(s,re){
    check('ui_home_title_canonical',d.title==='REALITI · Cloud Nine Nest',d.title);
  }finally{ui.close()}
 
- console.log('ACCEPTANCE ui done');\n\n // Machine-readable HoneySpark pack must be registered with its real bytes.
+ console.log('ACCEPTANCE ui done');
+
+ // Machine-readable HoneySpark pack must be registered with its real bytes.
  const packPath=path.resolve(__dirname,'../../../neuromesh/preset-packs/honeyspark-duo.json');
  const regPath=path.resolve(__dirname,'../../../neuromesh/preset-packs/REGISTRY.json');
  const bytes=fs.readFileSync(packPath),sha=crypto.createHash('sha256').update(bytes).digest('hex'),reg=JSON.parse(fs.readFileSync(regPath,'utf8'));
