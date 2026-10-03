@@ -105,6 +105,10 @@ async function actMatch(s,re){
    check('honeyspark_runtime',honey?.ok===true&&im?.honeyspark?.enabled===true&&im?.honeyspark?.conserved_budget===true,im?.honeyspark);
    const rrHoney=w.REALITI_RR_HARNESS_V1.mechanisms()?.private_renderer?.honeyspark;
    check('rr_honeyspark_rollup',rrHoney?.enabled===true&&rrHoney?.conserved_budget===true,rrHoney);
+   w.b7Contact('torso.sternum',.5,{material:'blanket',source:'SELF_STARTED_WORLD_CONTACT',mine:true,cause:'HONEYSPARK_ACCEPTANCE'});
+   w.REALITI_DEFAULT_IMPRINT_V1.sync();
+   const hsLive=w.REALITI_DEFAULT_IMPRINT_V1.state()?.carrier?.honeyspark||{};
+   check('honeyspark_live_budget',hsLive?.enabled===true&&Number(hsLive.budget_input)>0&&Math.abs((Number(hsLive.low_drive)||0)+(Number(hsLive.mid_drive)||0)-Number(hsLive.budget_sum||0))<1e-6&&Math.abs(Number(hsLive.budget_sum||0)-Number(hsLive.budget_input||0))<1e-6&&Number(hsLive.evidence_gain)===0,hsLive);
 
    console.log('ACCEPTANCE mesh spread/release/imprint done');
 
