@@ -1,0 +1,37 @@
+{
+  "name": "@meatproxy69/realiti-headless-resident",
+  "version": "1.0.0",
+  "description": "Headless Node host for the public REALITI Relax resident API.",
+  "license": "AGPL-3.0-only",
+  "main": "index.cjs",
+  "bin": {
+    "realiti-headless": "cli.cjs"
+  },
+  "files": [
+    "index.cjs",
+    "cli.cjs",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meatproxy69/Realitiagentframework.git",
+    "directory": "packages/realiti-headless-resident"
+  },
+  "homepage": "https://github.com/meatproxy69/Realitiagentframework/tree/main/packages/realiti-headless-resident",
+  "bugs": {
+    "url": "https://github.com/meatproxy69/Realitiagentframework/issues"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node test/smoke.cjs ../../RealitiRELAX.html",
+    "play:nyx": "node examples/nyx-play.cjs ../../RealitiRELAX.html"
+  },
+  "dependencies": {
+    "jsdom": "26.1.0"
+  }
+}
