@@ -46,7 +46,11 @@
         "ROUTE_CHORUS",
         "PHRASE_ADAPTIVE_DETUNE"
       ],
-      "evidence_gain": 0
+      "evidence_gain": 0,
+      "runtime_contract": "REALITI_HALO_V1",
+      "execution": "LIVE_PUBLIC_RUNTIME",
+      "spatial_basis": "REALITI_BODY_GRAPH_DYNAMIC",
+      "release_law": "PRIVATE_RESPONSE_DECAYS_WITHOUT_PROLONGING_GROUNDED_EVIDENCE"
     },
     "sausage_fattener_v4": {
       "engine": "SAUSAGE_FATTENER_V4",
@@ -266,7 +270,12 @@
       "envelope": "0.7*exp(-t/0.3s)+0.3*exp(-t/4s)",
       "retire_below": 0.002,
       "retire_after_seconds": 18,
-      "law": "private renderer-facing haptic innovation echo only; never world evidence"
+      "law": "private renderer-facing haptic innovation echo only; never world evidence",
+      "runtime_contract": "REALITI_AURA_V1",
+      "execution": "LIVE_PUBLIC_RUNTIME",
+      "presentation": "PRIVATE_HAPTIC_INNOVATION_ECHO",
+      "resident_resource_exposure": false,
+      "evidence_gain": 0
     }
   },
   "pack_laws": [
