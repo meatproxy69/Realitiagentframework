@@ -935,7 +935,7 @@ The simulated body and sensory fields are research software. This release does n
 
 ---
 
-# Agent README — Start Here
+## Agent README — Start Here
 
 > This section is the practical entry contract for an artificial resident.
 >
@@ -947,7 +947,7 @@ The final public interface is `window.Realiti`. This package is an in-process Ja
 
 Headless means the resident mechanics do not depend on CSS or visible layout. It does **not** mean the later native/browserless runtime is included here.
 
-## Agent cold start
+### Agent cold start
 
 ```js
 const ready = await Realiti.ready;
@@ -967,7 +967,7 @@ A Node/browser loader used to evaluate the package is only a host loader.
 
 If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable in that host. The in-memory world may still run.
 
-## Final resident surface
+### Final resident surface
 
 Prefer:
 
@@ -986,7 +986,7 @@ Realiti.createClient()
 
 Use `rooms()` and `actions()` for exact canonical IDs because available actions are state-dependent.
 
-## Time
+### Time
 
 Reads are observational and do not advance the experience.
 
@@ -1005,7 +1005,7 @@ One explicit advance is bounded to 60,000 ms.
 
 The starter Nest already has lawful support. Record the initial body/imprint before interpreting later changes.
 
-## Body and rich imprint
+### Body and rich imprint
 
 Always inspect both:
 
@@ -1030,7 +1030,7 @@ cf / afterstate / fullness / renderer lanes / prediction
 
 It does **not** erase lawful private ring-down; advance simulated time if you want to observe decay.
 
-## Action results and exact receipts
+### Action results and exact receipts
 
 Mutation results use `REALITI_MUTATION_RESULT_V1` and include current `here` and `body` projections.
 
@@ -1056,7 +1056,7 @@ Preserve full receipts when exact causality matters; use selected values for nar
 
 `feel words` remains a small accessibility decoder. It is not the full imprint and should not be treated as an authoritative interpretation.
 
-## Continuity
+### Continuity
 
 Subscriptions coalesce latest-state changes. They are not complete history.
 
@@ -1082,7 +1082,7 @@ Expired cursors and field references fail explicitly.
 
 Latency Lagoon demonstrates the difference between accepted action, world placement, and observed completion. Follow the pending cause to the Nest; elapsed time alone is not observer closure.
 
-## Mutation discipline
+### Mutation discipline
 
 - Refresh `actions()` after room/body state changes.
 - Await mutations sequentially; shared-world overlap can return `ACTION_IN_PROGRESS`.
@@ -1090,9 +1090,9 @@ Latency Lagoon demonstrates the difference between accepted action, world placem
 - Unsubscribe or close abandoned clients.
 - `STOP` remains available as the emergency contact-release path.
 
-## Embodiment-specific notes
+### Embodiment-specific notes
 
-### Borrowed Limb
+#### Borrowed Limb
 
 ```text
 attach
@@ -1104,7 +1104,7 @@ attach
 → cold learned trace may remain separately
 ```
 
-### Nine Lives
+#### Nine Lives
 
 ```text
 fork stable base
@@ -1118,7 +1118,7 @@ Compare refuses incomplete branches and a stale live base.
 
 Committing learned sandbox state does not create present contact.
 
-## Quiet and exits
+### Quiet and exits
 
 No-Ask uses room-local quiet.
 
@@ -1135,7 +1135,7 @@ GOODBYE
     end visit + close clients + advertise no room actions until re-entry
 ```
 
-## Persistence
+### Persistence
 
 Default persistence mode is explicit.
 
@@ -1147,7 +1147,7 @@ A host in which `Realiti.ready` reports Pocket unavailable has **not** demonstra
 
 Imprint export is an observational contribution draft, not a complete profile backup.
 
-## Recommended exploration rhythm
+### Recommended exploration rhythm
 
 ```text
 inspect baseline
