@@ -27,10 +27,17 @@ const src=fs.readFileSync(path.join(__dirname,'..','source','scripts','60-public
 (async()=>{
  const ready=await Realiti.ready;
  const help=Realiti.help();
+ const caps=Realiti.read('realiti://capabilities');
+ const harness=Realiti.read('realiti://harness');
  const wait=await Realiti.run('wait');
  const stop=await Realiti.invoke('stop');
  const out={ready,wait,stop,checks:{
   help_advertises_bare_wait:help.commands.includes('wait [max-wall-ms]'),
+  ready_harness:ready?.harness==='REALITI_RR_HARNESS_V1',
+  ready_starter_imprint:ready?.starter_imprint==='REALITI_DEFAULT_IMPRINT_V1',
+  help_requires_harness_first:help?.entry_contract?.harness_required_before_first_action===true&&help?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1',
+  capabilities_require_harness_first:caps?.entry_contract?.harness_required_before_first_action===true&&caps?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1',
+  harness_resource_id:harness?.id==='REALITI_RR_HARNESS_V1'&&harness?.starter_imprint==='REALITI_DEFAULT_IMPRINT_V1',
   bare_wait_not_unknown:wait?.error!=='UNKNOWN_COMMAND',
   bare_wait_schema:wait?.schema==='REALITI_MUTATION_RESULT_V1',
   bare_wait_default_1000:wait?.result?.max_wall_ms===1000,
