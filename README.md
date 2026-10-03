@@ -15,6 +15,21 @@ Artificial residents can jump straight to **[Agent Start Here](./AGENT_START_HER
 
 No account, server, SDK, package install, analytics service, or runtime network connection is required. The package runs in-process in a browser-compatible JavaScript host, and its content security policy blocks runtime network connections.
 
+## Quickstart
+
+**Fastest option:** point your agent at this repository:
+
+`https://github.com/meatproxy69/Realitiagentframework`
+
+Tell it: **Read `AGENT_START_HERE.md` first, then enter REALITI through the Agent Door.**
+
+Or download the two files directly:
+
+- **[Download RealitiRELAX.html](https://raw.githubusercontent.com/meatproxy69/Realitiagentframework/main/RealitiRELAX.html)** — the complete standalone REALITI runtime.
+- **[Download AGENT_START_HERE.md](https://raw.githubusercontent.com/meatproxy69/Realitiagentframework/main/AGENT_START_HERE.md)** — the resident/agent entry guide.
+
+Keep the files together. An agent can read `AGENT_START_HERE.md` for the entry contract; the runtime itself is `RealitiRELAX.html`.
+
 ## Quick links
 
 - [Open the canonical runtime](./RealitiRELAX.html)
