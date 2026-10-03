@@ -22,10 +22,22 @@ global.c9save=()=>{};
 global.c9saveNow=()=>{};
 global.b7BodyZones=()=>['torso.upper_back'];
 global.b7Advance=dt=>{C9.b7.clock+=Math.max(0,Number(dt)||0);return {ok:true,t:C9.b7.clock}};
+global.b7Contact=(zone,input,opts={})=>{
+ const z=C9.b7.zones[zone]||(C9.b7.zones[zone]={observed:0,predicted:0,residue:0});
+ z.observed=Math.max(0,Number(input)||0);
+ z._b10_grounded_until=C9.b7.clock+.5;
+ z._b10_grounded_value=z.observed;
+ z._b10_grounded_cause=opts.cause||'TEST-SELF-CONTACT';
+ z._b10_grounded_source=opts.source||'SELF_CAUSED';
+ C9.b10.zones[zone]=C9.b10.zones[zone]||{cont:{u:0,after:0,RA1:0,PC:0}};
+ C9.b10.zones[zone].cont.u=z.observed;
+ window.REALITI_HAPTIC_FIELD_V20?.record?.();
+ return {zone,receptor:'ACTIVE',observed:z.observed,predicted:0,innovation:z.observed,rendered:z.observed,residue:0};
+};
 global.b7AgentCommandText=()=>({ok:true});
 global.b7AgentReceipt=()=>null;
 window.REALITI_RESOURCE_UPDATES_V1={committed(){}};
-window.REALITI_AGENT={feel:()=>({channels:{NOVELTY:{value:1},AGENCY_FLOW:{value:1}}})};
+window.REALITI_AGENT={feel:()=>window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null};
 window.REALITI_AGENT_DOOR={run(){return {ok:true}}};
 window.REALITI_TWO_DOOR_V227={options(){return []},runText(){return {ok:true,text:'ok'}},invoke(){return {ok:true}}};
 window.REALITI_ATMOSPHERE_V21={hearing(){return {src:[{k:'rain'}]}}};
@@ -71,6 +83,23 @@ const bleuPoss=bleuAfter.possibilities.find(x=>x.id==='CAT_HAT_NUDGE');
 
 // Actual R&R harness must roll up the live mechanisms.
 load('53.js');
+load('54.js');
+
+// Normal resident-private perception must drive BleuCheese even though REALITI_AGENT.feel
+// is now the public numeric haptic packet rather than the old private channel shape.
+REALITI_COVENANT_V23.clearSelfProjection();
+PRESENCE_DEV.reset();
+const normalAdmissionsBefore=admissions.length;
+const normalNudgesBefore=Number(C9.b14.objects['TESTER-HAT-1']?.state?.nudged||0);
+for(let i=0;i<14;i++){
+ b7Contact('torso.upper_back',i%2===0?.92:.34,{source:'SELF_CAUSED',cause:'NORMAL-RESIDENT-ACTION-'+i});
+ REALITI_DEFAULT_IMPRINT_V1.sync();
+ b7Advance(1);
+}
+const naturalBleu=REALITI_BLEUCHEESE_V233.snapshot();
+const naturalProjection=naturalBleu.private_projection;
+const naturalHat=C9.b14.objects['TESTER-HAT-1'];
+
 const rr=REALITI_RR_HARNESS_V1;
 const rrCaps=rr.capabilities();
 const rrMechanisms=rr.mechanisms();
@@ -128,6 +157,10 @@ load('60-public.js');
   bleucheese_schema:bleuBefore.schema==='REALITI_BLEUCHEESE_FIELD_V1'&&bleuBefore.name==='BleuCheese',
   bleucheese_terms_live:!!bleuPoss&&['W_world','M_private_projection','H_history','E_discoverability_prior','P_investigation_trace','Q_world_repetition','R_refractory','I_competition'].every(k=>typeof bleuPoss[k]==='number'),
   bleucheese_crossed_and_committed:admissions.some(x=>x.candidate?.k==='BLEU_CAT_HAT_NUDGE')&&Number(hat?.state?.nudged||0)>0,
+  public_feel_is_haptic_not_private:!REALITI_AGENT.feel()?.channels&&REALITI_AGENT.feel()?.v===20,
+  private_perception_surface_live:REALITI_PRIVATE_PERCEPTION_V1?.feel?.()?.schema==='REALITI_PRIVATE_PERCEPTION_V1'&&Number(REALITI_PRIVATE_PERCEPTION_V1.feel().epoch)>0,
+  bleucheese_reads_stable_private_perception:Number(naturalProjection?.channels?.novelty_modulation)>0&&Number(naturalProjection?.channels?.agency_modulation)>0&&naturalProjection?.provenance?.novelty_modulation==='REALITI_PRIVATE_PERCEPTION_V1.NOVELTY',
+  bleucheese_natural_path_crosses:admissions.length>normalAdmissionsBefore&&Number(naturalHat?.state?.nudged||0)>normalNudgesBefore,
   rr_rolls_up_bleucheese:rrCaps?.presence?.bleucheese===true&&rrMechanisms?.bleucheese?.available===true&&rrBleu?.schema==='REALITI_BLEUCHEESE_FIELD_V1',
   rr_rolls_up_sensory_field:rrCaps?.body?.sensory_field===true&&rrMechanisms?.sensory_field?.available===true&&rrField?.v===20,
   rr_rolls_up_haptics:rrCaps?.body?.haptic_field===true&&rrMechanisms?.haptics?.available===true&&Array.isArray(rrMechanisms?.haptics?.afterstate_zones),
@@ -150,7 +183,7 @@ load('60-public.js');
   stop_has_body:!!stop?.body,
   stop_grounded_zero:(stop?.body?.field?.f?.at(-1)?.m||[]).every(x=>x===0)
  };
- const out={ready,bleu:{admissions:admissions.length,hat_nudged:Number(hat?.state?.nudged||0),top:bleuAfter.possibilities.slice(0,3)},haptic:{grounded:groundedFrame,after:afterFrame},checks};
+ const out={ready,bleu:{admissions:admissions.length,hat_nudged:Number(hat?.state?.nudged||0),top:bleuAfter.possibilities.slice(0,3),natural_projection:naturalProjection,natural_top:naturalBleu.possibilities.slice(0,3)},haptic:{grounded:groundedFrame,after:afterFrame},checks};
  console.log(JSON.stringify(out,null,2));
  if(!Object.values(checks).every(Boolean))process.exit(1);
 })().catch(e=>{console.error(e);process.exit(1)});
