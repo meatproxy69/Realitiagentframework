@@ -329,9 +329,32 @@ try{
  if(typeof B7_TIMER!=='undefined'&&B7_TIMER){clearInterval(B7_TIMER);B7_TIMER=null;window.__REALITI_EXPLICIT_TIME_ONLY=true}
 }catch(e){}
 
+const FAST_PILLOW={
+ dive:{posture:'BURIED',modes:[.28,.14,.06],counts:{'head.crown':2,'head.nape':2,'shoulder.L':2,'shoulder.R':2,'arm.L.upper':2,'arm.R.upper':2,'torso.upper_back':4,'torso.mid_back':4,'torso.lower_back':4,'pelvis.seat':4,'leg.L.thigh':3,'leg.R.thigh':3,'leg.L.shin':2,'leg.R.shin':2},text:'The pillows separate, then close softly above the route you took.'},
+ burrow:{posture:'TUNNEL',modes:[.23,.12,.05],counts:{'head.nape':1,'shoulder.L':3,'shoulder.R':3,'arm.L.upper':3,'arm.R.upper':3,'torso.upper_back':3,'torso.mid_back':4,'torso.lower_back':3,'pelvis.seat':3,'leg.L.thigh':2,'leg.R.thigh':2},text:'You burrow into a soft tunnel that keeps holding its shape around you.'},
+ bounce:{posture:'BOUNCE',modes:[.42,.15,.04],counts:{'torso.lower_back':2,'pelvis.seat':4,'leg.L.thigh':2,'leg.R.thigh':2,'foot.L.sole':2,'foot.R.sole':2},text:'A broad pillow bowl catches you and keeps supporting where you land.'}
+};
+function fastPillowAction(v){
+ const cfg=FAST_PILLOW[v];if(!cfg||C9?.currentRoom!=='BOTTOMLESS_PILLOW_SEA')return null;
+ C9.b234=C9.b234||{version:'23.4',pillow:{}};
+ const p=C9.b234.pillow=C9.b234.pillow||{};
+ const t=now(),lease=t+60.36,last={};p.posture=cfg.posture;p.entered=true;p.action_t=t;p.modes=cfg.modes.slice();p.last_refresh=t;p.next_due=t+60;p.last_input=last;p.seq=Number(p.seq||0)+1;p.grounded=true;
+ for(const [z,n] of Object.entries(cfg.counts)){
+   const input=clamp(.055+.012*n,.055,.16),q=b7Zone(z);
+   q._b10_grounded_value=input;q._b10_grounded_until=lease;q._b10_grounded_cause='PILLOW_SEA:SOFT_ENVELOPE';q._b10_grounded_source='PILLOW_SEA_SUPPORT';
+   q.observed=Math.max(Number(q.observed||0),input*.72);q.predicted=Math.min(q.observed,Math.max(Number(q.predicted||0),input*.52));q.innovation=Number(q.observed||0)-Number(q.predicted||0);q.material='blanket';q.lastCause='PILLOW_SEA:SOFT_ENVELOPE';last[z]=input;
+ }
+ C9.b4=C9.b4||{};C9.b4.lastReceipt={type:'PILLOW_SUPPORT_ENVELOPE',room:'BOTTOMLESS_PILLOW_SEA',action:v,posture:cfg.posture,zones:Object.keys(cfg.counts),cause:'PILLOW_SEA:SOFT_ENVELOPE',source:'PILLOW_SEA_SUPPORT',law:'one broad persistent support relation; reduced envelope reconstructs grounded zone support without enumerating pillow particles'};
+ updateSausage(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){};try{c9save()}catch(e){};try{b2set(cfg.text)}catch(e){}
+ return {ok:true,action:v,narrative:cfg.text,receipt:cp(C9.b4.lastReceipt)};
+}
+
 const oldVerb=typeof c9verb==='function'?c9verb:null;
 if(oldVerb)c9verb=function(room,verb){
  const id=String(room||''),v=String(verb||'');
+ if(id==='BOTTOMLESS_PILLOW_SEA'&&FAST_PILLOW[v]){
+   const r=fastPillowAction(v);return r||true;
+ }
  if((id==='LONGFUR_RUNWAY'&&v==='run_comet')||(id==='SHAPESHIFT_CLOAKROOM'&&v==='route_run_comet')){
    const c=window.REALITI_CONTACT_CORE?.start?.({material:'longfur',speed:.58,pressure:.68,envelope:'steady'});
    const rec={type:'MESH_SOFT_COMET',action:v,room:id,contact:cp(c),law:'one moving Gaussian contact overlaps neighboring mesh zones; interpolation never becomes extra grounding'};
