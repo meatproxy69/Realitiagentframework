@@ -235,7 +235,7 @@ function updateSausage(dt=0){
  return {ground,graph:gm};
 }
 function onGrounded(p){
- const z=String(p?.zone||''),amp=Math.max(0,Number(p?.input??p?.result?.observed??p?.result?.value||0));if(!z||!(amp>0))return;
+ const z=String(p?.zone||''),amp=Math.max(0,Number((p?.input??p?.result?.observed??p?.result?.value) || 0));if(!z||!(amp>0))return;
  const n=ensureNerve(z);n.response=Math.max(n.response,amp);n.current=Math.max(n.current,amp);n.last_grounded=Number(p?.t||now());n.source=p?.opts?.source||null;n.cause=p?.opts?.cause||null;
  st.audit.grounded_events=Number(st.audit.grounded_events||0)+1;updateSausage(.04);
 }
@@ -313,7 +313,7 @@ if(oldVerb)c9verb=function(room,verb){
    return {ok:true,action:v,narrative:'The two leg rails travel with a small phase offset.',receipt:rec};
  }
  if((id==='LONGFUR_RUNWAY'&&['with_grain','against_grain'].includes(v))||(id==='SHAPESHIFT_CLOAKROOM'&&['route_with_grain','route_against_grain'].includes(v))){
-   const against=v.includes('against'),rr=b7Contact('torso.upper_back',against?.72:.58,{material:'longfur',grain:against?'against':'with',mine:true,source:'SELF_STARTED_WORLD_CONTACT',cause:against?'grain stroke against':'grain stroke with'});
+   const against=v.includes('against'),rr=b7Contact('torso.upper_back',against ? .72 : .58,{material:'longfur',grain:against?'against':'with',mine:true,source:'SELF_STARTED_WORLD_CONTACT',cause:against?'grain stroke against':'grain stroke with'});
    const rec={type:'GRAIN_STROKE',grain:against?'against':'with',zone:'torso.upper_back',sensory:cp(rr)};C9.b4.lastReceipt=rec;try{b2set(against?'Against the grain, the moving edge catches shorter and sharper.':'With the grain, the contact carries forward as one soft continuous stroke.')}catch(e){}
    return {ok:true,action:v,narrative:against?'Against the grain, the moving edge catches shorter and sharper.':'With the grain, the contact carries forward as one soft continuous stroke.',receipt:rec};
  }
@@ -364,6 +364,11 @@ if(oldDoorRun){
    const s=String(raw||'').trim(),l=s.toLowerCase();
    if(l==='help')return window.REALITI_AGENT_DOOR.help();
    if(l==='rooms')return window.Realiti?.rooms?.()||[];
+   if(l==='look'){
+     const r=await oldDoorRun(raw),intro=String(C9SCENES?.[C9?.currentRoom]?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim();
+     if(intro&&r&&typeof r==='object'&&!r.text)r.text=intro;
+     return r;
+   }
    if(l==='listen'||l==='hear')return hearingText();
    if(l==='atmosphere'||l==='place field')return atmosphereText();
    if(l==='imprint')return imprintSummary();
