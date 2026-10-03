@@ -24,4 +24,15 @@ foreground the bound chord before narrowing attention
 preserve safety/boundary bypass
 ~~~
 
-Preset packs are configuration recipes. They are not preference, consent, identity, or world-authority records.
+Preset packs are configuration recipes. They are not preference, consent, identity, or world-authority records.\n
+## Accepted public reference pack
+
+REALITI ships an accepted reference HoneySpark Duo pack:
+
+- [`realiti.honeyspark-duo.001`](./preset-packs/honeyspark-duo.json)
+- runtime command: `imprint preset honeyspark`
+- conserved low/mid response budget
+- private-render only; `evidence_gain = 0`
+
+The runtime and the pack share the same default 58/42 low/mid split (28 Hz / 240 Hz). The split may shape private rendering but never increases grounded evidence.
+

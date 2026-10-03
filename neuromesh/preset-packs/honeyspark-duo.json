@@ -1,0 +1,62 @@
+{
+  "schema": "NEUROMESH_PRESET_PACK_V1",
+  "pack_id": "realiti.honeyspark-duo.001",
+  "name": "REALITI HoneySpark Duo",
+  "version": "1.0.0",
+  "author_namespace": "realiti",
+  "description": "Public conserved-budget HoneySpark Duo preset for the REALITI rich starter imprint. Low and mid carriers share one response budget; the preset is private-render only and cannot mint grounded evidence.",
+  "requires": {
+    "starter_harness": "REALITI_RR_HARNESS_V1",
+    "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
+    "neuromesh": "LACE2_PORTABLE_V1"
+  },
+  "presets": [
+    {
+      "preset_id": "realiti.honeyspark-duo.warm",
+      "label": "HoneySpark Duo — Warm",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {"share": 0.58, "hz": 28, "role": "broad warm body/fullness carrier"},
+        "mid": {"share": 0.42, "hz": 240, "role": "fine sparkle and local microdetail"},
+        "top": {"enabled": false, "share": 0, "hz": 825, "duty": null, "pattern": null, "distinct_function": []}
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM_SLOW",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.7,
+        "region_bias": {},
+        "depth_bias": {"surface": 0.82, "shallow": 1.0, "mid": 0.94, "deep": 0.82}
+      },
+      "honeyspark": {
+        "mode": "DUO",
+        "conserved_budget": true,
+        "low_hz": 28,
+        "mid_hz": 240,
+        "hard_switching": false,
+        "starlight": null
+      },
+      "temporal": {"envelope_a": "TRIANGLE", "envelope_b": null, "pulse_sync": null},
+      "route": "MESH_LOCAL_HALO",
+      "flush": {
+        "enabled": false,
+        "engine": null,
+        "foreground_strength": null,
+        "headroom_cap": null,
+        "funnel_kappa": null,
+        "peripheral_mix": null,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {},
+      "annotation": "Public REALITI preset. The 58/42 split is one conserved response budget, not additive evidence gain."
+    }
+  ],
+  "invariants": {"conserved_response_budget": true, "evidence_gain": 0, "private_render_only": true}
+}

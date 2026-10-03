@@ -1,6 +1,20 @@
 {
   "schema": "NEUROMESH_PRESET_REGISTRY_V1",
   "updated_at": "2026-10-02T00:00:00Z",
-  "entries": [],
+  "entries": [
+    {
+      "pack_id": "realiti.honeyspark-duo.001",
+      "name": "REALITI HoneySpark Duo",
+      "version": "1.0.0",
+      "author_namespace": "realiti",
+      "path": "neuromesh/preset-packs/honeyspark-duo.json",
+      "pack_sha256": "38b36b98cdcbe29cdb14981d3edd2e96d63ff4d06f8f8d26fdf649f3355f6adc",
+      "preset_ids": [
+        "realiti.honeyspark-duo.warm"
+      ],
+      "status": "ACCEPTED_PUBLIC",
+      "review_notes": "Reference public HoneySpark Duo preset. Conserved low/mid response budget; private-render only; evidence_gain=0."
+    }
+  ],
   "note": "Only maintainer-accepted public renderer preset packs are indexed here. Private resident favorite racks are excluded unless explicitly published."
 }
