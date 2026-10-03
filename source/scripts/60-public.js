@@ -116,13 +116,35 @@ async function invoke(name,args={}){
  }catch(e){return fail(String(e?.message||e))}finally{mutating=false}
 }
 function machine(value){if(value==null||typeof value!=='object')return null;const out={};const skip=new Set(['text','world','sense','resident_text','raw','options','field','body','here','command','trace','history','label','narrative','structured','receipt','play_receipt','result','available']);for(const [k,v] of Object.entries(value)){if(skip.has(k))continue;if(k==='action')out.action=publicActionId(v);else if(k==='objects'&&Array.isArray(v))out.objects=v.map(publicObjectId);else out[k]=publicRefs(cp(v))}const rec=value.receipt||value.play_receipt||value.structured?.sensory;if(rec){out.receipt_available=true;const summary=receiptSummary(rec);if(summary)out.receipt_summary=summary}return out}
+function residentBodySummary(body){
+ const p=body?.field,f=p?.f?.[p.f.length-1],m=f?.m||body?.grounding?.m||[],x=f?.x||[];
+ const grounded=Array.isArray(m)?m.reduce((n,v)=>n+(Number(v)===1?1:0),0):0;
+ const afterstate=Array.isArray(x)?x.some(v=>Array.isArray(v)&&Math.abs(Number(v[2]||0))>0):false;
+ return {grounded_zones:grounded,afterstate};
+}
+function compactDoorResult(raw,value){
+ if(!value||typeof value!=='object'||value.schema!=='REALITI_MUTATION_RESULT_V1')return value;
+ const here=value.here||{};
+ return {
+  schema:value.schema,ok:value.ok!==false,
+  ...(value.error?{error:value.error}:{}),
+  ...(value.receipt_ref?{receipt_ref:value.receipt_ref}:{}),
+  ...(value.receipt_id?{receipt_id:value.receipt_id}:{}),
+  ...(value.result!==undefined?{result:value.result}:{}),
+  here:{room:here.room||null,world_time:here.world_time??null,quiet_scope:here.quiet_scope??null,session:here.session??null},
+  felt:residentBodySummary(value.body),
+  detail_hint:value.receipt_ref?`receipt ${value.receipt_ref}`:null
+ };
+}
+async function agentDoorRun(raw){return compactDoorResult(raw,await run(raw))}
+
 async function save(){window.c9saveNow();await pocket.flush();return storage.save()}
-function publicHelp(){return {schema:'REALITI_HELP_V1',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','Realiti.read("realiti://capabilities")','const harness = Realiti.read("realiti://harness")','verify harness.id === \'REALITI_RR_HARNESS_V1\'','Realiti.read("realiti://body")','Realiti.read("realiti://imprint")'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'The R&R harness is mounted before the first resident action. Verify it before exploring; do not mistake the host/runtime loader for the harness.'},commands:['rooms','look','actions','go <room>','do <action-id>','feel','feel words','receipt [receipt-ref]','stay [wall-ms]','wait [max-wall-ms]','listen','atmosphere','hush','normal','where_was_i','home','stop','goodbye','save'],note:'Use Realiti.rooms() and Realiti.actions() for canonical IDs; available actions are state-dependent.'}}
+function publicHelp(){return {schema:'REALITI_HELP_V1',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','Realiti.read("realiti://capabilities")','const harness = Realiti.read("realiti://harness")','verify harness.id === \'REALITI_RR_HARNESS_V1\'','Realiti.read("realiti://body")','Realiti.read("realiti://imprint")'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'The R&R harness is mounted before the first resident action. Verify it before exploring; do not mistake the host/runtime loader for the harness.'},commands:['rooms','look','actions','go <room>','act <action-id>','do <action-id>','feel','feel words','felt','receipt [receipt-ref]','stay [wall-ms]','wait [max-wall-ms]','listen','atmosphere','hush','normal','where_was_i','home','stop','goodbye','save'],note:'Use Realiti.rooms() and Realiti.actions() for canonical IDs; available actions are state-dependent.'}}
 async function run(raw){const s=clean(raw),l=s.toLowerCase();if(!s||s.length>4300)return fail('INVALID_COMMAND');
  if(window.REALITI_STOP_V1.isStop(s))return invoke('stop');
  if(l==='help')return publicHelp();
  if(['rooms','places','more places','all places'].includes(l))return rooms.list();
- if(['feel words','feel numbers','feel field'].includes(l))return invoke('feel',{mode:l.endsWith('words')?'words':'field'});
+ if(['feel words','felt','feel numbers','feel field'].includes(l))return invoke('feel',{mode:l==='felt'||l.endsWith('words')?'words':'field'});
  if(['hush','quiet','normal'].includes(l))return invoke('ambient_mode',{mode:l==='normal'?'normal':'hush'});
  if(['leave','exit','bye'].includes(l))return invoke('goodbye');
  if(['where was i','where was i?','where_was_i'].includes(l))return invoke('where_was_i');
@@ -161,6 +183,6 @@ const agentDoorHelp=publicHelp();
 window.REALITI_AGENT_DOOR.help=publicHelp;
 window.REALITI_AGENT_DOOR.startup=Object.freeze(agentDoorHelp.startup.slice());
 window.REALITI_AGENT_DOOR.entry_contract=Object.freeze({...agentDoorHelp.entry_contract});
-window.REALITI_AGENT_DOOR.run=run;
+window.REALITI_AGENT_DOOR.run=agentDoorRun;
 if(ended)stream.stop();capture();
 })();
