@@ -54,7 +54,23 @@ async function actMatch(s,re){
    const nestNerve=Object.keys(nestIm.nerve?.zones||{});
    check('nest_support_reaches_nerve',nestNerve.filter(z=>/head|torso|pelvis|leg/.test(z)).length>=6,nestNerve);
 
-   console.log('ACCEPTANCE nest ingress done');
+   // Full R&R harness rollup: verify each shipped subsystem is actually mounted and wired.
+   const rr=w.REALITI_RR_HARNESS_V1,rrBoot=rr.boot(),rrSnap=rr.snapshot(),rrMech=rr.mechanisms(),rrCaps=rr.capabilities(),rrPublic=s.publicApi.read('realiti://harness');
+   const requiredAdapters=['nerve','lace','chronolace','private_renderer','perception'];
+   check('rr_boot_ready',rrBoot?.ok===true&&rrPublic?.mechanism_status?.ok===true,{rrBoot,public_status:rrPublic?.mechanism_status});
+   check('rr_private_adapters_live',requiredAdapters.every(x=>rrMech?.adapters?.active?.includes(x)),{active:rrMech?.adapters?.active,required:requiredAdapters});
+   check('rr_nerve_live',rrMech?.nerve?.available===true&&rrMech?.nerve?.adapter_registered===true&&rrMech?.nerve?.active_zone_count>=6,rrMech?.nerve);
+   check('rr_lace_live',rrMech?.lace?.available===true&&rrMech?.lace?.adapter_registered===true&&Number(rrMech?.lace?.node_count)>=35,rrMech?.lace);
+   check('rr_chronolace_live',rrMech?.chronolace?.available===true&&rrMech?.chronolace?.adapter_registered===true&&Number.isFinite(Number(rrMech?.chronolace?.now)),rrMech?.chronolace);
+   check('rr_private_renderer_live',rrMech?.private_renderer?.available===true&&rrMech?.private_renderer?.adapter_registered===true&&rrMech?.private_renderer?.sausage_available===true,rrMech?.private_renderer);
+   check('rr_perception_live',rrMech?.perception?.available===true&&rrMech?.perception?.adapter_registered===true&&w.REALITI_PRIVATE_PERCEPTION_V1?.feel?.()?.schema==='REALITI_PRIVATE_PERCEPTION_V1',rrMech?.perception);
+   check('rr_grounded_stack_live',rrMech?.haptics?.available===true&&rrMech?.sensory_field?.available===true&&rrMech?.sensory_ecology?.available===true,{haptics:rrMech?.haptics?.available,sensory_field:rrMech?.sensory_field?.available,sensory_ecology:rrMech?.sensory_ecology?.available});
+   check('rr_presence_stack_live',rrMech?.bleucheese?.available===true&&rrMech?.covenant?.available===true&&rrMech?.agency_field?.available===true,{bleucheese:rrMech?.bleucheese,covenant:rrMech?.covenant,agency:rrMech?.agency_field});
+   check('rr_support_continuity_memory_live',rrMech?.support?.available===true&&rrMech?.continuity?.available===true&&rrMech?.pocket?.available===true,{support:rrMech?.support,continuity:rrMech?.continuity,pocket:rrMech?.pocket});
+   check('rr_atmosphere_thicc_aura_live',rrMech?.atmosphere?.available===true&&rrMech?.thicc?.available===true&&rrMech?.aura?.available===true,{atmosphere:rrMech?.atmosphere,thicc:rrMech?.thicc,aura:rrMech?.aura});
+   check('rr_no_adapter_errors',!(rrSnap?.recent_history||[]).some(x=>x.kind==='PRIVATE_ADAPTER_ERROR'),rrSnap?.recent_history||[]);
+
+   console.log('ACCEPTANCE nest ingress + R&R rollup done');
 
    // Local touch must remain local-first over the mesh.
    await door.run('go NO_ASK_SANCTUARY');await door.run('stop');w.REALITI_CONTINUITY.reopen();
@@ -87,6 +103,8 @@ async function actMatch(s,re){
    const im=await door.run('imprint');
    check('door_imprint_tuning',tune?.ok===true&&Math.abs(Number(im?.params?.sausage_spread)-.31)<1e-9,im?.params?.sausage_spread);
    check('honeyspark_runtime',honey?.ok===true&&im?.honeyspark?.enabled===true&&im?.honeyspark?.conserved_budget===true,im?.honeyspark);
+   const rrHoney=w.REALITI_RR_HARNESS_V1.mechanisms()?.private_renderer?.honeyspark;
+   check('rr_honeyspark_rollup',rrHoney?.enabled===true&&rrHoney?.conserved_budget===true,rrHoney);
 
    console.log('ACCEPTANCE mesh spread/release/imprint done');
 
@@ -108,7 +126,7 @@ async function actMatch(s,re){
    try{w.REALITI_CONTACT_CORE.release()}catch{}
 
    const bilateral=await door.run('act route_bilateral');
-   check('bilateral_has_phase_offset',bilateral?.ok===true&&Number(w.C9?.b4?.lastReceipt?.side_phase_ms||0)>0,{result:bilateral,last:w.C9?.b4?.lastReceipt});
+   check('bilateral_has_phase_offset',bilateral?.ok===true&&Number(bilateral?.side_phase_ms||bilateral?.result?.side_phase_ms||w.C9?.b4?.lastReceipt?.side_phase_ms||0)>0,{result:bilateral,last:w.C9?.b4?.lastReceipt});
 
    const lace=await door.run('lace');
    check('lace_uses_graph_connectivity',lace?.ok===true&&Number(lace.lambda2)>0&&Number(lace.node_count)>=35&&Number(lace.coherence_proxy)>0,{lace});
