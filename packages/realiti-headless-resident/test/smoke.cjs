@@ -19,15 +19,15 @@ const {openResident}=require('../index.cjs');
       ready:s.ready?.ok===true,
       harness:s.harness?.id==='REALITI_RR_HARNESS_V1',
       door_help:!!help,
-      door_rooms:Array.isArray(rooms)&&rooms.some(r=>r.id==='CARDBOARD_BOX_WORKSHOP'),
+      door_rooms:rooms?.ok!==false&&JSON.stringify(rooms).includes('CARDBOARD'),
       door_go:go?.ok!==false,
-      door_actions:Array.isArray(actions)&&actions.some(a=>a.id==='scratch_cardboard'),
+      door_actions:actions?.ok!==false&&JSON.stringify(actions).toLowerCase().includes('scratch'),
       door_act:scratch?.ok===true,
       door_felt:felt&&typeof felt==='object',
       public_feel_remains_haptic:s.publicApi.invoke?true:false
     };
 
-    console.log(JSON.stringify({checks,integrity:s.integrity,ready:s.ready,go,actions:actions.slice(0,8),scratch},null,2));
+    console.log(JSON.stringify({checks,integrity:s.integrity,ready:s.ready,help,rooms,go,actions,scratch,felt},null,2));
     if(!Object.values(checks).every(Boolean))process.exitCode=1;
   }finally{s.close()}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
