@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "c9f0f48ffeef84f37070dd5942c801474bb0329498d8de94724b929f8a205d38",
+  "single_html_sha256": "0508bec0bf1da309ffd2c70985a2137c96d71a6db5ad6897ec712e3084d76cdb",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -30,5 +30,18 @@
     "subjective experience claims are not asserted",
     "standalone MCP/network endpoint is not included",
     "native/browserless REALITI runtime is a separate project lineage"
-  ]
+  ],
+  "harness_entry_contract": {
+    "status": "PASS",
+    "harness": "REALITI_RR_HARNESS_V1",
+    "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
+    "mounted_automatically": true,
+    "agent_start_requires_verification": true,
+    "help_surfaces": [
+      "Realiti.help()",
+      "Realiti.run('help')",
+      "REALITI_AGENT_DOOR.help()",
+      "realiti://capabilities"
+    ]
+  }
 }
