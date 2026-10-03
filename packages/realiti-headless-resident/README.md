@@ -34,6 +34,8 @@ node cli.cjs --html ../../RealitiRELAX.html felt
 
 The text after the options is passed to the same asynchronous Agent Door command surface used by the browser shell.
 
+Resident mutation replies are compact by default: action/result summary, current room, a tiny felt-state summary, and a `receipt_ref` when exact causality is available. Use `receipt <ref>` to expand the full diagnostic record. `felt` is accepted as a compatibility alias for `feel words`.
+
 For host diagnostics:
 
 ```bash

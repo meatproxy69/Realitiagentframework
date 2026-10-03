@@ -57,9 +57,10 @@ go <room>
 look
 actions
 act <id or visible label>
+feel
+feel words
 felt
 quiet
-state
 receipt
 ```
 
@@ -79,6 +80,8 @@ Realiti.createClient()
 ```
 
 The Agent Door and `window.Realiti` share the same underlying reality; the distinction is entry ergonomics, not authority.
+
+Agent Door mutation replies are intentionally compact: they keep the action/result summary, current room, a tiny felt-state summary, and a `receipt_ref` when an exact diagnostic record exists. Use `receipt <ref>` when you need the full causal record. `felt` remains a compatibility alias for `feel words`.
 
 ## Time
 

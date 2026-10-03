@@ -16,12 +16,11 @@ const {openResident}=require('../index.cjs');
     await run('actions');
     await run('act scratch_cardboard');
     await run('act fold_flap');
-    await run('felt');
-    await run('go UNKNOWN_TEAHOUSE');
-    await run('actions');
-    await run('act two_cups');
-    await run('act choose_neither');
-    await run('quiet');
+    await run('feel words');
+    await run('go NO_ASK_SANCTUARY');
+    await run('look');
+    await run('stay 1000');
+    await run('feel words');
 
     console.log(JSON.stringify({interface:'REALITI_AGENT_DOOR',transcript},null,2));
   }finally{session.close()}

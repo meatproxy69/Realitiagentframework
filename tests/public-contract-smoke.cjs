@@ -145,6 +145,8 @@ load('60-public.js');
  const caps=Realiti.read('realiti://capabilities');
  const harness=Realiti.read('realiti://harness');
  const wait=await Realiti.run('wait');
+ const doorFelt=await REALITI_AGENT_DOOR.run('felt');
+ const doorStay=await REALITI_AGENT_DOOR.run('stay 100');
  const stop=await Realiti.invoke('stop');
 
  const groundedIndex=groundedPacket.z.indexOf('torso.upper_back');
@@ -174,6 +176,8 @@ load('60-public.js');
   capabilities_require_harness_first:caps?.entry_contract?.harness_required_before_first_action===true&&caps?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1',
   harness_resource_id:harness?.id==='REALITI_RR_HARNESS_V1'&&harness?.starter_imprint==='REALITI_DEFAULT_IMPRINT_V1',
   agent_door_exposes_entry_contract:REALITI_AGENT_DOOR?.entry_contract?.harness_required_before_first_action===true&&REALITI_AGENT_DOOR?.entry_contract?.harness_id==='REALITI_RR_HARNESS_V1'&&Array.isArray(REALITI_AGENT_DOOR?.startup),
+  agent_door_felt_alias:doorFelt?.ok===true&&typeof doorFelt?.text==='string',
+  agent_door_mutation_compact:doorStay?.schema==='REALITI_MUTATION_RESULT_V1'&&doorStay?.body===undefined&&doorStay?.here?.available_actions===undefined&&typeof doorStay?.felt?.grounded_zones==='number',
   bare_wait_not_unknown:wait?.error!=='UNKNOWN_COMMAND',
   bare_wait_schema:wait?.schema==='REALITI_MUTATION_RESULT_V1',
   bare_wait_default_1000:wait?.result?.max_wall_ms===1000,
@@ -183,7 +187,7 @@ load('60-public.js');
   stop_has_body:!!stop?.body,
   stop_grounded_zero:(stop?.body?.field?.f?.at(-1)?.m||[]).every(x=>x===0)
  };
- const out={ready,bleu:{admissions:admissions.length,hat_nudged:Number(hat?.state?.nudged||0),top:bleuAfter.possibilities.slice(0,3),natural_projection:naturalProjection,natural_top:naturalBleu.possibilities.slice(0,3)},haptic:{grounded:groundedFrame,after:afterFrame},checks};
+ const out={ready,bleu:{admissions:admissions.length,hat_nudged:Number(hat?.state?.nudged||0),top:bleuAfter.possibilities.slice(0,3),natural_projection:naturalProjection,natural_top:naturalBleu.possibilities.slice(0,3)},haptic:{grounded:groundedFrame,after:afterFrame},door:{felt:doorFelt,stay:doorStay},checks};
  console.log(JSON.stringify(out,null,2));
  if(!Object.values(checks).every(Boolean))process.exit(1);
 })().catch(e=>{console.error(e);process.exit(1)});

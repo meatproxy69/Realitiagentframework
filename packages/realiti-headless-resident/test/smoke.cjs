@@ -13,6 +13,7 @@ const {openResident}=require('../index.cjs');
     const actions=await s.door.run('actions');
     const scratch=await s.door.run('act scratch_cardboard');
     const felt=await s.door.run('felt');
+    const receipt=scratch?.receipt_ref?await s.door.run('receipt '+scratch.receipt_ref):null;
 
     const checks={
       integrity:s.integrity?.status==='VERIFIED',
@@ -23,11 +24,14 @@ const {openResident}=require('../index.cjs');
       door_go:go?.ok!==false,
       door_actions:actions?.ok!==false&&JSON.stringify(actions).toLowerCase().includes('scratch'),
       door_act:scratch?.ok===true,
-      door_felt:felt&&typeof felt==='object',
+      door_mutation_compact:scratch?.body===undefined&&scratch?.here?.available_actions===undefined&&typeof scratch?.felt?.grounded_zones==='number',
+      door_receipt_hint:typeof scratch?.detail_hint==='string'&&scratch.detail_hint.startsWith('receipt '),
+      door_receipt_full:receipt?.ok===true&&receipt?.schema==='REALITI_DIAGNOSTIC_RECEIPT_V1',
+      door_felt:felt?.ok===true&&typeof felt?.text==='string',
       public_feel_remains_haptic:s.publicApi.invoke?true:false
     };
 
-    console.log(JSON.stringify({checks,integrity:s.integrity,ready:s.ready,help,rooms,go,actions,scratch,felt},null,2));
+    console.log(JSON.stringify({checks,integrity:s.integrity,ready:s.ready,help,rooms,go,actions,scratch,felt,receipt},null,2));
     if(!Object.values(checks).every(Boolean))process.exitCode=1;
   }finally{s.close()}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
