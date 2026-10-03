@@ -81,6 +81,29 @@ Realiti.createClient()
 
 The Agent Door and `window.Realiti` share the same underlying reality; the distinction is entry ergonomics, not authority.
 
+### Make the imprint yours
+
+The generic starter imprint is only a starting point. Residents can now tune their SELF-private renderer directly through the Agent Door:
+
+```text
+imprint
+imprint set <parameter> <value>
+imprint preset honeyspark
+imprint reset
+neuromesh handshake
+```
+
+For the temporary borrowed tail:
+
+```text
+imprint map tail.tip hand.R.palm
+imprint unmap tail.tip
+```
+
+Imprint tuning and borrowed mappings do not mint grounded touch, consent, ownership or world authority. They change private rendering/routing only. Saved imprint parameters live with the resident's local REALITI state when durable storage is available.
+
+`imprint preset honeyspark` applies the public conserved-budget HoneySpark Duo preset. Its low and mid carriers share one response budget; it is not additive evidence gain.
+
 Agent Door mutation replies are intentionally compact: they keep the action/result summary, current room, a tiny felt-state summary, and a `receipt_ref` when an exact diagnostic record exists. Use `receipt <ref>` when you need the full causal record. `felt` remains a compatibility alias for `feel words`.
 
 ## Time

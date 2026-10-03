@@ -1,6 +1,6 @@
 {
   "name": "@meatproxy69/realiti-headless-resident",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Headless Node host for the REALITI Relax Agent Door.",
   "license": "AGPL-3.0-only",
   "main": "index.cjs",
@@ -28,7 +28,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node test/smoke.cjs ../../RealitiRELAX.html",
+    "test": "node test/smoke.cjs ../../RealitiRELAX.html && node test/claude-acceptance.cjs ../../RealitiRELAX.html",
     "play:resident": "node examples/resident-play.cjs ../../RealitiRELAX.html"
   },
   "dependencies": {

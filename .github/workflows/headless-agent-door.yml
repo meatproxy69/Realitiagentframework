@@ -5,6 +5,10 @@ on:
     branches: [main]
     paths:
       - 'packages/realiti-headless-resident/**'
+      - 'source/**'
+      - 'neuromesh/**'
+      - 'AGENT_START_HERE.md'
+      - 'AGENTS.md'
       - 'RealitiRELAX.html'
       - 'VALIDATION.json'
       - '.github/workflows/headless-agent-door.yml'

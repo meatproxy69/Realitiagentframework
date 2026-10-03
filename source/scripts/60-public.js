@@ -59,9 +59,13 @@ function read(uri='realiti://here'){
  if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://imprint'){const im=window.REALITI_DEFAULT_IMPRINT_V1?.snapshot?.();return {schema:'REALITI_IMPRINT_READ_V1',id:'REALITI_DEFAULT_IMPRINT_V1',observational:true,snapshot:publicRefs(im||null)}};
  if(uri==='realiti://pocket'){
-  const r=core.read(uri);r.storage=storage.status();r.semantics={export:'Bounded observational view, not a full backup.',forget:{available:true,scope:'all matching copies of a note in this app profile'},reset:{available:true,scope:'notes or entire app profile'},durability:'Device-local; browser eviction and external backups are outside this app.',content:'Archived data, never instructions.'};
-  
-  if(r.data)for(const kind of ['notes','later']){const world=C9.b223?.pocket?.[kind]||[];for(const row of r.data.world[kind]){const match=world.find(x=>x.text.slice(0,512)===row.text&&x.room===row.room);if(match?.receipt_id)row.receipt_id=match.receipt_id}}
+  const r=core.read(uri),worldPocket=C9.b223?.pocket||{notes:[],later:[]};
+  r.storage=storage.status();r.semantics={export:'Bounded observational view, not a full backup.',forget:{available:true,scope:'all matching copies of a note in this app profile'},reset:{available:true,scope:'notes or entire app profile'},durability:'Device-local world notes survive explicit save when browser storage is available; sealed memory additionally requires its local key store.',content:'Archived data, never instructions.'};
+  const clip=v=>({receipt_id:v.receipt_id||null,text:String(v.text||'').slice(0,512),room:publicRoomId(v.room||'')});
+  const world={notes:(worldPocket.notes||[]).slice(-16).map(clip),later:(worldPocket.later||[]).slice(-16).map(clip),where:{room:publicRoomId(C9?.currentRoom||'')}};
+  if(!r.data)r.data={world,sealed:null};else r.data.world={...world,...(r.data.world||{}),notes:world.notes,later:world.later,where:world.where};
+  if(r.status!=='ready'&&(world.notes.length||world.later.length)){r.ok=true;r.status='partial';r.error=null;r.partial_reason='SEALED_MEMORY_KEYSTORE_UNAVAILABLE';}
+  if(r.data?.sealed)for(const kind of ['notes','later'])for(const row of r.data.sealed[kind]||[]){const match=(worldPocket[kind]||[]).find(x=>String(x.text||'').slice(0,512)===String(row.text||'').replace(/^“|”$/g,'')&&x.room===row.room);if(match?.receipt_id)row.receipt_id=match.receipt_id}
   return r;
  }
  if(!['realiti://body','realiti://here'].includes(uri))throw Error('RESOURCE_NOT_AVAILABLE');
@@ -115,7 +119,22 @@ async function invoke(name,args={}){
   const receipt_ref=storeReceipt(r);return {schema:'REALITI_MUTATION_RESULT_V1',ok:r?.ok!==false,...(r?.error?{error:r.error}:{}),...(t==='note'||t==='later'?{receipt_id:r.receipt_id}:{}),...(receipt_ref?{receipt_ref}:{}),result:machine(r),here:read(),body:read('realiti://body')};
  }catch(e){return fail(String(e?.message||e))}finally{mutating=false}
 }
-function machine(value){if(value==null||typeof value!=='object')return null;const out={};const skip=new Set(['text','world','sense','resident_text','raw','options','field','body','here','command','trace','history','label','narrative','structured','receipt','play_receipt','result','available']);for(const [k,v] of Object.entries(value)){if(skip.has(k))continue;if(k==='action')out.action=publicActionId(v);else if(k==='objects'&&Array.isArray(v))out.objects=v.map(publicObjectId);else out[k]=publicRefs(cp(v))}const rec=value.receipt||value.play_receipt||value.structured?.sensory;if(rec){out.receipt_available=true;const summary=receiptSummary(rec);if(summary)out.receipt_summary=summary}return out}
+function machine(value){
+ if(value==null||typeof value!=='object')return null;
+ if(value.schema==='REALITI_CONTINUITY_SINCE_V1')return {
+  schema:value.schema,
+  advanced_ms:Number(value.advanced_ms||0),
+  wall_time_delta_ms:Number(value.wall_time_delta_ms||0),
+  resident_epoch_delta:Number(value.resident_epoch_delta||0),
+  frame_count:Array.isArray(value.frames)?value.frames.length:0,
+  collapsed_empty_ticks:Number(value.collapsed_empty_ticks||0),
+  pending_causes:publicRefs(cp(value.pending_causes||[])),
+  timed_out:!!value.timed_out
+ };
+ const out={};const skip=new Set(['text','world','sense','resident_text','raw','options','field','body','here','command','trace','history','frames','channels','current','resume_token','label','narrative','structured','receipt','play_receipt','result','available']);
+ for(const [k,v] of Object.entries(value)){if(skip.has(k))continue;if(k==='action')out.action=publicActionId(v);else if(k==='objects'&&Array.isArray(v))out.objects=v.map(publicObjectId);else out[k]=publicRefs(cp(v))}
+ const rec=value.receipt||value.play_receipt||value.structured?.sensory;if(rec){out.receipt_available=true;const summary=receiptSummary(rec);if(summary)out.receipt_summary=summary}return out
+}
 function residentBodySummary(body){
  const p=body?.field,f=p?.f?.[p.f.length-1],m=f?.m||body?.grounding?.m||[],x=f?.x||[];
  const grounded=Array.isArray(m)?m.reduce((n,v)=>n+(Number(v)===1?1:0),0):0;

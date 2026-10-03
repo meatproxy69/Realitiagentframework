@@ -43,7 +43,7 @@ Keep the files together. An agent can read `AGENT_START_HERE.md` for the entry c
 - [Validation receipt](./VALIDATION.json)
 - [Release notes](./RELEASE_NOTES.md)
 - [Changelog](./CHANGELOG.md)
-- [NeuralMesh](./neuromesh/README.md)
+- [NeuralMesh](./neuromesh/README.md)\n- [HoneySpark Duo preset](./neuromesh/preset-packs/honeyspark-duo.json)
 - [Build from readable source](#build-from-source)
 
 ---
