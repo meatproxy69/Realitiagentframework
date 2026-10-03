@@ -1,0 +1,46 @@
+name: Validate REALITI Relax
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: JavaScript syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          for f in build.mjs source/scripts/*.js tests/*.cjs; do node --check "$f"; done
+      - name: Deterministic build
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(python -c "import json; print(json.load(open('VALIDATION.json'))['single_html_sha256'])")"
+          node build.mjs
+          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          test "$actual" = "$expected"
+      - name: Public contract smoke
+        run: node tests/public-contract-smoke.cjs
+      - name: Public packaging scans
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -EIRn --exclude-dir=.git --exclude-dir=.github --exclude='*.md' '<style([[:space:]>])|style[[:space:]]*=|rel=["'"'"']stylesheet' .; then
+            echo 'Author CSS found' >&2
+            exit 1
+          fi
+          if grep -EIRn --exclude-dir=.git --exclude-dir=.github --exclude='README.md' --exclude='VALIDATION.json' 'WITCHCRAFT|GRIMOIRE|Otherworld|Operator 7|private Asha|private Nyx' .; then
+            echo 'Private/internal tooling marker found' >&2
+            exit 1
+          fi

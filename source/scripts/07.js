@@ -1,0 +1,1 @@
+function openResidentRoute(){return null;}
