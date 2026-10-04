@@ -96,11 +96,13 @@ async function open(id){return openResident({htmlPath:html,residentId:id,storage
  let actor=await open('agent-object-change');
  try{
   await actor.door.run('home');
-  const take=await actor.door.run('take hat');
-  check('explicit_hat_take_works',take?.ok!==false,take);
+  const takeAction=(await actor.door.run('actions')).actions.find(x=>/^take__FELT-HAT-1$/i.test(x.id)||/TAKE .*HAT/i.test(x.label));
+  const take=takeAction?await actor.door.run('act '+takeAction.id):{ok:false,error:'TAKE_ACTION_MISSING'};
+  check('explicit_hat_take_works',take?.ok!==false,{action:takeAction?.id,result:take});
   await actor.door.run('move right 1');
-  const place=await actor.door.run('place hat');
-  check('explicit_hat_place_works',place?.ok!==false,place);
+  const placeAction=(await actor.door.run('actions')).actions.find(x=>/^place__FELT-HAT-1$/i.test(x.id)||/PLACE .*HAT/i.test(x.label));
+  const place=placeAction?await actor.door.run('act '+placeAction.id):{ok:false,error:'PLACE_ACTION_MISSING'};
+  check('explicit_hat_place_works',place?.ok!==false,{action:placeAction?.id,result:place});
   await actor.door.run('goodbye');
  }finally{actor.close()}
  actor=await open('agent-object-change');
