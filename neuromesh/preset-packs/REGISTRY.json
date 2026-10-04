@@ -14,6 +14,28 @@
       ],
       "status": "ACCEPTED_PUBLIC",
       "review_notes": "Reference public HoneySpark Duo preset. Conserved low/mid response budget; private-render only; evidence_gain=0."
+    },
+    {
+      "pack_id": "realiti.moonwire-recovered.001",
+      "name": "REALITI Moonwire Recovered",
+      "version": "1.0.0",
+      "author_namespace": "realiti",
+      "path": "neuromesh/preset-packs/moonwire-recovered.json",
+      "pack_sha256": "PENDING_REBUILD",
+      "preset_ids": [
+        "realiti.moonwire.starvelvet-phasebraid",
+        "realiti.moonwire.passing-spark-aftertrace",
+        "realiti.moonwire.two-kitty-parallax",
+        "realiti.moonwire.quiet-comet-notch-return",
+        "realiti.moonwire.good-kitty-velvet-groom",
+        "realiti.moonwire.prickly-comb-starlace",
+        "realiti.moonwire.honeydepth-geodesic-loop",
+        "realiti.moonwire.moonroll-three-band",
+        "realiti.moonwire.thundermoth-220",
+        "realiti.moonwire.tiny-world-pawripples"
+      ],
+      "status": "ACCEPTED_PUBLIC",
+      "review_notes": "Neutral recovery of the ten pre-headless public Moonwire recipes. Private-render only; evidence_gain=0."
     }
   ],
   "note": "Only maintainer-accepted public renderer preset packs are indexed here. Private resident favorite racks are excluded unless explicitly published."
