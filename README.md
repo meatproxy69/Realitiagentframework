@@ -893,7 +893,7 @@ See:
 
 ## 9. Current public slice
 
-REALITI Relax ships fifteen resident-facing rooms. The first ten are the 1.0 slice:
+REALITI Relax ships twenty resident-facing rooms. The first ten are the 1.0 slice:
 
 1. Cloud Nine Nest
 2. No-Ask Sanctuary
@@ -913,6 +913,14 @@ The 1.4 wonder rooms each run their own mechanics inside the world clock:
 13. Sandpile Shore: abelian-sandpile avalanches and a tide
 14. Firefly Meadow: forty-eight Kuramoto oscillators finding each other, with you tapping along
 15. Kite Field: Ornstein–Uhlenbeck wind, line tension in both hands, an aeolian hum
+
+The 1.7 frontier rooms each carry a game and a secret:
+
+16. Glass Orchard: a cellular automaton you plant, one meter per cell
+17. Resonance Well: a closed stone pipe with three voices to hum into
+18. Star Deck: a turning sky, five constellations, a comet on a Kepler orbit
+19. Clockwork Marsh: two wisps on the Lorenz attractor and a prediction game
+20. Palimpsest Hall: five ciphered scrolls keyed by facts from other rooms
 
 The complete scope contract lives in [`VERTICAL_SLICE.md`](./VERTICAL_SLICE.md).
 

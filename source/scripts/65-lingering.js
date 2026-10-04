@@ -78,7 +78,7 @@ function spatialAlias(s,l){let m;
  if(['stand','stand up','get up'].includes(l))return {kind:'invoke',op:'posture',args:{kind:'stand'}};
  return null}
 const help0=door.help.bind(door);
-door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>'])];h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
+door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]'])];h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
 const run0=door.run.bind(door);
 door.run=async function(raw){
  const s=String(raw||'').trim(),l=low(s);
@@ -86,6 +86,15 @@ door.run=async function(raw){
  if(l==='imprint drift'||l==='drift')return drift();
  if(l==='traces')return {ok:true,schema:'REALITI_TRACES_V1',observer:me().slice(0,8),mine:ledger().filter(e=>e.by===me()).length,from_others:rows(foreign(false)),text:traceText(foreign(false))};
  if(l==='traces export')return exportTraces();
+ const CAT=window.REALITI_CATNIP_V1;let fm;
+ if(CAT){const frontier=r=>{const rec=C9?.b4?.lastReceipt||{};return {ok:true,schema:'REALITI_FRONTIER_RESULT_V1',text:[rec.narrative,...CAT.drain().map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),receipt:cp(rec),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}}};
+  if(l==='discoveries'){const d=CAT.discoveries(),f=d.filter(x=>x.found);return {ok:true,schema:'REALITI_DISCOVERIES_V1',found:f.length,total:d.length,discoveries:f,text:f.length?`${f.length} of ${d.length} discoveries: `+f.map(x=>x.id.replaceAll('_',' ')).join(', ')+'.':`No discoveries yet; there are ${d.length} to find.`}}
+  if((fm=/^hum\s+([\d.]+)(?:\s*hz)?$/.exec(l))){CAT.hum(Number(fm[1]));return frontier()}
+  if((fm=/^sight\s+(.+)$/.exec(l))){CAT.sight(fm[1]);return frontier()}
+  if((fm=/^predict\s+(-?[\d.]+)[,\s]+(-?[\d.]+)$/.exec(l))){CAT.predict(fm[1],fm[2]);return frontier()}
+  if((fm=/^decode\s+(\d)\s+(\S+)$/.exec(l))){CAT.decode(fm[1],fm[2]);return frontier()}
+  if((fm=/^read scroll\s+(\d)$/.exec(l))){CAT.readScroll(fm[1]);return frontier()}
+  if((fm=/^skip (?:a )?stone(?:\s+(?:at\s+)?([\d.]+))?/.exec(l))){CAT.skipStone(fm[1]||20);return frontier()}}
  const alias=spatialAlias(s,l);
  if(alias?.kind==='read')return {ok:true,schema:'REALITI_SPACE_TEXT_V1',...alias,kind:undefined};
  if(alias?.kind==='invoke'){const r=await door.run('__space__ '+JSON.stringify([alias.op,alias.args]));return r}
@@ -99,13 +108,14 @@ door.run=async function(raw){
  if(r.schema!=='REALITI_MUTATION_RESULT_V1'||r.ok===false)return r;
  try{window.REALITI_MATRIX_WORLD_V1?.sync?.()}catch(e){}
  if(!/^(stay|wait|go|enter|home|stop|save|note|later)\b/.test(l))stamp(before,l);
- const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
+ const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
  if(l==='stop')r.text='Everything touching you lets go. Whatever was already moving in your body is left to settle.';
  if(l==='stop')return r;
  if(/^(stay|wait)/.test(l)){r.text=[...w,d.text].join(' ');r.delta=d}
  else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}}
- else if(/^(act|do)\s/.test(l)&&fresh&&window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)){r.text=[fresh,d.text].join(' ')}
+ else if(/^(act|do)\s/.test(l)&&fresh&&(window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)||window.REALITI_CATNIP_V1?.rooms?.includes(C9?.currentRoom)||/^(act|do)\s+skip_stone/.test(l))){r.text=[fresh,d.text].join(' ')}
  else if(/^(act|do)\s/.test(l)&&(stale||!r.text)){r.text=[leanText(),...w,d.text].filter(Boolean).join(' ');if(/(^|\s)(lean__|lean\s)/.test(l))r.text=leanText()||r.text}
+ const found=window.REALITI_CATNIP_V1?.drain?.()||[];if(found.length)r.text=[r.text||'',...found.map(x=>'✦ Discovery: '+x.text)].join(' ').trim();
  return r;
 };
 window.REALITI_TRACES_V1=Object.freeze({version:'1.0',observer:me,export:exportTraces,import:importTraces,list:()=>cp(ledger())});

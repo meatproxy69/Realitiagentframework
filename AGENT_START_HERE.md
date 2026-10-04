@@ -184,6 +184,12 @@ Movement takes world time and is swept against the geometry: a wall stops you, a
 
 Five rooms carry whole mechanisms of their own: `ORRERY_LOFT` (n-body gravity, nudge a body and watch its ellipse), `LANTERN_MAZE` (only open exits are advertised; lanterns you light stay lit; `maze_map`), `SANDPILE_SHORE` (abelian sandpile avalanches, exponent estimated as you go), `FIREFLY_MEADOW` (Kuramoto synchronization; `tap_along` to join), `KITE_FIELD` (stochastic wind, tension in both palms, `read_wind`). Their numbers live in `REALITI_WONDER_V1.state()`; every action reply and every `stay` reports them. Refresh `actions` after each step in the maze and after launching the kite: the lists are state-dependent on purpose.
 
+### Frontier rooms, games and discoveries
+
+Five more places, each a mechanism with a game and a secret. `GLASS_ORCHARD`: a cellular automaton you plant one cell at a time (`plant_seed`, `scatter_seeds`); a generation passes every world second; keep something alive, or watch for a glass bird. `RESONANCE_WELL`: a closed stone pipe with three resonant voices; `hum 120` and follow what it tells you. `STAR_DECK`: a seeded sky that turns once per 600 s and a comet on a Kepler orbit; stand at the sextant and `sight the lantern` or `sight comet`. `CLOCKWORK_MARSH`: two wisps on the Lorenz attractor that began a centimeter apart; `predict 2 -3` where the first will be in five seconds. `PALIMPSEST_HALL`: five Vigenère scrolls whose keys are facts from other rooms; walk to a lectern, `read scroll 1`, `decode 1 <key>`.
+
+Secrets are earned from real conditions, never narrated: a syzygy in the Orrery, unison in the Meadow, a critical sandpile, every maze lantern lit, the bottom of the bath, a kite above sixty meters, seven skips on the pond (`skip stone 20` at the pond), and what the fifth scroll points to. `discoveries` lists what you have found; new ones are announced once, appended to whatever reply earned them.
+
 ### Imprint drift
 
 ```text

@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.7.0 — frontier rooms and discoveries
+
+### Added
+
+- Five frontier rooms (`source/scripts/58e-frontier.js`, `REALITI_CATNIP_V1`), each stepped inside the world clock and persisted in the world save: Glass Orchard (Life on a 24×24 one-meter grid, a generation per world second, glider detection), Resonance Well (quarter-wave modes of a closed stone pipe with Q≈25, felt in the sternum; a chord secret), Star Deck (120 seeded stars, five constellations, a sky turning once per 600 s, a comet solved from Kepler's equation; the Lantern constellation brightens with the maze's lanterns), Clockwork Marsh (two Lorenz wisps integrated with RK4, a five-second prediction game, the Lyapunov doubling time stated), Palimpsest Hall (five Vigenère scrolls read at their lecterns, keyed by facts from other rooms, ending at a loose board in the Nest).
+- Discoveries: twenty-three secrets earned from real conditions in old and new rooms, collected once and announced once; `discoveries` lists them. A stone-skipping model at the Kite Field pond.
+- Door aliases `hum`, `sight`, `predict`, `read scroll`, `decode`, `skip stone`, `discoveries`. Twenty rooms; headless suite `test/frontier.cjs`.
+
 ## 1.6.0 — resident-local continuity memory
 
 ### Added
