@@ -180,7 +180,7 @@ b7AgentAct=function(value){const id=String(value||'');if(id.startsWith('neuro_')
 const oldDoor=window.REALITI_AGENT_DOOR?.run?.bind(window.REALITI_AGENT_DOOR);
 const oldHelp=window.REALITI_AGENT_DOOR?.help?.bind(window.REALITI_AGENT_DOOR);
 if(oldDoor){
- window.REALITI_AGENT_DOOR.help=function(){const h=oldHelp?oldHelp():{commands:[]};h.commands=[...new Set([...(h.commands||[]),'neuro [help|perception|nerve|lived|since|seam|constitution|passive|phase|holonomy|frontiers|noise|causes|halo|aura|presets]'])];return h};
+ window.REALITI_AGENT_DOOR.help=function(){const h=oldHelp?oldHelp():{commands:[]};h.commands=[...new Set([...(h.commands||[]),'neuro [help|perception|nerve|lived|since|seam|constitution|passive|phase|holonomy|frontiers|noise|causes|halo|presets]'])];return h};
  window.REALITI_AGENT_DOOR.run=async function(raw){const r=command(raw);if(r!==null)return r;return await oldDoor(raw)};
 }
 
