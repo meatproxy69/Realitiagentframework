@@ -153,7 +153,16 @@ function labAction(id){
  if(id==='neuro_echo_closer')return oldLab(typeof b4Echo==='function'?b4Echo:null,'closer','ECHO_NEST',()=>C9.b4?.annex?.echo);
  if(id==='neuro_echo_wait')return oldLab(typeof b4Echo==='function'?b4Echo:null,'wait','ECHO_NEST',()=>C9.b4?.annex?.echo);
  const pm={neuro_purr_loose:'purr_loose',neuro_purr_close:'purr_close',neuro_purr_21:'purr_21',neuro_purr_rest:'purr_rest',neuro_purr_state:'purr_state'};
- if(pm[id])return oldLab(typeof b5PurrLoom==='function'?b5PurrLoom:null,pm[id],'PURR_LOOM',()=>typeof b5snapshot==='function'?b5snapshot():null);
+ if(pm[id]){
+  const phase=window.REALITI_PHASE_V11;
+  if(id==='neuro_purr_loose')phase?.start?.('slip');
+  if(id==='neuro_purr_close')phase?.start?.('lock');
+  const r=oldLab(typeof b5PurrLoom==='function'?b5PurrLoom:null,pm[id],'PURR_LOOM',()=>typeof b5snapshot==='function'?b5snapshot():null);
+  if(id==='neuro_purr_rest')phase?.stop?.();
+  if(r&&typeof r==='object')r.live_phase=cp(phase?.state?.()||null);
+  if(id==='neuro_purr_21'&&r&&typeof r==='object')r.live_phase_note='2:1 remains a historical harmonic probe; Build11 live phase is not silently relabelled as 2:1.';
+  return r
+ }
  const pd={neuro_puddle_left:'drop_left',neuro_puddle_right:'drop_right',neuro_puddle_both:'drop_both',neuro_puddle_opposed:'drop_opposed',neuro_puddle_fade:'let_fade',neuro_puddle_read:'read_puddle'};
  if(pd[id])return oldLab(typeof b5Puddlestar==='function'?b5Puddlestar:null,pd[id],'PUDDLESTAR_ATRIUM',()=>typeof b5snapshot==='function'?b5snapshot():null);
  const hm={neuro_honey_metal:'metal',neuro_honey_wood:'wood',neuro_honey_cloth:'cloth',neuro_honey_press:'press',neuro_honey_relax:'wait_relax',neuro_honey_ring:'ring'};
@@ -174,8 +183,17 @@ function labAction(id){
  }
  return null
 }
-const actBase=b7AgentAct;
-b7AgentAct=function(value){const id=String(value||'');if(id.startsWith('neuro_')){const r=labAction(id);if(r)return r}const r=actBase(value);finishState(.04);return r};
+const actBase=b7AgentAct,LAB_IDS=new Set(Object.values(LABS).flat().map(x=>x[0]));
+b7AgentAct=function(value){
+ const id=String(value||'');
+ if(LAB_IDS.has(id)){
+  const bridge=window.REALITI_BUILD13_ACTION_BRIDGE_V1,token=bridge?.begin?.(id,C9.currentRoom||null);
+  const r=labAction(id)||{ok:false,error:'LAB_ACTION_UNAVAILABLE',action:id};
+  finishState(.04);
+  return bridge?.finish?bridge.finish(token,r):r
+ }
+ const r=actBase(value);finishState(.04);return r
+};
 
 const oldDoor=window.REALITI_AGENT_DOOR?.run?.bind(window.REALITI_AGENT_DOOR);
 const oldHelp=window.REALITI_AGENT_DOOR?.help?.bind(window.REALITI_AGENT_DOOR);
