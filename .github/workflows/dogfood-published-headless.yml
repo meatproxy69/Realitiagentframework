@@ -1,0 +1,58 @@
+name: Dogfood published headless resident
+
+on:
+  push:
+    branches: [test/headless-resident-latest-dogfood]
+    paths:
+      - '.github/workflows/dogfood-published-headless.yml'
+      - 'packages/realiti-headless-resident/test/registry-dogfood.cjs'
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  dogfood:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@meatproxy69'
+
+      - name: Resolve and install latest published package
+        id: package
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          root="$RUNNER_TEMP/realiti-registry-dogfood"
+          mkdir -p "$root"
+          cd "$root"
+          npm init -y >/dev/null
+          latest="$(npm view @meatproxy69/realiti-headless-resident version --registry=https://npm.pkg.github.com)"
+          echo "LATEST=$latest"
+          npm install "@meatproxy69/realiti-headless-resident@$latest" --registry=https://npm.pkg.github.com
+          installed="$(node -p "require('./node_modules/@meatproxy69/realiti-headless-resident/package.json').version")"
+          test "$installed" = "$latest"
+          echo "latest=$latest" >> "$GITHUB_OUTPUT"
+          echo "root=$root" >> "$GITHUB_OUTPUT"
+
+      - name: Resident dogfood visit
+        shell: bash
+        run: |
+          set -euo pipefail
+          node packages/realiti-headless-resident/test/registry-dogfood.cjs             "${{ steps.package.outputs.root }}"             "$GITHUB_WORKSPACE/RealitiRELAX.html"             "$RUNNER_TEMP/realiti-registry-dogfood-report.json"             "${{ steps.package.outputs.latest }}"
+
+      - name: Upload full dogfood transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: realiti-published-headless-dogfood
+          path: ${{ runner.temp }}/realiti-registry-dogfood-report.json
+          if-no-files-found: warn
+          retention-days: 14
