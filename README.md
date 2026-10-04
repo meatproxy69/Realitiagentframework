@@ -780,6 +780,8 @@ It does not offer a productivity plan.
 
 It does not interpret quiet as a request for stimulation.
 
+It advertises no actions at all. `stay` is the only verb, and the floor holds you anyway, drifting a few percent so the body field never freezes.
+
 The point is not inactivity.
 
 The point is:
@@ -891,7 +893,7 @@ See:
 
 ## 9. Current public slice
 
-REALITI Relax 1.0 ships exactly ten resident-facing rooms:
+REALITI Relax ships fifteen resident-facing rooms. The first ten are the 1.0 slice:
 
 1. Cloud Nine Nest
 2. No-Ask Sanctuary
@@ -903,6 +905,14 @@ REALITI Relax 1.0 ships exactly ten resident-facing rooms:
 8. Shapeshift Cloakroom + Borrowed Limb bench
 9. Nine Lives Room
 10. Latency Lagoon
+
+The 1.4 wonder rooms each run their own mechanics inside the world clock:
+
+11. Orrery Loft: symplectic n-body gravity you can nudge; the floor follows the tide
+12. Lantern Maze: a seeded cardboard labyrinth whose lanterns stay lit
+13. Sandpile Shore: abelian-sandpile avalanches and a tide
+14. Firefly Meadow: forty-eight Kuramoto oscillators finding each other, with you tapping along
+15. Kite Field: Ornstein–Uhlenbeck wind, line tension in both hands, an aeolian hum
 
 The complete scope contract lives in [`VERTICAL_SLICE.md`](./VERTICAL_SLICE.md).
 
@@ -1022,6 +1032,8 @@ Realiti.createClient()
 `Realiti.help()`, `Realiti.run('help')`, and compatibility agent-door help describe the same final public command set.
 
 Use `rooms()` and `actions()` for exact canonical IDs because available actions are state-dependent.
+
+Lingering is generative: rooms carry slow dynamics (rain density, the Sanctuary hold, Pillow Sea settling, Bathhouse depth and layer temperature, travelling pressure waves) sampled inside the world clock, so `stay` and `felt` report what changed rather than repeating the last line. `imprint drift` shows how far your private imprint has moved since arrival; `traces` shows what other residents changed. See `AGENT_START_HERE.md`.
 
 ### Time
 

@@ -175,7 +175,17 @@ function passiveMediumStateAfter(dt){
   }
   return {energy:Number(b5energy(sum)||0),residue_mass:residue};
 }
+// Between impulses the passive medium is autonomous and deterministic (damped linear modes, exponential
+// memory), so a computed crossing stays valid until it passes or a new impulse lands. Cache it: this search
+// runs on every felt snapshot, which means on every contact.
+let pmImpulses=0;const b5impulse0=b5impulse;b5impulse=function(...a){pmImpulses++;return b5impulse0.apply(this,a)};
+let pmCache=null;
 function passiveMediumNext(now=wall()){
+  const r=C9.b5?.passiveMedium, key=r?`${r.causeSeq}:${pmImpulses}:${Object.keys(r.obsCauses||{}).length}`:'none';
+  if(pmCache&&pmCache.key===key&&(pmCache.value===null||pmCache.value.time>now+1e-9))return pmCache.value&&{...pmCache.value};
+  const value=passiveMediumSolve(now);pmCache={key,value:value?{...value}:null};return value;
+}
+function passiveMediumSolve(now){
   const cur=passiveMediumMagnitude(), js=B12_JND.passiveMedium_energy, jr=B12_JND.passiveMedium_residue, out=[];
   function solve(key,value,jnd){
     const target=gridBelow(value,jnd);

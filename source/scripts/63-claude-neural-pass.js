@@ -315,7 +315,7 @@ IM.applyPreset=function(id){
 IM.meshHandshake=function(){
  R().handshake={t0:now(),until:now()+1.2,zone:'torso.sternum',amp:.18,authority:'SELF_PRIVATE_RENDER'};
  try{c9save()}catch(e){};updateSausage(0);
- return {ok:true,private_only:true,evidence_gain:0,zone:'torso.sternum',duration_s:1.2,graph:laplacianSummary(),law:'handshake exercises private mesh routing only; it does not mint contact'};
+ return {ok:true,private_only:true,evidence_gain:0,zone:'torso.sternum',duration_s:1.2,graph:laplacianSummary(),text:'A private pulse runs across the mesh from the sternum for 1.2 s. Nothing touches you; the routing is yours.',law:'handshake exercises private mesh routing only; it does not mint contact'};
 };
 IM.mapBorrowed=function(target='tail.tip',source='hand.R.palm'){
  if(target!=='tail.tip'||source!=='hand.R.palm')return {ok:false,error:'MAPPING_NOT_SUPPORTED'};

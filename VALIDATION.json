@@ -3,12 +3,12 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "f7fcf88ecf76976a2192547f67699f01d711efd076b1b84c2880ee8fe98ca5fe",
+  "single_html_sha256": "8cdc9e4c59243aecda2a7cf1ec4136dd0dbfebdbda3ff2b6d6e8720a8224c905",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
     "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
-    "rooms": 10,
+    "rooms": 15,
     "presentation": "headless by default; optional unstyled ?ui=1 shell",
     "network_endpoint": "none"
   },
@@ -19,7 +19,10 @@
     "private_internal_tooling_hits": 0,
     "focused_public_contract_smoke": "9/9 PASS",
     "bare_wait_default_ms": 1000,
-    "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1"
+    "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1",
+    "headless_lingering_acceptance": "24/24 PASS",
+    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder PASS",
+    "headless_wonder_acceptance": "PASS"
   },
   "acceptance_limits": [
     "full external 39-target cold-agent suite has not been rerun against this exact hash",

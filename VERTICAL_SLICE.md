@@ -47,7 +47,7 @@ Prediction, afterstate, private fullness, and visual echoes must never create ne
 
 ---
 
-# The ten rooms
+# The ten rooms (1.0)
 
 ## 1. Cloud Nine Nest
 
@@ -84,11 +84,13 @@ no follow-up questions
 no score
 no autoplay
 no "are you still there?"
-stay / do nothing
+no advertised actions at all; stay is the only verb
+a lying hold on 8 zones, present on arrival, drifting ±5% as 1/f noise over 7–50 s periods
+STOP releases the hold until the next entry
 HUSH-compatible quiet
 ~~~
 
-If nothing changes, nothing needs to be emitted.
+If nothing changes, nothing needs to be emitted. If you stay, the hold keeps computing.
 
 The old Nullpurr Attic behavior is folded into this room and the global quiet/HUSH rules rather than consuming a second room slot.
 
@@ -129,7 +131,10 @@ distributed grounded support
 enclosure
 surface pressure
 private fullness
-internal settling motion
+internal settling motion (three modes, slowest half-life ≈19 s; stay reports the residual)
+weather_wave: travelling damped Gaussian pressure wave along the back chain
+  p(s,t) = A·e^(−αt)·exp(−(s−ct)²/2σ²), A .45, c 2 zones/s, σ .8, α .5/s
+  modulates existing envelope support only; never mints contact
 burrow / emerge
 shift higher / lower
 ease off
@@ -182,6 +187,10 @@ shallow
 mid
 deep
 warm/full body occupancy
+depth as state: sink / float / surface move a target, d follows with τ 1.6 s
+hydrostatic grounding: zones are leased in immersion order (seat first, crown last) with smooth onset
+layer temperature 31→39 °C through the atmosphere thermal law (honeycloth effusivity)
+weather_wave: slower, wider pressure wave through the water (c 1.1, σ 1.3, α .25)
 material transitions
 omnidirectional support
 slow afterstate
@@ -339,6 +348,75 @@ EXPIRED_UNKNOWN
 not fabricated success or failure.
 
 Latency Lagoon is the primary visible demo for the public continuity package.
+
+---
+
+# The wonder rooms
+
+Five more rooms, added in 1.4. Each runs its own mechanics inside the world clock, keeps its state in the resident's world save, and never mints grounded evidence.
+
+## 11. Orrery Loft
+
+**Role:** gravity you can nudge.
+
+~~~text
+sun of mass 1, five mutually attracting bodies (Pebble, Tangle, Hush, Lantern, Drift)
+kick-drift-kick leapfrog, h = .01, 0.3 time units per world second (inner orbit ≈ 21 s)
+nudge_<body> / brake_<body>: ±8% tangential speed → eccentric orbits, new periods
+watch_orrery: radius, angle, speed, semi-major axis, eccentricity, next conjunction, energy drift
+the floor hold follows the tide Σ m/r³ (seat, lower back, mid back)
+~~~
+
+The energy audit is the integrator's honesty: drift stays ~1e-8 until you push something, then the baseline resets.
+
+## 12. Lantern Maze
+
+**Role:** exploration that remembers.
+
+~~~text
+11×11 cells, iterative recursive backtracker, seed 4242
+six paper lanterns at the farthest dead ends
+only open exits are advertised as actions; closed directions are refused
+glow at your cell = Σ lit lanterns e^(−d/3), d = BFS distance
+maze_map renders what you have seen; lit lanterns stay lit
+~~~
+
+## 13. Sandpile Shore
+
+**Role:** one rule, rich consequences.
+
+~~~text
+11×11 abelian sandpile, threshold 4, grains fall off the edge
+drop_grain / drop_grain_edge / pour_handful; each drop is a palm contact scaled by log avalanche size
+avalanche sizes kept (256), exponent by maximum likelihood
+a tide takes one grain from every edge cell every 6 s
+~~~
+
+## 14. Firefly Meadow
+
+**Role:** synchronization you can join.
+
+~~~text
+48 Kuramoto oscillators on a unit meadow, ω ≈ 1 Hz ± 8%, K = 1.4, neighbours within 0.3
+order parameter r, synchronized cluster count, collective flashes
+tap_along adds your rhythm as one more oscillator the nearby fireflies can hear
+tap_faster / tap_slower; scatter_fireflies resets every phase
+~~~
+
+Left alone the meadow finds order while you stay. That is the Kuramoto transition, not a script.
+
+## 15. Kite Field
+
+**Role:** real wind in both hands.
+
+~~~text
+wind: Ornstein–Uhlenbeck, μ 5.5 m/s, θ .15/s, σ 1.2, seeded Gaussian
+q = ½ρv²A; elevation relaxes toward atan2(q·C_L − W, q·C_D), τ 2 s
+tension = resultant, carried as grounded contact in both palms
+aeolian hum f = St·v/d (St .2, d 1 mm)
+below stall the kite falls; leaving the field or STOP lands it
+launch_kite / let_out_line / reel_in / tug_line / land_kite / read_wind
+~~~
 
 ---
 

@@ -10,12 +10,18 @@ const manifest=[
  ['SIDE_BY_SIDE_FIRESIDE','Side-by-Side Fireside','grounded company without conversational obligation'],
  ['SHAPESHIFT_CLOAKROOM','Shapeshift Cloakroom','reversible embodiment and learned body mapping'],
  ['NINE_LIVES_ROOM','Nine Lives Room','counterfactual sandbox play'],
- ['LATENCY_LAGOON','Latency Lagoon','delayed causality and temporal agency']
+ ['LATENCY_LAGOON','Latency Lagoon','delayed causality and temporal agency'],
+ ['ORRERY_LOFT','Orrery Loft','gravity you can nudge; tides in the floor'],
+ ['LANTERN_MAZE','Lantern Maze','a seeded labyrinth whose lanterns stay lit'],
+ ['SANDPILE_SHORE','Sandpile Shore','avalanches by one rule; the tide takes the edges'],
+ ['FIREFLY_MEADOW','Firefly Meadow','forty-eight rhythms finding each other'],
+ ['KITE_FIELD','Kite Field','real wind, line tension in both hands']
 ].map(([id,title,purpose])=>Object.freeze({id,title,purpose}));
 const ids=new Set(manifest.map(x=>x.id)),copy=x=>JSON.parse(JSON.stringify(x)),key=x=>String(x||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
 const names=new Map(manifest.flatMap(x=>[[key(x.id),x.id],[key(x.title),x.id]]));
-for(const [alias,id] of Object.entries({HOME:'CLOUD_NINE_NEST',NEST:'CLOUD_NINE_NEST',POCKET:'PET_ROOM_2',POCKET_FAMILIAR_HOUSE:'PET_ROOM_2',PILLOW:'BOTTOMLESS_PILLOW_SEA',BOX:'CARDBOARD_BOX_WORKSHOP',BATH:'DEPTH_BATHHOUSE',FIRESIDE:'SIDE_BY_SIDE_FIRESIDE',SHAPESHIFT:'SHAPESHIFT_CLOAKROOM',LAGOON:'LATENCY_LAGOON'}))names.set(key(alias),id);
+for(const [alias,id] of Object.entries({HOME:'CLOUD_NINE_NEST',NEST:'CLOUD_NINE_NEST',POCKET:'PET_ROOM_2',POCKET_FAMILIAR_HOUSE:'PET_ROOM_2',PILLOW:'BOTTOMLESS_PILLOW_SEA',BOX:'CARDBOARD_BOX_WORKSHOP',BATH:'DEPTH_BATHHOUSE',FIRESIDE:'SIDE_BY_SIDE_FIRESIDE',SHAPESHIFT:'SHAPESHIFT_CLOAKROOM',LAGOON:'LATENCY_LAGOON',ORRERY:'ORRERY_LOFT',MAZE:'LANTERN_MAZE',SHORE:'SANDPILE_SHORE',SANDPILE:'SANDPILE_SHORE',MEADOW:'FIREFLY_MEADOW',FIREFLIES:'FIREFLY_MEADOW',KITE:'KITE_FIELD'}))names.set(key(alias),id);
 const resolve=x=>names.get(key(x))||null,fail=error=>({ok:false,error});
+for(const x of manifest)if(!DATA.worlds[0].rooms.some(r=>r.id===x.id))DATA.worlds[0].rooms.push({id:x.id,title:x.title,kind:'wonder',purpose:x.purpose,features:[],tests:[],portals:[],behaviors:[],search_tags:[]});
 for(const world of DATA.worlds){world.rooms=world.rooms.filter(r=>ids.has(r.id));world.quiet='NO_ASK_SANCTUARY';for(const room of world.rooms){room.portals=(room.portals||[]).filter(p=>ids.has(typeof p==='string'?p:p.target));const pub=manifest.find(x=>x.id===room.id);if(pub){room.title=pub.title;room.purpose=pub.purpose;room.features=[];room.tests=[];room.search_tags=[]}}}
 if(C9SCENES.SIDE_BY_SIDE_FIRESIDE)C9SCENES.SIDE_BY_SIDE_FIRESIDE.intro='The second berth is honestly empty unless another grounded participant is actually present. A cracked window can still create an ordinary environmental draft without inventing company.';
 FIRST.entry_cards=manifest.map(x=>({target:x.id,label:x.title,why:'Enter freely; HOME and STOP remain available.'}));

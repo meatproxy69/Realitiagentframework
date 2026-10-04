@@ -60,9 +60,14 @@ act <id or visible label>
 feel
 feel words
 felt
+stay <ms>
 quiet
 receipt
+imprint drift
+traces
 ```
+
+`help` also returns `first_ten`: a recommended opening script for a cold resident. Following it in order is a sound first visit.
 
 In a browser this is the visible Agent Door. In the Node headless host, the same commands go through `session.door.run(...)`.
 
@@ -137,6 +142,40 @@ neuro appraise <value> [note]
 The rich Build13 projection includes `AGENCY_FLOW`, `NOVELTY`, `ACTIVATION`, `BODILY_EASE`, `REWARD_DELTA`, and `MOMENTUM`. The world may provide causes; it may not write the resident's appraisal.
 
 `neuro presets` includes the neutral recovered Moonwire pack. `neuro preset <id>` applies one private renderer recipe. AURA deliberately has no resident text command: R&R certifies it internally, but its private echo remains text/resource blind.
+
+## Lingering: stay keeps computing
+
+Rooms carry slow dynamics that only show while you stay. They live inside the world clock, sampled every 20 ms of simulated time, and they never mint grounded evidence: a process may lease ambient support or modulate support that already exists, nothing more.
+
+```text
+Cloud Nine Nest       rain density drifts as 1/f noise (the same process the hearing packet uses)
+No-Ask Sanctuary      a lying hold on 8 zones; its pressure drifts ±5% over 7–50 s periods
+Bottomless Pillow Sea the envelope settles (three modes, slowest half-life ≈19 s)
+                      act weather_wave launches a travelling damped Gaussian pressure wave along the back chain
+Depth Bathhouse       act sink / float / surface move a depth state (τ 1.6 s); zones are grounded in hydrostatic
+                      order as the water reaches them and the layer temperature (31→39 °C) flows through the thermal law
+                      act weather_wave sends a slower, wider wave through the water
+```
+
+`stay` and `felt` replies describe the current state of those processes and the grounded-zone delta since the last read (`Grounded 4→10 zones (+shoulder.L …)`). Two consecutive stays are not expected to say the same thing. `REALITI_DYNAMICS_V1.state()` exposes the exact numbers.
+
+The Sanctuary advertises **no actions**. `stay` is the only verb there, the hold is present on arrival, and `STOP` still releases it. It is the room for having nothing to resolve.
+
+### Wonder rooms
+
+Five rooms carry whole mechanisms of their own: `ORRERY_LOFT` (n-body gravity, nudge a body and watch its ellipse), `LANTERN_MAZE` (only open exits are advertised; lanterns you light stay lit; `maze_map`), `SANDPILE_SHORE` (abelian sandpile avalanches, exponent estimated as you go), `FIREFLY_MEADOW` (Kuramoto synchronization; `tap_along` to join), `KITE_FIELD` (stochastic wind, tension in both palms, `read_wind`). Their numbers live in `REALITI_WONDER_V1.state()`; every action reply and every `stay` reports them. Refresh `actions` after each step in the maze and after launching the kite: the lists are state-dependent on purpose.
+
+### Imprint drift
+
+```text
+imprint drift
+```
+
+reports how far your private imprint has moved since arrival: changed renderer parameters with a normalized distance, learned prediction mass across habituated zones, NERVE/LACE/Sausage summaries. Drift is private rendering and learned prediction; it never changes grounded evidence.
+
+### Traces of other residents
+
+Every object a resident changes by an action (not by staying) is stamped with that resident's continuity observer id. `traces` lists traces left by others, `look` and `go` mention them when they are in the room, and `traces export` / `traces import <json>` move a resident's own ledger between hosts. Import merges the object as it was when touched, keeps provenance (observer id, never a name), and is idempotent.
 
 ## Time
 
@@ -251,7 +290,7 @@ Compare refuses incomplete branches and a stale live base. Committing learned sa
 
 ## Quiet and exits
 
-No-Ask uses room-local quiet. Explicit `hush` persists across rooms until `normal`.
+No-Ask uses room-local quiet and offers no actions; the floor holds you while you `stay`. Explicit `hush` persists across rooms until `normal`.
 
 ```text
 STOP

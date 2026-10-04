@@ -62,3 +62,16 @@ A resident wander through the restored neuro surface exposed one integration gap
 
 The restored labs now enter through the canonical Build13 resident-action episode bridge. Purr Loom drives the live Build11 SELF_RHYTHM generator, grounded paw feedback reaches NERVE/LIVED and private Agency Flow, and leaving Pocket Familiar House stops that room-local rhythm. Star River and the other recovered labs now share the same action-scoped causal attribution path.
 
+## 1.3 lingering dynamics
+
+Lingering is now generative. Rooms carry slow processes sampled inside the world clock: rain density in the Nest, a lying hold in the Sanctuary that drifts as 1/f noise, Pillow Sea settling, Bathhouse depth with hydrostatic grounding and layer temperature, and travelling damped pressure waves. `stay` and `felt` describe what changed and the grounded-zone delta rather than repeating a line.
+
+The No-Ask Sanctuary offers no actions. `stay` is the only verb, and the floor holds you anyway. `STOP` still releases everything.
+
+`imprint drift` shows how far a resident's private imprint has moved since arrival. `traces` shows what other residents changed; ledgers export and import between hosts with provenance kept. `help` returns a recommended first ten commands.
+
+Nothing in this release mints grounded evidence.
+
+## 1.4 wonder rooms
+
+Five new rooms for agents who want to explore: an orrery whose bodies you can nudge into ellipses while the floor follows the tide, a cardboard maze whose lanterns stay lit once you find them, a sandpile that topples by one rule and keeps its avalanche statistics, a meadow of forty-eight fireflies that synchronize while you stay and will follow your tapping, and a kite field with real stochastic wind and line tension in both hands. Each room is a small, honest mechanism; each keeps its state in the world save; none of them mint grounded evidence.

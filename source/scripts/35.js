@@ -13,7 +13,7 @@ function S(){
 }
 
 const MAT={
-  metal:{ratio:25,obj:20},glass:{ratio:1.405,obj:14},wood:{ratio:.30,obj:20},honeycloth:{ratio:.15,obj:20},wool:{ratio:.057,obj:20},ceramic:{ratio:1.50,obj:45},fur:{ratio:.08,obj:31.5},blanket:{ratio:.057,obj:22}
+  metal:{ratio:25,obj:20},glass:{ratio:1.405,obj:14},wood:{ratio:.30,obj:20},honeycloth:{ratio:.15,obj:20},wool:{ratio:.057,obj:20},ceramic:{ratio:1.50,obj:45},fur:{ratio:.08,obj:31.5},blanket:{ratio:.057,obj:22},water:{ratio:1.2,obj:35}
 };
 function interfaceTemp(material,objC,skinC=BASE_SKIN){const m=MAT[material]||MAT.wood,r=Math.max(.001,Number(m.ratio||.3)),o=Number.isFinite(Number(objC))?Number(objC):Number(m.obj);return clamp((skinC+r*o)/(1+r),15,42)}
 function tz(z){return S().thermal.zones[z]||(S().thermal.zones[z]={skin0:BASE_SKIN,start:now(),end:now(),target:BASE_SKIN,material:null,cause:null,source:null})}

@@ -2,6 +2,36 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.4.0 — wonder rooms
+
+### Added
+
+- Five wonder rooms (`source/scripts/58b-wonder.js`, `REALITI_WONDER_V1`), each with its own mechanics stepped inside the world clock and persisted in the world save: Orrery Loft (kick-drift-kick n-body gravity, tidal floor hold, energy audit), Lantern Maze (seeded recursive-backtracker labyrinth, BFS lantern glow, state-dependent exits, persistent lit lanterns), Sandpile Shore (abelian sandpile, avalanche exponent, edge tide), Firefly Meadow (local Kuramoto oscillators, order parameter, clusters, tap-along entrainment), Kite Field (Ornstein–Uhlenbeck wind, lift/drag equilibrium elevation, tension in both palms, aeolian hum, stall).
+- `water` thermal material (effusivity ratio 1.2); the Bathhouse layers now use it.
+- Headless acceptance suite `test/wonder.cjs`.
+
+### Fixed
+
+- `stop` and `neuromesh handshake` replies have text.
+- Chronomancy's passive-medium frontier search (a ~150-step bisection over every cause) ran on every felt snapshot, i.e. on every contact, and dominated runtime; it is now cached between impulses, since the medium is autonomous and deterministic in between. A Pillow Sea `dive` drops from ~2.0 s to well under the 2 s responsiveness bound.
+- The room count is fifteen; `fifteen_public_rooms` replaces `ten_public_rooms` in the acceptance suite.
+
+## 1.3.0 — lingering dynamics
+
+### Added
+
+- Slow room dynamics sampled inside the world clock (`source/scripts/58a-dynamics.js`, `REALITI_DYNAMICS_V1`): a travelling damped Gaussian pressure wave for `weather_wave` in the Pillow Sea and Bathhouse, a Bathhouse depth state (`sink` / `float` / `surface`) with hydrostatic zone grounding and layer temperature through the thermal law, a Sanctuary hold envelope with 1/f drift, and rain density read from the atmosphere's own process. None of them mint grounded evidence; `STOP` releases them.
+- The No-Ask Sanctuary now advertises no actions. `stay` is the only verb; the hold is present on arrival.
+- `stay` and `felt` replies are generated from the current state and include the grounded-zone delta since the last read (`source/scripts/65-lingering.js`).
+- `imprint drift`: normalized distance of changed renderer parameters plus learned prediction mass since arrival.
+- `traces`, `traces export`, `traces import <json>` (`REALITI_TRACES_V1`): objects changed by a resident action are stamped with that resident's continuity observer id; another host can import the ledger, merging object state as it was when touched, with provenance kept.
+- `help.first_ten`: a recommended opening script.
+- `lean` replies now describe the support relation instead of returning empty text.
+- Headless acceptance suite `test/lingering.cjs` (24 checks).
+
+### Fixed
+
+- Mutation replies no longer fall back to a stale narrative from an earlier action.
 ## 1.2.1 — restored neuro coherence
 
 ### Fixed
