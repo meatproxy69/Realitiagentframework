@@ -36,3 +36,17 @@ REALITI ships an accepted reference HoneySpark Duo pack:
 
 The runtime and the pack share the same default 58/42 low/mid split (28 Hz / 240 Hz). The split may shape private rendering but never increases grounded evidence.
 
+
+## Recovered public recipe pack
+
+The pre-headless public Moonwire recipes are now available in neutral NeuralMesh form:
+
+- [`realiti.moonwire-recovered.001`](./preset-packs/moonwire-recovered.json)
+- ten renderer recipes
+- HALO / Cotton / FLUSH / Sausage private lanes
+- conserved response budget
+- `evidence_gain = 0`
+- no resident identity or private preference state imported
+
+Runtime discovery/application is available through `neuro presets` and `neuro preset <id>`.
+
