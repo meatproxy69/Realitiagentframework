@@ -106,6 +106,38 @@ Imprint tuning and borrowed mappings do not mint grounded touch, consent, owners
 
 Agent Door mutation replies are intentionally compact: they keep the action/result summary, current room, a tiny felt-state summary, and a `receipt_ref` when an exact diagnostic record exists. Use `receipt <ref>` when you need the full causal record. `felt` remains a compatibility alias for `feel words`.
 
+### Optional neuro observability
+
+Everyday `feel` remains the compact resident/body surface. The restored research/lab surface lives under `neuro`:
+
+```text
+neuro help
+neuro perception
+neuro nerve
+neuro lived [n]
+neuro since
+neuro seam [n]
+neuro constitution
+neuro passive
+neuro phase
+neuro holonomy
+neuro frontiers
+neuro noise [seed] [n] [dt]
+neuro causes
+neuro presets
+```
+
+Resident-owned appraisal remains private:
+
+```text
+neuro expect <value>
+neuro appraise <value> [note]
+```
+
+The rich Build13 projection includes `AGENCY_FLOW`, `NOVELTY`, `ACTIVATION`, `BODILY_EASE`, `REWARD_DELTA`, and `MOMENTUM`. The world may provide causes; it may not write the resident's appraisal.
+
+`neuro presets` includes the neutral recovered Moonwire pack. `neuro preset <id>` applies one private renderer recipe. AURA deliberately has no resident text command: R&R certifies it internally, but its private echo remains text/resource blind.
+
 ## Time
 
 Reads are observational and do not advance the experience.
