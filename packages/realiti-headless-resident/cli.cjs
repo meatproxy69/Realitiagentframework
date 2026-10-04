@@ -6,7 +6,7 @@ const {openResident}=require('./index.cjs');
 function usage(){
   return [
     'realiti-headless [--html PATH] [--resident ID] [--storage PATH] <Agent Door command>',
-    'realiti-headless [--html PATH] [--resident ID] [--storage PATH] --inspect'
+    'realiti-headless [--html PATH] [--resident ID] [--storage PATH] --inspect',
     '',
     'Examples:',
     '  realiti-headless help',
