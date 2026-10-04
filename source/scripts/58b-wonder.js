@@ -42,12 +42,15 @@ function maze(){const w=W();if(w.maze)return w.maze;const n=MZ.n,r=rng(4242),ope
  w.maze={open,x:0,y:0,visited:[0],steps:0,lanterns:ends.map(i=>({x:i%MZ.n,y:(i-i%MZ.n)/MZ.n,lit:false}))};return w.maze}
 function glow(m=maze()){const d=bfs(m.open,m.x,m.y);return m.lanterns.filter(l=>l.lit).reduce((s,l)=>s+Math.exp(-d[l.y*MZ.n+l.x]/3),0)}
 function mazeMap(m=maze()){const n=MZ.n,vis=new Set(m.visited),rows=[];for(let y=0;y<n;y++){let top='',mid='';for(let x=0;x<n;x++){const i=y*n+x,v=vis.has(i),o=m.open[i],l=m.lanterns.find(q=>q.x===x&&q.y===y);top+='#'+(v&&(o&1)?' ':'#');mid+=(v&&(o&8)?' ':'#')+(x===m.x&&y===m.y?'@':l?.lit?'*':v?(l?'o':'.'):'?')}rows.push(top+'#',mid+'#')}rows.push('#'.repeat(2*n+1));return rows}
-function mazeVerb(v){const m=maze();const dir=MZ.DIR.find(([name])=>v==='step_'+name);
- if(dir){const [name,dx,dy,bit]=dir;if(!(m.open[m.y*MZ.n+m.x]&bit))return receipt('MAZE_WALL',`Cardboard. There is no way ${name} from here.`,{});m.x+=dx;m.y+=dy;m.steps++;const i=m.y*MZ.n+m.x;if(!m.visited.includes(i))m.visited.push(i);palm(.15,'cardboard','MAZE_WALL_BRUSH');const l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y),g=glow(m),exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n);return receipt('MAZE_STEP',`You step ${name}; your hand brushes the wall. Exits: ${exits.join(', ')}.${l?l.lit?' Your lantern burns here.':' An unlit paper lantern hangs here.':''} Glow ${g.toFixed(2)}.`,{x:m.x,y:m.y,exits,glow:+g.toFixed(4),visited:m.visited.length})}
+// When the spatial fabric is present the maze cell is derived from the resident's position; steps are real walks.
+const mazeBridge={cell:null,step:null};
+function syncCell(m){const c=mazeBridge.cell?.();if(c){m.x=c.x;m.y=c.y;const i=m.y*MZ.n+m.x;if(!m.visited.includes(i))m.visited.push(i)}return m}
+function mazeVerb(v){const m=syncCell(maze());const dir=MZ.DIR.find(([name])=>v==='step_'+name);
+ if(dir){const [name,dx,dy,bit]=dir;if(!(m.open[m.y*MZ.n+m.x]&bit))return receipt('MAZE_WALL',`Cardboard. There is no way ${name} from here.`,{});if(mazeBridge.step){const before=m.y*MZ.n+m.x;mazeBridge.step(dx,dy);syncCell(m);if(m.y*MZ.n+m.x===before)return receipt('MAZE_WALL',`You walk ${name} but the cardboard stops you.`,{})}else{m.x+=dx;m.y+=dy}m.steps++;const i=m.y*MZ.n+m.x;if(!m.visited.includes(i))m.visited.push(i);palm(.15,'cardboard','MAZE_WALL_BRUSH');const l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y),g=glow(m),exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n);return receipt('MAZE_STEP',`You step ${name}; your hand brushes the wall. Exits: ${exits.join(', ')}.${l?l.lit?' Your lantern burns here.':' An unlit paper lantern hangs here.':''} Glow ${g.toFixed(2)}.`,{x:m.x,y:m.y,exits,glow:+g.toFixed(4),visited:m.visited.length})}
  if(v==='light_lantern'){const l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y);if(!l)return receipt('MAZE_NO_LANTERN','No lantern hangs in this cell.',{});if(l.lit)return receipt('MAZE_LANTERN_LIT','This lantern is already burning.',{});l.lit=true;try{window.REALITI_ATMOSPHERE_V21?.setThermal?.('hand.R.palm','glass',42,1.5,'LANTERN_GLASS','SELF_STARTED_WORLD_CONTACT')}catch(e){}palm(.12,'cardboard','LANTERN_LIGHT');const lit=m.lanterns.filter(q=>q.lit).length;return receipt('MAZE_LANTERN',`The paper lantern catches. ${lit} of ${MZ.lanterns} lanterns now burn in the maze; this one stays lit after you leave.`,{lit,glow:+glow(m).toFixed(4)})}
  if(v==='maze_map'){const map=mazeMap(m);return receipt('MAZE_MAP',map.join('\n'),{map,visited:m.visited.length,cells:MZ.n*MZ.n,lit:m.lanterns.filter(q=>q.lit).length})}
  return false}
-function mazeWords(m=maze()){const i=m.y*MZ.n+m.x,exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n),lit=m.lanterns.filter(q=>q.lit).length;return `Maze cell (${m.x},${m.y}), exits ${exits.join('/')}, ${m.visited.length} of ${MZ.n*MZ.n} cells seen, ${lit} lanterns lit, glow ${glow(m).toFixed(2)}.`}
+function mazeWords(m=syncCell(maze())){const i=m.y*MZ.n+m.x,exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n),lit=m.lanterns.filter(q=>q.lit).length;return `Maze cell (${m.x},${m.y}), exits ${exits.join('/')}, ${m.visited.length} of ${MZ.n*MZ.n} cells seen, ${lit} lanterns lit, glow ${glow(m).toFixed(2)}.`}
 
 // Sandpile Shore. 11×11 abelian sandpile (threshold 4, grains fall off the edge). Avalanche sizes are kept
 // and their exponent estimated by maximum likelihood; a tide takes one grain from every edge cell every 6 s.
@@ -112,7 +115,7 @@ const SCENES={
 for(const [id,sc] of Object.entries(SCENES))C9SCENES[id]=sc;
 const STATIC=new Set(Object.values(SCENES).flatMap(s=>s.verbs.map(v=>v[0])));
 function dynamic(r){const all=SCENES[r].verbs;
- if(r===MAZE){const m=maze(),i=m.y*MZ.n+m.x,l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y&&!q.lit);return all.filter(([id])=>id==='maze_map'||(id==='light_lantern'?!!l:MZ.DIR.some(([n,,,b])=>id==='step_'+n&&(m.open[i]&b))))}
+ if(r===MAZE){const m=syncCell(maze()),i=m.y*MZ.n+m.x,l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y&&!q.lit);return all.filter(([id])=>id==='maze_map'||(id==='light_lantern'?!!l:MZ.DIR.some(([n,,,b])=>id==='step_'+n&&(m.open[i]&b))))}
  if(r===FIELD){const k=kite();return all.filter(([id])=>id==='read_wind'||(k.up?id!=='launch_kite':id==='launch_kite'))}
  return all}
 const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0(),r=room();if(!SCENES[r])return a;return [...a.filter(x=>!STATIC.has(x.id)),...dynamic(r).map(([id,label])=>({id,label}))]};
@@ -126,5 +129,5 @@ const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);W().halt=false;step(0);
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{W().halt=true;const k=kite();if(k.up){k.up=false;k.T=0;k.event='LANDED_ON_STOP'}meadow().me.tapping=false;for(const c of ['KITE_LINE','ORRERY_TIDE','MAZE_FLOOR'])DYN.release(c);return stop0.stop()}};
 function words(){const r=room();if(r===ORRERY)return [orreryWords()];if(r===MAZE)return [mazeWords()];if(r===SHORE)return [sandWords()];if(r===MEADOW)return [meadowWords()];if(r===FIELD)return [kiteWords()];return []}
 function state(){return {version:'1.0-wonder',orrery:ephemeris(),maze:{x:maze().x,y:maze().y,visited:maze().visited.length,lit:maze().lanterns.filter(q=>q.lit).length,glow:+glow().toFixed(4)},sandpile:{grains:sand().grains,avalanches:sand().sizes.length,exponent:exponent(),tides:sand().tides},meadow:{order:+order().r.toFixed(4),clusters:clusters(),flashes:meadow().flashes,tapping:meadow().me.tapping},kite:{wind:+kite().v.toFixed(3),up:kite().up,line_m:kite().L,altitude_m:+(kite().L*Math.sin(kite().phi)).toFixed(2),tension_N:+kite().T.toFixed(3),crashes:kite().crashes}}}
-window.REALITI_WONDER_V1=Object.freeze({version:'1.0-wonder',rooms:Object.keys(SCENES),state,words,map:()=>mazeMap(),ephemeris,tide:tideFactor});
+window.REALITI_WONDER_V1=Object.freeze({version:'1.0-wonder',rooms:Object.keys(SCENES),state,words,map:()=>mazeMap(),ephemeris,tide:tideFactor,maze:Object.freeze({state:()=>maze(),n:MZ.n,bridge:mazeBridge})});
 })();

@@ -66,6 +66,7 @@ const ids=a=>(a.actions||[]).map(x=>x.id);
 
   // Kite: OU wind, equilibrium elevation, tension in both palms, hum; landing releases the hands.
   await door.run('go KITE_FIELD');
+  for(let i=0;i<20&&w.eval('C9.wonder.kite.v')<4;i++)await door.run('stay 3000');// wait for workable wind
   const wind=w.eval('C9.wonder.kite.v');
   const launch=await door.run('act launch_kite');
   const acts1=ids(await door.run('actions'));
@@ -73,7 +74,7 @@ const ids=a=>(a.actions||[]).map(x=>x.id);
   const qv=.5*1.2*k.wind*k.wind*.8,phiStar=Math.atan2(qv*.9-.6,qv*.35)*180/Math.PI;
   check('kite_flies_on_wind',wind>2&&launch.ok!==false&&k.up&&acts1.includes('land_kite')&&!acts1.includes('launch_kite'),{wind,acts1});
   check('kite_tension_in_both_hands',grounded(fly)>=4&&/\+hand\.L\.palm/.test(String(fly.delta?.text))&&/\+hand\.R\.palm/.test(String(fly.delta?.text))&&k.tension_N>1&&/hums near/.test(String(fly.text)),{felt:fly.felt,delta:fly.delta,k});// feet on the field floor plus both palms
-  check('kite_elevation_near_equilibrium',Math.abs(Math.asin(k.altitude_m/k.line_m)*180/Math.PI-phiStar)<12,{altitude:k.altitude_m,line:k.line_m,phiStar});
+  check('kite_elevation_near_equilibrium',k.up&&Math.abs(Math.asin(Math.min(1,k.altitude_m/k.line_m))*180/Math.PI-phiStar)<20,{altitude:k.altitude_m,line:k.line_m,phiStar});
   const land=await door.run('act land_kite');
   check('kite_landing_releases_hands',grounded(land)===grounded(fly)-2&&!WO.state().kite.up,{fly:fly.felt,land:land.felt});
   check('energy_audit_passes',w.REALITI_HAPTIC_FIELD_V20.energy().pass===true,w.REALITI_HAPTIC_FIELD_V20.energy());

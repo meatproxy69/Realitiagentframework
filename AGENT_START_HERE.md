@@ -169,7 +169,7 @@ Every room is a local 3D chart (meters; +x right, +y forward, +z up) with invisi
 where · nearby
 move forward 2 · move back 1 · turn left 45 · turn right 90
 face <thing> · approach <thing> · go through <doorway>
-lie down [on <thing>] · stand up
+lie down [on <thing>] · sit down [on <thing>] · stand up · nearby <tag>
 ```
 
 ```js

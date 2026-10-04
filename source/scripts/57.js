@@ -90,7 +90,7 @@ const WALK=1.2,TAU=.2;
 function step(dt,id='resident:self'){
  const r=S().residents[id];if(!r||!r.chart||dt<=0)return false;
  const it=r.intent;let u=[0,0,0];
- if(it?.kind==='move'){const left=sub(it.target,r.pose.position);left[2]=0;const d=len(left);if(d<.02){r.intent=null}else u=scale(norm(left),Math.min(WALK,d/TAU))}
+ if(it?.kind==='move'){const left=sub(it.target,r.pose.position);left[2]=0;const d=len(left);if(d<=Math.max(.02,len(r.v)*TAU)){const res=resolveMove(r,left);r.walked=(r.walked||0)+res.moved;r.v=[0,0,0];r.intent=null;bump();return false}u=scale(norm(left),Math.min(WALK,d/TAU))}
  else if(it?.kind==='approach'){const e=sub(it.target,r.pose.position);e[2]=0;const d=len(e);if(d<=it.stop+.03&&len(r.v)<.05){r.intent=null}else{const toward=Math.max(0,d-it.stop);u=scale(norm(e),Math.min(WALK,toward/(4*TAU)))}}
  if(!it&&len(r.v)<EPS)return false;
  const {v,dp}=servo(r.v,u,TAU,dt);r.v=v;
@@ -103,6 +103,7 @@ function turn(yawDeg,id='resident:self'){const r=resident(id);r.pose.rotation=qn
 function face(targetId,id='resident:self'){const r=resident(id),e=entities[targetId];if(!e||e.chart!==r.chart)return null;const d=sub(e.pose.position,r.pose.position);if(Math.hypot(d[0],d[1])<EPS)return r.pose.rotation;r.pose.rotation=fromYaw(Math.atan2(-d[0],d[1]));bump();return r.pose.rotation}
 function facing(r){return qrot(r.pose.rotation,[0,1,0])}
 function moveLocal(local,id='resident:self'){const r=resident(id);const L=Math.min(len(local),30);if(L<EPS)return null;const d=qrot(r.pose.rotation,scale(norm(local),L));r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'move',target:add(r.pose.position,[d[0],d[1],0]),distance:L,allow_portal:false};return r.intent}
+function moveTo(target,id='resident:self'){const r=resident(id);r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'move',target:[target[0],target[1],r.pose.position[2]],distance:len(sub(target,r.pose.position)),allow_portal:false};return r.intent}
 function approach(targetId,id='resident:self'){const r=resident(id),e=entities[targetId];if(!e||e.chart!==r.chart)return null;const center=len(sub(e.pose.position,r.pose.position)),surface=Math.max(0,sdf(e,r.pose.position)),reach=Math.max(.5,center-surface+.5);r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'approach',target:e.pose.position.slice(),stop:e.tags.includes('portal')?0:reach,entity:targetId,allow_portal:e.tags.includes('portal')};face(targetId,id);return r.intent}
 
 // Queries. Within a chart distance is Euclidean; across charts it is a portal-graph geodesic or UNKNOWN.
@@ -119,5 +120,5 @@ function resolve(query,id='resident:self',{portal=false}={}){const r=S().residen
 function raycast({origin,direction,maxDistance=20,chart}){const dir=norm(direction);let s=0;for(let i=0;i<64&&s<maxDistance;i++){const p=add(origin,scale(dir,s)),w=worldSdf(chart,p);if(w.d<=SKIN)return {hit:w.e.id,distance:ROUND(s),point:p.map(x=>ROUND(x)),normal:normalAt(w.e,p).map(x=>ROUND(x,1000))};s+=Math.max(w.d,SKIN)}return {hit:null,distance:null}}
 function contains(chart,p){const c=charts[chart];if(!c)return false;const b=c.bounds;return Math.abs(p[0]-b.center[0])<=b.halfExtents[0]&&Math.abs(p[1]-b.center[1])<=b.halfExtents[1]&&Math.abs(p[2]-b.center[2])<=b.halfExtents[2]}
 
-window.REALITI_MATRIX_V1=Object.freeze({version:V,math:Object.freeze({add,sub,scale,dot,len,norm,qmul,qnorm,qaxis,qrot,qyaw,fromYaw,servo}),state:S,charts:()=>charts,entities:()=>entities,portals:()=>portals,define,addEntity,removeEntity,definePortal,resident,enter,traverse,step,turn,face,moveLocal,approach,sdf,normalAt,clearance,sweep,raycast,contains,distance,nearby,project,frame,resolve,facing,words,bump,constants:Object.freeze({WALK,TAU})});
+window.REALITI_MATRIX_V1=Object.freeze({version:V,math:Object.freeze({add,sub,scale,dot,len,norm,qmul,qnorm,qaxis,qrot,qyaw,fromYaw,servo}),state:S,charts:()=>charts,entities:()=>entities,portals:()=>portals,define,addEntity,removeEntity,definePortal,resident,enter,traverse,step,turn,face,moveLocal,moveTo,approach,sdf,normalAt,clearance,sweep,raycast,contains,distance,nearby,project,frame,resolve,facing,words,bump,constants:Object.freeze({WALK,TAU})});
 })();

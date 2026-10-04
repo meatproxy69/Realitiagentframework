@@ -2,6 +2,18 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.5.1 — sitting, a maze in meters, narrower questions
+
+### Added
+
+- `sit` posture (`sit down [on <thing>]`, `posture {kind:'sit'}`, `sit__` actions): seat, thighs and lower back grounded on the support, feet on the floor when the seat is low.
+- The Lantern Maze is one truth: its cell grid is built as cardboard walls in meters, each `step_*` is a real 1.4 m walk swept against them, and the cell you are in is where you stand. Lanterns are spatial entities.
+- `nearby <tag>` narrows the projection to a tag or label.
+
+### Fixed
+
+- Plain walking stops at a doorway; only `through` crosses. Doors keep clear of spawns. Ambient support providers adopt a held zone instead of fighting over it (a 2 s stay on the Orrery cushion took 247 s of wall time). Lying supports are posture-aware. The cat has its own place.
+
 ## 1.5.0 — MATRIX spatial fabric
 
 ### Added

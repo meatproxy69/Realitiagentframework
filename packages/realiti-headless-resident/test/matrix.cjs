@@ -83,6 +83,18 @@ const grounded=w=>(w.Realiti.read('realiti://body')?.field?.f?.at(-1)?.m||[]).fi
   const walk=await door.run('move forward 3');
   check('door_aliases_work',/Kite Field/.test(String(where.text))&&walk.ok&&/You walk/.test(String(walk.text))&&near(space().pose.position[1],-17,.3),{where:where.text,walk:walk.text,pose:space().pose});
   check('existing_room_commands_still_work',(await door.run('look')).room?.id==='KITE_FIELD'&&(await door.run('actions')).actions.some(x=>x.id==='read_wind'));
+  // Sit is a posture between lying and standing, grounded on seat and thighs.
+  await door.run('home');await R.invoke('approach',{target:'mattress'});
+  const sit=await door.run('sit down');
+  check('sit_posture_grounds_seat',sit.ok&&space().body.posture==='sitting'&&grounded(w)===4,{text:sit.text,felt:grounded(w)});
+  // The Maze is one truth: its grid is cardboard in meters and a step is a real walk.
+  await door.run('go LANTERN_MAZE');
+  const east=await R.invoke('move',{local:[1.4,0,0]});// the entrance cell's only exit is south; east is cardboard
+  const south=await door.run('act step_south');
+  const cell=w.REALITI_WONDER_V1.maze.state();
+  check('maze_walls_are_the_grid',east.result.moved_m<.5&&south.ok!==false&&near(space().pose.position[1],5.6,.15)&&cell.x===0&&cell.y===1,{east:east.result.moved_m,pose:space().pose,cell:{x:cell.x,y:cell.y}});
+  const lanterns=await door.run('nearby lantern');
+  check('nearby_filters_by_tag',lanterns.ok&&lanterns.nearby.length>0&&lanterns.nearby.every(n=>n.tags.includes('lantern')),lanterns.nearby.map(n=>n.label));
   check('energy_audit_passes',w.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
  }finally{s.close()}
 
