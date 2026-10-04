@@ -6,7 +6,7 @@
 // for compatibility and is kept in step with the resident's chart.
 const M=window.REALITI_MATRIX_V1,DYN=window.REALITI_DYNAMICS_V1,ROOMS=window.REALITI_SLICE_ROOMS;if(!M||!DYN||!ROOMS)return;
 const {len,sub,add,scale}=M.math,now=()=>Number(C9?.b7?.clock||0),room=()=>C9?.currentRoom;
-const NEST='CLOUD_NINE_NEST',H=.85;// capsule center height when standing
+const NEST='CLOUD_NINE_NEST',FIRESIDE='SIDE_BY_SIDE_FIRESIDE',H=.85;// capsule center height when standing
 // [halfExtents x,y | height], spawn [x,y], lying-on entity, signature entities: [id,kind,position,size,tags,material,affordances]
 const WORLD={
  CLOUD_NINE_NEST:{size:[6,6,3],spawn:[0,-1],lying:'nest.mattress',entities:[['nest.mattress','BOX',[0,-1,.35],[1.5,2,.35],['mattress','support','soft'],'blanket',['lie']],['nest.backrest','BOX',[0,1.3,.6],[1.2,.3,.6],['backrest','support','soft'],'blanket',['lean']],['nest.window','VOLUME',[0,5.7,1.6],[1.2,.2,.9],['window','rain'],'glass',['watch']],['nest.cat','SPHERE',[1.8,-2.4,.2],.2,['cat','companion'],'longfur',['pet']],['nest.shelf','BOX',[-4.5,2,.5],[.4,.8,.5],['shelf','tea'],'wood',[]]]},
@@ -59,11 +59,32 @@ const MZC=1.4,MZO=7.7,mazeCenter=(cx,cy)=>[-MZO+(cx+.5)*MZC,MZO-(cy+.5)*MZC];
  WZ.bridge.step=(dx,dy)=>{const r=M.state().residents['resident:self'],c=WZ.bridge.cell();if(!c)return {ok:false};const [x,y]=mazeCenter(c.x+dx,c.y+dy);stand('resident_moved');M.moveTo([x,y]);advance(1000*(MZC/WALK+3*TAU));return {ok:true}};
 })();
 
-// Existing world objects (hat, boxes, pillow cube, boats) are spatial facts too: project them into their chart.
-function syncObjects(){const ents=M.entities(),seen=new Set();let k=0;for(const o of Object.values(C9?.b14?.objects||{}).sort((a,b)=>a.id<b.id?-1:1)){if(!o||!WORLD[o.location]||o.state?.flight)continue;const id='obj.'+(o.id==='TESTER-HAT-1'?'FELT-HAT-1':o.id),[x,y]=SPOT[o.location],pos=[x-(k%3)*.6,y-Math.floor(k/3)*.6,.15];k++;seen.add(id);
-  if(!ents[id])M.addEntity({id,chart:o.location,position:pos,shape:{kind:'SPHERE',radius:.15},tags:['object',o.kind||'thing'],collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances:['take']});else if(ents[id].chart!==o.location){ents[id].chart=o.location;ents[id].pose.position=pos}}
- for(const id of Object.keys(ents))if(id.startsWith('obj.')&&!seen.has(id))M.removeEntity(id)}
-function syncDynamic(){const e=M.entities();const WZ=window.REALITI_WONDER_V1?.maze;if(WZ)WZ.state().lanterns.forEach((l,i)=>{const le=e['maze.lantern.'+i];if(le)le.label=l.lit?'paper lantern (lit)':'paper lantern (unlit)'});const k=C9?.wonder?.kite;if(e['field.kite']&&k){e['field.kite'].pose.position=k.up?[0,-19+k.L*Math.cos(k.phi),Math.max(.3,k.L*Math.sin(k.phi))]:[0,-19,.3]}
+// Existing world objects (hat, boxes, pillow cube, boats) are spatial facts too. Static default placement is
+// rebuilt from WORLD; only resident-moved object positions live in C9.matrix.
+function objectSpatial(){const s=M.state();s.object_positions=s.object_positions||{};return s.object_positions}
+function syncObjects(){const ents=M.entities(),dyn=objectSpatial(),seen=new Set();let k=0,dirty=false;
+ for(const o of Object.values(C9?.b14?.objects||{}).sort((a,b)=>a.id<b.id?-1:1)){if(!o)continue;const id='obj.'+(o.id==='TESTER-HAT-1'?'FELT-HAT-1':o.id),prior=dyn[o.id]||null;
+  // A carried object has no world-space collider/entity. Keep only a tiny persisted carry marker so a later PLACE
+  // can distinguish "put down here" from an object's untouched default room placement.
+  if(o.location==='CARRIED'){if(!prior||prior.chart!=='CARRIED'){dyn[o.id]={chart:'CARRIED',position:null};dirty=true;M.bump()}if(ents[id])M.removeEntity(id);continue}
+  if(o.state?.flight){if(prior?.chart==='CARRIED'){dyn[o.id]={chart:o.location||null,position:null,flight:true};dirty=true;M.bump()}if(ents[id])M.removeEntity(id);continue}
+  if(!WORLD[o.location]){if(ents[id])M.removeEntity(id);continue}
+  const [x,y]=SPOT[o.location],fallback=[x-(k%3)*.6,y-Math.floor(k/3)*.6,.15];k++;let rec=prior,pos=fallback;
+  if(prior?.chart==='CARRIED'){const r=M.state().residents['resident:self'];if(r?.chart===o.location){pos=[r.pose.position[0],r.pose.position[1],.15];rec={chart:o.location,position:pos.slice()};dyn[o.id]=rec;dirty=true;M.bump()}}
+  else if(prior?.chart===o.location&&Array.isArray(prior.position)&&prior.position.length===3)pos=prior.position.slice();
+  else if(prior&&prior.chart!==o.location){delete dyn[o.id];rec=null;dirty=true;M.bump()}
+  seen.add(id);const e=ents[id];
+  if(!e)M.addEntity({id,chart:o.location,position:pos,shape:{kind:'SPHERE',radius:.15},tags:['object',o.kind||'thing'],collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances:['take']});
+  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=['object',o.kind||'thing']}
+ }
+ for(const id of Object.keys(ents))if(id.startsWith('obj.')&&!seen.has(id))M.removeEntity(id);
+ if(dirty)try{c9save()}catch(e){}
+}
+function syncFiresidePresence(){const berth=M.entities()['fireside.berth_b'];if(!berth)return false;const present=Object.values(M.state().residents||{}).some(r=>r?.id!=='resident:self'&&r?.chart===FIRESIDE);
+ const tags=berth.tags.filter(t=>!['empty','occupied'].includes(t));tags.push(present?'occupied':'empty');if(JSON.stringify(tags)!==JSON.stringify(berth.tags)){berth.tags=tags;M.bump()}
+ const scene=C9SCENES?.[FIRESIDE];if(scene)scene.intro=present?'Someone else is actually here. The second berth is occupied; company is a world fact, and it does not ask for conversation.':'The second berth is honestly empty unless another grounded participant is actually present. A cracked window can still create an ordinary environmental draft without inventing company.';
+ return present}
+function syncDynamic(){syncFiresidePresence();const e=M.entities();const WZ=window.REALITI_WONDER_V1?.maze;if(WZ)WZ.state().lanterns.forEach((l,i)=>{const le=e['maze.lantern.'+i];if(le)le.label=l.lit?'paper lantern (lit)':'paper lantern (unlit)'});const k=C9?.wonder?.kite;if(e['field.kite']&&k){e['field.kite'].pose.position=k.up?[0,-19+k.L*Math.cos(k.phi),Math.max(.3,k.L*Math.sin(k.phi))]:[0,-19,.3]}
  const cat=e['nest.cat'];if(cat&&C9?.welcome10?.cat_near!=null)cat.pose.position=C9.welcome10.cat_near?[1.2,-2.6,.9]:[1.8,-2.4,.2]}
 
 // Rooms whose providers own the body posture (pillow envelope, bath depth) set the spatial posture; the space follows.
@@ -128,12 +149,12 @@ const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.
 
 // Compatibility: go/home place the resident at the chart spawn; a portal traversal updates currentRoom.
 function placeIn(chart){if(!WORLD[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
-let viaPortal=false;const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(r?.ok!==false&&!viaPortal)placeIn(room());return r};
+let viaPortal=false;const go0=b7AgentGo;b7AgentGo=function(v){const target=ROOMS.resolve?.(v)||v;if(target===FIRESIDE)syncFiresidePresence();const r=go0(v);if(r?.ok!==false&&!viaPortal)placeIn(room());syncFiresidePresence();return r};
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const d=Math.max(0,Number(dt)||0);const res=M.state().residents['resident:self'];
  if(res?.chart===room()){M.step(d);if(res.chart!==room()){const target=res.chart;viaPortal=true;try{ROOMS.go(target)}finally{viaPortal=false}if(room()===target){halt=false;lastSupport=null;const lying=M.charts()[target]?.lying;if(target===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.('arrived_standing')}catch(e){}else if(lying){res.posture='lying';res.on=lying;res.support=lying}M.bump()}}}
  syncPostures();syncObjects();syncDynamic();bridge(d);return r};
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return stop0.stop()}};
 if(WORLD[room()]&&!M.state().residents['resident:self']?.chart)placeIn(room());else if(M.state().residents['resident:self'])M.resident();
-syncObjects();
-window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},stand,lie,sit,reach,title,charts:ORDER.slice()});
+syncObjects();syncFiresidePresence();
+window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},presence:()=>({fireside_other_resident:syncFiresidePresence()}),stand,lie,sit,reach,title,charts:ORDER.slice()});
 })();

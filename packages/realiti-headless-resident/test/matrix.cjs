@@ -32,6 +32,8 @@ const grounded=w=>(w.Realiti.read('realiti://body')?.field?.f?.at(-1)?.m||[]).fi
   check('space_read_is_bounded_and_placed',sp0.schema==='REALITI_SPACE_READ_V1'&&sp0.chart==='CLOUD_NINE_NEST'&&sp0.nearby.length<=12&&sp0.nearby.every(n=>n.distance_m<=10)&&sp0.body.posture==='lying'&&sp0.body.on==='nest.mattress',{nearby:sp0.nearby.length,body:sp0.body});
   const sp1=space();
   check('reads_do_not_move_or_advance',JSON.stringify(sp1.pose)===JSON.stringify(sp0.pose)&&w.eval('C9.b7.clock')===t0&&sp1.matrix_revision===sp0.matrix_revision);
+  const look0=await door.run('look');
+  check('look_includes_spatial_line',typeof look0.spatial_line==='string'&&/Cloud Nine Nest/.test(look0.spatial_line)&&String(look0.text||look0.resident_text||'').includes(look0.spatial_line),look0.spatial_line);
   const lyingFelt=grounded(w);
 
   // Movement: stands you up, takes world time, stops at the wall, never tunnels.
@@ -74,8 +76,17 @@ const grounded=w=>(w.Realiti.read('realiti://body')?.field?.f?.at(-1)?.m||[]).fi
   await door.run('home');
   const home=space();
   check('home_returns_to_nest_spawn_lying',home.chart==='CLOUD_NINE_NEST'&&near(home.pose.position[0],0,.01)&&near(home.pose.position[1],-1,.01)&&home.body.posture==='lying'&&grounded(w)>=8,{home:home.pose,felt:grounded(w)});
-  await door.run('stop');
-  check('stop_releases_without_teleporting',grounded(w)===0&&JSON.stringify(space().pose.position)===JSON.stringify(home.pose.position));
+  // Carried objects disappear from world space, then PLACE uses the resident's current position and persists it in C9.matrix.
+  const hatTake=(await door.run('actions')).actions.find(a=>/p14__take__.*HAT/i.test(a.id)||/TAKE .*HAT/i.test(a.label));
+  const took=hatTake?await door.run('act '+hatTake.id):null;
+  check('take_removes_object_from_matrix',took?.ok!==false&&!M.entities()['obj.FELT-HAT-1'],{action:hatTake?.id,result:took});
+  const walkedHat=await door.run('move right 3');
+  const hatPlace=(await door.run('actions')).actions.find(a=>/p14__place__.*HAT/i.test(a.id)||/PLACE .*HAT/i.test(a.label));
+  const placed=hatPlace?await door.run('act '+hatPlace.id):null;
+  const hatNear=await door.run('nearby hat'),hatDyn=w.eval('C9.matrix.object_positions&&C9.matrix.object_positions["TESTER-HAT-1"]');
+  check('place_uses_resident_position',placed?.ok!==false&&walkedHat.ok&&hatNear.nearby?.length===1&&hatNear.nearby[0].distance_m>=.35&&hatNear.nearby[0].distance_m<=.8&&hatDyn?.chart==='CLOUD_NINE_NEST'&&Math.abs(hatDyn.position[0]-space().pose.position[0])<.05,{nearby:hatNear.nearby,dynamic:hatDyn,pose:space().pose});
+  const beforeStop=JSON.stringify(space().pose.position);await door.run('stop');
+  check('stop_releases_without_teleporting',grounded(w)===0&&JSON.stringify(space().pose.position)===beforeStop);
 
   // Door aliases resolve to the same operations.
   await door.run('go KITE_FIELD');
@@ -109,6 +120,15 @@ const grounded=w=>(w.Realiti.read('realiti://body')?.field?.f?.at(-1)?.m||[]).fi
   const rise=await R.invoke('approach',{target:'rise'});
   const lieRise=await door.run('lie down');
   check('approach_big_object_reaches_surface',rise.result.arrived&&rise.result.surface_m<=1&&lieRise.ok&&space().body.on==='field.rise',{rise:rise.result,body:space().body});
+  // Fireside presence is derived from Matrix.residents, not a special multiplayer flag.
+  await door.run('go SIDE_BY_SIDE_FIRESIDE');
+  w.REALITI_MATRIX_WORLD_V1.sync();
+  const berth=w.REALITI_MATRIX_V1.entities()['fireside.berth_b'];
+  check('fireside_empty_without_second_resident',berth.tags.includes('empty')&&/honestly empty/.test(w.eval('C9SCENES.SIDE_BY_SIDE_FIRESIDE.intro')),{tags:berth.tags,intro:w.eval('C9SCENES.SIDE_BY_SIDE_FIRESIDE.intro')});
+  const guest=w.REALITI_MATRIX_V1.enter('SIDE_BY_SIDE_FIRESIDE','resident:guest');w.REALITI_MATRIX_WORLD_V1.sync();
+  check('fireside_presence_from_matrix_residents',guest&&berth.tags.includes('occupied')&&!berth.tags.includes('empty')&&/actually here/.test(w.eval('C9SCENES.SIDE_BY_SIDE_FIRESIDE.intro')),{tags:berth.tags,intro:w.eval('C9SCENES.SIDE_BY_SIDE_FIRESIDE.intro')});
+  guest.chart='CLOUD_NINE_NEST';w.REALITI_MATRIX_V1.resident('resident:guest');w.REALITI_MATRIX_WORLD_V1.sync();
+  check('fireside_empty_restores_when_guest_leaves',berth.tags.includes('empty')&&!berth.tags.includes('occupied'),berth.tags);
   check('energy_audit_passes',w.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
  }finally{s.close()}
 

@@ -95,7 +95,7 @@ door.run=async function(raw){
  const r=await run0(raw);
  if(!r||typeof r!=='object')return r;
  if(l==='felt'||l==='feel words'){const g=grounded();if(lastFelt){const d=delta(lastFelt,g);r.delta=d;r.text=`${r.text||''} ${d.text}`.trim()}lastFelt=g;return r}
- if(l==='look'&&foreign(true).length){r.traces=rows(foreign(true));r.text=`${r.text||''} ${traceText(foreign(true))}`.trim()}
+ if(l==='look'){const line=whereText();r.spatial_line=line;if(typeof r.text==='string')r.text=(r.text+'\n'+line).trim();else if(typeof r.resident_text==='string')r.resident_text=(r.resident_text+'\n'+line).trim();else r.text=line;const tr=foreign(true);if(tr.length){r.traces=rows(tr);r.text=((r.text||r.resident_text||'')+' '+traceText(tr)).trim()}}
  if(r.schema!=='REALITI_MUTATION_RESULT_V1'||r.ok===false)return r;
  try{window.REALITI_MATRIX_WORLD_V1?.sync?.()}catch(e){}
  if(!/^(stay|wait|go|enter|home|stop|save|note|later)\b/.test(l))stamp(before,l);
