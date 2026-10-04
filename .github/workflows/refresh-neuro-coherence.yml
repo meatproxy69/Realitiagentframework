@@ -43,6 +43,9 @@ jobs:
       - name: Full headless package suite
         working-directory: packages/realiti-headless-resident
         run: npm test
+      - name: Fixed resident neuro wander
+        working-directory: packages/realiti-headless-resident
+        run: node examples/neuro-resident-wander.cjs ../../RealitiRELAX.html
       - name: Commit generated artifacts
         shell: bash
         run: |
