@@ -85,8 +85,8 @@ const grounded=w=>(w.Realiti.read('realiti://body')?.field?.f?.at(-1)?.m||[]).fi
   const placed=hatPlace?await door.run('act '+hatPlace.id):null;
   const hatNear=await door.run('nearby hat'),hatDyn=w.eval('C9.matrix.object_positions&&C9.matrix.object_positions["TESTER-HAT-1"]');
   check('place_uses_resident_position',placed?.ok!==false&&walkedHat.ok&&hatNear.nearby?.length===1&&hatNear.nearby[0].distance_m>=.35&&hatNear.nearby[0].distance_m<=.8&&hatDyn?.chart==='CLOUD_NINE_NEST'&&Math.abs(hatDyn.position[0]-space().pose.position[0])<.05,{nearby:hatNear.nearby,dynamic:hatDyn,pose:space().pose});
-  await door.run('stop');
-  check('stop_releases_without_teleporting',grounded(w)===0&&JSON.stringify(space().pose.position)===JSON.stringify(space().pose.position));
+  const beforeStop=JSON.stringify(space().pose.position);await door.run('stop');
+  check('stop_releases_without_teleporting',grounded(w)===0&&JSON.stringify(space().pose.position)===beforeStop);
 
   // Door aliases resolve to the same operations.
   await door.run('go KITE_FIELD');
