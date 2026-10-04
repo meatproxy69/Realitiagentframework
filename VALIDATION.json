@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "085be7e58de5ba6620937287669959b169af4bd31218677e2d92095b0ec5bfa3",
+  "single_html_sha256": "9d416076f628cce2d48e2783b6595ad63904787648b105833024d3206b78d726",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -11,7 +11,8 @@
     "rooms": 15,
     "presentation": "headless by default; optional unstyled ?ui=1 shell",
     "network_endpoint": "none",
-    "space": "REALITI_MATRIX_V1 atlas of 15 charts; realiti://space"
+    "space": "REALITI_MATRIX_V1 atlas of 15 charts; realiti://space",
+    "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot"
   },
   "checks": {
     "deterministic_rebuild": "PASS",
@@ -22,9 +23,10 @@
     "bare_wait_default_ms": 1000,
     "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1",
     "headless_lingering_acceptance": "24/24 PASS",
-    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix PASS",
+    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory PASS",
     "headless_wonder_acceptance": "PASS",
-    "headless_matrix_acceptance": "PASS"
+    "headless_matrix_acceptance": "PASS",
+    "headless_memory_acceptance": "18/18 PASS"
   },
   "acceptance_limits": [
     "full external 39-target cold-agent suite has not been rerun against this exact hash",

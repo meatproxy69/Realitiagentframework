@@ -83,6 +83,32 @@ console.log((await b.door.run('look')).traces); // by: 'another resident', obser
 
 Import merges the object as it was when touched, keeps provenance, never a name, and is idempotent.
 
+## Resident-local memory
+
+Pass a stable `residentId` whenever a host wants continuity for a particular resident. Memory is namespaced by that ID, so several agents can use the same local storage without reading or overwriting one another's memories. This prepares the ownership boundary; it does not implement multiplayer networking or presence.
+
+For durable headless storage, also provide a local `storagePath`:
+
+```js
+const a=await openResident({
+  htmlPath:'./RealitiRELAX.html',
+  residentId:'agent-a',
+  storagePath:'./realiti-local-state.json'
+});
+
+await a.door.run('remember the blue lantern was by the east turn');
+console.log(await a.door.run('memory'));
+console.log(await a.door.run('recall lantern'));
+a.close();
+```
+
+The store holds at most 32 explicit memories plus one replaceable departure snapshot. Closing the host or using `GOODBYE` replaces that snapshot; it does not append whole world snapshots or transcripts. A different resident ID receives a separate key in the same local backing store.
+
+```bash
+realiti-headless --resident agent-a --storage ./realiti-state.json remember "the maze lantern was warm"
+realiti-headless --resident agent-a --storage ./realiti-state.json recall lantern
+```
+
 ## Integrity
 
 When `VALIDATION.json` is next to the runtime, the host computes SHA-256 and refuses to execute a mismatched HTML file. This matters because DOM hosts must execute REALITI's inline JavaScript.
