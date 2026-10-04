@@ -47,8 +47,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1110253,
-      "sha256": "dc752e8d36fb2401b223168207cf359a763927e527b2ee037b9c44e6b810e3b2"
+      "bytes": 1112049,
+      "sha256": "8c4c699d6f6d3a21d1f4ddd82122927268aa020e03f241315b3e6f280d32a5d1"
     },
     {
       "path": "SECURITY.md",
@@ -63,7 +63,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 2343,
-      "sha256": "48d8fa98f8bf5920391d013785910453fb205a68d3a141c7e8b99cb0d6f89afe"
+      "sha256": "519ff5861e87a627367fd175b57ba9153a10e197ed59ca3afc469571fb0b8bcd"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -252,8 +252,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/memory.cjs",
-      "bytes": 4532,
-      "sha256": "a774d7e1c3afa02645c1f3edbe5dfe2ee69e01e925fbad9e82c54e1a49815525"
+      "bytes": 7073,
+      "sha256": "5704f00a9a24793fc766a69bb846df248effe90debb6085ca29e1d1c497b2e62"
     },
     {
       "path": "packages/realiti-headless-resident/test/neuro-restoration.cjs",
@@ -617,8 +617,8 @@
     },
     {
       "path": "source/scripts/66-memory.js",
-      "bytes": 12380,
-      "sha256": "ab374cc8ab5133660b63d1d98c73db75010ef28c24bf7c2209b0e1cecae6529b"
+      "bytes": 14176,
+      "sha256": "373c0de8c931a00a3949f27999076fc097d272a5f5d192842075a7deb7324e9c"
     },
     {
       "path": "source/template.html",
