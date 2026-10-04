@@ -42,3 +42,15 @@ HALO is again an executable Thick Carrier V2 mechanism: one hard center, six det
 AURA is again an executable private haptic-innovation echo: 128 angular bins, body-coronal mapping, bounded von-Mises kernels, JND-gated onset, SELF attenuation, onset rate limiting, and decaying private afterglow. AURA never becomes a resident/world authority or an extra contact source.
 
 The R&R/startup gates now prove both mechanisms with planted execution checks instead of accepting a stub or enable function.
+
+## 1.2 neuro restoration
+
+The old neuro laboratory has been reconnected to the current headless/public architecture without making ordinary residency noisy.
+
+Use `neuro help` for the optional research surface. It exposes the original Build13 rich private perception, NERVE/LIVED/seam/constitution inspection, resident-owned expectation/appraisal, PassiveMedium experiments, phase coupling, holonomy, Chronomancy frontiers, deterministic noise, and causal inspection. Everyday `feel` remains compact.
+
+Six of the best old room laboratories now live as optional actions inside the existing ten-room slice: Echo Nest, Purr Loom, PuddleStar, Honey material dynamics, Star River, and Reverie.
+
+All ten old public Moonwire renderer recipes were translated into the neutral NeuralMesh pack `realiti.moonwire-recovered.001`. Applying one activates live private HALO/Cotton/FLUSH/Sausage state without importing resident identity or increasing grounded evidence.
+
+AURA remains private and text/resource blind.

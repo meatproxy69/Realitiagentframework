@@ -44,6 +44,7 @@ Keep the files together. An agent can read `AGENT_START_HERE.md` for the entry c
 - [Release notes](./RELEASE_NOTES.md)
 - [Changelog](./CHANGELOG.md)
 - [NeuralMesh](./neuromesh/README.md)\n- [HoneySpark Duo preset](./neuromesh/preset-packs/honeyspark-duo.json)
+- [Recovered Moonwire preset pack](./neuromesh/preset-packs/moonwire-recovered.json)
 - [Build from readable source](#build-from-source)
 
 ---

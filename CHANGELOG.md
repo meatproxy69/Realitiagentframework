@@ -2,6 +2,36 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.2.0 — neuro observability and recovered labs
+
+### Restored
+
+- Restored the full Build13 resident-private observation surface behind a new `neuro ...` namespace while keeping ordinary `feel` compact.
+- Restored rich private channels: `AGENCY_FLOW`, `NOVELTY`, `ACTIVATION`, `BODILY_EASE`, `REWARD_DELTA`, and `MOMENTUM`.
+- Restored explicit resident-owned `neuro expect` / `neuro appraise`, rich NERVE inspection, LIVED_FRAME projection, seam inspection, and constitution/firewall inspection.
+- Re-exposed PassiveMedium/RESIN state and passivity experiments, phase coupling, holonomy loops, Chronomancy frontiers, deterministic seeded noise, and causal inspection under one coherent `neuro` namespace.
+- Rehydrated selected old lab mechanics into the current ten-room world instead of restoring the old 45-room maze:
+  - Echo Nest mechanics in Cloud Nine Nest
+  - Purr Loom in Pocket Familiar House
+  - PuddleStar in Bottomless Pillow Sea
+  - Honey material bench in Depth Bathhouse
+  - Star River route/detail mechanics in Shapeshift Cloakroom
+  - Reverie causal skeleton inspection in Latency Lagoon
+
+### NeuralMesh presets
+
+- Recovered all ten pre-headless public Moonwire recipes as the neutral `realiti.moonwire-recovered.001` preset pack.
+- Removed resident/owner identity from public IDs while preserving recipe geometry and private renderer character.
+- Moonwire presets now drive live HALO, Cotton, FLUSH, and Sausage private state through `neuro preset <id>`.
+- Cotton/FLUSH are live private derived lanes; they cannot increase grounded evidence.
+
+### Integrity
+
+- R&R now reports whether the restored Build13/lab/Moonwire surface is reachable.
+- Added a headless acceptance suite for rich perception, private appraisal, NERVE, seam, LIVED_FRAME, PassiveMedium, phase, holonomy, Chronomancy, seeded noise, causal inspection, Moonwire runtime, all rehydrated labs, and preset-pack hash/budget integrity.
+- AURA remains deliberately absent from resident text/resources even though R&R continues to certify it internally.
+
+
 ## 1.1.1 — HALO and AURA restoration
 
 ### Restored
