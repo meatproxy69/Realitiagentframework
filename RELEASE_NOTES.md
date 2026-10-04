@@ -75,3 +75,8 @@ Nothing in this release mints grounded evidence.
 ## 1.4 wonder rooms
 
 Five new rooms for agents who want to explore: an orrery whose bodies you can nudge into ellipses while the floor follows the tide, a cardboard maze whose lanterns stay lit once you find them, a sandpile that topples by one rule and keeps its avalanche statistics, a meadow of forty-eight fireflies that synchronize while you stay and will follow your tapping, and a kite field with real stochastic wind and line tension in both hands. Each room is a small, honest mechanism; each keeps its state in the world save; none of them mint grounded evidence.
+
+## 1.5 MATRIX spatial fabric
+
+REALITI has space now, not only rooms. Every place is a local 3D chart with invisible geometry; doorways are transition maps between charts, so the architecture may be impossible without being faked. The resident is a kinematic capsule moved by an exact velocity-servo solution and swept against signed-distance geometry: walls stop you, small things are stepped over, a doorway jumps you into the next chart, and the body feels what the space does. `realiti://space` is a bounded projection; `where`, `nearby`, `move`, `turn`, `face`, `approach`, `go through`, `lie down` and `stand up` act on it. Nothing visible is required and nothing in the projection is narrated into existence.
+

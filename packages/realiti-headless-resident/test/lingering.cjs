@@ -60,7 +60,7 @@ const grounded=r=>Number(r?.felt?.grounded_zones??-1);
   await door.run('act sink');const b2=await door.run('stay 3000');
   check('bath_deeper_holds_more',grounded(b2)>grounded(b1),{shallow:grounded(b1),deep:grounded(b2)});
   await door.run('act surface');const b3=await door.run('stay 6000');
-  check('bath_surface_releases',grounded(b3)===0&&dyn.state().bath.depth===0,{felt:b3.felt,bath:dyn.state().bath});
+  check('bath_surface_releases',grounded(b3)<=2&&dyn.state().bath.zones===0&&dyn.state().bath.depth===0,{felt:b3.felt,bath:dyn.state().bath});// feet stay on the floor once you stand at the surface
 
   // Imprint drift.
   const d0=await door.run('imprint drift');

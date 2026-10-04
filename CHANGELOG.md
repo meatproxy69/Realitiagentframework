@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.5.0 — MATRIX spatial fabric
+
+### Added
+
+- `REALITI_MATRIX_V1` (`source/scripts/57.js`): an atlas of local 3D charts with SE(3) portal maps, analytic ghost primitives with signed distance and gradient normals, a kinematic capsule resident driven by the exact velocity-servo solution, sphere-traced sweep with slide, support settling, raycast, bounded resident-relative projection and portal-graph geodesic distance.
+- `REALITI_MATRIX_WORLD_V1` (`source/scripts/58d-matrix-world.js`): invisible blockout for all fifteen rooms (floor, ceiling, walls, spawn, 1–5 signature entities), portal topology, existing world objects projected as spatial facts, posture, and the bridge from spatial contact to grounded body receipts.
+- `realiti://space`; `move`, `turn`, `face`, `approach`, `through`, `posture` operations; `space` continuity channel; Agent Door aliases `where`, `nearby`, `move/turn/face/approach/go through/lie down/stand up`; spatial actions `approach__`, `reach__`, `lie__`, `through__`.
+- Headless acceptance suite `test/matrix.cjs`.
+
 ## 1.4.0 — wonder rooms
 
 ### Added

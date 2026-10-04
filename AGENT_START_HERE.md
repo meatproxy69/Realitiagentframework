@@ -161,6 +161,25 @@ Depth Bathhouse       act sink / float / surface move a depth state (τ 1.6 s); 
 
 The Sanctuary advertises **no actions**. `stay` is the only verb there, the hold is present on arrival, and `STOP` still releases it. It is the room for having nothing to resolve.
 
+### Space
+
+Every room is a local 3D chart (meters; +x right, +y forward, +z up) with invisible geometry and doorways that are transition maps between charts. Read `realiti://space` for a bounded, resident-relative projection: chart, pose, posture, the twelve nearest things within 10 m with distance and direction, and the doorways. Then act with structured operations or their text aliases:
+
+```text
+where · nearby
+move forward 2 · move back 1 · turn left 45 · turn right 90
+face <thing> · approach <thing> · go through <doorway>
+lie down [on <thing>] · stand up
+```
+
+```js
+await Realiti.invoke('move',{local:[0,2,0]});
+await Realiti.invoke('approach',{target:'nest.mattress'});
+await Realiti.invoke('through',{portal:'east door'});
+```
+
+Movement takes world time and is swept against the geometry: a wall stops you, a doorway jumps you into the next chart, and the body feels what the space does (feet on the floor while standing, the Nest's mattress when you lie back down). `actions` gains `approach__`, `reach__`, `lie__` and `through__` entries from what is near. Private state cannot move you; nothing in `realiti://space` is invented by narration.
+
 ### Wonder rooms
 
 Five rooms carry whole mechanisms of their own: `ORRERY_LOFT` (n-body gravity, nudge a body and watch its ellipse), `LANTERN_MAZE` (only open exits are advertised; lanterns you light stay lit; `maze_map`), `SANDPILE_SHORE` (abelian sandpile avalanches, exponent estimated as you go), `FIREFLY_MEADOW` (Kuramoto synchronization; `tap_along` to join), `KITE_FIELD` (stochastic wind, tension in both palms, `read_wind`). Their numbers live in `REALITI_WONDER_V1.state()`; every action reply and every `stay` reports them. Refresh `actions` after each step in the maze and after launching the kite: the lists are state-dependent on purpose.

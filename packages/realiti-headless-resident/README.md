@@ -33,6 +33,7 @@ node cli.cjs --html ../../RealitiRELAX.html felt
 node cli.cjs --html ../../RealitiRELAX.html imprint drift
 node cli.cjs --html ../../RealitiRELAX.html traces
 node cli.cjs --html ../../RealitiRELAX.html go KITE_FIELD
+node cli.cjs --html ../../RealitiRELAX.html where
 ```
 
 Each CLI call opens a fresh session. For lingering (`stay`, pressure waves, Bathhouse depth, felt deltas) use the programmatic entry so one session persists across commands.

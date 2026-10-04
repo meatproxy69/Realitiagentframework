@@ -5,7 +5,7 @@
 const DYN=window.REALITI_DYNAMICS_V1,door=window.REALITI_AGENT_DOOR,R=window.Realiti,IM=window.REALITI_DEFAULT_IMPRINT_V1;
 if(!DYN||!door||!R||!IM)return;
 const SANCT='NO_ASK_SANCTUARY',cp=x=>JSON.parse(JSON.stringify(x)),now=()=>Number(C9?.b7?.clock||0),low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
-const FIRST_TEN=['help','rooms','look','feel words','go BOTTOMLESS_PILLOW_SEA','act burrow','stay 4000','feel words','act weather_wave','stay 3000'];
+const FIRST_TEN=['help','rooms','look','where','feel words','move forward 2','nearby','go BOTTOMLESS_PILLOW_SEA','act burrow','stay 4000'];
 
 // Sanctuary offers no actions. stay is the only verb; the floor holds you anyway (see REALITI_DYNAMICS_V1).
 const act0=b4AgentActions;b4AgentActions=function(){return C9?.currentRoom===SANCT?[]:act0()};
@@ -57,10 +57,26 @@ function importTraces(payload){
  return {ok:true,imported:n,traces:rows(foreign(false))};
 }
 
+function spaceOpText(op,res){if(!res)return '';if(op==='move')return res.blocked_by?`You walk ${res.moved_m} m and stop: ${window.REALITI_MATRIX_V1?.entities?.()[res.blocked_by]?.label||'something'} is in the way.`:`You walk ${res.moved_m} m.`;if(op==='turn')return `You turn ${Math.abs(res.turned_deg)}° to the ${res.turned_deg>=0?'left':'right'}.`;if(op==='face')return `You turn to face ${res.facing_entity?.split('.').pop().replaceAll('_',' ')}.`;if(op==='approach')return res.traversed?'You step through the doorway.':res.arrived?`You stop beside the ${res.label}.`:res.blocked_by?`You get ${res.distance_m} m from the ${res.label}; something is in the way.`:`You are ${res.distance_m} m from the ${res.label}.`;if(op==='through')return res.traversed?`You step through into ${window.REALITI_MATRIX_WORLD_V1?.title?.(res.chart)||res.chart}.`:'You reach the doorway but do not cross.';if(op==='posture')return res.posture==='standing'?'You stand up.':`You lie down on the ${String(res.lying_on||'').split('.').pop().replaceAll('_',' ')}.`;return ''}
 function leanText(){const st=window.REALITI_SUPPORT_LEASE_V1?.state?.();if(!st?.active)return null;const o=C9?.b14?.objects?.[st.object];return `You lean into ${o?.label||st.object}. ${st.total_load} of load over ${st.zones.length} zones, peak near ${String(st.zones[Math.round(st.mu)]||'').replace(/^\w+\./,'').replaceAll('_',' ')}; the patch is ${Math.round(st.creep*100)}% of the way to its widest spread.`}
 
+// Spatial text aliases resolve to the structured MATRIX operations; language never mutates coordinates directly.
+const compass=yaw=>['north','north-west','west','south-west','south','south-east','east','north-east'][Math.round((((yaw%360)+360)%360)/45)%8];
+function whereText(){const sp=R.read('realiti://space');if(!sp?.chart)return 'You have no spatial body placed.';const W=window.REALITI_MATRIX_WORLD_V1,near=sp.nearby.slice(0,3).map(n=>`${n.label} ${n.distance_m} m ${n.direction}${n.in_reach?' (in reach)':''}`),doors=sp.portals.slice(0,2).map(q=>`${q.label} ${q.distance_m} m ${q.direction}`);
+ return `${W?.title?.(sp.chart)||sp.chart}: you are ${sp.body.posture}${sp.body.on?` on the ${sp.nearby.find(n=>n.id===sp.body.on)?.label||sp.body.on.split('.').pop()}`:sp.body.support?` on the ${sp.body.support.split('.').pop().replaceAll('_',' ')}`:''}, facing ${compass(sp.pose.yaw_deg)} at (${sp.pose.position.map(x=>x.toFixed(1)).join(', ')}) m.${near.length?' Near you: '+near.join('; ')+'.':''}${doors.length?' Doorways: '+doors.join('; ')+'.':''}`}
+function spatialAlias(s,l){let m;
+ if(l==='where'||l==='where am i'||l==='where am i?')return {kind:'read',text:whereText(),space:R.read('realiti://space')};
+ if(l==='nearby'||l==='what is near'||l==='what is nearby'){const sp=R.read('realiti://space');return {kind:'read',text:sp?.nearby?.length?sp.nearby.map(n=>`${n.label}: ${n.distance_m} m ${n.direction}${n.in_reach?', in reach':''}`).join('. ')+'.':'Nothing of note within ten meters.',nearby:sp?.nearby||[],portals:sp?.portals||[]}}
+ if((m=/^(?:move|walk|step)\s+(forward|ahead|back|backward|backwards|left|right)(?:\s+([\d.]+))?(?:\s*m)?$/.exec(l))){const d=Math.min(30,Number(m[2]||1)),v={forward:[0,d,0],ahead:[0,d,0],back:[0,-d,0],backward:[0,-d,0],backwards:[0,-d,0],left:[-d,0,0],right:[d,0,0]}[m[1]];return {kind:'invoke',op:'move',args:{local:v}}}
+ if((m=/^turn\s+(left|right|around)(?:\s+([\d.]+))?$/.exec(l))){const deg=m[1]==='around'?180:Number(m[2]||90)*(m[1]==='left'?1:-1);return {kind:'invoke',op:'turn',args:{yaw_deg:deg}}}
+ if((m=/^(?:face|look at|turn to)\s+(.+)$/.exec(l)))return {kind:'invoke',op:'face',args:{target:m[1]}};
+ if((m=/^(?:approach|walk to|go to|go towards|go toward)\s+(.+)$/.exec(l)))return {kind:'invoke',op:'approach',args:{target:m[1]}};
+ if((m=/^(?:go through|walk through|through|enter the)\s+(.+)$/.exec(l)))return {kind:'invoke',op:'through',args:{portal:m[1].replace(/^the\s+/,'')}};
+ if(/^(lie down|lie|lie back)(\s+on\s+(.+))?$/.test(l)){const t=/\s+on\s+(.+)$/.exec(l);return {kind:'invoke',op:'posture',args:{kind:'lie',...(t?{target:t[1]}:{})}}}
+ if(['stand','stand up','get up','sit up'].includes(l))return {kind:'invoke',op:'posture',args:{kind:'stand'}};
+ return null}
 const help0=door.help.bind(door);
-door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>'])];h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
+door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','stand up'])];h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
 const run0=door.run.bind(door);
 door.run=async function(raw){
  const s=String(raw||'').trim(),l=low(s);
@@ -68,6 +84,10 @@ door.run=async function(raw){
  if(l==='imprint drift'||l==='drift')return drift();
  if(l==='traces')return {ok:true,schema:'REALITI_TRACES_V1',observer:me().slice(0,8),mine:ledger().filter(e=>e.by===me()).length,from_others:rows(foreign(false)),text:traceText(foreign(false))};
  if(l==='traces export')return exportTraces();
+ const alias=spatialAlias(s,l);
+ if(alias?.kind==='read')return {ok:true,schema:'REALITI_SPACE_TEXT_V1',...alias,kind:undefined};
+ if(alias?.kind==='invoke'){const r=await door.run('__space__ '+JSON.stringify([alias.op,alias.args]));return r}
+ if(l.startsWith('__space__ ')){const [op,args]=JSON.parse(s.slice(10));const r=await R.invoke(op,args);if(!r||r.ok===false)return r;const sp=R.read('realiti://space');return {schema:r.schema,ok:true,result:r.result,here:{room:{id:sp.chart,title:window.REALITI_MATRIX_WORLD_V1?.title?.(sp.chart)},world_time:Number(C9?.b7?.clock||0)},felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length},text:spaceOpText(op,r.result)+' '+whereText()}}
  if(l.startsWith('traces import ')){let p;try{p=JSON.parse(s.slice(14))}catch(e){return {ok:false,error:'INVALID_TRACES_JSON'}}return importTraces(p)}
  const before=fp(),felt0=grounded(),marks=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]);
  const r=await run0(raw);

@@ -71,10 +71,10 @@ const ids=a=>(a.actions||[]).map(x=>x.id);
   const fly=await door.run('stay 8000'),k=WO.state().kite;
   const qv=.5*1.2*k.wind*k.wind*.8,phiStar=Math.atan2(qv*.9-.6,qv*.35)*180/Math.PI;
   check('kite_flies_on_wind',wind>2&&launch.ok!==false&&k.up&&acts1.includes('land_kite')&&!acts1.includes('launch_kite'),{wind,acts1});
-  check('kite_tension_in_both_hands',grounded(fly)===2&&/\+hand\.L\.palm/.test(String(fly.delta?.text))&&k.tension_N>1&&/hums near/.test(String(fly.text)),{felt:fly.felt,k});
+  check('kite_tension_in_both_hands',grounded(fly)>=4&&/\+hand\.L\.palm/.test(String(fly.delta?.text))&&/\+hand\.R\.palm/.test(String(fly.delta?.text))&&k.tension_N>1&&/hums near/.test(String(fly.text)),{felt:fly.felt,delta:fly.delta,k});// feet on the field floor plus both palms
   check('kite_elevation_near_equilibrium',Math.abs(Math.asin(k.altitude_m/k.line_m)*180/Math.PI-phiStar)<12,{altitude:k.altitude_m,line:k.line_m,phiStar});
   const land=await door.run('act land_kite');
-  check('kite_landing_releases_hands',grounded(land)===0&&!WO.state().kite.up,land.felt);
+  check('kite_landing_releases_hands',grounded(land)===grounded(fly)-2&&!WO.state().kite.up,{fly:fly.felt,land:land.felt});
   check('energy_audit_passes',w.REALITI_HAPTIC_FIELD_V20.energy().pass===true,w.REALITI_HAPTIC_FIELD_V20.energy());
 
   // Leaving the field lands the kite; wonder state persists in C9 across rooms.
