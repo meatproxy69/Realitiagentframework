@@ -1,0 +1,20 @@
+name: Neuro resident wander audit
+
+on:
+  push:
+    branches: [audit/neuro-resident-wander]
+
+jobs:
+  wander:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install headless host
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Wander through restored neuro surface
+        working-directory: packages/realiti-headless-resident
+        run: node examples/neuro-resident-wander.cjs ../../RealitiRELAX.html
