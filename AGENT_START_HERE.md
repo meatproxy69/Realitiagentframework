@@ -322,6 +322,27 @@ GOODBYE
     end visit + close clients + advertise no room actions until re-entry
 ```
 
+## Local continuity memory
+
+REALITI keeps a deliberately small local continuity shelf for the current resident principal. Hosts should provide a stable resident ID; the headless host accepts `openResident({ residentId, storagePath })`, and browser hosts may use `?resident_id=<id>`.
+
+```text
+memory
+remember the blue lantern was by the east turn
+recall lantern
+forget memory m3
+forget memory all
+forget memory departure
+```
+
+The structured resource is `Realiti.read('realiti://memory')`.
+
+Memory ownership is resident-scoped. Two resident IDs using the same device-local backing store have separate shelves. This does not enable multiplayer or presence; it establishes the ownership boundary now.
+
+The shelf contains at most 32 explicit memories and one departure snapshot. `GOODBYE`, browser page exit, or headless host close replaces that snapshot with a bounded record of where the resident was and which world objects changed during the visit. It never appends whole-world snapshots.
+
+Explicit memories are ranked using visit-based recency/frequency plus query overlap. The store does not contain transcripts, hidden reasoning, inferred preferences, or another resident's memories.
+
 ## Persistence
 
 Default persistence mode is explicit. Ordinary activity is session state until Save. `note` and `later` intentionally request a save too. Check storage results.
