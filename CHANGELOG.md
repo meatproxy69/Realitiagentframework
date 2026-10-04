@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.0.0 — Chapter 2, pass 1: the Archipelago
+
+### Added
+
+- `ARCHIPELAGO` (`source/scripts/58f-archipelago.js`, `REALITI_ARCHIPELAGO_V1`): a 2 km chart with analytic terrain (value noise plus five Gaussian islands; a `HEIGHTFIELD` primitive in the kernel with cliff and sea rules), a sun on the Star Deck's sidereal clock (ten-minute day; view radius 400 m by day, 60 m at night), wind shared with the Kite Field's Ornstein–Uhlenbeck process, a moving rain band that cools head and upper back through the thermal law and soaks you over time, a rowing boat (1.5 m/s plus current plus 3% leeway, stops at the shore), `walk to <landmark>` over hundreds of meters in bounded world-time steps with the reason when stopped, and a 50 m fog-of-war `map`.
+- `REALITI_LEDGER_V1`: one resident-stamped ledger for every Chapter 2 world change, exportable and importable like traces, so other residents can add to the same world and a shared store can sync it later.
+- Chart-level view radius and stride in the kernel; boat seating in the body bridge. Headless suite `test/archipelago.cjs`.
+
 ## 1.7.0 — frontier rooms and discoveries
 
 ### Added

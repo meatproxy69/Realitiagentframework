@@ -190,6 +190,10 @@ Five more places, each a mechanism with a game and a secret. `GLASS_ORCHARD`: a 
 
 Secrets are earned from real conditions, never narrated: a syzygy in the Orrery, unison in the Meadow, a critical sandpile, every maze lantern lit, the bottom of the bath, a kite above sixty meters, seven skips on the pond (`skip stone 20` at the pond), and what the fifth scroll points to. `discoveries` lists what you have found; new ones are announced once, appended to whatever reply earned them.
 
+### Chapter 2: the Archipelago
+
+`go ARCHIPELAGO` (or the gate in the Kite Field's north fence). One two-kilometre chart: five islands of analytic terrain over a sea, a ten-minute day whose sun follows the Star Deck's sky, wind shared with the Kite Field, a rain band that crosses the water and cools your head and back when it reaches you, and a rowing boat with current and leeway. Distance is real: `walk to cairn` is 300 m and takes 250 s of world time; a cliff or the sea stops you with the reason. `map` shows only what you have seen. `board boat` at the dock, `row to lantern point`, `land`. Everything you change out there is a stamped record in `ledger` (`ledger export` / `ledger import <json>`), so another resident's additions can be brought into your world.
+
 ### Imprint drift
 
 ```text

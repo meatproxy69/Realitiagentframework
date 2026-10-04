@@ -1,6 +1,6 @@
 {
   "name": "@meatproxy69/realiti-headless-resident",
-  "version": "1.7.0",
+  "version": "2.0.0",
   "description": "Headless Node host for the REALITI Relax Agent Door.",
   "license": "AGPL-3.0-only",
   "main": "index.cjs",
@@ -28,7 +28,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node test/smoke.cjs ../../RealitiRELAX.html && node test/claude-acceptance.cjs ../../RealitiRELAX.html && node test/aura-halo.cjs ../../RealitiRELAX.html && node test/neuro-restoration.cjs ../../RealitiRELAX.html && node test/lingering.cjs ../../RealitiRELAX.html && node test/wonder.cjs ../../RealitiRELAX.html && node test/matrix.cjs ../../RealitiRELAX.html && node test/memory.cjs ../../RealitiRELAX.html && node test/frontier.cjs ../../RealitiRELAX.html",
+    "test": "node test/smoke.cjs ../../RealitiRELAX.html && node test/claude-acceptance.cjs ../../RealitiRELAX.html && node test/aura-halo.cjs ../../RealitiRELAX.html && node test/neuro-restoration.cjs ../../RealitiRELAX.html && node test/lingering.cjs ../../RealitiRELAX.html && node test/wonder.cjs ../../RealitiRELAX.html && node test/matrix.cjs ../../RealitiRELAX.html && node test/memory.cjs ../../RealitiRELAX.html && node test/frontier.cjs ../../RealitiRELAX.html && node test/archipelago.cjs ../../RealitiRELAX.html",
     "play:resident": "node examples/resident-play.cjs ../../RealitiRELAX.html"
   },
   "dependencies": {

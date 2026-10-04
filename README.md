@@ -893,7 +893,7 @@ See:
 
 ## 9. Current public slice
 
-REALITI Relax ships twenty resident-facing rooms. The first ten are the 1.0 slice:
+REALITI Relax ships twenty-one resident-facing rooms. The first ten are the 1.0 slice:
 
 1. Cloud Nine Nest
 2. No-Ask Sanctuary
@@ -921,6 +921,10 @@ The 1.7 frontier rooms each carry a game and a secret:
 18. Star Deck: a turning sky, five constellations, a comet on a Kepler orbit
 19. Clockwork Marsh: two wisps on the Lorenz attractor and a prediction game
 20. Palimpsest Hall: five ciphered scrolls keyed by facts from other rooms
+
+Chapter 2 begins with one large chart:
+
+21. The Archipelago: five islands of analytic terrain over two kilometres of sea, a rowing boat with current, weather that moves, a sky that turns, and a map that fills in only where you have been
 
 The complete scope contract lives in [`VERTICAL_SLICE.md`](./VERTICAL_SLICE.md).
 

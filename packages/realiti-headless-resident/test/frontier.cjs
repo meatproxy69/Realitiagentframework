@@ -13,7 +13,7 @@ const near=(a,b,tol)=>Math.abs(a-b)<=tol;
  try{
   const door=s.door,w=s.window,CAT=w.REALITI_CATNIP_V1,R=w.Realiti;
   const rooms=await door.run('rooms');
-  check('twenty_rooms_with_frontier',rooms.length===20&&CAT.rooms.every(id=>rooms.some(r=>r.id===id)),rooms.map(r=>r.id).slice(15));
+  check('twenty_rooms_with_frontier',rooms.length===21&&CAT.rooms.every(id=>rooms.some(r=>r.id===id)),rooms.map(r=>r.id).slice(15));
 
   // Glass Orchard: Life rules hold; a still life survives; generations follow world time.
   await door.run('go GLASS_ORCHARD');

@@ -27,6 +27,7 @@ function sdfLocal(e,p){
  if(s.kind==='BOX'||s.kind==='VOLUME'){const q=[Math.abs(p[0])-s.halfExtents[0],Math.abs(p[1])-s.halfExtents[1],Math.abs(p[2])-s.halfExtents[2]];return len(q.map(x=>Math.max(x,0)))+Math.min(Math.max(q[0],q[1],q[2]),0)}
  if(s.kind==='CAPSULE'){const h=Math.max(0,s.height/2-s.radius),z=clamp(p[2],-h,h);return len([p[0],p[1],p[2]-z])-s.radius}
  if(s.kind==='PLANE')return p[2];
+ if(s.kind==='HEIGHTFIELD')return (p[2]-s.h(p[0],p[1]))/Math.sqrt(1+(s.slope||0)**2);
  return Infinity;
 }
 function toLocal(e,p){return qrot(qconj(e.pose.rotation),sub(p,e.pose.position))}
@@ -53,6 +54,7 @@ function sweep(r,from,delta,skipIds){
 function supportUnder(chart,center,feetZ){
  let best=null;for(const e of Object.values(entities)){if(e.chart!==chart||e.resident)continue;const s=e.shape;if(!s)continue;let top=null;
   if(s.kind==='PLANE'&&e.tags.includes('floor'))top=e.pose.position[2];
+  else if(s.kind==='HEIGHTFIELD')top=s.h(center[0],center[1]);
   else if(s.kind==='BOX'&&e.collision){const l=toLocal(e,center);if(Math.abs(l[0])<=s.halfExtents[0]&&Math.abs(l[1])<=s.halfExtents[1])top=e.pose.position[2]+s.halfExtents[2]}
   if(top!=null&&top<=feetZ+.45&&(!best||top>best.z))best={z:top,e}}
  return best;
@@ -63,15 +65,20 @@ function touching(r,p){const skip=walkable(r,p[2]-r.shape.height/2),out=[];for(c
 // iterations; then settle onto support (kinematic gravity).
 function resolveMove(r,delta){
  let p=r.pose.position.slice(),rem=delta.slice(),hits=[];
- const skipIds=new Set();for(const {e,n} of touching(r,p)){const inward=dot(rem,n);if(inward<0)rem=sub(rem,scale(n,inward));skipIds.add(e.id)}
+ const skipIds=new Set();let wall=null;for(const {e,n} of touching(r,p)){const inward=dot(rem,n);if(inward<0){rem=sub(rem,scale(n,inward));wall=e.id}skipIds.add(e.id)}
+ if(len(rem)<EPS&&len(delta)>EPS&&wall)hits.push(wall);
  for(let i=0;i<3&&len(rem)>EPS;i++){const sw=sweep(r,p,rem,skipIds);p=sw.end;if(!sw.hit)break;hits.push(sw.hit.id);const left=scale(rem,1-sw.t),inward=Math.min(0,dot(left,sw.normal));rem=sub(left,scale(sw.normal,inward));if(len(rem)<EPS)break}
- const half=r.shape.height/2,sup=supportUnder(r.chart,p,p[2]-half);if(sup)p[2]=sup.z+half;
+ const half=r.shape.height/2,feet=r.pose.position[2]-half,terrain=Object.values(entities).find(e=>e.chart===r.chart&&e.shape?.kind==='HEIGHTFIELD');
+ const sup=supportUnder(r.chart,p,feet);
+ // Terrain rules apply only when the terrain itself would carry you: a pier or a boat may stand over deep water.
+ if(terrain&&!r.afloat&&(!sup||sup.e.shape.kind==='HEIGHTFIELD')){const tt=terrain.shape.h(p[0],p[1]);if(tt>feet+.45)return {moved:0,blocked_by:terrain.id,support:r.support,cliff:true};if(tt<(terrain.shape.sea??-Infinity)-.3)return {moved:0,blocked_by:terrain.id,support:r.support,sea:true}}
+ if(sup)p[2]=sup.z+half;
  const moved=len(sub(p,r.pose.position));r.pose.position=p;r.support=sup?sup.e.id:null;return {moved,blocked_by:moved<EPS?(hits[0]||null):null,support:r.support};
 }
 // Exact velocity servo over one step h: dv/dt=(u−v)/τ, dp/dt=v, closed form.
 function servo(v0,u,tau,h){const a=Math.exp(-h/tau);return {v:add(u,scale(sub(v0,u),a)),dp:add(scale(u,h),scale(sub(v0,u),tau*(1-a)))}}
 
-function define(chart,def){charts[chart]={id:chart,bounds:def.bounds,spawn:def.spawn,tags:def.tags||[],lying:def.lying||null};return charts[chart]}
+function define(chart,def){charts[chart]={id:chart,bounds:def.bounds,spawn:def.spawn,tags:def.tags||[],lying:def.lying||null,view:def.view||10,stride:def.stride||30};return charts[chart]}
 function addEntity(e){const rec={id:e.id,chart:e.chart,pose:{position:e.position||[0,0,0],rotation:e.rotation||[0,0,0,1]},shape:e.shape||null,tags:e.tags||[],collision:!!e.collision,visible:false,material:e.material||null,label:e.label||e.id.split('.').pop().replaceAll('_',' '),dynamic:!!e.dynamic,resident:!!e.resident,affordances:e.affordances||[]};entities[rec.id]=rec;return rec}
 function removeEntity(id){delete entities[id]}
 function definePortal(p){const rec={id:p.id,from:p.from,to:p.to,entry:p.entry,exit:p.exit,rotation:p.rotation||[0,0,0,1],radius:p.radius||.6,label:p.label||p.id};portals[rec.id]=rec;addEntity({id:rec.id,chart:p.from,position:p.entry,shape:{kind:'SPHERE',radius:rec.radius},tags:['portal','doorway'],label:rec.label,affordances:['through']});return rec}
@@ -105,7 +112,7 @@ function step(dt,id='resident:self'){
 function turn(yawDeg,id='resident:self'){const r=resident(id);r.pose.rotation=qnorm(qmul(fromYaw(yawDeg*Math.PI/180),r.pose.rotation));bump();return r.pose.rotation}
 function face(targetId,id='resident:self'){const r=resident(id),e=entities[targetId];if(!e||e.chart!==r.chart)return null;const d=sub(e.pose.position,r.pose.position);if(Math.hypot(d[0],d[1])<EPS)return r.pose.rotation;r.pose.rotation=fromYaw(Math.atan2(-d[0],d[1]));bump();return r.pose.rotation}
 function facing(r){return qrot(r.pose.rotation,[0,1,0])}
-function moveLocal(local,id='resident:self'){const r=resident(id);const L=Math.min(len(local),30);if(L<EPS)return null;const d=qrot(r.pose.rotation,scale(norm(local),L));r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'move',target:add(r.pose.position,[d[0],d[1],0]),distance:L,allow_portal:false};return r.intent}
+function moveLocal(local,id='resident:self'){const r=resident(id);const L=Math.min(len(local),charts[r.chart]?.stride||30);if(L<EPS)return null;const d=qrot(r.pose.rotation,scale(norm(local),L));r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'move',target:add(r.pose.position,[d[0],d[1],0]),distance:L,allow_portal:false};return r.intent}
 function moveTo(target,id='resident:self'){const r=resident(id);r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'move',target:[target[0],target[1],r.pose.position[2]],distance:len(sub(target,r.pose.position)),allow_portal:false};return r.intent}
 function approach(targetId,id='resident:self'){const r=resident(id),e=entities[targetId];if(!e||e.chart!==r.chart)return null;const center=len(sub(e.pose.position,r.pose.position)),surface=Math.max(0,sdf(e,r.pose.position)),reach=Math.max(.5,center-surface+.5);r.last_block=null;r.at_portal=null;r.walked=0;r.intent={kind:'approach',target:e.pose.position.slice(),stop:e.tags.includes('portal')?0:reach,entity:targetId,allow_portal:e.tags.includes('portal')};face(targetId,id);return r.intent}
 
@@ -113,7 +120,7 @@ function approach(targetId,id='resident:self'){const r=resident(id),e=entities[t
 function distance(a,b){const A=entities[a],B=entities[b];if(!A||!B)return null;if(A.chart===B.chart)return len(sub(A.pose.position,B.pose.position));return geodesic(A,B)}
 function geodesic(A,B){const dist={[A.chart]:0},at={[A.chart]:A.pose.position},done=new Set();for(let k=0;k<64;k++){let cur=null;for(const c of Object.keys(dist))if(!done.has(c)&&(cur==null||dist[c]<dist[cur]))cur=c;if(cur==null)return null;if(cur===B.chart)return dist[cur]+len(sub(B.pose.position,at[cur]));done.add(cur);for(const P of Object.values(portals)){if(P.from!==cur)continue;const d=dist[cur]+len(sub(P.entry,at[cur]))+1;if(!(P.to in dist)||d<dist[P.to]){dist[P.to]=d;at[P.to]=P.exit}}}return null}
 function words(r,e){if(e.id===r.support)return 'underfoot';const d=sub(e.pose.position,r.pose.position),f=facing(r),ang=Math.atan2(f[0]*d[1]-f[1]*d[0],f[0]*d[0]+f[1]*d[1])*180/Math.PI,flat=Math.hypot(d[0],d[1]);if(flat<.5&&d[2]>1)return 'above';if(flat<.5&&d[2]<-1)return 'below';const a=((ang%360)+360)%360;return a<22.5||a>=337.5?'ahead':a<67.5?'ahead-left':a<112.5?'left':a<157.5?'behind-left':a<202.5?'behind':a<247.5?'behind-right':a<292.5?'right':'ahead-right'}
-function nearby(id='resident:self',{radius=10,limit=12}={}){const r=S().residents[id];if(!r)return [];return Object.values(entities).filter(e=>e.chart===r.chart&&!e.resident&&!e.tags.includes('structure')&&!e.tags.includes('portal')).map(e=>({e,c:len(sub(e.pose.position,r.pose.position)),d:Math.max(0,sdf(e,r.pose.position))})).filter(x=>x.d<=radius).sort((a,b)=>a.d-b.d||(a.e.id<b.e.id?-1:1)).slice(0,limit).map(({e,c,d})=>({id:e.id,label:e.label,distance_m:ROUND(d),center_m:ROUND(c),direction:words(r,e),tags:e.tags.slice(),material:e.material,affordances:e.affordances.slice(),in_reach:d<=1.0}))}
+function nearby(id='resident:self',{radius,limit=12}={}){const r=S().residents[id];if(!r)return [];radius=radius??(typeof charts[r.chart]?.view==='function'?charts[r.chart].view():charts[r.chart]?.view??10);return Object.values(entities).filter(e=>e.chart===r.chart&&!e.resident&&!e.tags.includes('structure')&&!e.tags.includes('portal')).map(e=>({e,c:len(sub(e.pose.position,r.pose.position)),d:Math.max(0,sdf(e,r.pose.position))})).filter(x=>x.d<=radius).sort((a,b)=>a.d-b.d||(a.e.id<b.e.id?-1:1)).slice(0,limit).map(({e,c,d})=>({id:e.id,label:e.label,distance_m:ROUND(d),center_m:ROUND(c),direction:words(r,e),tags:e.tags.slice(),material:e.material,affordances:e.affordances.slice(),in_reach:d<=1.0}))}
 function project(id='resident:self'){const r=S().residents[id];if(!r||!r.chart)return {schema:'REALITI_SPACE_READ_V1',world:S().world.id,chart:null,law:'no spatial body is placed'};const f=facing(r);
  return {schema:'REALITI_SPACE_READ_V1',world:S().world.id,chart:r.chart,pose:{position:r.pose.position.map(x=>ROUND(x)),facing:f.map(x=>ROUND(x)),yaw_deg:Math.round(qyaw(r.pose.rotation)*180/Math.PI)},body:{kind:r.shape.kind,radius:r.shape.radius,height:r.shape.height,posture:r.posture,on:r.on,support:r.support},moving:!!r.intent||len(r.v)>EPS,speed_m_s:ROUND(len(r.v)),nearby:nearby(id),
   portals:Object.values(portals).filter(P=>P.from===r.chart).map(P=>({id:P.id,label:P.label,to:P.to,distance_m:ROUND(len(sub(P.entry,r.pose.position))),direction:words(r,entities[P.id])})).sort((a,b)=>a.distance_m-b.distance_m),

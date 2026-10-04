@@ -31,7 +31,7 @@ async function actMatch(s,re){
 
    console.log('ACCEPTANCE rooms');
    const rooms=await door.run('rooms');
-   check('twenty_public_rooms',Array.isArray(rooms)&&rooms.length===20,rooms);
+   check('twenty_one_public_rooms',Array.isArray(rooms)&&rooms.length===21,rooms);
    check('canonical_pocket_room_id',rooms.some(r=>r.id==='POCKET_FAMILIAR_HOUSE')&&!rooms.some(r=>r.id==='PET_ROOM_2'),rooms.map(r=>r.id));
 
    const zoneSet=[...w.b7BodyZones()].sort();
