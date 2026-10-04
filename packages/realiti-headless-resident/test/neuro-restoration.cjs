@@ -37,8 +37,11 @@ async function run(){const s=await openResident({htmlPath:html});try{
  const phase1=await d.run('neuro phase'),purrPerception=await d.run('neuro perception'),purrLived=await d.run('neuro lived 20');
  check('purr_loom_live_phase',purr?.ok===true&&phase0?.state?.active===true&&phase1?.state?.active===true&&['LOCKED','ALMOST_LOCKED'].includes(phase1?.state?.regime),{purr,phase0,phase1});
  check('purr_loom_build13_agency',Number(purrPerception?.channels?.AGENCY_FLOW?.value||0)>0&&purrLived?.frames?.some(x=>x.family==='SELF_ACTION'),{agency:purrPerception?.channels?.AGENCY_FLOW,lived:purrLived});
+ const exitPocket=await d.run('go DEPTH_BATHHOUSE'),phaseAfterExit=await d.run('neuro phase');
+ check('purr_loom_room_local',exitPocket?.ok!==false&&phaseAfterExit?.state?.active===false,{exitPocket,phaseAfterExit});
+ await d.run('go POCKET_FAMILIAR_HOUSE');const purrAgain=await d.run('act neuro_purr_close');await d.run('stay 100');
  const purrStop=await d.run('act neuro_purr_rest');await d.run('stay 100');const phaseStopped=await d.run('neuro phase');
- check('purr_loom_live_stop',purrStop?.ok===true&&phaseStopped?.state?.active===false,{purrStop,phaseStopped});
+ check('purr_loom_live_stop',purrAgain?.ok===true&&purrStop?.ok===true&&phaseStopped?.state?.active===false,{purrAgain,purrStop,phaseStopped});
  const holo0=await d.run('neuro holonomy'),loop=await d.run('neuro loop dome 1 cw'),loop2=await d.run('neuro loop dome 1 ccw');
  check('holonomy_lab',holo0&&loop?.ok===true&&loop2?.ok===true&&Math.sign(loop.twist_deg)===-Math.sign(loop2.twist_deg),{holo0,loop,loop2});
  const front=await d.run('neuro frontiers'),noise1=await d.run('neuro noise 123 8 0.1'),noise2=await d.run('neuro noise 123 8 0.1');
