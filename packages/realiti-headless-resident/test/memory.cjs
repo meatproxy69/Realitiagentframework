@@ -72,6 +72,47 @@ async function open(id){return openResident({htmlPath:html,residentId:id,storage
   check('capabilities_advertise_memory',caps.resources.includes('realiti://memory')&&caps.operations.includes('remember')&&caps.memory?.resident_scoped===true,caps.memory);
  }finally{a.close()}
 
+ // Regression: travel and elapsed world time alone must not fabricate changed objects.
+ let travel=await open('agent-travel-only');
+ try{
+  await travel.door.run('home');
+  await travel.door.run('stay 1200');
+  await travel.door.run('go CARDBOARD_BOX_WORKSHOP');
+  await travel.door.run('stay 1200');
+  await travel.door.run('go KITE_FIELD');
+  await travel.door.run('stay 1200');
+  await travel.door.run('goodbye');
+ }finally{travel.close()}
+ travel=await open('agent-travel-only');
+ try{
+  const where=await travel.door.run('where_was_i');
+  check('where_was_i_local_memory_is_success',where.ok===true&&!where.error&&where.schema==='REALITI_WHERE_WAS_I_V1'&&where.room==='KITE_FIELD',where);
+  check('travel_only_has_no_changed_objects',Array.isArray(where.departure?.changed_objects)&&where.departure.changed_objects.length===0,where.departure?.changed_objects);
+  const structured=await travel.publicApi.invoke('where_was_i');
+  check('structured_where_was_i_is_success',structured.ok===true&&!structured.error&&structured.schema==='REALITI_WHERE_WAS_I_V1'&&structured.room==='KITE_FIELD',structured);
+ }finally{travel.close()}
+
+ // Regression: explicit object mutation is retained, but unrelated time-aged objects are not.
+ let actor=await open('agent-object-change');
+ try{
+  await actor.door.run('home');
+  const takeAction=(await actor.door.run('actions')).actions.find(x=>/^take__FELT-HAT-1$/i.test(x.id)||/TAKE .*HAT/i.test(x.label));
+  const take=takeAction?await actor.door.run('act '+takeAction.id):{ok:false,error:'TAKE_ACTION_MISSING'};
+  check('explicit_hat_take_works',take?.ok!==false,{action:takeAction?.id,result:take});
+  await actor.door.run('move right 1');
+  const placeAction=(await actor.door.run('actions')).actions.find(x=>/^place__FELT-HAT-1$/i.test(x.id)||/PLACE .*HAT/i.test(x.label));
+  const place=placeAction?await actor.door.run('act '+placeAction.id):{ok:false,error:'PLACE_ACTION_MISSING'};
+  check('explicit_hat_place_works',place?.ok!==false,{action:placeAction?.id,result:place});
+  await actor.door.run('goodbye');
+ }finally{actor.close()}
+ actor=await open('agent-object-change');
+ try{
+  const dep=actor.publicApi.read('realiti://memory').last_departure;
+  const ids=(dep?.changed_objects||[]).map(x=>x.id).sort();
+  check('explicit_change_keeps_only_causal_object',ids.length===1&&ids[0]==='TESTER-HAT-1',ids);
+  check('departure_object_state_omits_clock_bookkeeping',!Object.prototype.hasOwnProperty.call(dep.changed_objects[0]?.state||{},'t'),dep.changed_objects[0]);
+ }finally{actor.close()}
+
  const disk=JSON.parse(fs.readFileSync(storagePath,'utf8'));
  const memoryKeys=Object.keys(disk).filter(k=>k.includes('resident-memory-v1:'));
  check('separate_physical_namespaces',memoryKeys.some(k=>k.endsWith('agent-a'))&&memoryKeys.some(k=>k.endsWith('agent-b')),memoryKeys);

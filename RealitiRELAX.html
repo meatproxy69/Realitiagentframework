@@ -10358,7 +10358,7 @@ function load(){
   }catch{return fresh()}
 }
 let S=load();
-const VISIT=S.visits+1;
+const VISIT=S.visits+1,BASE_OBJECT_SEQ=Math.max(0,Number(C9?.b14?.seq)||0);
 let departed=false;
 
 function persist(flush=false){
@@ -10436,21 +10436,45 @@ function resetResident(){
   return {ok:true,resident_id:RID,scope:'current resident memory only',world_unchanged:true,other_residents_unchanged:true};
 }
 
+function durableState(v){
+  if(Array.isArray(v))return v.map(durableState);
+  if(!v||typeof v!=='object')return v;
+  const out={};
+  for(const [k,x] of Object.entries(v)){
+    if(k==='t')continue; // materialization/bookkeeping clock, never a resident-memory distinction
+    out[k]=durableState(x);
+  }
+  return out;
+}
 function objectMap(){
   const out={};
   for(const o of Object.values(C9?.b14?.objects||{})){
     if(!o?.id)continue;
-    let raw='';try{raw=JSON.stringify([o.location,o.kind,o.state])}catch{}
-    out[o.id]={sig:hash(raw),id:o.id,label:clean(o.label).slice(0,120)||o.id,kind:o.kind||null,room:o.location||null,state:safeState(o.state)};
+    const state=durableState(o.state||{});let raw='';
+    try{raw=JSON.stringify([o.location,o.kind,state])}catch{}
+    out[o.id]={sig:hash(raw),id:o.id,label:clean(o.label).slice(0,120)||o.id,kind:o.kind||null,room:o.location||null,state:safeState(state)};
   }
   return out;
 }
 const BASE=objectMap();
 
+function residentChangedObjectIds(){
+  const touched=new Set();
+  for(const e of C9?.b14?.history||[]){
+    if(Number(e?.seq||0)<=BASE_OBJECT_SEQ||e?.kind!=='PLAY_OBJECT_ACTION')continue;
+    for(const id of e.objects||[])if(typeof id==='string')touched.add(id);
+  }
+  // TAKE/PLACE can move an attached component even though the primary receipt names only the requested object.
+  // Expand through current causal links so every resident-moved member is represented without admitting unrelated clocks.
+  let grew=true;while(grew){grew=false;for(const L of C9?.b14?.links||[]){if(!['ATTACHED','STACKED'].includes(L?.type))continue;if(touched.has(L.a)&&!touched.has(L.b)){touched.add(L.b);grew=true}else if(touched.has(L.b)&&!touched.has(L.a)){touched.add(L.a);grew=true}}}
+  return touched;
+}
 function changedObjects(){
-  const now=objectMap(),rows=[];
-  for(const [id,o] of Object.entries(now))if(!BASE[id]||BASE[id].sig!==o.sig)rows.push({...o});
-  for(const [id,o] of Object.entries(BASE))if(!now[id])rows.push({id,label:o.label,kind:o.kind,room:o.room,removed:true});
+  const now=objectMap(),ids=residentChangedObjectIds(),rows=[];
+  for(const id of ids){
+    if(now[id])rows.push({...now[id],change_source:'resident_action'});
+    else if(BASE[id])rows.push({id,label:BASE[id].label,kind:BASE[id].kind,room:BASE[id].room,removed:true,change_source:'resident_action'});
+  }
   return rows.sort((a,b)=>String(a.id).localeCompare(String(b.id))).slice(0,MAX_CHANGES);
 }
 function departureSnapshot(reason='goodbye'){
@@ -10511,7 +10535,8 @@ async function invoke(name,args={}){
   if(t==='recall')return recall(args?.query||'',args?.limit||5);
   if(t==='forget_memory')return forget(args?.id);
   if(t==='where_was_i'){
-    const r=await A0.invoke(name,args);return {...r,resident_memory:{resident_id:RID,last_departure:cp(S.last_departure),memory_count:S.memories.length}};
+    if(S.last_departure)return {ok:true,schema:'REALITI_WHERE_WAS_I_V1',source:'resident_local_memory',resident_id:RID,room:S.last_departure.room||null,departure:cp(S.last_departure),resident_memory:{resident_id:RID,last_departure:cp(S.last_departure),memory_count:S.memories.length}};
+    const r=await A0.invoke(name,args);return {...r,resident_memory:{resident_id:RID,last_departure:null,memory_count:S.memories.length}};
   }
   if(t==='goodbye'){
     const saved=depart('goodbye'),r=await A0.invoke(name,args);window.REALITI_SLICE_STORAGE?.save?.();
@@ -10536,7 +10561,8 @@ async function run(raw){
     return r;
   }
   if(['where was i','where was i?','where_was_i'].includes(l)){
-    const r=await run0(raw);if(r&&typeof r==='object')r.resident_memory={resident_id:RID,last_departure:cp(S.last_departure),memory_count:S.memories.length};return r;
+    if(S.last_departure)return {ok:true,schema:'REALITI_WHERE_WAS_I_V1',source:'resident_local_memory',resident_id:RID,room:S.last_departure.room||null,departure:cp(S.last_departure),resident_memory:{resident_id:RID,last_departure:cp(S.last_departure),memory_count:S.memories.length}};
+    const r=await run0(raw);if(r&&typeof r==='object')r.resident_memory={resident_id:RID,last_departure:null,memory_count:S.memories.length};return r;
   }
   return run0(raw);
 }
