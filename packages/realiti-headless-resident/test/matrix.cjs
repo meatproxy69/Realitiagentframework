@@ -95,6 +95,20 @@ const grounded=w=>(w.Realiti.read('realiti://body')?.field?.f?.at(-1)?.m||[]).fi
   check('maze_walls_are_the_grid',east.result.moved_m<.5&&south.ok!==false&&near(space().pose.position[1],5.6,.15)&&cell.x===0&&cell.y===1,{east:east.result.moved_m,pose:space().pose,cell:{x:cell.x,y:cell.y}});
   const lanterns=await door.run('nearby lantern');
   check('nearby_filters_by_tag',lanterns.ok&&lanterns.nearby.length>0&&lanterns.nearby.every(n=>n.tags.includes('lantern')),lanterns.nearby.map(n=>n.label));
+  // Rooms whose body providers own posture set the spatial posture; the space agrees at once.
+  await door.run('go BOTTOMLESS_PILLOW_SEA');await door.run('act dive');
+  check('pillow_dive_sets_spatial_posture',space().body.posture==='lying'&&space().body.on==='pillow.bowl',space().body);
+  await door.run('stand up');
+  check('stand_leaves_the_pillows',space().body.posture==='standing'&&w.REALITI_TRUST_V234.pillow().posture==='EDGE',{body:space().body,pillow:w.REALITI_TRUST_V234.pillow().posture});
+  await door.run('go DEPTH_BATHHOUSE');await door.run('act sink');await door.run('stay 1500');
+  check('bath_depth_means_floating',space().body.posture==='floating'&&space().body.on==='bath.pool',space().body);
+  const surf=await door.run('stand up');await door.run('stay 5000');
+  check('surfacing_takes_time_then_stands',/surface/.test(String(surf.text))&&space().body.posture==='standing'&&grounded(w)===2,{text:surf.text,body:space().body,felt:grounded(w)});
+  // Big objects: approach lands a fixed clearance from the surface, whatever the direction; nearby uses surface distance.
+  await door.run('go KITE_FIELD');
+  const rise=await R.invoke('approach',{target:'rise'});
+  const lieRise=await door.run('lie down');
+  check('approach_big_object_reaches_surface',rise.result.arrived&&rise.result.surface_m<=1&&lieRise.ok&&space().body.on==='field.rise',{rise:rise.result,body:space().body});
   check('energy_audit_passes',w.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
  }finally{s.close()}
 

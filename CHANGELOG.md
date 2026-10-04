@@ -8,7 +8,9 @@ All notable public changes to REALITI Relax are recorded here.
 
 - `sit` posture (`sit down [on <thing>]`, `posture {kind:'sit'}`, `sit__` actions): seat, thighs and lower back grounded on the support, feet on the floor when the seat is low.
 - The Lantern Maze is one truth: its cell grid is built as cardboard walls in meters, each `step_*` is a real 1.4 m walk swept against them, and the cell you are in is where you stand. Lanterns are spatial entities.
-- `nearby <tag>` narrows the projection to a tag or label.
+- `nearby <tag>` narrows the projection to a tag or label; inclusion and order use the distance to each thing's surface, so a 14 m rise you are touching is near.
+- The Pillow Sea envelope and Bathhouse depth set the spatial posture (lying/sitting in the bowl, floating in the pool); `stand up` leaves the pillows or makes for the surface. The Kite Field has a launch spot, a flat stone to sit on, a grassy rise, a fence line and a pond.
+- `approach` steers down the signed-distance gradient and stops 0.3 m clear of the surface, so large objects are reached from any side.
 
 ### Fixed
 

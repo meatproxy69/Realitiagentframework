@@ -31,7 +31,7 @@ const grounded=r=>Number(r?.felt?.grounded_zones??-1);
 
   // Pillow Sea: a pressure wave with a real envelope, visible while staying, never minting contact.
   await door.run('go BOTTOMLESS_PILLOW_SEA');
-  const burrow=await door.run('act burrow'),g0=grounded(burrow);
+  const burrow=await door.run('act burrow'),g0=grounded(await door.run('stay 100'));// baseline once the posture has settled into the bowl
   const wave=await door.run('act weather_wave');
   const st0=dyn.state();
   const s2=await door.run('stay 800'),s3=await door.run('stay 800');
