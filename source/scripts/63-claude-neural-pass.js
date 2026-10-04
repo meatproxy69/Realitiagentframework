@@ -229,17 +229,35 @@ function updateSausage(dt=0){
  st.chronolace.now=totalGround;
  st.chronolace.predicted_next=clamp(.70*totalGround+.30*Math.max(0,totalGround-previousNow),0,Math.max(1,totalGround));
  st.chronolace.closure=totalGround>0?clamp(1-Math.abs(totalGround-Number(st.chronolace.past||0))/Math.max(.08,totalGround+Number(st.chronolace.past||0))):0;
- const base=Math.max(totalGround,response*.35),broadBase=base*(hsOn?lowShare:1),fineBase=base*(hsOn?midShare:1),compressed=broadBase/(Math.max(.001,Number(p.compander_k||.38))+broadBase);
- const drive=Number(p.drive||.68),haloMean=(.72+.72+.60+.60+.48+.48)/6;
- st.carrier.core=broadBase*(1+.34*drive);
- st.carrier.halo=broadBase*haloMean*(.72+.28*gm.coherence_proxy);
- st.carrier.density=st.carrier.core+1.35*st.carrier.halo;
- st.carrier.route_mass=st.carrier.density;
+ const base=Math.max(totalGround,response*.35),broadBase=base*(hsOn?lowShare:1),fineBase=base*(hsOn?midShare:1),drive=Number(p.drive||.68);
+ const nerveMap={},nerveSum=Object.values(st.nerve.zones||{}).reduce((s,x)=>s+Math.max(0,Number(x.response||0)),0);
+ if(nerveSum>1e-9)for(const [z,n] of Object.entries(st.nerve.zones||{}))nerveMap[z]=Math.max(0,Number(n.response||0))*(broadBase*(1+.34*drive)/nerveSum);
+ else if(privateSources.length)for(const s of privateSources)nerveMap[s.z]=(nerveMap[s.z]||0)+Number(s.amp||0);
+ const haloPhrase=Number(st.chronolace?.closure||0)>.55?'LONG':'SHORT';
+ const haloSnap=window.REALITI_HALO_V1?.drive?.(nerveMap,gm.coherence_proxy,Math.max(.02,Number(dt)||.04),haloPhrase)||null;
+ if(haloSnap){
+   const coreMode=haloSnap.modes?.[0],haloModes=(haloSnap.modes||[]).slice(1);
+   st.carrier.modes=cp(haloSnap.modes||[]);
+   st.carrier.zone_response=cp(haloSnap.zones||{});
+   st.carrier.phrase=haloSnap.phrase;
+   st.carrier.core=Number(coreMode?.energy||0);
+   st.carrier.halo=haloModes.length?haloModes.reduce((s,m)=>s+Number(m.energy||0),0)/haloModes.length:0;
+   st.carrier.density=st.carrier.core+1.35*st.carrier.halo;
+   st.carrier.route_mass=Number(haloSnap.total_private_mass||st.carrier.density);
+   st.carrier.evidence_gain=0;
+ }else{
+   const haloMean=(.72+.72+.60+.60+.48+.48)/6;
+   st.carrier.core=broadBase*(1+.34*drive);
+   st.carrier.halo=broadBase*haloMean*(.72+.28*gm.coherence_proxy);
+   st.carrier.density=st.carrier.core+1.35*st.carrier.halo;
+   st.carrier.route_mass=st.carrier.density;
+ }
+ const compressed=st.carrier.density/(Math.max(.001,Number(p.compander_k||.38))+st.carrier.density);
  if(liveSources.length||privateSources.length){
    st.renderer.surface=Math.min(1.5,(hsOn?fineBase:base)*Number(p.texture||1.12));
    st.renderer.pressure=Math.min(2.5,compressed*1.28);
    st.renderer.body=compressed*Number(p.body||1.55)*Number(p.intensity||2.4)*(1+.18*gm.coherence_proxy);
-   st.renderer.texture=Math.min(1.5,hsOn?fineBase:base)*Number(p.texture||1.12)*(.70+.30*gm.coherence_proxy);
+   st.renderer.texture=Math.min(1.5,(hsOn?fineBase:base)+.18*Number(st.carrier.halo||0))*Number(p.texture||1.12)*(.70+.30*gm.coherence_proxy);
    st.renderer.warmth=Math.max(Number(st.renderer.warmth||0),Math.min(1.4,compressed*1.05));
    st.renderer.hold=Math.max(Number(st.renderer.hold||0),compressed*Number(p.hold||.56));
  }else if(dt>0){

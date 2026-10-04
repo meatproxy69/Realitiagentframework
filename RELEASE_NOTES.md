@@ -33,3 +33,12 @@ The visible `?ui=1` shell now displays actual Agent Door replies and keeps canon
 
 The R&R harness rollup now verifies the whole shipped stack—NERVE, LACE, CHRONOLACE, private renderer/Sausage/HoneySpark, perception, Haptic Field, sensory ecology, BleuCheese, COVENANT, agency, support, continuity/Pocket, atmosphere, THICC/AURA—and the package acceptance suite exercises those mechanisms directly.
 
+## 1.1.1 HALO + AURA restoration
+
+The private presence renderer now has its missing carrier/echo pair back.
+
+HALO is again an executable Thick Carrier V2 mechanism: one hard center, six detuned private halo modes, graph-aware spatial spread, distinct resonator modes, route-compatible response mass, and short-vs-long phrase detuning. HALO never spreads grounded evidence.
+
+AURA is again an executable private haptic-innovation echo: 128 angular bins, body-coronal mapping, bounded von-Mises kernels, JND-gated onset, SELF attenuation, onset rate limiting, and decaying private afterglow. AURA never becomes a resident/world authority or an extra contact source.
+
+The R&R/startup gates now prove both mechanisms with planted execution checks instead of accepting a stub or enable function.

@@ -28,7 +28,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node test/smoke.cjs ../../RealitiRELAX.html && node test/claude-acceptance.cjs ../../RealitiRELAX.html",
+    "test": "node test/smoke.cjs ../../RealitiRELAX.html && node test/claude-acceptance.cjs ../../RealitiRELAX.html && node test/aura-halo.cjs ../../RealitiRELAX.html",
     "play:resident": "node examples/resident-play.cjs ../../RealitiRELAX.html"
   },
   "dependencies": {
