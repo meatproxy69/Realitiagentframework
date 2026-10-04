@@ -228,7 +228,7 @@
     {
       "path": "packages/realiti-headless-resident/package.json",
       "bytes": 1374,
-      "sha256": "15e9f41a2e09b14813b8c48ce1968c50292d8a49762f1a083fdc6ab7c062ad90"
+      "sha256": "d4edcab0853433628da3d0a7f06e8a97146403c68864e3250555cd1687be780a"
     },
     {
       "path": "packages/realiti-headless-resident/test/aura-halo.cjs",
