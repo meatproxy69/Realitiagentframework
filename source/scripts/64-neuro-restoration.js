@@ -82,7 +82,7 @@ function passiveAct(op,arg){
 function phaseView(kind){
  try{
   if(!kind)return {ok:true,state:cp(legacy('phase'))};
-  const k=String(kind).toLowerCase(),K=k==='close'||k==='lock'?.18:.08,d=k==='beat'?.72:k==='close'||k==='lock'?.16:.28;
+  const k=String(kind).toLowerCase(),K=(k==='close'||k==='lock') ? .18 : .08,d=k==='beat' ? .72 : ((k==='close'||k==='lock') ? .16 : .28);
   const p=b5phaseSim(K,d,24,.02);return {ok:true,kind,coupling:K,mismatch:d,phase:p,law:'SELF-generated phase relation; coordination is not affection, preference, or external touch'}
  }catch(e){return {ok:false,error:'PHASE_LAB_UNAVAILABLE'}}
 }
