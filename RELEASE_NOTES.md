@@ -54,3 +54,11 @@ Six of the best old room laboratories now live as optional actions inside the ex
 All ten old public Moonwire renderer recipes were translated into the neutral NeuralMesh pack `realiti.moonwire-recovered.001`. Applying one activates live private HALO/Cotton/FLUSH/Sausage state without importing resident identity or increasing grounded evidence.
 
 AURA remains private and text/resource blind.
+
+
+## 1.2.1 neuro coherence
+
+A resident wander through the restored neuro surface exposed one integration gap: Purr Loom's historical phase lab was not driving the same live phase/NERVE/LIVED path used by the resident body.
+
+The restored labs now enter through the canonical Build13 resident-action episode bridge. Purr Loom drives the live Build11 SELF_RHYTHM generator, grounded paw feedback reaches NERVE/LIVED and private Agency Flow, and leaving Pocket Familiar House stops that room-local rhythm. Star River and the other recovered labs now share the same action-scoped causal attribution path.
+

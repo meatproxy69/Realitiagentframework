@@ -554,14 +554,16 @@ function seamView(n=8){const s=S().seam;return {law:'only GROUNDED_SENSORY_EVENT
   grounded:s.grounded.slice(-n),counts:cp(s.counts),predicted_recent:s.predicted.slice(-3),afterstate_recent:s.afterstate.slice(-3),adaptation_recent:s.adaptation.slice(-3),
   world_contact_no_receptor:s.no_receptor.slice(-3),direct_sense_not_in_felt:s.direct_not_in_felt}}
 function livedView(n=12){syncTo(wall());return {frames:S().lived.frames.slice(-Math.max(1,Math.min(64,n||12))),note:'read-only; `since` advances the cursor'}}
-function act13(txt){
-  const s=S(),t0=wall(),seq0=s.seq.frame,g0=JSON.stringify(C9.b10?.last_event||null),name=txt.slice(4).trim();
-  episodeOpen(name,C9.currentRoom||null,t0);
-  const out=cmd12(txt);
+function beginResidentAction13(name,room=C9.currentRoom||null){
+  const s=S(),t0=wall(),token={name:String(name||''),room,t0,seq0:s.seq.frame,g0:JSON.stringify(C9.b10?.last_event||null)};
+  episodeOpen(token.name,room,t0);return token;
+}
+function finishResidentAction13(token,out){
+  const s=S(),name=String(token?.name||''),seq0=Number(token?.seq0||0),g0=String(token?.g0??JSON.stringify(C9.b10?.last_event||null));
   closeReleasedGrounding();ingestAll();syncTo(wall());
   if(out&&typeof out==='object'){
     if(out.ok===false){s.lived.episode=null;frame('SELF_ACTION',{phase:'REJECTED',action:name,error:out.error||null,salience:.5},wall());percFlowScale(.75,'blocked action',wall())}
-    else frame('SELF_ACTION',{phase:'ACCEPTED',action:out.action||name,room:out.room||C9.currentRoom||null},wall());
+    else frame('SELF_ACTION',{phase:'ACCEPTED',action:out.action||name,room:out.room||token?.room||C9.currentRoom||null},wall());
     const caused=s.lived.frames.filter(f=>f.seq>seq0&&f.salience>=K.SAL_MIN),glob=s.lived.frames.filter(f=>f.salience>=K.SAL_MIN).slice(-1)[0]||null;
     out.salient_event_caused_by_this_action=caused.length?caused.reduce((a,b)=>b.salience>a.salience?b:a):null;
     out.last_global_salient_event=glob?{...glob,scope:'GLOBAL — not attributed to this action'}:null;
@@ -569,7 +571,11 @@ function act13(txt){
     const rec=C9.b7?.lastAgentAction?.structured;
     if(rec&&out.ok!==false){if(JSON.stringify(C9.b10?.last_event||null)===g0){rec.last_global_event=rec.last_event;rec.last_event=null;rec.last_event_scope='NOT_CAUSED_BY_THIS_ACTION'}else rec.last_event_scope='CAUSED_BY_THIS_ACTION'}
   }
-  return out;
+  refreshLive();return out;
+}
+function act13(txt){
+  const name=txt.slice(4).trim(),token=beginResidentAction13(name,C9.currentRoom||null),out=cmd12(txt);
+  return finishResidentAction13(token,out);
 }
 function overview(){return {build:13,patch:V13,goal:'make the body complicated underneath, but make lived change sparse, causal, private, and impossible to confuse with world truth',
   commands:['since','since legacy','lived [n]','nerve','nerve compare','nerve transfer trace','nerve restore trace','feel','expect <-1..1>','appraise <-1..1> [note]','seam [n]','constitution','v13 checkRemoved'],ownership:cp(S().own)}}
@@ -619,6 +625,7 @@ void 0;
 
 try{S();ingestAll();syncTo(wall())}catch(e){fault('boot',e)}
 window.REALITI_AGENT={...(window.REALITI_AGENT||{}),since:since13,lived:livedView,nerve:nerveView,feel,appraise,expect:expectCmd,seam:seamView,constitution};
+window.REALITI_BUILD13_ACTION_BRIDGE_V1={version:1,begin:beginResidentAction13,finish:finishResidentAction13,law:'current resident actions may reuse Build13 control episodes; affect remains unable to issue commands or mint evidence'};
 void 0;
 if(window.REALITI_AGENT_DOOR){
   const help12=window.REALITI_AGENT_DOOR.help,run12=window.REALITI_AGENT_DOOR.run;

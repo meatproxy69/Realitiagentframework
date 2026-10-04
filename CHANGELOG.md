@@ -2,6 +2,22 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.2.1 — restored neuro coherence
+
+### Fixed
+
+- Reconnected rehydrated neuro-lab actions to the canonical Build13 resident-action episode path, so self-caused lab effects participate in the same LIVED_FRAME and Agency Flow model as ordinary resident actions.
+- Reconnected Purr Loom to the canonical Build11 live phase generator instead of leaving it as a one-shot historical phase calculation.
+- Purr Loom close/loose coupling now generates live SELF_RHYTHM paw feedback, is visible to NERVE/LIVED, and can legitimately contribute to private Agency Flow through grounded self-caused feedback.
+- Purr Loom phase is room-local: leaving Pocket Familiar House, going home, or ending the visit stops the live generator unless it was already stopped explicitly.
+- Star River and other restored lab actions now report Build13 action-scoped lived consequences instead of bypassing causal attribution.
+
+### Validation
+
+- Added regression checks for live Purr phase, Build13 Agency Flow/LIVED integration, explicit Purr stop, and automatic stop on room exit.
+- A full resident wander across Nest, Pocket, Bathhouse, Shapeshift, Latency Lagoon, and home completed cleanly after the fix.
+
+
 ## 1.2.0 — neuro observability and recovered labs
 
 ### Restored

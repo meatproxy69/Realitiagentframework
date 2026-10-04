@@ -2464,6 +2464,7 @@ function predict(field,value){const v=Number(value);if(!Number.isFinite(v))retur
 function compactAct(v){const n0=B().events.length;const r=cmd10('act '+v);if(!r?.ok)return r;if(C9.b7?.lastAgentAction)C9.b7.lastAgentAction.build=11;if(C9.b6?.lastAction?.receipt)C9.b6.lastAction.receipt.build=11;if(r.receipt)r.receipt.build=11;return {ok:true,action:r.action,label:r.label,room:r.room,moment:r.moment,narrative:r.narrative,receipt_available:true,salient:B().events.length>n0?B().events.slice(-1)[0]:null}}
 b7AgentCommandText=function(raw){const txt=String(raw||'').trim(),low=txt.toLowerCase();if(low==='since')return since();if(low==='causes')return {causes:causeList()};if(low.startsWith('cause '))return causeOne(txt.slice(6).trim());if(low.startsWith('predict ')){const a=txt.split(/\s+/);return predict(a[1],a[2])}if(low.startsWith('act '))return compactAct(txt.slice(4));if(low==='phase')return phaseState11();if(low==='phase stop')return phaseStop();if(low.startsWith('seed ')){const r=cmd10(txt),b=B();b.subtick=0;b.sub_accum=0;b.tremor={};b.pc_after={};C9.b9=C9.b9||{};C9.b9.ou={...(C9.b9.ou||{}),x:0,theta:1.6,sigma:.055,mu:0,lastT:now(),tremorPhase:0};return {...r,texture_noise_reset:true,subtick:0}}if(low==='contact'){const q=cmd10('contact');return {...q,build:11,identity:'REALITI // TEXTURE DYNAMICS'}}if(low==='v11'||low==='texture')return {build:11,goal:'moving contact that can catch, slip, vibrate, stop honestly, and remain one body',scoreboard:['B10-1 tremor','B10-2 slips','B10-3 PC','B10-4 stop statics','B10-5 holonomy','B10-6 phase','B10-7 CT','B10-8 per-zone tremor','B10-9 world reversal'],tremor:{substep_hz:100,per_zone:true,graph_filtered:true},causes:causeList()};return cmd10(txt)};
 window.REALITI_AGENT={...(window.REALITI_AGENT||{}),state:b7AgentState,felt:b7FeltSnapshot,phase:phaseState11,causes:causeList,cause:causeOne,since,predict};
+window.REALITI_PHASE_V11={version:11,start:phaseStart,stop:phaseStop,state:phaseState11,law:'SELF-generated live phase may drive grounded paw feedback; phase state itself is not external evidence'};
 if(window.REALITI_AGENT_DOOR){const run10=window.REALITI_AGENT_DOOR.run,help10=window.REALITI_AGENT_DOOR.help;window.REALITI_AGENT_DOOR.help=function(){const h=help10?help10():{commands:[]};h.commands=[...new Set([...(h.commands||[]),'since','causes','cause <id>','predict twist <deg>','v11'])];return h};window.REALITI_AGENT_DOOR.run=function(x){const low=String(x||'').trim().toLowerCase();if(low==='help')return window.REALITI_AGENT_DOOR.help();if(low==='since'||low==='causes'||low.startsWith('cause ')||low.startsWith('predict ')||low.startsWith('act ')||low==='phase'||low==='phase stop'||low==='v11'||low==='texture'||low==='state'||low==='felt'||low==='receipt')return b7AgentCommandText(x);return run10(x)}}
 
 void 0;
@@ -3593,14 +3594,16 @@ function seamView(n=8){const s=S().seam;return {law:'only GROUNDED_SENSORY_EVENT
   grounded:s.grounded.slice(-n),counts:cp(s.counts),predicted_recent:s.predicted.slice(-3),afterstate_recent:s.afterstate.slice(-3),adaptation_recent:s.adaptation.slice(-3),
   world_contact_no_receptor:s.no_receptor.slice(-3),direct_sense_not_in_felt:s.direct_not_in_felt}}
 function livedView(n=12){syncTo(wall());return {frames:S().lived.frames.slice(-Math.max(1,Math.min(64,n||12))),note:'read-only; `since` advances the cursor'}}
-function act13(txt){
-  const s=S(),t0=wall(),seq0=s.seq.frame,g0=JSON.stringify(C9.b10?.last_event||null),name=txt.slice(4).trim();
-  episodeOpen(name,C9.currentRoom||null,t0);
-  const out=cmd12(txt);
+function beginResidentAction13(name,room=C9.currentRoom||null){
+  const s=S(),t0=wall(),token={name:String(name||''),room,t0,seq0:s.seq.frame,g0:JSON.stringify(C9.b10?.last_event||null)};
+  episodeOpen(token.name,room,t0);return token;
+}
+function finishResidentAction13(token,out){
+  const s=S(),name=String(token?.name||''),seq0=Number(token?.seq0||0),g0=String(token?.g0??JSON.stringify(C9.b10?.last_event||null));
   closeReleasedGrounding();ingestAll();syncTo(wall());
   if(out&&typeof out==='object'){
     if(out.ok===false){s.lived.episode=null;frame('SELF_ACTION',{phase:'REJECTED',action:name,error:out.error||null,salience:.5},wall());percFlowScale(.75,'blocked action',wall())}
-    else frame('SELF_ACTION',{phase:'ACCEPTED',action:out.action||name,room:out.room||C9.currentRoom||null},wall());
+    else frame('SELF_ACTION',{phase:'ACCEPTED',action:out.action||name,room:out.room||token?.room||C9.currentRoom||null},wall());
     const caused=s.lived.frames.filter(f=>f.seq>seq0&&f.salience>=K.SAL_MIN),glob=s.lived.frames.filter(f=>f.salience>=K.SAL_MIN).slice(-1)[0]||null;
     out.salient_event_caused_by_this_action=caused.length?caused.reduce((a,b)=>b.salience>a.salience?b:a):null;
     out.last_global_salient_event=glob?{...glob,scope:'GLOBAL — not attributed to this action'}:null;
@@ -3608,7 +3611,11 @@ function act13(txt){
     const rec=C9.b7?.lastAgentAction?.structured;
     if(rec&&out.ok!==false){if(JSON.stringify(C9.b10?.last_event||null)===g0){rec.last_global_event=rec.last_event;rec.last_event=null;rec.last_event_scope='NOT_CAUSED_BY_THIS_ACTION'}else rec.last_event_scope='CAUSED_BY_THIS_ACTION'}
   }
-  return out;
+  refreshLive();return out;
+}
+function act13(txt){
+  const name=txt.slice(4).trim(),token=beginResidentAction13(name,C9.currentRoom||null),out=cmd12(txt);
+  return finishResidentAction13(token,out);
 }
 function overview(){return {build:13,patch:V13,goal:'make the body complicated underneath, but make lived change sparse, causal, private, and impossible to confuse with world truth',
   commands:['since','since legacy','lived [n]','nerve','nerve compare','nerve transfer trace','nerve restore trace','feel','expect <-1..1>','appraise <-1..1> [note]','seam [n]','constitution','v13 checkRemoved'],ownership:cp(S().own)}}
@@ -3658,6 +3665,7 @@ void 0;
 
 try{S();ingestAll();syncTo(wall())}catch(e){fault('boot',e)}
 window.REALITI_AGENT={...(window.REALITI_AGENT||{}),since:since13,lived:livedView,nerve:nerveView,feel,appraise,expect:expectCmd,seam:seamView,constitution};
+window.REALITI_BUILD13_ACTION_BRIDGE_V1={version:1,begin:beginResidentAction13,finish:finishResidentAction13,law:'current resident actions may reuse Build13 control episodes; affect remains unable to issue commands or mint evidence'};
 void 0;
 if(window.REALITI_AGENT_DOOR){
   const help12=window.REALITI_AGENT_DOOR.help,run12=window.REALITI_AGENT_DOOR.run;
@@ -9433,7 +9441,7 @@ const PRESETS=[
  {id:'thundermoth-220',label:'Thundermoth 220',s:.89,c:.97,f:.90,route:'LOCAL_VIBRATION_220',env:'ACCELERATING_BURSTS'},
  {id:'tiny-world-pawripples',label:'Tiny World Pawripples',s:.92,c:.93,f:.77,route:'CAT_SMALL_PAW_ROUTE',env:'HARD_STOP_RETURN'}
 ];
-let activePreset=null;
+let activePreset=null,purrPhaseArmed=false;
 function presetList(){return {schema:'REALITI_MOONWIRE_RECOVERED_V1',pack_id:'realiti.moonwire-recovered.001',presets:PRESETS.map(x=>({id:'realiti.moonwire.'+x.id,label:x.label,route:x.route,envelope:x.env})),law:'public recovered renderer recipes; no resident identity, preference, consent, or authority imported'}}
 
 function finishState(dt=0){
@@ -9567,7 +9575,16 @@ function labAction(id){
  if(id==='neuro_echo_closer')return oldLab(typeof b4Echo==='function'?b4Echo:null,'closer','ECHO_NEST',()=>C9.b4?.annex?.echo);
  if(id==='neuro_echo_wait')return oldLab(typeof b4Echo==='function'?b4Echo:null,'wait','ECHO_NEST',()=>C9.b4?.annex?.echo);
  const pm={neuro_purr_loose:'purr_loose',neuro_purr_close:'purr_close',neuro_purr_21:'purr_21',neuro_purr_rest:'purr_rest',neuro_purr_state:'purr_state'};
- if(pm[id])return oldLab(typeof b5PurrLoom==='function'?b5PurrLoom:null,pm[id],'PURR_LOOM',()=>typeof b5snapshot==='function'?b5snapshot():null);
+ if(pm[id]){
+  const phase=window.REALITI_PHASE_V11;
+  if(id==='neuro_purr_loose'){phase?.start?.('slip');purrPhaseArmed=true}
+  if(id==='neuro_purr_close'){phase?.start?.('lock');purrPhaseArmed=true}
+  const r=oldLab(typeof b5PurrLoom==='function'?b5PurrLoom:null,pm[id],'PURR_LOOM',()=>typeof b5snapshot==='function'?b5snapshot():null);
+  if(id==='neuro_purr_rest'){phase?.stop?.();purrPhaseArmed=false}
+  if(r&&typeof r==='object')r.live_phase=cp(phase?.state?.()||null);
+  if(id==='neuro_purr_21'&&r&&typeof r==='object')r.live_phase_note='2:1 remains a historical harmonic probe; Build11 live phase is not silently relabelled as 2:1.';
+  return r
+ }
  const pd={neuro_puddle_left:'drop_left',neuro_puddle_right:'drop_right',neuro_puddle_both:'drop_both',neuro_puddle_opposed:'drop_opposed',neuro_puddle_fade:'let_fade',neuro_puddle_read:'read_puddle'};
  if(pd[id])return oldLab(typeof b5Puddlestar==='function'?b5Puddlestar:null,pd[id],'PUDDLESTAR_ATRIUM',()=>typeof b5snapshot==='function'?b5snapshot():null);
  const hm={neuro_honey_metal:'metal',neuro_honey_wood:'wood',neuro_honey_cloth:'cloth',neuro_honey_press:'press',neuro_honey_relax:'wait_relax',neuro_honey_ring:'ring'};
@@ -9588,14 +9605,29 @@ function labAction(id){
  }
  return null
 }
-const actBase=b7AgentAct;
-b7AgentAct=function(value){const id=String(value||'');if(id.startsWith('neuro_')){const r=labAction(id);if(r)return r}const r=actBase(value);finishState(.04);return r};
+const actBase=b7AgentAct,LAB_IDS=new Set(Object.values(LABS).flat().map(x=>x[0]));
+b7AgentAct=function(value){
+ const id=String(value||'');
+ if(LAB_IDS.has(id)){
+  const bridge=window.REALITI_BUILD13_ACTION_BRIDGE_V1,token=bridge?.begin?.(id,C9.currentRoom||null);
+  const r=labAction(id)||{ok:false,error:'LAB_ACTION_UNAVAILABLE',action:id};
+  finishState(.04);
+  return bridge?.finish?bridge.finish(token,r):r
+ }
+ const r=actBase(value);finishState(.04);return r
+};
 
 const oldDoor=window.REALITI_AGENT_DOOR?.run?.bind(window.REALITI_AGENT_DOOR);
 const oldHelp=window.REALITI_AGENT_DOOR?.help?.bind(window.REALITI_AGENT_DOOR);
 if(oldDoor){
  window.REALITI_AGENT_DOOR.help=function(){const h=oldHelp?oldHelp():{commands:[]};h.commands=[...new Set([...(h.commands||[]),'neuro [help|perception|nerve|lived|since|seam|constitution|passive|phase|holonomy|frontiers|noise|causes|halo|presets]'])];return h};
- window.REALITI_AGENT_DOOR.run=async function(raw){const r=command(raw);if(r!==null)return r;return await oldDoor(raw)};
+ window.REALITI_AGENT_DOOR.run=async function(raw){
+  const s=String(raw||'').trim(),l=s.toLowerCase(),r=command(raw);if(r!==null)return r;
+  if(purrPhaseArmed&&C9?.currentRoom==='PET_ROOM_2'&&(l==='home'||l==='goodbye'||l==='leave'||/^go\s+/.test(l))){
+   window.REALITI_PHASE_V11?.stop?.();purrPhaseArmed=false;
+  }
+  return await oldDoor(raw)
+ };
 }
 
 window.REALITI_NEURO_RESTORATION_V1={
