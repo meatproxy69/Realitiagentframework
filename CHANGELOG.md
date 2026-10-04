@@ -2,6 +2,17 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 1.6.0 — resident-local continuity memory
+
+### Added
+
+- `REALITI_LOCAL_MEMORY_V1`: a bounded resident-scoped local memory shelf (32 explicit memories) plus one replaceable departure snapshot.
+- Agent Door `memory`, `remember <text>`, `recall <query>`, and scoped forget/reset controls.
+- Stable `residentId` ownership and optional file-backed `storagePath` in the headless host. Different resident IDs sharing one backing file cannot read or overwrite one another's memory shelf.
+- Visit-based recency/frequency activation for bounded recall and compaction.
+- Headless acceptance coverage for separation, reopen continuity, snapshot replacement, bounded retention, and scoped reset.
+
+
 ## 1.5.1 — sitting, a maze in meters, narrower questions
 
 ### Added

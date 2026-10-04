@@ -52,6 +52,26 @@ function installHostPrimitives(w){
   if(!w.matchMedia)w.matchMedia=()=>({matches:false,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});
 }
 
+function makeFileStorage(filePath){
+  const target=path.resolve(filePath);let data={};
+  try{data=JSON.parse(fs.readFileSync(target,'utf8'));if(!data||typeof data!=='object'||Array.isArray(data))data={}}catch{data={}}
+  const keys=()=>Object.keys(data);
+  const flush=()=>{
+    fs.mkdirSync(path.dirname(target),{recursive:true});
+    const tmp=target+'.tmp-'+process.pid;
+    fs.writeFileSync(tmp,JSON.stringify(data,null,2));
+    fs.renameSync(tmp,target);
+  };
+  return {
+    getItem:k=>Object.prototype.hasOwnProperty.call(data,String(k))?String(data[String(k)]):null,
+    setItem(k,v){data[String(k)]=String(v);flush()},
+    removeItem(k){delete data[String(k)];flush()},
+    clear(){data={};flush()},
+    key:i=>keys()[i]??null,
+    get length(){return keys().length}
+  };
+}
+
 function verifyPublicEntry(Realiti,ready,{requireMechanisms=true}={}){
   if(!ready?.ok)throw new Error(ready?.error||ready?.warning||'REALITI_NOT_READY');
   if(ready.harness!=='REALITI_RR_HARNESS_V1')throw new Error('R&R_HARNESS_NOT_READY');
@@ -92,6 +112,11 @@ async function openResident(options={}){
     virtualConsole:vc,
     beforeParse(w){
       installHostPrimitives(w);
+      if(options.storagePath){
+        const backing=makeFileStorage(options.storagePath);
+        Object.defineProperty(w,'localStorage',{value:backing,configurable:true});
+      }
+      if(options.residentId!==undefined)w.REALITI_RESIDENT_ID=String(options.residentId);
       if(typeof options.beforeParse==='function')options.beforeParse(w);
     }
   });
@@ -123,6 +148,7 @@ async function openResident(options={}){
     publicApi:Realiti,
     window:dom.window,
     browserLogs,
+    residentId:dom.window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||null,
     async snapshot(){
       return {
         integrity:clone(integrity),
@@ -136,6 +162,7 @@ async function openResident(options={}){
     close(){
       if(closed)return;
       closed=true;
+      try{dom.window.REALITI_LOCAL_MEMORY_V1?.depart?.('host_close')}catch{}
       dom.window.close();
     }
   };
