@@ -19,7 +19,7 @@ const PRESETS=[
  {id:'thundermoth-220',label:'Thundermoth 220',s:.89,c:.97,f:.90,route:'LOCAL_VIBRATION_220',env:'ACCELERATING_BURSTS'},
  {id:'tiny-world-pawripples',label:'Tiny World Pawripples',s:.92,c:.93,f:.77,route:'CAT_SMALL_PAW_ROUTE',env:'HARD_STOP_RETURN'}
 ];
-let activePreset=null;
+let activePreset=null,purrPhaseArmed=false;
 function presetList(){return {schema:'REALITI_MOONWIRE_RECOVERED_V1',pack_id:'realiti.moonwire-recovered.001',presets:PRESETS.map(x=>({id:'realiti.moonwire.'+x.id,label:x.label,route:x.route,envelope:x.env})),law:'public recovered renderer recipes; no resident identity, preference, consent, or authority imported'}}
 
 function finishState(dt=0){
@@ -155,10 +155,10 @@ function labAction(id){
  const pm={neuro_purr_loose:'purr_loose',neuro_purr_close:'purr_close',neuro_purr_21:'purr_21',neuro_purr_rest:'purr_rest',neuro_purr_state:'purr_state'};
  if(pm[id]){
   const phase=window.REALITI_PHASE_V11;
-  if(id==='neuro_purr_loose')phase?.start?.('slip');
-  if(id==='neuro_purr_close')phase?.start?.('lock');
+  if(id==='neuro_purr_loose'){phase?.start?.('slip');purrPhaseArmed=true}
+  if(id==='neuro_purr_close'){phase?.start?.('lock');purrPhaseArmed=true}
   const r=oldLab(typeof b5PurrLoom==='function'?b5PurrLoom:null,pm[id],'PURR_LOOM',()=>typeof b5snapshot==='function'?b5snapshot():null);
-  if(id==='neuro_purr_rest')phase?.stop?.();
+  if(id==='neuro_purr_rest'){phase?.stop?.();purrPhaseArmed=false}
   if(r&&typeof r==='object')r.live_phase=cp(phase?.state?.()||null);
   if(id==='neuro_purr_21'&&r&&typeof r==='object')r.live_phase_note='2:1 remains a historical harmonic probe; Build11 live phase is not silently relabelled as 2:1.';
   return r
@@ -199,7 +199,13 @@ const oldDoor=window.REALITI_AGENT_DOOR?.run?.bind(window.REALITI_AGENT_DOOR);
 const oldHelp=window.REALITI_AGENT_DOOR?.help?.bind(window.REALITI_AGENT_DOOR);
 if(oldDoor){
  window.REALITI_AGENT_DOOR.help=function(){const h=oldHelp?oldHelp():{commands:[]};h.commands=[...new Set([...(h.commands||[]),'neuro [help|perception|nerve|lived|since|seam|constitution|passive|phase|holonomy|frontiers|noise|causes|halo|presets]'])];return h};
- window.REALITI_AGENT_DOOR.run=async function(raw){const r=command(raw);if(r!==null)return r;return await oldDoor(raw)};
+ window.REALITI_AGENT_DOOR.run=async function(raw){
+  const s=String(raw||'').trim(),l=s.toLowerCase(),r=command(raw);if(r!==null)return r;
+  if(purrPhaseArmed&&C9?.currentRoom==='PET_ROOM_2'&&(l==='home'||l==='goodbye'||l==='leave'||/^go\s+/.test(l))){
+   window.REALITI_PHASE_V11?.stop?.();purrPhaseArmed=false;
+  }
+  return await oldDoor(raw)
+ };
 }
 
 window.REALITI_NEURO_RESTORATION_V1={
