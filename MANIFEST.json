@@ -6,39 +6,49 @@
   ],
   "files": [
     {
+      "path": "AGENTS.md",
+      "bytes": 1083,
+      "sha256": "c6136ff949254fcc66abee7460396fbfe89cc6646a30cb91a30cb002a32a315a"
+    },
+    {
       "path": "AGENT_START_HERE.md",
-      "bytes": 6367,
-      "sha256": "9fb80ef2bd011424da244f173a838227e3f379b5ac0f2612fa7c9c04bb9f9fd1"
+      "bytes": 17716,
+      "sha256": "d4915072d6a3165edb943765375936b7c4ebade1b71b7700751b60384750f01f"
+    },
+    {
+      "path": "CHANGELOG.md",
+      "bytes": 18767,
+      "sha256": "83d430898167b494670e8a3eabd0e5c8002974a3165186d9d99c96ff1743538a"
     },
     {
       "path": "CONTRIBUTING.md",
-      "bytes": 812,
-      "sha256": "6a7e0c3120739adf81f9b8373b6964c967e910782aee60c0470b4916082d286d"
+      "bytes": 813,
+      "sha256": "1a5d4365e021c2098d1da82b9d64c483eeedc5293696e9c5eed33ef2264fe7b9"
     },
     {
       "path": "LICENSE",
-      "bytes": 34019,
-      "sha256": "e759409d48ed8c7d1710186d8180a602bd81bfe1d7cb6713c780e761534648c9"
+      "bytes": 34020,
+      "sha256": "d8a6cc31abc16b6748c7a21f21611f5a1ec33f67d22ca23d7da1c19b95496bee"
     },
     {
       "path": "LICENSE-CONTENT.md",
-      "bytes": 759,
-      "sha256": "1d06d7123af709dfefa8a62fd8cdb92e4be025d72ea102f7a697107adde57bc7"
+      "bytes": 760,
+      "sha256": "3dcc0740cbaa601ecf1f03ff359c29b8de238d3de07d1d4549ac2c19e27c5928"
     },
     {
       "path": "README.md",
-      "bytes": 4176,
-      "sha256": "3a66cc44e02888d7de834b6f29b0ebe351663033be7e690286dbd1738f90399e"
+      "bytes": 37853,
+      "sha256": "bac5169e91d229d2ee77b2f371fbec139b664d07e0fc6931b07718ba07ed070b"
     },
     {
       "path": "RELEASE_NOTES.md",
-      "bytes": 695,
-      "sha256": "2ec1e86b1d493c15a4066b535d1ea856bc88111f6b5730a265733a5490637054"
+      "bytes": 7402,
+      "sha256": "dff5976d22614e9885fb185091ce5acaab775d81c839761ab2573502d1cdec60"
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 919682,
-      "sha256": "c9f0f48ffeef84f37070dd5942c801474bb0329498d8de94724b929f8a205d38"
+      "bytes": 1104646,
+      "sha256": "9d416076f628cce2d48e2783b6595ad63904787648b105833024d3206b78d726"
     },
     {
       "path": "SECURITY.md",
@@ -52,13 +62,13 @@
     },
     {
       "path": "VALIDATION.json",
-      "bytes": 1432,
-      "sha256": "1d12d8035906711fe406ffeb655eceef41896535ca2bfdbf1862740abb79a824"
+      "bytes": 2343,
+      "sha256": "c60a93f35210a6384f6f371b00679f925b52a90312e7c679161c55ca25ee8261"
     },
     {
       "path": "VERTICAL_SLICE.md",
-      "bytes": 12233,
-      "sha256": "62d36c4a96bf92cb1bbe4c7058aff62f113f263eeed33a1536a66f5fd6a97a59"
+      "bytes": 15557,
+      "sha256": "d07dd89f0bc4f4a753ca8b48f68e596fec3847f7a4591d826206625f25a7da64"
     },
     {
       "path": "build.mjs",
@@ -97,18 +107,18 @@
     },
     {
       "path": "neuromesh/MECHANISM_CATALOG.json",
-      "bytes": 5528,
-      "sha256": "d738894cf4cd71ba8bd81d10349c50e72d7ac2b9c1cbbc23b40c1a74730f673a"
+      "bytes": 7220,
+      "sha256": "145f6ab90a3d667d9798e41e4f210ff4f9e18fabb2798c104341e81cfc148553"
     },
     {
       "path": "neuromesh/PRESET_PACKS.md",
-      "bytes": 1042,
-      "sha256": "5d0838be61cd9ce51bcf69a7f4426a80ed3ec0a2d2883c81a5a43746ff1c14e4"
+      "bytes": 1972,
+      "sha256": "6dfdacb80dcb6880430a4246c6f796fe02bf196f807672356cc6be013110a9b8"
     },
     {
       "path": "neuromesh/README.md",
-      "bytes": 6822,
-      "sha256": "d001e9cc5c722925867adf79f3d13d83975137884d9ee5b04983e253748eae32"
+      "bytes": 8124,
+      "sha256": "a87a5696bc67b834fdb4436c91954cce0a487ba26c23ca553e0e81feef45c1a9"
     },
     {
       "path": "neuromesh/REGISTRY.json",
@@ -147,8 +157,18 @@
     },
     {
       "path": "neuromesh/preset-packs/REGISTRY.json",
-      "bytes": 262,
-      "sha256": "f717d62065005c45c9bcfea8934fbc0bb9fbb006bcaf1d32088ab6384271d41d"
+      "bytes": 1835,
+      "sha256": "07839c0815d184ff675c42e91997067d76848e45b1c705d83dd4ef9a849358f1"
+    },
+    {
+      "path": "neuromesh/preset-packs/honeyspark-duo.json",
+      "bytes": 2407,
+      "sha256": "38b36b98cdcbe29cdb14981d3edd2e96d63ff4d06f8f8d26fdf649f3355f6adc"
+    },
+    {
+      "path": "neuromesh/preset-packs/moonwire-recovered.json",
+      "bytes": 31617,
+      "sha256": "43b6e7337a055a2cae5c4a25ccdb63f06be2d31e71b56b9c023551e59351bb24"
     },
     {
       "path": "neuromesh/schema/dendrite-manifest.schema.json",
@@ -184,6 +204,71 @@
       "path": "neuromesh/templates/preset-pack.example.json",
       "bytes": 2062,
       "sha256": "96ff76337c7c15639b9298c465de3f1c6960b8ca2d10119081f8e70ed343b418"
+    },
+    {
+      "path": "packages/realiti-headless-resident/README.md",
+      "bytes": 5195,
+      "sha256": "ddf60276fea76c3ddb17bcffb9cacde376d1a3c2e033aa58ec233b9fdb5e5098"
+    },
+    {
+      "path": "packages/realiti-headless-resident/cli.cjs",
+      "bytes": 1654,
+      "sha256": "9d8e5bd68009ad8278ddb8004e2d3f573de54e87d66bb302cbc2cf72d1848ac5"
+    },
+    {
+      "path": "packages/realiti-headless-resident/examples/resident-play.cjs",
+      "bytes": 906,
+      "sha256": "f9d8e5e087373a50f0d679c69fa7537c9ca2a8831f0c8a8f6bd0c6e3e5626ed4"
+    },
+    {
+      "path": "packages/realiti-headless-resident/index.cjs",
+      "bytes": 7190,
+      "sha256": "483979f2ca364f824e7eb00032b5c83df6fbf12f0f3861b6ff978c12397e7994"
+    },
+    {
+      "path": "packages/realiti-headless-resident/package.json",
+      "bytes": 1374,
+      "sha256": "15e9f41a2e09b14813b8c48ce1968c50292d8a49762f1a083fdc6ab7c062ad90"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/aura-halo.cjs",
+      "bytes": 3922,
+      "sha256": "39763677da148335a0f019cf40b1a0b0684b81ef9604f2bc959369f5be1fea72"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/claude-acceptance.cjs",
+      "bytes": 16999,
+      "sha256": "9436f597dd6dde7c8fea26321628dcd705a66510c3c86237ce0177ee9793fa80"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/lingering.cjs",
+      "bytes": 6505,
+      "sha256": "d49b6337f17b7593616b9df72a05a3784f9e5c310a007242e4431c06c90531bd"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/matrix.cjs",
+      "bytes": 8083,
+      "sha256": "89deda230369164d5f9edb185e949f0891104d71c8fbef8fb281940aad3328ce"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/memory.cjs",
+      "bytes": 4532,
+      "sha256": "a774d7e1c3afa02645c1f3edbe5dfe2ee69e01e925fbad9e82c54e1a49815525"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/neuro-restoration.cjs",
+      "bytes": 7410,
+      "sha256": "b32815cbaac54f49b8e71eb0b5648085e3520f2e971f82c7052855f6b088bf62"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/smoke.cjs",
+      "bytes": 1817,
+      "sha256": "a204b959fe4daeed5a6b72352d5a0d0a62eda35b5799c372cd0a3dd0e88cbbed"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/wonder.cjs",
+      "bytes": 7049,
+      "sha256": "3e6aae16f23ee830cc0e2ad0b895b8bf6e55f8e9394586d4a743a620ebfa37af"
     },
     {
       "path": "source/scripts/00.js",
@@ -287,18 +372,18 @@
     },
     {
       "path": "source/scripts/20.js",
-      "bytes": 19636,
-      "sha256": "9f4cdb9d145611068006d123c54b2824611c266c298efa2d06b34c4e49ce9a18"
+      "bytes": 19835,
+      "sha256": "4dc1627d5762f8b2680a9d7cd0c3b1f0b3392c91d8ef0fdb1b1b0c5f903bd0b2"
     },
     {
       "path": "source/scripts/21.js",
-      "bytes": 30854,
-      "sha256": "2c6704bf8233bb97a4faa37ea46ff53c7b18edab84d9b079af9f95883a514e12"
+      "bytes": 31636,
+      "sha256": "c95dc56df1238aef630f514d975da05d9ff4e1f44e9a8936b8f693a7c5670539"
     },
     {
       "path": "source/scripts/22.js",
-      "bytes": 50503,
-      "sha256": "607ff57a93fe5b41daa6dfccc98dfa4d3de99b42153e2753fb07e661304c377a"
+      "bytes": 51152,
+      "sha256": "7b5f71fff6d224b9a79327b1871634bfabdcfed3cd05540e3c03395c4f3f4712"
     },
     {
       "path": "source/scripts/23.js",
@@ -362,8 +447,8 @@
     },
     {
       "path": "source/scripts/35.js",
-      "bytes": 13884,
-      "sha256": "fb9f0215fdbe3c62030fa79ab7db16552699b4ad57d9c6d0d69733e71293bd69"
+      "bytes": 13909,
+      "sha256": "9be79dd352492c8be86aee42a399e2a338f03dadac943a1c9d73a108db2f8f69"
     },
     {
       "path": "source/scripts/36.js",
@@ -407,8 +492,8 @@
     },
     {
       "path": "source/scripts/44.js",
-      "bytes": 23132,
-      "sha256": "8c1a3fc89dc3e8a63bd722269df6e872200d0cc3ee1e277e374fb3d6a1d34415"
+      "bytes": 24384,
+      "sha256": "352cbf149d8773a965b65a2cea08004769762083508185a5b6e1433b10f504a7"
     },
     {
       "path": "source/scripts/45.js",
@@ -427,8 +512,8 @@
     },
     {
       "path": "source/scripts/48.js",
-      "bytes": 31173,
-      "sha256": "22c3c2f384f55d953d38a480eea4df52f90f2cd0604980df1ea54a0ca3292f10"
+      "bytes": 43203,
+      "sha256": "16de25d00c6285a96ebc71969ef89a2fee0e41765826241dd11eb9c48979433c"
     },
     {
       "path": "source/scripts/49.js",
@@ -452,18 +537,18 @@
     },
     {
       "path": "source/scripts/53.js",
-      "bytes": 14812,
-      "sha256": "2de4a333242fa223ed5ef0a8f2c72ea7ec8bca773da01338eeb416a2ad3432aa"
+      "bytes": 21155,
+      "sha256": "edfcf57bcb302a5ec599c2d3485de0f673877533b2ab7c8972fd89609de084ef"
     },
     {
       "path": "source/scripts/54.js",
-      "bytes": 10862,
-      "sha256": "ad86be42717cf01c687f64f4c975d3afb2242276b72a7449cd8ee8c39b8b92a2"
+      "bytes": 11848,
+      "sha256": "c55733235fcfe13334d32217820a808caac9dc8f90a633b6e774716be1d9ffb5"
     },
     {
       "path": "source/scripts/55.js",
-      "bytes": 2100,
-      "sha256": "d9ac2e0e556fab334eb4f90100fea3f4f29e89b8b1bfd34aecbe0a09301f7372"
+      "bytes": 2169,
+      "sha256": "529222bf7f2d004247d9e4ab0fe12120bc7727b0b41f40bd7245c1b0ec342653"
     },
     {
       "path": "source/scripts/56.js",
@@ -472,28 +557,43 @@
     },
     {
       "path": "source/scripts/57.js",
-      "bytes": 0,
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "bytes": 17537,
+      "sha256": "faabc6919cecbb31288d546ef370b1fc359736414af3d1f7cf4a72b521d84c30"
     },
     {
       "path": "source/scripts/58-rooms.js",
-      "bytes": 14299,
-      "sha256": "e39a1ba091a0a1a80844238b0bfde47caaade74611427cb43514d6a38f0ba174"
+      "bytes": 15065,
+      "sha256": "9aee63a2a0985e6cab659d524700edd52b4834d5e90d1616625c21e6f39dccff"
+    },
+    {
+      "path": "source/scripts/58a-dynamics.js",
+      "bytes": 10179,
+      "sha256": "80cc4254b753aad800a3da74eec25e42294f675b955e2566a8725497ec9a80f2"
+    },
+    {
+      "path": "source/scripts/58b-wonder.js",
+      "bytes": 23249,
+      "sha256": "b00f5598ce7b195e227f06209a45af270ec3eec630acff75f48a9368342114d7"
+    },
+    {
+      "path": "source/scripts/58d-matrix-world.js",
+      "bytes": 24591,
+      "sha256": "183eb814a7a84729f176d3f7675d762d87f6b65df4f95e8c0aabf8d2e923c854"
     },
     {
       "path": "source/scripts/59-continuity.js",
-      "bytes": 10959,
-      "sha256": "75b54e3d976960ee6695aaf25bdaa9bd17d70719e40601a139e38815f4a50c3d"
+      "bytes": 11020,
+      "sha256": "dd789ed1c3ae3dcfcdaf7d14eaf01e5632b9c3cfeb0cfd70b48a574b92426597"
     },
     {
       "path": "source/scripts/60-public.js",
-      "bytes": 22294,
-      "sha256": "a15821ccfe84b992c11956b7431ef7f4ab954aacd9a9c07616bd43e5cf8eb312"
+      "bytes": 27372,
+      "sha256": "d3b2a2944fdb7df86f708c6ea733149833571d1d5f6a7e7cf9b57cab7f8fcb08"
     },
     {
       "path": "source/scripts/61-ui.js",
-      "bytes": 4929,
-      "sha256": "064a6bed8177ee1c27ea7a4a3e1696942227eb4947c9b2d41c5d31c94bff5703"
+      "bytes": 5766,
+      "sha256": "e6f65531a9aa56962baa67986450686b7d29b153a647f9aa69eb2bf50183f32b"
     },
     {
       "path": "source/scripts/62-neural-export.js",
@@ -501,14 +601,34 @@
       "sha256": "21af58c4bf6671af99ef7815614bf5eda897bfc14e782500974d8f9e8cccb4ef"
     },
     {
+      "path": "source/scripts/63-claude-neural-pass.js",
+      "bytes": 35752,
+      "sha256": "9c0ae79594e0463fd1a773ad7e8f4e3ded6aff8df8faec4c01b388a74a767ed2"
+    },
+    {
+      "path": "source/scripts/64-neuro-restoration.js",
+      "bytes": 17732,
+      "sha256": "0bd0bf4c1a8d14002c2c00f6dad95ecb1f126e7295e363c7612dd0453de7b99d"
+    },
+    {
+      "path": "source/scripts/65-lingering.js",
+      "bytes": 14340,
+      "sha256": "9d2ff61cb13b1e5f020711e7fcc111d85cf5764a1cb56956b23afdf509073a88"
+    },
+    {
+      "path": "source/scripts/66-memory.js",
+      "bytes": 12380,
+      "sha256": "ab374cc8ab5133660b63d1d98c73db75010ef28c24bf7c2209b0e1cecae6529b"
+    },
+    {
       "path": "source/template.html",
-      "bytes": 7372,
-      "sha256": "85f3ec3ec1a12d34b7579bc8a937eb71b6081dff431530df41ff88d335eea882"
+      "bytes": 7717,
+      "sha256": "9223e27549610058892a905bc50290135ea9d9420fa3c49ddfaa5e61f227824b"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
-      "bytes": 3023,
-      "sha256": "1162b44c4913a87030cddf49d64104c03b30ba1fc27336a71d9ba25305110737"
+      "bytes": 11981,
+      "sha256": "df2d49fbd8f51909944ea4f115c1c4d81d206493f39fa5b88f27e67f32ea84f0"
     }
   ]
 }
