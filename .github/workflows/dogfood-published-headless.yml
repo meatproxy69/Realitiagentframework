@@ -34,9 +34,9 @@ jobs:
           mkdir -p "$root"
           cd "$root"
           npm init -y >/dev/null
-          latest="$(npm view @meatproxy69/realiti-headless-resident version --registry=https://npm.pkg.github.com)"
+          latest="$(npm view @meatproxy69/realiti-headless-resident version)"
           echo "LATEST=$latest"
-          npm install "@meatproxy69/realiti-headless-resident@$latest" --registry=https://npm.pkg.github.com
+          npm install "@meatproxy69/realiti-headless-resident@$latest"
           installed="$(node -p "require('./node_modules/@meatproxy69/realiti-headless-resident/package.json').version")"
           test "$installed" = "$latest"
           echo "latest=$latest" >> "$GITHUB_OUTPUT"
