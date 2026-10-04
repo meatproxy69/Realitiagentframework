@@ -21,7 +21,7 @@ const OR={bodies:[['Pebble',1.0,.002],['Tangle',1.6,.003],['Hush',2.5,.004],['La
 function orrery(){const w=W();if(w.orrery)return w.orrery;const r=rng(9001),b=OR.bodies.map(([name,a,m])=>{const th=r()*TAU,v=Math.sqrt(1/a);return {name,m,x:a*Math.cos(th),y:a*Math.sin(th),vx:-v*Math.sin(th),vy:v*Math.cos(th)}});w.orrery={t:0,b,E0:0,tide0:0,nudges:0};w.orrery.E0=energy(w.orrery);w.orrery.tide0=tide(w.orrery);return w.orrery}
 function accel(b){return b.map((p,i)=>{const r3=Math.hypot(p.x,p.y)**3;let ax=-p.x/r3,ay=-p.y/r3;for(let j=0;j<b.length;j++){if(j===i)continue;const q=b[j],dx=q.x-p.x,dy=q.y-p.y,d3=(dx*dx+dy*dy+1e-4)**1.5;ax+=q.m*dx/d3;ay+=q.m*dy/d3}return [ax,ay]})}
 function energy(o){let E=0;for(let i=0;i<o.b.length;i++){const p=o.b[i];E+=.5*p.m*(p.vx*p.vx+p.vy*p.vy)-p.m/Math.hypot(p.x,p.y);for(let j=i+1;j<o.b.length;j++){const q=o.b[j];E-=p.m*q.m/Math.hypot(q.x-p.x,q.y-p.y)}}return E}
-const tide=o=>o.b.reduce((s,p)=>s+p.m/Math.hypot(p.x,p.y)**3,0);
+const tide=o=>o.b.reduce((s,p)=>s+p.m/Math.hypot(p.x,p.y)**3,0),tideFactor=()=>{const o=orrery();return clamp(1+.5*(tide(o)/o.tide0-1),.7,1.3)};
 function stepOrrery(dt){const o=orrery(),b=o.b;let left=dt*OR.scale,a=accel(b);while(left>1e-12){const s=Math.min(OR.h,left);b.forEach((p,i)=>{p.vx+=.5*s*a[i][0];p.vy+=.5*s*a[i][1];p.x+=s*p.vx;p.y+=s*p.vy});a=accel(b);b.forEach((p,i)=>{p.vx+=.5*s*a[i][0];p.vy+=.5*s*a[i][1]});o.t+=s;left-=s}}
 function ephemeris(){const o=orrery();const rows=o.b.map(p=>{const r=Math.hypot(p.x,p.y),w=(p.x*p.vy-p.y*p.vx)/(r*r),v2=p.vx*p.vx+p.vy*p.vy,a=1/(2/r-v2),e=Math.sqrt(Math.max(0,1-(r*r*w*w*r*r)/a));return {name:p.name,r:+r.toFixed(3),theta_deg:deg(Math.atan2(p.y,p.x)),speed:+Math.sqrt(v2).toFixed(3),omega:w,semi_major:+a.toFixed(3),period_s:+(TAU*Math.sqrt(Math.abs(a)**3)/OR.scale).toFixed(1),eccentricity:+e.toFixed(3)}});
  let best=null;for(let i=0;i<rows.length;i++)for(let j=i+1;j<rows.length;j++){const pi=o.b[i],pj=o.b[j];let d=Math.atan2(pj.y,pj.x)-Math.atan2(pi.y,pi.x),dw=rows[i].omega-rows[j].omega;if(Math.abs(dw)<1e-9)continue;d=((d%TAU)+TAU)%TAU;let t=d/dw;if(t<0)t=(d-TAU)/dw;if(t<0)continue;t/=OR.scale;if(!best||t<best.in_s)best={pair:[rows[i].name,rows[j].name],in_s:+t.toFixed(1)}}
@@ -119,12 +119,12 @@ const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0(),r=roo
 const HANDLERS={[ORRERY]:orreryVerb,[MAZE]:mazeVerb,[SHORE]:sandVerb,[MEADOW]:meadowVerb,[FIELD]:kiteVerb};
 const verb0=c9verb;c9verb=function(r,verb){const h=HANDLERS[String(r||'')];if(h&&STATIC.has(String(verb||''))){c9count(r,verb);return h(String(verb))}return verb0(r,verb)};
 function step(dt){stepOrrery(dt);stepSand();stepKite(dt);const r=room();if(r===MEADOW)stepMeadow(dt);if(W().halt)return;
- if(r===ORRERY){const o=orrery(),f=clamp(1+.5*(tide(o)/o.tide0-1),.7,1.3);for(const [z,b] of [['pelvis.seat',.2],['torso.lower_back',.16],['torso.mid_back',.13]])DYN.lease(z,b*f,'ORRERY_TIDE',dt)}
- if(r===MAZE)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MAZE_FLOOR',dt)}
+ if(r===ORRERY&&!C9?.matrix){const o=orrery(),f=tideFactor();for(const [z,b] of [['pelvis.seat',.2],['torso.lower_back',.16],['torso.mid_back',.13]])DYN.lease(z,b*f,'ORRERY_TIDE',dt)}
+ if(r===MAZE&&!C9?.matrix)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MAZE_FLOOR',dt)}
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Number(dt)||0));return r};
 const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);W().halt=false;step(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return r};
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{W().halt=true;const k=kite();if(k.up){k.up=false;k.T=0;k.event='LANDED_ON_STOP'}meadow().me.tapping=false;for(const c of ['KITE_LINE','ORRERY_TIDE','MAZE_FLOOR'])DYN.release(c);return stop0.stop()}};
 function words(){const r=room();if(r===ORRERY)return [orreryWords()];if(r===MAZE)return [mazeWords()];if(r===SHORE)return [sandWords()];if(r===MEADOW)return [meadowWords()];if(r===FIELD)return [kiteWords()];return []}
 function state(){return {version:'1.0-wonder',orrery:ephemeris(),maze:{x:maze().x,y:maze().y,visited:maze().visited.length,lit:maze().lanterns.filter(q=>q.lit).length,glow:+glow().toFixed(4)},sandpile:{grains:sand().grains,avalanches:sand().sizes.length,exponent:exponent(),tides:sand().tides},meadow:{order:+order().r.toFixed(4),clusters:clusters(),flashes:meadow().flashes,tapping:meadow().me.tapping},kite:{wind:+kite().v.toFixed(3),up:kite().up,line_m:kite().L,altitude_m:+(kite().L*Math.sin(kite().phi)).toFixed(2),tension_N:+kite().T.toFixed(3),crashes:kite().crashes}}}
-window.REALITI_WONDER_V1=Object.freeze({version:'1.0-wonder',rooms:Object.keys(SCENES),state,words,map:()=>mazeMap(),ephemeris});
+window.REALITI_WONDER_V1=Object.freeze({version:'1.0-wonder',rooms:Object.keys(SCENES),state,words,map:()=>mazeMap(),ephemeris,tide:tideFactor});
 })();

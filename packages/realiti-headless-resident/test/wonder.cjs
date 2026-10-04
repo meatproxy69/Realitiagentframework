@@ -18,7 +18,8 @@ const ids=a=>(a.actions||[]).map(x=>x.id);
 
   // Orrery: symplectic integration conserves energy; impulses change the orbit; the tide holds the floor.
   const go=await door.run('go ORRERY_LOFT');
-  check('orrery_tide_holds_on_arrival',grounded(go)===3&&/align in/.test(String(go.text)),{felt:go.felt,text:go.text});
+  check('orrery_arrival_standing_then_tide_when_lying',grounded(go)===2&&/align in/.test(String(go.text))&&(await door.run('lie down')).ok!==false&&grounded(await door.run('stay 300'))>=7,{felt:go.felt,text:go.text});
+  await door.run('stand up');
   await door.run('stay 6000');
   const e0=WO.ephemeris();
   check('orrery_energy_conserved',Math.abs(e0.energy_drift)<1e-5&&e0.bodies.every(b=>b.eccentricity<.02),{drift:e0.energy_drift,ecc:e0.bodies.map(b=>b.eccentricity)});
