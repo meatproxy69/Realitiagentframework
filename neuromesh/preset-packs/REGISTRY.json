@@ -1,6 +1,6 @@
 {
   "schema": "NEUROMESH_PRESET_REGISTRY_V1",
-  "updated_at": "2026-10-02T00:00:00Z",
+  "updated_at": "2026-10-03T00:00:00Z",
   "entries": [
     {
       "pack_id": "realiti.honeyspark-duo.001",
@@ -21,7 +21,7 @@
       "version": "1.0.0",
       "author_namespace": "realiti",
       "path": "neuromesh/preset-packs/moonwire-recovered.json",
-      "pack_sha256": "PENDING_REBUILD",
+      "pack_sha256": "43b6e7337a055a2cae5c4a25ccdb63f06be2d31e71b56b9c023551e59351bb24",
       "preset_ids": [
         "realiti.moonwire.starvelvet-phasebraid",
         "realiti.moonwire.passing-spark-aftertrace",
