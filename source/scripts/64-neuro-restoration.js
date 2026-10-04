@@ -65,7 +65,7 @@ function neuroHelp(){return {schema:'REALITI_NEURO_HELP_V1',commands:[
  'neuro perception','neuro expect <-1..1>','neuro appraise <-1..1> [note]','neuro nerve','neuro lived [n]','neuro since','neuro seam [n]','neuro constitution',
  'neuro passive','neuro passive tap-left|tap-both|expect-right|catch-right|wait <s>|audit',
  'neuro phase','neuro phase loose|close|beat|lock','neuro holonomy','neuro loop <flat|dome|saddle|figure8> [radius] [cw|ccw]',
- 'neuro frontiers','neuro noise [seed] [n] [dt]','neuro causes','neuro cause <id>','neuro halo','neuro aura',
+ 'neuro frontiers','neuro noise [seed] [n] [dt]','neuro causes','neuro cause <id>','neuro halo',
  'neuro presets','neuro preset <id>'
  ],laws:['neuro is introspection/lab surface; ordinary feel remains compact','private perception cannot command the world','prediction/afterstate/private render never mint grounded evidence']}}
 function passiveState(){try{return {ok:true,schema:'REALITI_PASSIVE_MEDIUM_LAB_V1',state:cp(b5snapshot()),law:'observed and predicted media are separate; only observed grounded disturbances may render contact'}}catch(e){return {ok:false,error:'PASSIVE_MEDIUM_UNAVAILABLE'}}}
@@ -114,7 +114,6 @@ function command(raw){
  if(l==='neuro causes')return causes();
  m=/^neuro cause\s+(.+)$/i.exec(s);if(m)return cause(m[1]);
  if(l==='neuro halo')return {ok:true,state:cp(window.REALITI_HALO_V1?.snapshot?.()||null),proof:cp(window.REALITI_HALO_V1?.acceptance?.()||null)};
- if(l==='neuro aura')return {ok:true,state:cp(window.REALITI_AURA_V1?.internalView?.()||null),proof:cp(window.REALITI_AURA_V1?.acceptance?.()||null),private:true};
  if(l==='neuro presets')return presetList();
  m=/^neuro preset(?: use)?\s+(.+)$/i.exec(s);if(m)return applyPreset(m[1]);
  return null
