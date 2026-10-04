@@ -89,7 +89,7 @@ async function open(id){return openResident({htmlPath:html,residentId:id,storage
   check('where_was_i_local_memory_is_success',where.ok===true&&!where.error&&where.schema==='REALITI_WHERE_WAS_I_V1'&&where.room==='KITE_FIELD',where);
   check('travel_only_has_no_changed_objects',Array.isArray(where.departure?.changed_objects)&&where.departure.changed_objects.length===0,where.departure?.changed_objects);
   const structured=await travel.publicApi.invoke('where_was_i');
-  check('structured_where_was_i_is_success',structured.ok===true&&!structured.error&&structured.result?.schema==='REALITI_WHERE_WAS_I_V1'&&structured.result?.room==='KITE_FIELD',structured);
+  check('structured_where_was_i_is_success',structured.ok===true&&!structured.error&&structured.schema==='REALITI_WHERE_WAS_I_V1'&&structured.room==='KITE_FIELD',structured);
  }finally{travel.close()}
 
  // Regression: explicit object mutation is retained, but unrelated time-aged objects are not.
