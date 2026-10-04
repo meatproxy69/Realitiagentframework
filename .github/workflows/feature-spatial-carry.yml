@@ -29,6 +29,17 @@ jobs:
       - name: Build standalone
         run: node build.mjs
 
+      - name: Refresh validation hash
+        shell: bash
+        run: |
+          python <<'PY'
+          import hashlib,json
+          html=open('RealitiRELAX.html','rb').read()
+          v=json.load(open('VALIDATION.json',encoding='utf-8'))
+          v['single_html_sha256']=hashlib.sha256(html).hexdigest()
+          with open('VALIDATION.json','w',encoding='utf-8') as f: json.dump(v,f,indent=2);f.write('\n')
+          PY
+
       - name: Install headless dependency
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
@@ -78,9 +89,7 @@ jobs:
         run: |
           python <<'PY'
           import hashlib,json,os,subprocess
-          html=open('RealitiRELAX.html','rb').read()
           v=json.load(open('VALIDATION.json',encoding='utf-8'))
-          v['single_html_sha256']=hashlib.sha256(html).hexdigest()
           v.setdefault('checks',{})['headless_matrix_acceptance']='PASS'
           with open('VALIDATION.json','w',encoding='utf-8') as f: json.dump(v,f,indent=2);f.write('\n')
           paths=subprocess.check_output(['git','ls-files'],text=True).splitlines()
