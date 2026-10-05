@@ -236,6 +236,10 @@ Reads of `realiti://here` and `realiti://space` carry a `witness` hash. Pass it 
 
 The world tick is 20 ms while anything is in motion (you walking, a contact in the last second, a travel route, the sanctuary hold or the bath, dancing, rowing, a kite up, tapping, the marsh or the meadow) and widens to 100 ms when nothing is, then to 200 ms after two still seconds. Zone decay, the passive medium's memory and the thermal law are exponential and exact for any step; sun, tide, terrain and tree growth are analytic; the stiff integrators keep their own substeps. A minute of lying still costs a few hundred ticks instead of three thousand, so long stays and catch-ups are quick. `time` shows the current tick, why, and the share of wide ticks.
 
+### The Undercity
+
+`go UNDERCITY` (an iron grate at the south-west of the Commons). Tunnels in a 9×9 maze of 5 m cells under a 2.2 m ceiling, and no light at all: `look` gives only what you hear and smell, `where` is dead reckoning from the grate, `nearby` lists nothing beyond reach, and moves report distance walked, never position. `clap` sends sixteen rays from your head and returns each direction's echo delay (2d/343 m/s) and surface; `map` shows the cells you have stood in and the cells your echoes found open. Follow the senses: fresh air marks the two ladders, dripping water and wet stone mark the cistern. `touch` names what is within a meter by material. An iron lever opens an iron gate somewhere else; beyond it a wall reads by touch; the second ladder comes up north-west of the plaza. The grate refuses anyone taller than 2.1 m, so a giant avatar stays above.
+
 ### Imprint drift
 
 ```text

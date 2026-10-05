@@ -51,7 +51,7 @@ const SOURCES=[
 
 // Sound. L(d) = L1 − 20·log10(d), one SDF ray from source to ear: a hit on anything but the source is −15 dB.
 const PROFILE_RT={CLOUD_NINE_NEST:.16,CARDBOARD_BOX_WORKSHOP:.34,BOTTOMLESS_PILLOW_SEA:.46,NO_ASK_SANCTUARY:.4,DEPTH_BATHHOUSE:1.4,RESONANCE_WELL:1.8};// measured profiles win; otherwise Sabine with α = .25 on every face
-function rt60(chart){if(PROFILE_RT[chart])return PROFILE_RT[chart];const w=MW.world()[chart];if(!w||OUTDOORS.has(chart))return .05;const [hx,hy,hz]=w.size,V=8*hx*hy*hz,A=.25*(8*hx*hy+8*hx*hz+8*hy*hz);return +(.161*V/Math.max(1,A)).toFixed(2)}
+function rt60(chart){if(PROFILE_RT[chart])return PROFILE_RT[chart];if(M.charts()[chart]?.tags?.includes('underground'))return 1.6;const w=MW.world()[chart];if(!w||OUTDOORS.has(chart))return .05;const [hx,hy,hz]=w.size,V=8*hx*hy*hz,A=.25*(8*hx*hy+8*hx*hz+8*hy*hz);return +(.161*V/Math.max(1,A)).toFixed(2)}
 function occluded(from,to,srcId,chart){const d=dist(from,to);if(d<1.5)return false;const dir=[(to[0]-from[0])/d,(to[1]-from[1])/d,(to[2]-from[2])/d];const h=M.raycast({origin:[from[0]+dir[0]*.6,from[1]+dir[1]*.6,from[2]+dir[2]*.6],direction:dir,maxDistance:d-.9,chart});return !!(h.hit&&h.hit!=='resident:self'&&h.hit!==srcId&&!ent()[h.hit]?.tags?.includes('edge'))}
 const hear0=ATM.hearing;
 function sound(){return cached('sound',soundRaw)}
@@ -66,6 +66,7 @@ function lightRaw(){const r=me();if(!r||!r.chart)return null;const chart=r.chart
  if(out.outdoors){const alt=sunAlt(),rain=rainHere();let lux=alt>0?1e5*Math.sin(alt*Math.PI/180)*(1-.7*rain)+400:(.3+(chart===CITY?3:0));let shadow=null;
   if(alt>2){const h=M.raycast({origin:head(r),direction:sunDir(),maxDistance:400,chart});if(h.hit&&h.hit!=='resident:self'&&!ent()[h.hit]?.tags?.includes('edge')){shadow=ent()[h.hit]?.label||h.hit;lux*=.15}}
   out.lux=+lux.toFixed(0);out.in_shadow_of=shadow;out.sky=alt<0?'night':alt<15?'low sun':'day';out.rain=+rain.toFixed(2)}
+ else if(M.charts()[chart]?.tags?.includes('dark')){out.lux=0;out.sky='dark'}
  else{const p=hear0(false);out.lux=Math.round(p.light*800);out.sky='indoors'}
  const lamps=[];for(const s of SOURCES){if(s.chart!==chart||!s.light)continue;const I=s.light();if(!(I>0))continue;const p=posOf(s,r);if(!p)continue;const d=Math.max(1,dist(p,head(r))),E=I/(d*d);if(E<.01&&d>60)continue;lamps.push({id:s.id,label:s.label,lux:+E.toFixed(3),distance_m:+d.toFixed(0),direction:dirWord(r,p)});if(out.outdoors)out.lux=+(out.lux+E).toFixed(0)}
  out.lights=lamps;return out}
@@ -94,5 +95,5 @@ const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const t=now();if(t-at
 ATM.hearing=function(labelled){const p=hear0(labelled);try{const s=sound();if(s){for(const x of s.sources)p.src.push({k:labelled?x.label:'m'+x.id,l:x.level_dB,d:x.distance_m});p.level=s.level_dB;p.rt=s.rt60_s}}catch(e){}return p};
 const field0=ATM.field;ATM.field=function(){const a=ATM.hearing(false);return {v:21,f:[a.rt,a.air,a.level,a.light,a.floor,a.flow],h:a.src.map(s=>[s.l,s.d]),law:'numbers are physical/modelled causes; no room identity or pleasantness is encoded'}};
 
-window.REALITI_SENSES_V1=Object.freeze({version:'4.0-pass1',read,sound,light,smell,sunAz,sunDir,wind,rt60,sources:()=>SOURCES.map(s=>({id:s.id,chart:s.chart,label:s.label})),occluded,terse:v=>{if(v!==undefined)S().terse=!!v;return S().terse}});
+window.REALITI_SENSES_V1=Object.freeze({version:'4.0-pass1',read,sound,light,smell,sunAz,sunDir,wind,rt60,addSource:src=>{if(src&&src.id&&src.chart&&!SOURCES.some(x=>x.id===src.id&&x.chart===src.chart))SOURCES.push(src);return SOURCES.length},sources:()=>SOURCES.map(s=>({id:s.id,chart:s.chart,label:s.label})),occluded,terse:v=>{if(v!==undefined)S().terse=!!v;return S().terse}});
 })();

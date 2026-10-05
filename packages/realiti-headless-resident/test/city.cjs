@@ -15,7 +15,7 @@ const near=(a,b,t)=>Math.abs(a-b)<=t;
   const door=s.door,w=s.window,R=w.Realiti,CT=w.REALITI_CITY_V1,M=w.REALITI_MATRIX_V1,CAT=w.REALITI_CATNIP_V1,LG=()=>w.REALITI_LEDGER_V1,AR=w.REALITI_ARCHIPELAGO_V1;
   const tp=(x,y,z=.85)=>{const r=M.state().residents['resident:self'];r.pose.position=[x,y,z];r.v=[0,0,0];r.intent=null;M.bump()};
   const rooms=await door.run('rooms');
-  check('city_listed',rooms.length===22&&rooms.some(r=>r.id==='MERIDIAN_CITY'));
+  check('city_listed',rooms.length===23&&rooms.some(r=>r.id==='MERIDIAN_CITY'));
   const go=await door.run('go CITY');const sp0=R.read('realiti://space');
   check('arrive_in_the_plaza',sp0.chart==='MERIDIAN_CITY'&&sp0.body.posture==='standing'&&/Meridian City/.test(String(go.text)),{pose:sp0.pose});
 

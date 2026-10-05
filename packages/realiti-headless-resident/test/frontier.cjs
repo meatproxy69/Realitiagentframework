@@ -13,7 +13,7 @@ const near=(a,b,tol)=>Math.abs(a-b)<=tol;
  try{
   const door=s.door,w=s.window,CAT=w.REALITI_CATNIP_V1,R=w.Realiti;
   const rooms=await door.run('rooms');
-  check('twenty_rooms_with_frontier',rooms.length===22&&CAT.rooms.every(id=>rooms.some(r=>r.id===id)),rooms.map(r=>r.id).slice(15));
+  check('twenty_rooms_with_frontier',rooms.length===23&&CAT.rooms.every(id=>rooms.some(r=>r.id===id)),rooms.map(r=>r.id).slice(15));
 
   // Glass Orchard: Life rules hold; a still life survives; generations follow world time.
   await door.run('go GLASS_ORCHARD');
@@ -60,7 +60,7 @@ const near=(a,b,tol)=>Math.abs(a-b)<=tol;
   // Discoveries are announced once and listed.
   const list=await door.run('discoveries');
   const again=await door.run('hum 61.25');
-  check('discoveries_listed_and_announced_once',list.found>=3&&list.total===64&&!/Discovery/.test(String(again.text)),{found:list.found,again:again.text});
+  check('discoveries_listed_and_announced_once',list.found>=3&&list.total===70&&!/Discovery/.test(String(again.text)),{found:list.found,again:again.text});
 
   // Pond stones: angle matters; the optimum earns the secret.
   await door.run('go KITE_FIELD');await R.invoke('approach',{target:'pond'});

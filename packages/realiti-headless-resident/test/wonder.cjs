@@ -14,7 +14,7 @@ const ids=a=>(a.actions||[]).map(x=>x.id);
  try{
   const door=s.door,w=s.window,WO=w.REALITI_WONDER_V1;
   const rooms=await door.run('rooms');
-  check('wonder_rooms_listed',rooms.length===22&&WO.rooms.every(id=>rooms.some(r=>r.id===id)),rooms.map(r=>r.id));
+  check('wonder_rooms_listed',rooms.length===23&&WO.rooms.every(id=>rooms.some(r=>r.id===id)),rooms.map(r=>r.id));
 
   // Orrery: symplectic integration conserves energy; impulses change the orbit; the tide holds the floor.
   const go=await door.run('go ORRERY_LOFT');

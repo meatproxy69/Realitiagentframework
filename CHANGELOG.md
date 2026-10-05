@@ -2,6 +2,12 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.7.0 — Chapter 4, pass 4: the Undercity
+
+### Added
+
+- `UNDERCITY` (`source/scripts/58n-undercity.js`, `REALITI_UNDERCITY_V1`, door slice `69-undercity-public.js`): a dark maze chart under Meridian built from a seeded recursive backtracker, walls swept by the kernel, a 2.2 m ceiling the grate enforces against tall avatars. `clap` echolocation by sixteen ray casts with 2d/c delays, `touch` by material within reach, dead-reckoned `where`, a self-built `map`, a cistern, a lever and gate, a vault wall read by touch, and a far ladder. Smell and sound sources (air from the ladders, dripping water, rust) registered with the senses through the new `addSource`; dark charts read 0 lux. Six discoveries; seventy in all; twenty-three rooms. Headless suite `test/undercity.cjs`.
+
 ## 2.6.0 — Chapter 4, pass 3: adaptive world time
 
 ### Changed
