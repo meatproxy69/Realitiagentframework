@@ -15,6 +15,7 @@ function releaseEverything(){
 function home(){releaseEverything();C9.currentRoom='CLOUD_NINE_NEST';C9.roomVisits=C9.roomVisits||{};C9.roomVisits.CLOUD_NINE_NEST=(C9.roomVisits.CLOUD_NINE_NEST||0)+1;try{c9save()}catch(e){};return {resident_text:'You come back to Cloud Nine Nest. Rain slides down the round window. The mattress is where you left it, and '+catName()+' is nearby.'}}
 function stop(){
   
+  window.REALITI_PHASE_V11?.stop?.('resident_stop');
   window.REALITI_SUPPORT_LEASE_V1?.end?.('resident_stop',false);
   window.REALITI_NEST_SUPPORT?.disable?.('resident_stop');
   window.REALITI_COZY_V20_3?.clearCatTouch?.();
