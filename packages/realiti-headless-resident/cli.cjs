@@ -7,6 +7,7 @@ function usage(){
   return [
     'realiti-headless [--html PATH] [--resident ID] [--storage PATH] <Agent Door command>',
     'realiti-headless [--html PATH] [--resident ID] [--storage PATH] --inspect',
+    'realiti-headless [--html PATH] [--resident ID] [--storage PATH] --sync http://server:8787 <command>   (sync the shared ledger before and after)',
     '',
     'Examples:',
     '  realiti-headless help',
@@ -21,11 +22,12 @@ function usage(){
 }
 
 function parse(argv){
-  const out={htmlPath:null,residentId:null,storagePath:null,inspect:false,noIntegrity:false,args:[]};
+  const out={htmlPath:null,residentId:null,storagePath:null,inspect:false,noIntegrity:false,sync:null,args:[]};
   for(let i=0;i<argv.length;i++){
     if(argv[i]==='--html'){out.htmlPath=argv[++i];continue}
     if(argv[i]==='--resident'){out.residentId=argv[++i];continue}
     if(argv[i]==='--storage'){out.storagePath=argv[++i];continue}
+    if(argv[i]==='--sync'){out.sync=argv[++i];continue}
     if(argv[i]==='--inspect'){out.inspect=true;continue}
     if(argv[i]==='--no-integrity'){out.noIntegrity=true;continue}
     if(argv[i]==='--help'||argv[i]==='-h'){out.help=true;continue}
@@ -39,7 +41,10 @@ function parse(argv){
   if(p.help){console.log(usage());return}
   const s=await openResident({htmlPath:p.htmlPath,residentId:p.residentId,storagePath:p.storagePath,verifyIntegrity:!p.noIntegrity});
   try{
+    let before=null,after=null;
+    if(p.sync){const {sync}=require('./sync.cjs');before=await sync(s.window,p.sync)}
     const out=p.inspect?await s.snapshot():await s.door.run(p.args.join(' ')||'help');
-    console.log(JSON.stringify(out,null,2));
+    if(p.sync){const {sync}=require('./sync.cjs');after=await sync(s.window,p.sync)}
+    console.log(JSON.stringify(p.sync?{...out,sync:{before,after}}:out,null,2));
   }finally{s.close()}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});

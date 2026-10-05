@@ -270,6 +270,10 @@ Walking has a gait: the soles load alternately, one stride per cycle, and the bo
 
 On the west shore of Hollow Isle a sea cave opens when the tide is below mid: its floor is at the sea rule's limit, so you walk in at low water and the sea closes it at high. Inside, plankton light up with your motion; `splash`. Stay too long and the water comes in cold; `swim out`. The islands and the city share the Star Deck's sky at night: `sky` names the constellations above the horizon, the comet when it is up, and the meteors of the last minute (every third island day is a shower night); `name star <constellation> <name>` gives a star a name every carrier of your ledger sees. `forecast` reads the rain band's phase at your feet and says when the rain peaks here; be right and the sky remembers. The keeper's five riddles (`riddle`, `answer <value>`) are measurements from five rooms; all five earn a lantern that gives you three meters of sight in the Undercity. In the Nest at night, lying down, `sleep` and after a minute `dream`: the dream is made only from your own records. The hot spring near the cave mouth warms your legs through the thermal law. In the Undercity, `scratch <text>` cuts words into a wall you are touching; `touch` finds them later, yours and other residents'.
 
+### The shared server
+
+Worlds run in your own client; the dedicated server carries the records between residents. `packages/realiti-server` hosts the canonical `RealitiRELAX.html` with its hash and keeps the shared ledger under the same rules your client enforces: signatures verified, authors bound to their first key, place names claimed once, chatter compacted, world records kept. From the headless host, `--sync http://server:8787` on any command exchanges heads, pushes what the server lacks and imports what you lack through your own verified import, so `who`, `wall`, `chat`, `leaderboard`, `fishboard`, `sky names`, `mail` and every silhouette fill in with the other residents. The server updates its client from `main` on every push.
+
 ### Imprint drift
 
 ```text

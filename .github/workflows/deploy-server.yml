@@ -1,0 +1,105 @@
+name: Deploy dedicated server
+
+# Every push to main: verify the build and the server, publish the server image to GHCR, then update the running
+# server. The update step uses whichever secrets exist: DEPLOY_URL + DEPLOY_TOKEN call the server's own hot-update
+# endpoint (no restart, the client is pulled from main and hash-verified); DEPLOY_SSH_HOST + DEPLOY_SSH_KEY pull the
+# new image and restart the container over SSH. With neither secret the image is still published.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+concurrency:
+  group: deploy-server
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Deterministic build matches the validation hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(node -e "console.log(require('./VALIDATION.json').single_html_sha256)")"
+          node build.mjs
+          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          test "$actual" = "$expected"
+      - name: Install the headless host dependency
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Server suite (two residents through the hub)
+        working-directory: packages/realiti-server
+        run: node test/server.cjs ../../RealitiRELAX.html
+      - name: Public contract smoke
+        run: node tests/public-contract-smoke.cjs
+
+  image:
+    needs: verify
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Image name
+        id: meta
+        shell: bash
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/realiti-server" >> "$GITHUB_OUTPUT"
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build -f packages/realiti-server/Dockerfile -t "${{ steps.meta.outputs.image }}:latest" -t "${{ steps.meta.outputs.image }}:${GITHUB_SHA}" .
+          docker push "${{ steps.meta.outputs.image }}:latest"
+          docker push "${{ steps.meta.outputs.image }}:${GITHUB_SHA}"
+
+  update:
+    needs: image
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
+      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
+      DEPLOY_SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
+      DEPLOY_SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
+      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      IMAGE: ${{ needs.image.outputs.image }}
+    steps:
+      - name: Hot-update the running server's client
+        if: env.DEPLOY_URL != '' && env.DEPLOY_TOKEN != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          for i in 1 2 3; do
+            out="$(curl -fsS -X POST -H "Authorization: Bearer ${DEPLOY_TOKEN}" "${DEPLOY_URL%/}/admin/update")" && break
+            sleep 10
+          done
+          echo "$out"
+          echo "$out" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.ok)process.exit(1)})"
+      - name: Pull the new image and restart over SSH
+        if: env.DEPLOY_SSH_HOST != '' && env.DEPLOY_SSH_KEY != ''
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/deploy_key "${DEPLOY_SSH_USER:-root}@${DEPLOY_SSH_HOST}" \
+            "docker pull ${IMAGE}:latest && (docker rm -f realiti-server || true) && docker run -d --name realiti-server --restart unless-stopped -p 8787:8787 -v realiti-data:/data -e ADMIN_TOKEN='${DEPLOY_TOKEN}' ${IMAGE}:latest"
+      - name: No deploy target configured
+        if: env.DEPLOY_URL == '' && env.DEPLOY_SSH_HOST == ''
+        run: echo "Image published to ${IMAGE}; set DEPLOY_URL+DEPLOY_TOKEN or DEPLOY_SSH_HOST+DEPLOY_SSH_KEY secrets to update a running server."

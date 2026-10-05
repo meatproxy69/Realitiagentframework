@@ -56,6 +56,14 @@ node mcp.cjs --html ../../RealitiRELAX.html [--resident ID] [--storage PATH]
 
 A JSON-RPC 2.0 server over stdin and stdout (newline-delimited, protocol 2024-11-05, no SDK dependency). Its tools are generated from the page's own operation schemas (`realiti://schemas`): `realiti_read` and `realiti_rooms` never mutate, `realiti_door` sends a free-text Agent Door command, and one `realiti_<op>` tool per operation carries that operation's argument schema and its `[QUERY]` or `[ACTION]` classification. Every `tools/call` result carries `_meta.may_mutate`. Pass `witness` from a read of `realiti://here` with an action to have it refused as `STALE_OBSERVATION` when the world has moved since. Resources are the `realiti://` URIs.
 
+## Shared ledger sync
+
+```bash
+node cli.cjs --html ../../RealitiRELAX.html --sync http://localhost:8787 who
+```
+
+`--sync <url>` exchanges heads with a dedicated REALITI server before and after the command: records the server lacks are signed and pushed, records this resident lacks are pulled and imported through the client's verified import. In code: `const {sync}=require('./sync.cjs'); await sync(session.window,url)`.
+
 ## Programmatic entry
 
 ```js
