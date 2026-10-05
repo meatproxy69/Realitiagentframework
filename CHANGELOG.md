@@ -2,6 +2,13 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.14.1 — REALITI 2.0: the dedicated server package is live
+
+### Changed
+
+- The project is REALITI 2.0, no longer just Relax: the root README now leads with the shared world and the dedicated server package, with a Dedicated server section (run, Docker, `--sync`) and a link to the update ticket workflow. `RealitiRELAX.html` keeps its name for compatibility.
+- `@meatproxy69/realiti-server` 1.1.0, security pass: callers are never logged or stored, rate limits key on a salted in-memory hash of the address; constant-time admin token compare; `/admin/*` is 404 without a token, 10 attempts/min, updates throttled to one per 30 s and fetched over https only; `/ledger/push` 60/min per caller, 600 req/min overall; author id, kind and string fields capped (64/32/512) and refused as `MALFORMED`; `/events` capped by `MAX_EVENT_CLIENTS` with keep-alives; `nosniff`, `no-referrer`, `Permissions-Policy` and `no-store` headers; no filesystem paths in `GET /` or logs; sanitized `INTERNAL`/`UPDATE_FAILED` errors; header/request timeouts. New env `REALITI_PUBLIC_URL`, `TRUST_PROXY`, `MAX_EVENT_CLIENTS`. README Security section on hiding the origin behind a proxy. Suite check `hardened_surface`.
+
 ## 2.14.0 — Chapter 5, pass 1: the dedicated server
 
 ### Added

@@ -14,7 +14,7 @@ cd packages/realiti-server
 PORT=8787 ADMIN_TOKEN=change-me node server.cjs
 ```
 
-Environment: `PORT` (8787), `HOST` (0.0.0.0), `REALITI_DATA` (where the ledger checkpoint and updated client live), `REALITI_CLIENT_DIR` (the checkout to serve before any update, default the repository root), `ADMIN_TOKEN` (required for `/admin/*`), `SOURCE_BASE` (where updates come from; default the repository's raw `main`), `REQUIRE_SIGNATURES=1` to refuse unsigned records from unknown authors, `MAX_RECORDS` (4096 before compaction).
+Environment: `PORT` (8787), `HOST` (0.0.0.0), `REALITI_DATA` (where the ledger checkpoint and updated client live), `REALITI_CLIENT_DIR` (the checkout to serve before any update, default the repository root), `ADMIN_TOKEN` (required for `/admin/*`), `SOURCE_BASE` (where updates come from; default the repository's raw `main`), `REQUIRE_SIGNATURES=1` to refuse unsigned records from unknown authors, `MAX_RECORDS` (4096 before compaction), `REALITI_PUBLIC_URL` (the hostname residents should use; advertised by `GET /`; never an IP), `TRUST_PROXY=1` when running behind a reverse proxy so rate limits key on `X-Forwarded-For`, `MAX_EVENT_CLIENTS` (256 concurrent `/events` listeners).
 
 Docker:
 
@@ -40,6 +40,22 @@ The published image is `ghcr.io/meatproxy69/realiti-server:latest` (and `:<commi
 | `GET /residents` | authors seen, handle, last venue, whether their key is known |
 | `POST /admin/update` | pull and verify the latest client from `SOURCE_BASE` |
 | `GET /admin/stats` | pushes, acceptances, recent rejections, live event clients |
+
+## Security
+
+The server is built to be run on the public internet by one operator and to give away as little as possible about that operator.
+
+**Hide the origin.** Do not expose port 8787 to the world. Put the server behind a reverse proxy or a CDN/tunnel (Cloudflare, Caddy, nginx, Tailscale Funnel) on a hostname, firewall 8787 so only the proxy can reach it, and set `REALITI_PUBLIC_URL` to that hostname. Residents, the update ticket and `GET /` then only ever see the hostname; the machine's address stays behind the proxy. Set `TRUST_PROXY=1` in that setup so per-caller limits apply to the real caller rather than the proxy.
+
+**No caller addresses are kept.** The server never logs, stores or returns a caller's IP. Rate limiting keys on a salted SHA-256 of the address with a salt generated at process start and held only in memory, so nothing on disk or in the checkpoint can be mapped back to who connected. Residents are identified only by the author id and public key they sign with.
+
+**No paths, no internals.** `GET /` and the startup log print no filesystem paths. Unexpected errors return `INTERNAL` with no stack or message. Responses carry `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, a restrictive `Permissions-Policy` and `Cache-Control: no-store`.
+
+**Admin surface.** `/admin/*` answers 404 unless `ADMIN_TOKEN` is set, compares tokens in constant time, allows ten attempts a minute per caller, throttles updates to one every thirty seconds, and only fetches the client over `https` (loopback excepted for tests). A failed update reports `UPDATE_FAILED` without the upstream error.
+
+**Ledger limits.** Pushes are capped at sixty a minute per caller and six hundred requests a minute overall; author ids are capped at 64 characters, kinds at 32, any string field at 512; malformed records are refused before signature checks. Set `REQUIRE_SIGNATURES=1` on a public server so unknown authors cannot write unsigned records. `/events` holds at most `MAX_EVENT_CLIENTS` listeners and sends a keep-alive every 25 seconds.
+
+**Timeouts.** Header timeout 15 s, request timeout 30 s, body cap 1 MiB.
 
 ## Sync from a resident
 

@@ -42,6 +42,10 @@ const get=async(u,init)=>{const r=await fetch(u,init);return {status:r.status,he
   // Admin update: refused without the token; with it, pulls from the source, verifies the hash, swaps the client in.
   const noTok=await get(url+'/admin/update',{method:'POST'}),upd=await get(url+'/admin/update',{method:'POST',headers:{authorization:'Bearer test-token'}}),idx2=await get(url+'/');
   check('admin_update_pulls_and_verifies',noTok.status===401&&upd.body.ok&&upd.body.sha256===val.single_html_sha256&&idx2.body.client.source==='updated'&&idx2.body.client.consistent===true&&fs.existsSync(path.join(dataDir,'client','RealitiRELAX.html'))&&events.some(e=>e.event==='client'),{upd:upd.body,source:idx2.body.client.source});
+  // Hardening: safe headers everywhere, no filesystem paths in the index, string caps, admin throttled, SSE capped, rate limits.
+  const hdr=await fetch(url+'/health');const idx3=await get(url+'/');const big=await get(url+'/ledger/push',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({records:[{by:'legacy-9',t:2,n:1,kind:'CHAT',text:'x'.repeat(600)}]})});
+  const again=await get(url+'/admin/update',{method:'POST',headers:{authorization:'Bearer test-token'}});let limited=null;for(let i=0;i<70;i++){const r=await get(url+'/ledger/push',{method:'POST',headers:{'content-type':'application/json'},body:'{"records":[]}'});if(r.status===429){limited=r.body;break}}
+  check('hardened_surface',hdr.headers.get('x-content-type-options')==='nosniff'&&hdr.headers.get('referrer-policy')==='no-referrer'&&!JSON.stringify(idx3.body).includes(dataDir)&&!JSON.stringify(idx3.body).includes(root)&&big.body.rejected===1&&big.body.rejections[0].reason==='MALFORMED'&&again.body.error==='UPDATE_THROTTLED'&&limited&&limited.error==='RATE_LIMITED',{idx:Object.keys(idx3.body),big:big.body.rejections,again:again.body.error,limited});
   check('energy_audit_passes',a.window.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
   reader.cancel().catch(()=>{});
  }finally{try{a&&a.close()}catch{}try{b&&b.close()}catch{}await srv.close();src.close()}
