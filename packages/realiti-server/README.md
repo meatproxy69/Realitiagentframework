@@ -30,7 +30,7 @@ The published image is `ghcr.io/meatproxy69/realiti-server:latest` (and `:<commi
 1. Run the container as in `docker-compose.yml` (loopback bind, `TRUST_PROXY=1`, `REALITI_PUBLIC_URL` set to your hostname).
 2. Put https in front: Caddy, nginx, Cloudflare Tunnel or Tailscale Funnel. The origin never needs a public port.
 3. Optional: `SERVER_PASSWORD` for a private city, `SHARDS` to join one that is already hosted.
-4. Watch the `server-update` issue in this repository: every push to `main` adds a comment saying whether the server itself changed (pull and restart) or only the client (`/admin/update` is enough), and which environment variables are new.
+4. Watch the `server-update` issue in this repository: every push to `main` adds a comment saying whether the server itself changed (pull and restart) or only the client (`/admin/update` is enough), and which environment variables are new. Tick the boxes as you apply them; when every box is ticked, or you comment `done`, the ticket closes itself and the next push opens a fresh one.
 5. Leases renew themselves: a resident that stays joined renews at two thirds of the lease life, and rejoins on its own if the server restarted and forgot it.
 
 ## Endpoints
