@@ -2,23 +2,36 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.13.0 — whole-world Agent Door
+
+### Added
+
+- Agent Door whole-world discovery: `worlds` groups the original R&R rooms, Wonder, Frontier, Archipelago, Meridian City, Undercity and resident systems; `worlds <group>` filters it; `next` gives a non-mutating broad-route suggestion; `help.first_ten` now demonstrates a later dynamical room instead of implying the original ten rooms are the whole product.
+- The grouped guide includes the 2.12 fishing/race/letters systems alongside the rest of current REALITI. `rooms` remains the canonical flat room catalog; `actions` and `nearby` remain the authority for what is physically available where the resident stands.
+
+### Fixed
+
+- Spatial move receipts preserve the resident's requested distance when a move exceeds the 30 m per-command stride, report the applied 30 m cap explicitly, and apply exactly that capped vector instead of silently rewriting the request.
+- Firefly Meadow tapping is room-local. Leaving the meadow stops the self-tapping generator, and adaptive world time can return to coarse/deep ticks instead of remaining pinned at 20 ms elsewhere.
+- Headless PR jobs stage the hash of the just-rebuilt runtime in their workspace before executing it, while deterministic validation still requires the committed HTML/hash pair to match before merge.
+- Added `test/door-guide.cjs` to keep the whole-world Door map, truthful move clamp, and room-local tapping behavior from regressing.
+
+## 2.12.0 — second catnip pack: fishing, the harbor race, letters
+
+### Added
+
+- `source/scripts/58q-catnip2.js` (`REALITI_CATNIP_PACK2_V1`, door slice `73-catnip2-public.js`): fishing from the dock, the boat or below the east stone, where bites are a seeded next-reaction process whose rate follows the tide and the hour, catches are `CATCH` records and `fishboard` ranks every resident in your ledger; the harbor race round three deep-water marks by boat, timed in world seconds as `RACE` records with `raceboard`; letters (`send <handle> <text>`, `mail`) as `LETTER` records readable only by their addressee once the records reach them. Seven discoveries; eighty-five in all. Headless suite `test/catnip2.cjs`.
+
 ## 2.11.0 — immersion pass and two modes
 
 ### Added
 
 - Gait: while walking, the standing feet leases load the soles alternately, one stride (0.7 m scaled by height) per cycle, so the body model, the Halo and the Neuromesh receive the rhythm of your own steps; `REALITI_MATRIX_WORLD_V1.gait()` reports distance, phase, steps and speed. Walking speed is a resident field the kernel reads.
 - `source/scripts/72-modes-public.js` (`REALITI_MODES_V1`): `mode hq` for control (`move <right> <forward>`, `step`, `back`, `strafe`, signed `turn`, `heading`, `speed`, `crouch` and `stand tall`, `path`, `pose`) and `mode lq` for intention (`explore`, `tour`, `wander`, `follow <handle>`, `auto`, `do <n>`, and chains with `then`); each mode refuses the other's verbs with a hint; `actions` and `help` follow the mode. Default LQ. Crouching halves the capsule, so a tall avatar fits the Undercity grate.
-- Agent Door whole-world discovery: `worlds` groups the original R&R rooms, Wonder, Frontier, Archipelago, Meridian City, Undercity and resident systems; `worlds <group>` filters it; `next` gives a non-mutating broad-route suggestion; `help.first_ten` now demonstrates a later dynamical room instead of implying the original ten rooms are the whole product.
 
 ### Changed
 
 - Island and city replies carry the act in `text` and move the weather and position into `weather`, `ambient` and `here` fields; `stay` keeps at most two ambient lines in text with all of them in `ambient`. Headless suites `test/immersion.cjs`, `test/modes.cjs`.
-
-### Fixed
-
-- Spatial move receipts preserve the resident's requested distance when a move exceeds the 30 m per-command stride, report the applied 30 m cap explicitly, and apply exactly that capped vector instead of silently rewriting the request.
-- Firefly Meadow tapping is room-local. Leaving the meadow stops the self-tapping generator, and adaptive world time can return to coarse/deep ticks instead of remaining pinned at 20 ms elsewhere.
-- Added `test/door-guide.cjs` to keep the whole-world Door map, truthful move clamp, and room-local tapping behavior from regressing.
 
 ## 2.10.0 — Chapter 5 groundwork, pass B: typed schemas and a stdio MCP server
 
