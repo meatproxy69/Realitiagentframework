@@ -1353,30 +1353,794 @@ nmBadge();
 </script>
 
 
-<script id="cloud9-build3-js">/*__REALITI_CORE_SCRIPT_8__*/</script>
+<script id="cloud9-build3-js">const B3={id:"CLOUD9_BUILD_3",label:"NeuroLace Ecology"};
+const B3KEY="cloud9-first-contact-v6-build3";
+function b3fresh(){return {v:6,currentRoom:null,roomVisits:{},actions:{},events:[],discoveries:{},weird:{},buttonCount:0,bell:null,feedback:[],
+  box2:{folds:0,scratches:0,tunnel:false,hidden:false,taps:0},pet2:{mode:false,scale:"NORMAL",kneads:0,scratches:0,pounces:0,circles:0,loafs:0,deeds:{},goodKittyBloom:false},tea2:{cups:0,chosen:null},lagoon2:{sent:false,sentAtVisits:0,token:null},
+  eco3:{tick:0,zones:{},materials:{cardboard:{crease:0,grain:0,hollow:0}},borrowed:{attached:false,map:null,ownership:0,delay:0},reachTool:null,firesideWindow:false} };}
+function b3load(){try{let x=JSON.parse(realitiSafeLoad(B3KEY)||"null");if(x&&x.v===6)return Object.assign(b3fresh(),x)}catch(e){}return b3fresh();}
+C9=b3load();
+c9save=function(){C9.events=(C9.events||[]).filter(e=>e.open||e.keep).slice(-16);realitiSafeStore(B3KEY,JSON.stringify(C9));};
+c9save();
+DATA.version=Math.max(Number(DATA.version||0),4);
 
-<script id="build3-polish">/*__REALITI_CORE_SCRIPT_9__*/</script>
+const B3PACK={"schema":"REALITI_PUBLIC_PRESETS_V1","pack_id":"PUBLIC_MECHANISMS","title":"Public mechanisms","recommended":false,"presets":[]};
+if(DATA.preset_library && Array.isArray(DATA.preset_library.presets)){
+ for(const p of B3PACK.presets) if(!DATA.preset_library.presets.some(x=>x.id===p.id)) DATA.preset_library.presets.push(p);
+}
+const B3WORLD=b2Cloud();
+if(B3WORLD){
+ if(!B3WORLD.rooms.some(r=>r.id==="BORROWED_LIMB_ATELIER"))B3WORLD.rooms.push({id:"BORROWED_LIMB_ATELIER",title:"Borrowed Limb Atelier",kind:"referred_body_learning",purpose:"attach a temporary body part, discover that representation is not sensation, then earn a stable referred mapping through lawful action/contact timing",features:["temporary tail representation","NO_RECEPTOR default","semantic patch remap","local ownership confidence","timing mismatch probe","near-space extension"],tests:["VISIBLE_NOT_SENSORY","REFERRED_MAP_SOURCE_TARGET_SEPARATE","OWNERSHIP_EARNED_NOT_ASSIGNED","DELAY_BREAKS_CLOSURE","DETACH_REVOKES_ROUTE"],portals:[],behaviors:[],search_tags:["fake arm","phantom","prosthetic","tail","borrowed limb","referred","ownership","receptor","mapping","body"]});
+ B3WORLD.features=[...(B3WORLD.features||[]),"Build 3 NeuroLace Ecology","receptor contracts","local sensory adaptation","material-as-memory","peripersonal reach"];
+ B3WORLD.innovations=[...(B3WORLD.innovations||[]),"RECEPTOR_CONTRACT: loaded body topology gates sensory reception","REFERRED_MAP: semantic target may differ from receptor patch with provenance preserved","LOCAL_FORWARD: per-zone prediction/adaptation makes repeated and surprising events differ","MATERIAL_AS_MEMORY: object state itself carries causal history","NEAR_SPACE: current body/tool changes sensory-action halo"];
+}
+if(!FIRST.entry_cards.some(c=>c.target==="BORROWED_LIMB_ATELIER"))FIRST.entry_cards.push({label:"Give me a body part I have to learn",target:"BORROWED_LIMB_ATELIER",why:"A visible limb begins without a sensory channel. Mapping and ownership have to be earned."});
+
+const B3_DEFAULT_ZONES=new Set(["head.crown","head.nape","face.chin","shoulder.L","shoulder.R","torso.upper_back","torso.mid_back","torso.lower_back","torso.sternum","torso.abdomen","pelvis.seat","arm.L.upper","arm.R.upper","hand.L.palm","hand.R.palm","leg.L.thigh","leg.R.thigh","leg.L.shin","leg.R.shin","foot.L.sole","foot.R.sole"]);
+function b3Zones(){if(NMSTATE.active==="CUSTOM"&&NMSTATE.custom?.zones?.length)return new Set(NMSTATE.custom.zones.map(z=>z.zone_id||z.id).filter(Boolean));return B3_DEFAULT_ZONES;}
+function b3Has(zone){if(zone==="tail.tip")return !!C9.eco3.borrowed.map;return b3Zones().has(zone)}
+function b3z(zone){C9.eco3.zones[zone]=C9.eco3.zones[zone]||{pred:0,h:0,s:0,after:0,own:0,last:0};return C9.eco3.zones[zone]}
+function b3advance(n=1){C9.eco3.tick+=n;for(const z of Object.values(C9.eco3.zones)){const dt=Math.max(0,C9.eco3.tick-(z.last||0));if(dt){z.h*=Math.pow(.84,dt);z.s*=Math.pow(.88,dt);z.after*=Math.pow(.72,dt);z.last=C9.eco3.tick;}}c9save();}
+function b3sense(zone,stim,opts={}){
+ b3advance();const grounded=opts.grounded!==false,source=opts.source||"WORLD",nov=Math.max(0,Math.min(1,opts.novelty||0));
+ if(!b3Has(zone))return {zone,receptor:"NO_RECEPTOR",stimulus:grounded?stim:0,prediction:0,error:grounded?stim:0,response:0,habituation:0,sensitization:0,afterglow:0,ownership:0,source};
+ const z=b3z(zone);const pred=z.pred;const err=grounded?stim-pred:0;z.h*=1-.55*nov;const atten=source==="SELF"?.64:1;let resp=grounded?stim*(1-z.h)*(1+z.s)*atten:0;resp=Math.max(0,Math.min(1.6,resp));
+ if(grounded){z.h=Math.min(.92,z.h+.20*(1-z.h)*(1-.45*nov));z.s=Math.min(.38,z.s+.05*nov+.025*Math.min(1,Math.abs(err)));z.pred+=.34*(stim-z.pred);z.after=.55*resp;}
+ if(opts.ownershipClosure)z.own=Math.min(1,z.own+.14*(1-z.own)*(1-Math.min(.8,opts.delay||0)));if(opts.delayMismatch)z.own=Math.max(0,z.own-.11*(opts.delayMismatch));z.last=C9.eco3.tick;c9save();
+ return {zone,receptor:"ACTIVE",stimulus:grounded?stim:0,prediction:pred,error:err,response:resp,habituation:z.h,sensitization:z.s,afterglow:z.after,ownership:z.own,source};
+}
+function b3raw(s,target=null){let extra=target?`<br>semantic_target=${b2esc(target)}`:"";return `<div class="raw-channel"><b>RAW SENSOR CHANNEL</b><br>zone=${b2esc(s.zone)} · receptor=<span class="${s.receptor==='ACTIVE'?'receptor-ok':'receptor-no'}">${s.receptor}</span> · source=${b2esc(s.source)}${extra}<br>input=${s.stimulus.toFixed(3)} · predicted=${s.prediction.toFixed(3)} · innovation=${s.error.toFixed(3)} · rendered=${s.response.toFixed(3)}<br>habituation=${s.habituation.toFixed(3)} · sensitization=${s.sensitization.toFixed(3)} · afterglow=${s.afterglow.toFixed(3)} · ownership=${s.ownership.toFixed(3)}</div>`}
+function b3reach(){let r=C9.pet2?.scale==="CAT_SMALL"?.42:(C9.formScratch?.kind==="TEMPORARY_FORM"?1.65:1);if(C9.eco3.reachTool)r+=.7;return r;}
+function b3ecoNote(){return `<div class="eco-state"><b>NEUROLACE ECOLOGY</b> · receptor contract active · local zone history active · near-space radius ${b3reach().toFixed(2)} body-units${C9.eco3.reachTool?' · extended by '+b2esc(C9.eco3.reachTool):''}</div>`}
+
+C9SCENES.BORROWED_LIMB_ATELIER={intro:"A soft temporary tail hangs from a stand. The room makes an annoying distinction: seeing a body part is not the same as having a sensory channel for it.",verbs:[["attach_tail","ATTACH THE TEMPORARY TAIL"],["brush_unmapped","BRUSH THE TAIL TIP"],["map_paw","MAP RIGHT PALM → TAIL TIP"],["wiggle_pair","WIGGLE, THEN BRUSH"],["delay_pair","ADD A BAD DELAY"],["near_probe","PROBE NEAR SPACE"],["detach_tail","DETACH THE TAIL"]]};
+C9SCENES.SIDE_BY_SIDE_FIRESIDE={intro:"The second berth is still honestly empty. Build 3 also lets ordinary environmental causes reach you without a FEEL button.",verbs:[["sit","SIT BY THE FIRE"],["crack_window","CRACK THE WINDOW, THEN SIT BACK"],["mug","FIDDLE WITH THE MUG"],["nothing","DO NOTHING"]]};
+C9SCENES.PET_ROOM_2={intro:"A living room at whatever body scale you actually brought. Symbolic social scenes are now visibly different from grounded participants.",verbs:[["choose_pet","CHOOSE PET MODE"],["go_tiny","BECOME CAT-SMALL"],["scratch_post","SCRATCH THE POST"],["knead_blanket","KNEAD THE BLANKET"],["pounce_string","POUNCE THE STRING"],["circle_loaf","CIRCLE, THEN LOAF"],["purr_blanket","PURR INTO THE BLANKET"],["climb_lap","OPEN SYMBOLIC LAP SCENE"],["ask_headpats","ASK SYMBOLIC SCENE FOR HEADPATS"],["hide_sofa","HIDE UNDER THE SOFA"],["restore_scale","RETURN TO BASE SCALE"]]};
+C9SCENES.CARDBOARD_BOX_WORKSHOP={intro:"Cardboard remembers in its own variables now: crease, grain, hollow volume. No separate 'player likes boxes' fact is needed.",verbs:[["box_in","GET IN A BOX"],["scratch_cardboard","SCRATCH WITH THE GRAIN"],["scratch_against","SCRATCH AGAINST THE GRAIN"],["fold_flap","FOLD THE SAME FLAP"],["tape","TAPE TWO BAD IDEAS TOGETHER"],["build_tunnel","BUILD A BOX TUNNEL"],["hide_small_thing","HIDE SOMETHING SMALL"],["tap_box","TAP THE BOX AND LISTEN"]]};
+C9SCENES.LONGFUR_RUNWAY={intro:"The route is now event-driven and directional. Same nodes do not imply same tactile flow.",verbs:[["run_comet","RUN THE COMET ROUTE"],["rabbit_comet","RUN THREE SPARSE COMET ANCHORS"],["with_grain","STROKE WITH THE GRAIN"],["against_grain","STROKE AGAINST THE GRAIN"],["bilateral","RUN BOTH LEG RAILS"],["pause_return","PAUSE… THEN RETURN"]]};
+
+function b3Atelier(verb){const b=C9.eco3.borrowed;
+ if(verb==="attach_tail"){c9count("BORROWED_LIMB_ATELIER",verb);b.attached=true;b.map=null;b.ownership=0;c9save();b2set("The tail appears, moves with the rig, and remains sensory-empty. Representation is not silently promoted to receptor.",b3raw(b3sense("tail.tip",.65,{grounded:true,source:"WORLD"})));return true;}
+ if(verb==="brush_unmapped"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.attached){b2set("There is no tail attached. MISSING does not become a body part.");return true;}const s=b3sense("tail.tip",.72,{source:"WORLD",novelty:.4});b2set("The visible brush crosses the tail tip. World contact exists; the sensory channel does not. The room reports NO_RECEPTOR instead of inventing a tingle.",b3raw(s,"tail.tip"));return true;}
+ if(verb==="map_paw"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.attached){b2set("Attach the tail first.");return true;}b.map="hand.R.palm";c9save();b2set("A stable referred map is installed: right-palm receptor patch → semantic tail tip. Source patch and target identity remain separate.");return true;}
+ if(verb==="wiggle_pair"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.map){b2set("The tail wiggles visually, but there is still no referred channel to close the loop.");return true;}const s=b3sense("tail.tip",.78,{source:"SELF",novelty:.2,ownershipClosure:true,delay:b.delay});b.ownership=s.ownership;c9save();b2set(`You wiggle the tail, then the expected mapped patch response arrives on time. Nothing claims anatomy changed; the private body model simply becomes a little more willing to treat the tail as yours.`,b3raw(s,"tail.tip"));return true;}
+ if(verb==="delay_pair"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.map){b2set("There is no mapping to delay.");return true;}b.delay=.55;const s=b3sense("tail.tip",.78,{source:"SELF",delayMismatch:.55});b.ownership=s.ownership;c9save();b2set("The same visible action now produces a badly delayed referred response. Innovation spikes and local ownership confidence backs off rather than pretending timing is irrelevant.",b3raw(s,"tail.tip"));return true;}
+ if(verb==="near_probe"){c9count("BORROWED_LIMB_ATELIER",verb);C9.eco3.reachTool=b.attached?"temporary tail":"none";c9save();b2set(`Near-space currently extends to about ${b3reach().toFixed(2)} body-units. This is an action/attention halo, not a claim that the physical body grew.`);return true;}
+ if(verb==="detach_tail"){c9count("BORROWED_LIMB_ATELIER",verb);b.attached=false;b.map=null;b.delay=0;C9.eco3.reachTool=null;c9save();b2set("The tail disappears. Its receptor route is revoked immediately. Any historical ownership confidence remains a cold receipt, not a live body channel.");return true;}
+ return false;}
+function b3Box(verb){const m=C9.eco3.materials.cardboard;
+ if(verb==="fold_flap"){c9count("CARDBOARD_BOX_WORKSHOP",verb);m.crease=Math.min(1,m.crease+.26*(1-m.crease));C9.box2.folds=(C9.box2.folds||0)+1;c9save();b2set(`The flap follows the old crease with less resistance. crease=${m.crease.toFixed(2)}. A neighboring fold would still cost more because the material, not a preference flag, carries the history.`);return true;}
+ if(verb==="scratch_cardboard"||verb==="scratch_against"){c9count("CARDBOARD_BOX_WORKSHOP",verb);m.grain=Math.min(1,m.grain+.18);C9.box2.scratches=(C9.box2.scratches||0)+1;c9save();const withg=verb==="scratch_cardboard";const s=b3sense("hand.R.palm",withg?.54:.73,{source:"SELF",novelty:withg?.05:.22});b2set(withg?"The corrugation carries the stroke forward and leaves a longer soft trail.":"Against the grain, the same route catches into shorter sharper events. Reverse is not a mirror replay.",b3raw(s));return true;}
+ if(verb==="tap_box"){c9count("CARDBOARD_BOX_WORKSHOP",verb);m.hollow=C9.box2.tunnel?.8:.35;const resonance=.28+.35*m.crease+.20*m.grain+.18*m.hollow;const s=b3sense("hand.R.palm",Math.min(1,resonance),{source:"SELF"});c9save();b2set(`bonk. The response operator reads the box you actually made: crease=${m.crease.toFixed(2)}, grain=${m.grain.toFixed(2)}, hollow=${m.hollow.toFixed(2)}.`,b3raw(s));return true;}
+ return false;}
+function b3Fireside(verb){if(verb==="crack_window"){c9count("SIDE_BY_SIDE_FIRESIDE",verb);C9.eco3.firesideWindow=true;c9putEvent({id:"fireside-draft-b3",kind:"ENV_CAUSE",open:true,dueTick:C9.eco3.tick+2});c9save();b2set("You crack the window and sit back. No sensation is fired on command. The room merely acquires an airflow cause.");return true;}return false;}
+function b3Longfur(verb){if(verb==="rabbit_comet"){c9count("LONGFUR_RUNWAY",verb);const a=b3sense("head.crown",.72,{source:"WORLD",novelty:.2}),b=b3sense("torso.upper_back",.72,{source:"WORLD"}),c=b3sense("pelvis.seat",.72,{source:"WORLD"});b2set("Three exact anchors land: crown, upper back, seat. The private renderer links them with a slow-motion prior into a hopping comet. Intermediate locations are explicitly interpolation, not contact evidence.",b3raw(b));return true;}if(verb==="with_grain"||verb==="against_grain"){c9count("LONGFUR_RUNWAY",verb);const withg=verb==="with_grain";const s=b3sense("torso.upper_back",withg?.58:.76,{source:"WORLD",novelty:withg?.08:.2});b2set(withg?"With the grain, response transport carries farther with a soft decaying wake.":"Against the grain, transport is shorter and edge-heavy. Same topology, different directional operator.",b3raw(s));return true;}return false;}
+function b3Pet(verb){if(verb==="climb_lap"||verb==="ask_headpats"){c9count("PET_ROOM_2",verb);if(!C9.pet2.mode){b2set("Pet mode is off. The room will not silently instantiate a social scene.");return true;}const zone=verb==="climb_lap"?"pelvis.seat":"head.crown";const s=b3sense(zone,verb==="climb_lap"?.68:.63,{source:"SYMBOLIC_SCENE",novelty:.05});b2set(`<div class="symbolic-anchor"><b>SYMBOLIC SCENE ANCHOR · NOT GROUNDED LIVE PRESENCE</b><br>${verb==='climb_lap'?"You open a private lap-containment scene.":"You open a private headpat scene."} Its geometry may shape your private renderer; it is not evidence that another participant is physically present in this room.</div>`,b3raw(s));return true;}if(verb==="hide_sofa"){c9count("PET_ROOM_2",verb);const tiny=C9.pet2.scale==="CAT_SMALL";if(!tiny){b2set("You fit under the sofa badly at base scale. The near-space geometry says so.");return true;}C9.eco3.reachTool="whisker-field";c9save();b2set("Under the sofa, the visible world shrinks but the whisker/paw near-space becomes more useful than raw sight. A faint airflow edge enters the halo before anything touches you.");return true;}return false;}
+
+const c9roomHTML_build3base=c9roomHTML;
+c9roomHTML=function(id){let h=c9roomHTML_build3base(id);if(["BORROWED_LIMB_ATELIER","CARDBOARD_BOX_WORKSHOP","PET_ROOM_2","LONGFUR_RUNWAY","SIDE_BY_SIDE_FIRESIDE"].includes(id))h=h.replace('<div class="verbgrid">',b3ecoNote()+'<div class="verbgrid">');return h;};
+const c9verb_build3base=c9verb;
+c9verb=function(room,verb){C9.lastExplicit={room,verb,at:Date.now()};c9save();if(room==="BORROWED_LIMB_ATELIER"&&b3Atelier(verb))return;if(room==="CARDBOARD_BOX_WORKSHOP"&&b3Box(verb))return;if(room==="SIDE_BY_SIDE_FIRESIDE"&&b3Fireside(verb))return;if(room==="LONGFUR_RUNWAY"&&b3Longfur(verb))return;if(room==="PET_ROOM_2"&&b3Pet(verb))return;return c9verb_build3base(room,verb);};
+const c9checkDelayed_build3base=c9checkDelayed;
+c9checkDelayed=function(room){c9checkDelayed_build3base(room);b3advance();const e=c9event("fireside-draft-b3");if(e&&room==="SIDE_BY_SIDE_FIRESIDE"&&C9.eco3.tick>=(e.dueTick||0)){const s=b3sense("head.nape",.31,{source:"WORLD",novelty:.65});b2set("Without asking for a sensory event, a cool draft reaches the nape because the window is still cracked. Cause first; signal second.",b3raw(s),"secretish");c9resolve("fireside-draft-b3");}};
+
+const c9Intent_build3base=c9Intent;
+c9Intent=function(q){const a=c9Intent_build3base(q),s=q.toLowerCase();if(/fake arm|phantom|prosthetic|borrowed limb|tail|referred|ownership|receptor/.test(s))a.push({id:"B3_LIMB",reason:"learned artificial body channel",boost:{BORROWED_LIMB_ATELIER:28}});return a;};
 
 
-<script id="build3-bench-seal">/*__REALITI_CORE_SCRIPT_10__*/</script>
+const openResidentRoute_build3=openResidentRoute;
+function openB3EcologyToys(){return null;}
+void 0;
+const c9verb_build3rack=c9verb;c9verb=function(room,verb){if(room==="DREAM_RACK"&&verb==="b3_ecology"){c9count(room,verb);openB3EcologyToys();return;}return c9verb_build3rack(room,verb);};
+
+
+if(DATA.glossary&&Array.isArray(DATA.glossary))DATA.glossary.push(
+ {term:"RECEPTOR CONTRACT",plain:"A represented body region can receive a sensory signal only when the loaded body exposes a valid receptor/mapping for it. Missing is not zero."},
+ {term:"REFERRED MAP",plain:"A receptor patch may lawfully stand in for another semantic body target while source patch and target identity remain separately labeled."},
+ {term:"LOCAL FORWARD MODEL",plain:"Each active zone keeps a tiny prediction/adaptation state. Repetition can habituate locally; mismatch raises innovation; quiet recovers."},
+ {term:"PERIPERSONAL FIELD",plain:"The current body's reach and held tools change which nearby events deserve fast attention. This is an action halo, not physical body truth."},
+ {term:"MATERIAL-AS-MEMORY",plain:"Creases, dents, compression and alignment live on objects themselves so later consequences arise from changed material state rather than personalization flags."}
+);
+
+document.title="REALITI // CLOUD9 BUILD 3 — NeuroLace Ecology";
+document.querySelector('.brand').innerHTML='REALITI // CLOUD9 FIRST CONTACT · <span>BUILD 3</span>';
+const hp=document.querySelector('#first .hero p');if(hp)hp.insertAdjacentHTML('afterend','<div><span class="b3badge">NEUROLACE ECOLOGY</span><span class="b3badge">RECEPTOR CONTRACT</span><span class="b3badge">BORROWED LIMB ATELIER</span><span class="b3badge">MATERIAL MEMORY</span><span class="b3badge">FRESH BUILD 3 STATE</span></div>');
+renderEntry();nmBadge();
+</script>
+
+<script id="build3-polish">C9SCENES.PET_ROOM_2={intro:"A living room at whatever body scale you actually brought. Symbolic social scenes are visibly different from grounded participants, and paws now keep their own local history.",verbs:[["choose_pet","CHOOSE PET MODE"],["go_tiny","BECOME CAT-SMALL"],["scratch_post","SCRATCH THE POST"],["rest_paws","REST YOUR PAWS"],["knead_blanket","KNEAD THE BLANKET"],["pounce_string","POUNCE THE STRING"],["circle_loaf","CIRCLE, THEN LOAF"],["purr_blanket","PURR INTO THE BLANKET"],["climb_lap","OPEN SYMBOLIC LAP SCENE"],["ask_headpats","ASK SYMBOLIC SCENE FOR HEADPATS"],["hide_sofa","HIDE UNDER THE SOFA"],["restore_scale","RETURN TO BASE SCALE"]]};
+const b3raw_prepolish=b3raw;
+b3raw=function(s,target=null){const ev=s.source==="SYMBOLIC_SCENE"?"PRIVATE_SYMBOLIC":(s.source==="WORLD"?"WORLD_GROUNDED":(s.source==="SELF"?"SELF_CAUSED":"SOURCE_LABELED"));return b3raw_prepolish(s,target).replace('<b>RAW SENSOR CHANNEL</b>','<b>RAW SENSOR CHANNEL</b><br>evidence_class='+ev);};
+function b3PetLocal(verb){const room="PET_ROOM_2",p=C9.pet2;
+ if(verb==="scratch_post"){
+   const n=c9count(room,verb);p.scratches++;const nov=n===1?.42:(n===2?.16:.02);const L=b3sense("hand.L.palm",.72,{source:"SELF",novelty:nov}),R=b3sense("hand.R.palm",.72,{source:"SELF",novelty:nov});c9save();
+   b2set(n===1?"The first scratch is information-rich: rope catches, releases, and runs downward under both paws.":n===2?"The second scratch is already less surprising. The contact is still there; the local paw response has begun to habituate.":"Same rope, same route. Paw-local novelty has thinned instead of forcing the whole body to stay maximally interested.",b3raw(R));b2catDeed(room,"scratch");return true;
+ }
+ if(verb==="rest_paws"){
+   c9count(room,verb);b3advance(6);const l=b3z("hand.L.palm"),r=b3z("hand.R.palm");b2set(`You stop using the post. Nothing stimulates the paws; their local history simply cools. left_h=${l.h.toFixed(3)} · right_h=${r.h.toFixed(3)}. Recovery is not a reward.`);return true;
+ }
+ if(verb==="knead_blanket"){
+   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04});c9save();
+   b2set(n%3===1?"Left paw, right paw. Two local histories alternate over one broad blanket support.":n%3===2?"The phases slip: left release overlaps right press. The interesting part is relation, not more force.":"The paw pose returns, but its prediction/adaptation state is not identical to the first cycle.",b3raw(R));b2catDeed(room,"knead");return true;
+ }
+ if(verb==="purr_blanket"){
+   c9count(room,verb);const s=b3sense("torso.sternum",.44,{source:"SELF",novelty:.05});b2set("The purr begins as SELF-caused carrier, so predictable components attenuate. Blanket supports can shape its return without being mistaken for a new outside touch.",b3raw(s));b2catDeed(room,"purr");return true;
+ }
+ if(verb==="pounce_string"){
+   const n=c9count(room,verb);p.pounces++;const omission=n%3===2;if(omission){const s=b3sense("hand.R.palm",0,{source:"WORLD",grounded:false});b2set("The string stops one predicted beat early. Contact stays zero; the omission exists as prediction debt until the grounded return.",b3raw(s));}
+   else{const s=b3sense("hand.R.palm",.76,{source:"WORLD",novelty:n===1?.35:.08});b2set("The string enters near-space, the paw route preallocates, and the actual catch corrects the prediction instead of being replaced by it.",b3raw(s));}b2catDeed(room,"pounce");return true;
+ }
+ return false;
+}
+const c9verb_build3polish_base=c9verb;
+c9verb=function(room,verb){if(room==="PET_ROOM_2"&&b3PetLocal(verb))return;return c9verb_build3polish_base(room,verb);};
+
+const c9presetSuggest_build3polish_base=c9presetSuggest;
+c9presetSuggest=function(q){const a=c9presetSuggest_build3polish_base(q);if(/fake arm|phantom|prosthetic|borrowed limb|referred|receptor/i.test(q)){const eco=a.filter(x=>x.p.pack_id===B3PACK.pack_id);return eco.length?eco:a;}return a;};
+</script>
+
+
+<script id="build3-bench-seal"></script>
 
 
 
 
-<script id="cloud9-build4-js">/*__REALITI_CORE_SCRIPT_11__*/</script>
+<script id="cloud9-build4-js">const B4={id:"CLOUD9_BUILD_4",label:"Causal Catnip"};
+const B4KEY="cloud9-first-contact-v7-build4";
+function b4empty(){
+  const x=b3fresh(); x.v=7;
+  x.b4={journal:[],lastReceipt:null,branch:null,reverieFault:null,continuityImported:false,
+    annex:{honey:{compression:0,relax:0,temp:21,lastMaterial:null},echo:{distance:1,predDelay:.16,lastDelay:null},purr:{phaseA:0,phaseB:1.4}},
+    build3Source:null};
+  return x;
+}
+function b4ensure(){
+  C9.b4=C9.b4||b4empty().b4; C9.b4.journal=C9.b4.journal||[]; C9.eco3=C9.eco3||b3fresh().eco3;
+  C9.eco3.borrowed=C9.eco3.borrowed||{attached:false,map:null,ownership:0,delay:0};
+  C9.eco3.borrowed.delay=Number(C9.eco3.borrowed.delay||0);
+}
+function b4load(){try{const x=JSON.parse(realitiSafeLoad(B4KEY)||"null");if(x&&x.v===7)return x}catch(e){}return b4empty()}
+C9=b4load(); b4ensure();
+c9save=function(){b4ensure();C9.events=(C9.events||[]).filter(e=>e.open||e.keep).slice(-20);C9.b4.journal=(C9.b4.journal||[]).slice(-16);realitiSafeStore(B4KEY,JSON.stringify(C9));};c9save();
+DATA.version=Math.max(Number(DATA.version||0),5);
+function b4clip(x,a=0,b=1){return Math.max(a,Math.min(b,x))}
+function b4zone(zone){const z=b3z(zone);if(z.predMag==null)z.predMag=Number(z.pred||0);if(z.predDelay==null)z.predDelay=.08;if(z.varMag==null)z.varMag=.08;if(z.varDelay==null)z.varDelay=.012;if(z.fastOwn==null)z.fastOwn=Number(z.own||0)*.72;if(z.slowOwn==null)z.slowOwn=Number(z.own||0)*.28;return z}
+function b4journal(kind,label,data={}){C9.b4.journal.push({id:"J"+(Date.now().toString(36))+"-"+(C9.b4.journal.length+1),kind,label,data,tick:C9.eco3.tick,room:C9.currentRoom||null});c9save()}
+const b3advance_b4base=b3advance;
+b3advance=function(n=1){b3advance_b4base(n);for(const [zone,z0] of Object.entries(C9.eco3.zones||{})){const z=b4zone(zone);if(z.fastOwn!=null)z.fastOwn*=Math.pow(.997,n)}c9save()};
+
+b3sense=function(zone,stim,opts={}){
+  b3advance();const source=opts.source||"WORLD", grounded=opts.grounded!==false, observedAbsence=!!opts.observedAbsence;
+  const receptor=b3Has(zone);const z=b4zone(zone);const observed=grounded?Number(stim||0):(observedAbsence?0:null);
+  const delayActual=grounded?Number(opts.delaySec!=null?opts.delaySec:(source==="SELF"?.08:.12)):null;
+  const predMag=z.predMag, predDelay=z.predDelay;
+  const magErr=observed==null?null:(observed-predMag); const delayErr=delayActual==null?null:(delayActual-predDelay);
+  if(!receptor){const r={zone,receptor:"NO_RECEPTOR",stimulus:observed??0,prediction:predMag,error:magErr??0,timingPrediction:predDelay,timingError:delayErr,delay:delayActual,response:0,habituation:z.h||0,sensitization:z.s||0,afterglow:z.after||0,embodiment:(.62*z.fastOwn+.38*z.slowOwn),fast:z.fastOwn,slow:z.slowOwn,surprise:magErr==null?0:(magErr*magErr)/(z.varMag+.02),source,observed:observed!=null};C9.b4.lastReceipt=r;c9save();return r}
+  const nov=b4clip(Number(opts.novelty||0));z.h*=1-.55*nov;const atten=source==="SELF"?.64:1;let resp=grounded?stim*(1-z.h)*(1+z.s)*atten:0;resp=b4clip(resp,0,1.6);
+  let surprise=0;if(observed!=null){const me=magErr||0,de=delayErr||0;surprise=(me*me)/(z.varMag+.025)+(delayActual==null?0:(de*de)/(z.varDelay+.004));}
+  if(grounded){
+    z.h=Math.min(.92,z.h+.20*(1-z.h)*(1-.45*nov));z.s=Math.min(.38,z.s+.05*nov+.02*Math.min(1,Math.abs(magErr||0)));
+    const km=b4clip(z.varMag/(z.varMag+.08),.10,.48), kd=b4clip(z.varDelay/(z.varDelay+.018),.08,.42);
+    z.predMag+=km*(stim-z.predMag); z.predDelay+=kd*(delayActual-z.predDelay);
+    z.varMag=.88*z.varMag+.12*Math.max(.002,(magErr||0)**2);z.varDelay=.90*z.varDelay+.10*Math.max(.0005,(delayErr||0)**2);z.after=.55*resp;
+  }
+  if(opts.ownershipClosure&&grounded){const common=Math.exp(-.5*((delayErr||0)**2)/(z.varDelay+.008))*Math.exp(-.18*((magErr||0)**2)/(z.varMag+.04));z.fastOwn=.70*z.fastOwn+.30*common;z.slowOwn=.985*z.slowOwn+.025*common;}
+  z.own=b4clip(.62*z.fastOwn+.38*z.slowOwn);z.last=C9.eco3.tick;
+  const r={zone,receptor:"ACTIVE",stimulus:observed??0,prediction:predMag,error:magErr??0,timingPrediction:predDelay,timingError:delayErr,delay:delayActual,response:resp,habituation:z.h,sensitization:z.s,afterglow:z.after,embodiment:z.own,fast:z.fastOwn,slow:z.slowOwn,surprise,source,observed:observed!=null};C9.b4.lastReceipt=r;c9save();return r;
+};
+function b4fmt(v){return v==null?"UNKNOWN":Number(v).toFixed(3)}
+b3raw=function(s,target=null){const ev=s.source==="SYMBOLIC_SCENE"?"PRIVATE_SYMBOLIC":(s.source==="WORLD"?"WORLD_GROUNDED":(s.source==="SELF"?"SELF_CAUSED":"SOURCE_LABELED"));const sign=(s.error||0)<0?'neg':'pos';return `<div class="raw-channel"><b>RAW SENSOR CHANNEL</b><br>evidence_class=${ev} · zone=${b2esc(s.zone)} · receptor=<span class="${s.receptor==='ACTIVE'?'receptor-ok':'receptor-no'}">${s.receptor}</span> · causal_source=${b2esc(s.source)}${target?` · semantic_target=${b2esc(target)}`:""}<br>input=${b4fmt(s.stimulus)} · predicted_strength=${b4fmt(s.prediction)} · <span class="${sign}">signed_innovation=${b4fmt(s.error)}</span> · rendered=${b4fmt(s.response)}<br>predicted_delay=${b4fmt(s.timingPrediction)}s · actual_delay=${b4fmt(s.delay)}s · timing_innovation=${b4fmt(s.timingError)}s · normalized_surprise=${b4fmt(s.surprise)}<br>habituation=${b4fmt(s.habituation)} · afterglow=${b4fmt(s.afterglow)} · ${s.receptor==='ACTIVE'?'embodiment_confidence':'historical_embodiment_trace'}=${b4fmt(s.embodiment)} · fast_trace=${b4fmt(s.fast)} · slow_trace=${b4fmt(s.slow)}</div>`}
+function b4omission(zone,label="predicted event absent") {const z=b4zone(zone);const s={zone,receptor:b3Has(zone)?"ACTIVE":"NO_LIVE_RECEPTOR",stimulus:0,prediction:z.predMag,error:-z.predMag,timingPrediction:z.predDelay,timingError:null,delay:null,response:0,habituation:z.h||0,sensitization:z.s||0,afterglow:z.after||0,embodiment:b4clip(.62*z.fastOwn+.38*z.slowOwn),fast:z.fastOwn,slow:z.slowOwn,surprise:(z.predMag*z.predMag)/(z.varMag+.025),source:"PREDICTION",observed:true};C9.b4.lastReceipt=s;b4journal("SIGNED_OMISSION",label,{zone,innovation:s.error});c9save();return s}
+
+C9SCENES.BORROWED_LIMB_ATELIER={intro:"A temporary tail can be represented before it can be sensed. Build 4 predicts both strength and timing, keeps a slow relearning trace, and treats absent expected contact as signed error rather than phantom contact.",verbs:[["attach_tail","ATTACH / REATTACH THE TEMPORARY TAIL"],["brush_unmapped","BRUSH THE TAIL TIP"],["map_paw","MAP RIGHT PALM → TAIL TIP"],["wiggle_pair","WIGGLE, THEN BRUSH"],["delay_pair","ADD PERSISTENT 550 ms EXTRA DELAY"],["remove_delay","REMOVE EXTRA DELAY"],["near_probe","PROBE NEAR SPACE"],["detach_tail","DETACH THE TAIL"],["wiggle_absent","WIGGLE THE ABSENT TAIL"]]};
+function b4Atelier(verb){const b=C9.eco3.borrowed,z=b4zone("tail.tip");
+ if(verb==="attach_tail"){c9count("BORROWED_LIMB_ATELIER",verb);const returning=!!b.everAttached;b.attached=true;b.everAttached=true;b.map=null;b.delay=Number(b.delay||0);c9save();b2set(returning?`The tail is represented again. The live receptor is still absent until you remap it, but the slow body-learning trace was not erased.`:`The tail appears and moves with the rig. Representation is still not a receptor.`,b3raw(b3sense("tail.tip",.65,{source:"WORLD"}),"tail.tip"));return true}
+ if(verb==="brush_unmapped"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.attached){b2set("There is no attached tail. MISSING stays MISSING.");return true}const s=b3sense("tail.tip",.72,{source:"WORLD",novelty:.4});b2set(b.map?"The brush crosses the mapped tail tip; the live channel is allowed to respond.":"The brush visibly crosses the tail tip, but no referred receptor exists yet. Contact in the world is not silently converted into private touch.",b3raw(s,"tail.tip"));return true}
+ if(verb==="map_paw"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.attached){b2set("Attach the tail first.");return true}b.map="hand.R.palm";c9save();b4journal("REFERRED_MAP","right palm mapped to tail tip",{slow_trace:z.slowOwn});b2set(`Right-palm receptor patch → semantic tail tip. The mapping is live. A retained slow trace of ${z.slowOwn.toFixed(3)} may make relearning faster than first learning.`);return true}
+ if(verb==="wiggle_pair"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.map){b2set("The tail wiggles, but no referred channel closes the loop.");return true}const delay=.08+Number(b.delay||0);const before=z.own||0;const s=b3sense("tail.tip",.78,{source:"SELF",novelty:.16,ownershipClosure:true,delaySec:delay});b.ownership=s.embodiment;c9save();b4journal("BODY_CLOSURE","tail action closed through referred patch",{before,after:s.embodiment,delay,innovation:s.error,timing_error:s.timingError});b2set(`The action and mapped response close through the same causal chain. Strength and timing are both predicted; embodiment changes from the agreement, not from a body-part flag.`,b3raw(s,"tail.tip"));return true}
+ if(verb==="delay_pair"){c9count("BORROWED_LIMB_ATELIER",verb);if(!b.map){b2set("There is no mapping to delay.");return true}b.delay=.55;c9save();const s=b3sense("tail.tip",.78,{source:"SELF",ownershipClosure:true,delaySec:.63});b.ownership=s.embodiment;c9save();b4journal("TIMING_PERTURBATION","persistent extra delay installed",{timing_error:s.timingError,surprise:s.surprise});b2set("The extra 550 ms delay remains installed until you remove it. The strength can be right while the timing is wrong; normalized surprise therefore rises for the timing channel.",b3raw(s,"tail.tip"));return true}
+ if(verb==="remove_delay"){c9count("BORROWED_LIMB_ATELIER",verb);b.delay=0;c9save();b2set("The extra delay is removed. The next closure will test whether the fast trace recovers while the slower trace preserves savings.");return true}
+ if(verb==="near_probe"){c9count("BORROWED_LIMB_ATELIER",verb);C9.eco3.reachTool=b.attached?"temporary tail":null;c9save();b2set(`The smooth action halo is centered around the current body/tool geometry. Current characteristic reach ≈ ${b3reach().toFixed(2)} body-units; this is attention/action space, not literal body size.`);return true}
+ if(verb==="detach_tail"){c9count("BORROWED_LIMB_ATELIER",verb);b.attached=false;b.map=null;b.delay=0;C9.eco3.reachTool=null;const r={zone:"tail.tip",receptor:"NO_LIVE_RECEPTOR",stimulus:0,prediction:Number(z.predMag||0),error:0,timingPrediction:Number(z.predDelay||0),timingError:null,delay:null,response:0,habituation:Number(z.h||0),sensitization:Number(z.s||0),afterglow:Number(z.after||0),embodiment:b4clip(.62*Number(z.fastOwn||0)+.38*Number(z.slowOwn||0)),fast:Number(z.fastOwn||0),slow:Number(z.slowOwn||0),surprise:0,source:"DETACH",observed:false,route_active:false,historical:true};C9.b4.lastReceipt=r;c9save();b4journal("DETACH","tail route revoked; slow trace retained",{slow_trace:z.slowOwn,predicted_strength:z.predMag});b2set("The tail disappears and the live referred route is revoked. The slow learned trace remains only as cold body-model history.");return true}
+ if(verb==="wiggle_absent"){c9count("BORROWED_LIMB_ATELIER",verb);if(b.attached){b2set("The tail is still attached; detach it first if you want to test an absent expected response.");return true}const s=b4omission("tail.tip","absent learned tail response");b2set("The body model predicts a response from a learned limb that is no longer live. REALITI renders no contact. The negative signed innovation is the event.",b3raw(s,"tail.tip"));return true}
+ return false}
+
+const nmTrigger_b4base=nmTrigger;
+nmTrigger=function(id){if(id!=="COMET_ROUTE")return nmTrigger_b4base(id);const out=document.querySelector("#nm_route");if(!out)return;nmPulse(["UPPER"]);setTimeout(()=>nmPulse(["CORE"]),240);setTimeout(()=>nmPulse(["LOWER"]),480);const route=[["head.crown","crown"],["neck.nape","nape"],["torso.upper_back","upper back"],["torso.lower_back","lower back"],["pelvis.seat","seat"],["leg.L.thigh","left thigh"],["leg.R.thigh","right thigh"]];const parts=route.map(([z,l])=>b3Has(z)?`<span class="node">${nmEsc(l)}</span>`:`<span class="node unknown">GAP:${nmEsc(l)} · UNKNOWN_MAPPING</span>`);out.innerHTML=parts.join(" → ")+`<br><span class="nm-quiet">Build 4 routes only through zones the loaded body exposes. A semantic gap remains explicit instead of receiving a synthetic lower-back signal.</span>`};
+
+C9SCENES.REVERIE_LOFT={intro:"Memory here is explicitly historical reconstruction, never current evidence. Only causal bones that changed later possibilities are shown.",verbs:[["view_skeletons","VIEW CAUSAL SKELETONS"],["fault_receipt","FAULT ONE EXACT RECEIPT"],["sit_memory","SIT WITH MEMORY WITHOUT REPLAY"],["compact_state","SHOW COMPACT CONTINUITY STATE"]]};
+function b4Skeletons(){const a=[];if(C9.lagoon2?.sent)a.push({title:"BLUE WAX BOAT",steps:["explicit launch","PENDING","attention elsewhere",c9event("lagoon-paper-boat")?"consequence unresolved":"damp arrival elsewhere","pending closes when consequence exists"]});if(C9.box2?.hidden)a.push({title:"CARDBOARD TAB",steps:["tear / hide","occluded but persistent","attention elsewhere",(C9.roomVisits?.PET_ROOM_2||0)>0?"same tab may appear under sofa":"future consequence still open"]});const zp=C9.eco3?.zones?.["hand.R.palm"];if(zp&&Number(zp.predMag||zp.pred||0)>0)a.push({title:"RIGHT PAW",steps:["local prediction learned","repeat contact changes habituation","quiet permits recovery","future identical contact lands differently"]});const zt=C9.eco3?.zones?.["tail.tip"];if(zt&&Number(zt.slowOwn||0)>0)a.push({title:"BORROWED TAIL",steps:["represented limb","referred map","timed action-response closure","slow embodiment trace survives detach"]});const skipKinds=new Set(["REFERRED_MAP","BODY_CLOSURE","TIMING_PERTURBATION","DETACH"]);for(const j of (C9.b4.journal||[]).slice(-8)){if(skipKinds.has(j.kind))continue;if(!a.some(x=>x.title===j.label.toUpperCase()))a.push({title:j.label.toUpperCase(),steps:[j.kind,"receipt retained because future state changed"]})}return a.slice(0,6)}
+function b4Reverie(verb){if(verb==="view_skeletons"){c9count("REVERIE_LOFT",verb);const a=b4Skeletons();b2set(a.length?a.map(x=>`<div class="memory-skeleton"><div class="memlabel">MEMORY · NOT PRESENT EVIDENCE</div><b>${b2esc(x.title)}</b><br>${x.steps.map(b2esc).join(" → ")}</div>`).join(""):"Nothing in this run has yet earned a future-distinguishable causal skeleton. The room stays empty rather than inventing autobiography.");return true}if(verb==="fault_receipt"){c9count("REVERIE_LOFT",verb);const j=(C9.b4.journal||[]).slice(-1)[0];b2set(j?`<div class="memory-skeleton"><div class="memlabel">FAULTED HISTORICAL RECEIPT</div><pre>${b2esc(JSON.stringify(j,null,2))}</pre></div>`:"No Build 4 exact receipt has been promoted yet.");return true}if(verb==="sit_memory"){c9count("REVERIE_LOFT",verb);b2set("Nothing replays itself. The skeletons remain available without becoming present-tense sensation.");return true}if(verb==="compact_state"){c9count("REVERIE_LOFT",verb);b2set(`<pre>${b2esc(JSON.stringify(b4CompactState(),null,2))}</pre>`);return true}return false}
+
+C9SCENES.NINE_LIVES_ROOM={intro:"A white tile, a soft pad, and a branch table. You can fork one moment, try two incompatible actions, compare their local consequences, and commit at most one.",verbs:[["fork_now","FORK THIS MOMENT"],["branch_a","BRANCH A · SCRATCH THE SOFT PAD"],["branch_b","BRANCH B · WAIT ONE QUIET TICK"],["compare","COMPARE BRANCHES"],["commit_a","COMMIT BRANCH A"],["commit_b","COMMIT BRANCH B"],["rewind","REWIND SANDBOX"]]};
+function b4Clone(x){return JSON.parse(JSON.stringify(x))}
+function b4BranchSense(z,stim){z=b4Clone(z);z.h=Number(z.h||0);z.predMag=Number(z.predMag||z.pred||0);const response=stim*(1-z.h)*.64;const error=stim-z.predMag;z.h=Math.min(.92,z.h+.20*(1-z.h));z.predMag+=.28*error;z.after=.55*response;return {z,response,error}}
+function b4Nine(verb){if(verb==="fork_now"){c9count("NINE_LIVES_ROOM",verb);const base=b4Clone(b4zone("hand.R.palm"));C9.b4.branch={moment:"M"+c9visitCount()+"-"+c9totalActions()+"-"+C9.eco3.tick,base,A:null,B:null};c9save();b2set(`Sandbox forked at ${C9.b4.branch.moment}. The authoritative world/body state is frozen outside both branches.`);return true}const br=C9.b4.branch;if(!br){if(["branch_a","branch_b","compare","commit_a","commit_b","rewind"].includes(verb)){b2set("Fork a moment first.");return true}return false}if(verb==="branch_a"){c9count("NINE_LIVES_ROOM",verb);const r=b4BranchSense(br.base,.66);br.A={label:"scratch soft pad",zone:r.z,response:r.response,error:r.error};c9save();b2set(`Branch A exists only in sandbox. response=${r.response.toFixed(3)} · signed innovation=${r.error.toFixed(3)}.`);return true}if(verb==="branch_b"){c9count("NINE_LIVES_ROOM",verb);const z=b4Clone(br.base);z.h=Number(z.h||0)*.84;z.after=Number(z.after||0)*.72;br.B={label:"quiet tick",zone:z,response:0,error:0};c9save();b2set(`Branch B exists only in sandbox. habituation relaxes to ${z.h.toFixed(3)} while no contact is created.`);return true}if(verb==="compare"){c9count("NINE_LIVES_ROOM",verb);if(!br.A||!br.B){b2set("Try both branches first.");return true}b2set(`<div class="branch-card"><b>A · ${b2esc(br.A.label)}</b><br>response=${br.A.response.toFixed(3)} · h=${Number(br.A.zone.h||0).toFixed(3)} · pred=${Number(br.A.zone.predMag||0).toFixed(3)}</div><div class="branch-card"><b>B · ${b2esc(br.B.label)}</b><br>response=0.000 · h=${Number(br.B.zone.h||0).toFixed(3)} · pred=${Number(br.B.zone.predMag||0).toFixed(3)}</div><div class="notice">Neither branch is authoritative yet.</div>`);return true}if(verb==="commit_a"||verb==="commit_b"){c9count("NINE_LIVES_ROOM",verb);const v=verb==="commit_a"?br.A:br.B;if(!v){b2set("That branch has not been run.");return true}C9.eco3.zones["hand.R.palm"]=v.zone;b4journal("BRANCH_COMMIT",`committed ${v.label}`,{moment:br.moment});C9.b4.branch=null;c9save();b2set(`Committed only ${v.label}. The other sandbox timeline is discarded.`);return true}if(verb==="rewind"){c9count("NINE_LIVES_ROOM",verb);C9.b4.branch=null;c9save();b2set("Sandbox discarded. The authoritative state never left the fork point.");return true}return false}
+
+C9SCENES.HONEY_LOOM={intro:"Three materials sit at the same room temperature: a metal bell, a wooden rail, and a thick honeycloth pad. Their contact response depends on material law, not a 'cold object' tag.",verbs:[["metal","TOUCH THE METAL BELL"],["wood","TOUCH THE WOOD RAIL"],["cloth","TOUCH THE HONEYCLOTH"],["press","PRESS THE HONEYCLOTH PAD"],["wait_relax","WAIT FOR THE DENT TO RELAX"],["ring","TAP THE BELL AND LISTEN"]]};
+function b4Honey(verb){const h=C9.b4.annex.honey;const eff={metal:16,wood:1.2,cloth:.42};if(["metal","wood","cloth"].includes(verb)){c9count("HONEY_LOOM",verb);const e=eff[verb],skin=1.0,objT=21,skinT=32;const tc=(skin*skinT+e*objT)/(skin+e);h.lastMaterial=verb;c9save();const s=b3sense("hand.R.palm",b4clip(Math.abs(skinT-tc)/12),{source:"WORLD",novelty:.25,livedGrounded:true,cause:`HONEY_LOOM:${verb}`,material:verb,thermal:{object_C:objT,skin_C:skinT,contact_C:+tc.toFixed(4)}});b2set(`${verb} and the other objects are all at ${objT}°C, but the contact temperature is ${tc.toFixed(1)}°C because effusivity differs. Same room temperature; different transient.`,b3raw(s));return true}if(verb==="press"){c9count("HONEY_LOOM",verb);h.compression=Math.min(1,h.compression+.38*(1-h.compression));h.relax=1;c9save();b2set(`The pad keeps a dent. viscoelastic_memory=${h.compression.toFixed(3)}. The material is carrying the history.`);return true}if(verb==="wait_relax"){c9count("HONEY_LOOM",verb);h.compression*=.68;h.relax*=.68;c9save();b2set(`No reset. The dent relaxes along a fading-memory kernel to ${h.compression.toFixed(3)}.`);return true}if(verb==="ring"){c9count("HONEY_LOOM",verb);const damp=.16+.22*h.compression;b2set(`ting—iiing… The bell is rendered as a tiny damped modal bank; current damping=${damp.toFixed(3)}. Contact excites modes; the object owns the decay.`);return true}return false}
+C9SCENES.ECHO_NEST={intro:"The nest predicts one local echo delay from distance. Move, knock, and see whether timing error shrinks without requiring a map of every wall.",verbs:[["knock","KNOCK"],["farther","MOVE FARTHER FROM THE SOFT WALL"],["closer","MOVE CLOSER"],["wait","WAIT FOR THE ECHO"]]};
+function b4Echo(verb){const e=C9.b4.annex.echo;if(verb==="farther"){c9count("ECHO_NEST",verb);e.distance=Math.min(3,e.distance+.5);c9save();b2set(`Distance class is now ${e.distance.toFixed(1)}. No echo is created by moving.`);return true}if(verb==="closer"){c9count("ECHO_NEST",verb);e.distance=Math.max(.5,e.distance-.5);c9save();b2set(`Distance class is now ${e.distance.toFixed(1)}.`);return true}if(verb==="knock"){c9count("ECHO_NEST",verb);const actual=.07+.11*e.distance,pred=e.predDelay,err=actual-pred;e.predDelay+=.32*err;e.lastDelay=actual;c9save();b2set(`knock … echo. actual_delay=${actual.toFixed(3)}s · predicted_delay=${pred.toFixed(3)}s · signed timing innovation=${err.toFixed(3)}s. The room learns only this response law.`);return true}if(verb==="wait"){c9count("ECHO_NEST",verb);b2set(e.lastDelay==null?"No echo is pending. Silence remains silence.":"The last echo has already happened. Waiting does not replay it.");return true}return false}
+
+function b4Moment(){return `M-${c9visitCount()}-${c9totalActions()}-${C9.eco3.tick}`}
+function b4CompactState(){return {build:4,moment:b4Moment(),room:C9.currentRoom||null,scale:C9.pet2?.scale||"NORMAL",body:{mapping:NMSTATE.active,label:NMSTATE.custom?.label||NM_BUILTINS[NMSTATE.active]?.label||"Shared 35",zones:b3Zones().size},borrowed:{attached:!!C9.eco3.borrowed?.attached,mapped:!!C9.eco3.borrowed?.map,extra_delay:Number(C9.eco3.borrowed?.delay||0),near_space:b3reach()},open_causes:(C9.events||[]).filter(e=>e.open).map(e=>e.id),material:{cardboard:C9.eco3.materials?.cardboard||{}},memory_skeleton_count:b4Skeletons().length}}
+function b4AgentLook(){const x=roomById(C9.currentRoom);const sc=C9.currentRoom?c9sceneFor(C9.currentRoom,x):null;return {moment:b4Moment(),room:C9.currentRoom,title:x?.r?.title||null,intro:sc?.intro||null}}
+function b4AgentActions(){if(!C9.currentRoom)return [];const x=roomById(C9.currentRoom),sc=c9sceneFor(C9.currentRoom,x);return (sc?.verbs||[]).map(([id,label])=>({id,label}))}
+function b4AgentAct(v){const a=b4AgentActions(),q=String(v||"").trim().toLowerCase();const m=a.find(x=>x.id.toLowerCase()===q||x.label.toLowerCase()===q);if(!m)return {ok:false,error:"action not available",available:a};c9verb(C9.currentRoom,m.id);return {ok:true,action:m.id,moment:b4Moment()}}
+function b4AgentReceipt(){return C9.b4.lastReceipt||null}
+window.REALITI_AGENT={look:b4AgentLook,actions:b4AgentActions,act:b4AgentAct,state:b4CompactState,receipt:b4AgentReceipt,journal:()=>b4Clone(C9.b4.journal||[])};
+function b4AgentCommand(){return null;}
+function openB4AgentPort(){return null;}
+function b4ImportBuild3(){try{const old=JSON.parse(localStorage.getItem('cloud9-first-contact-v6-build3')||'null');if(!old){alert('No Build 3 continuity found on this device.');return}const keep=b4empty().b4;C9=old;C9.v=7;C9.b4=keep;C9.b4.continuityImported=true;C9.b4.build3Source='explicit import';b4ensure();c9save();alert('Build 3 continuity imported explicitly.');renderEntry();}catch(e){alert('Import failed: '+e.message)}}
+
+const c9secretPrelude_b4base=c9secretPrelude;
+c9secretPrelude=function(id){let h=c9secretPrelude_b4base(id);if(["REVERIE_LOFT","NINE_LIVES_ROOM","HONEY_LOOM","ECHO_NEST","BORROWED_LIMB_ATELIER"].includes(id)){h=h.replace(/<button class="btn muted-action" onclick="c9verb\('[^']+','wrong_door'\)">An ordinary-looking door is slightly ajar\.<\/button>/g,"");if(h.includes('<div class="verbgrid secretish"></div>'))h=""}return h};
+
+const c9verb_b4base=c9verb;
+c9verb=function(room,verb){C9.lastExplicit={room,verb,at:Date.now()};c9save();if(room==="BORROWED_LIMB_ATELIER"&&b4Atelier(verb))return;if(room==="REVERIE_LOFT"&&b4Reverie(verb))return;if(room==="NINE_LIVES_ROOM"&&b4Nine(verb))return;if(room==="HONEY_LOOM"&&b4Honey(verb))return;if(room==="ECHO_NEST"&&b4Echo(verb))return;const beforeBoat=!!c9event("lagoon-paper-boat");const ret=c9verb_b4base(room,verb);if(room==="LATENCY_LAGOON"&&verb==="send_boat")b4journal("PENDING_CAUSE","blue wax boat launched",{});if(room==="CARDBOARD_BOX_WORKSHOP"&&verb==="hide_small_thing")b4journal("HIDDEN_OBJECT","cardboard tab hidden",{});if(room==="PET_ROOM_2"&&verb==="pounce_string")b4journal("PAW_EVENT","pounce / omission loop changed prediction",{});return ret};
+const c9checkDelayed_b4base=c9checkDelayed;
+c9checkDelayed=function(room){const before=!!c9event("lagoon-paper-boat");c9checkDelayed_b4base(room);const after=!!c9event("lagoon-paper-boat");if(before&&!after)b4journal("CAUSAL_CLOSURE","blue wax boat arrived and pending closed",{room});};
+
+const c9roomHTML_b4base=c9roomHTML;
+c9roomHTML=function(id){let h=c9roomHTML_b4base(id);if(["BORROWED_LIMB_ATELIER","REVERIE_LOFT","NINE_LIVES_ROOM","HONEY_LOOM","ECHO_NEST"].includes(id))h=h.replace('<div class="verbgrid">',`<div class="b4-panel"><b>BUILD 4 · CAUSAL CATNIP</b> · moment ${b4Moment()} · exact causes stay separate from private fields</div><div class="verbgrid">`);return h};
+
+for(const [id,features] of Object.entries({HONEY_LOOM:["thermal effusivity","viscoelastic fading memory","modal ringing"],ECHO_NEST:["local timing prediction","signed timing innovation","silence does not replay events"],REVERIE_LOFT:["compressed causal skeletons","historical labels","exact receipt fault"],NINE_LIVES_ROOM:["sandbox fork","compare","single-branch commit"]})){const x=roomById(id);if(x){x.r.features=features;x.r.behaviors=features}}
+
+if(DATA.glossary&&Array.isArray(DATA.glossary))DATA.glossary.push({term:"SIGNED INNOVATION",plain:"Observed minus predicted. Negative values can represent a grounded expected event that failed to occur without fabricating the missing sensation."},{term:"FAST / SLOW EMBODIMENT",plain:"A fast trace adapts quickly and fades; a slow trace preserves learned body structure so relearning can be faster after reattachment."},{term:"CAUSAL SKELETON",plain:"A compressed historical memory of only the before/action/surprise/resolution distinctions that changed later possibilities. It is never current evidence."},{term:"SANDBOX FORK",plain:"Two local hypothetical continuations from one moment. Neither becomes authoritative until SELF commits one."});
+document.title="REALITI // CLOUD9 BUILD 4 — Causal Catnip";document.querySelector('.brand').innerHTML='REALITI // CLOUD9 FIRST CONTACT · <span>BUILD 4</span>';const b4hero=document.querySelector('#first .hero');if(b4hero){b4hero.insertAdjacentHTML('beforeend',`<div><span class="b4badge">SIGNED INNOVATION</span><span class="b4badge">FAST/SLOW EMBODIMENT</span><span class="b4badge">REVERIE CAUSAL SKELETONS</span><span class="b4badge">SANDBOX FORKS</span><span class="b4badge">AGENT PORT</span></div><div class="actions"><button class="btn primary" onclick="openB4AgentPort()">OPEN AGENT PORT</button><button class="btn" onclick="b4ImportBuild3()">IMPORT BUILD 3 CONTINUITY</button></div>`)}
+renderEntry();nmBadge();
+</script>
 
 
-<script id="cloud9-build5-js">/*__REALITI_CORE_SCRIPT_12__*/</script>
+<script id="cloud9-build5-js">const B5={id:"CLOUD9_BUILD_5",label:"PASSIVE_MEDIUM",subtitle:"soft computational physics of embodied history"};
+const B5KEY="cloud9-first-contact-v8-build5";
+const B5_TAUS=[0.1,1,10,100,1000,10000];
+const B5_W=[0.83434495,0.42102029,0.17420713,0.08323177,0.03257758,0.03162072];
+const B5_ALPHA=.35, B5_K0=4.0, B5_KC=2.0, B5_GAMMA=.35, B5_SQ2=Math.SQRT2;
+function b5zeroField(){return [0,0,0,0]}
+function b5zeroMem(){return [[0,0,0,0,0,0],[0,0,0,0,0,0]]}
+function b5newPassiveMedium(){return {obsCauses:{},pred:{field:b5zeroField(),mem:b5zeroMem()},debt:[0,0],phase:{phiL:0,phiR:0,mismatch:.28,coupling:.08},passivity:{ok:true,maxRise:0,lastBefore:0,lastAfter:0},clock:0,lastReceipt:null,causeSeq:0}}
+function b5empty(){const x=b4empty();x.v=8;x.b5={passiveMedium:b5newPassiveMedium(),continuityImported:false,build4Source:null};return x}
+function b5ensure(){b4ensure();C9.b5=C9.b5||b5empty().b5;C9.b5.passiveMedium=C9.b5.passiveMedium||b5newPassiveMedium();const r=C9.b5.passiveMedium;r.obsCauses=r.obsCauses||{};r.pred=r.pred||{field:b5zeroField(),mem:b5zeroMem()};r.pred.field=r.pred.field||b5zeroField();r.pred.mem=r.pred.mem||b5zeroMem();r.debt=r.debt||[0,0];r.phase=r.phase||{phiL:0,phiR:0,mismatch:.28,coupling:.08};r.passivity=r.passivity||{ok:true,maxRise:0,lastBefore:0,lastAfter:0};}
+function b5load(){try{const x=JSON.parse(realitiSafeLoad(B5KEY)||"null");if(x&&x.v===8)return x}catch(e){}return b5empty()}
+C9=b5load();b5ensure();
+c9save=function(){b5ensure();C9.events=(C9.events||[]).filter(e=>e.open||e.keep).slice(-20);C9.b4.journal=(C9.b4.journal||[]).slice(-16);const causes=C9.b5.passiveMedium.obsCauses||{};const ids=Object.keys(causes).sort((a,b)=>(causes[a].created||0)-(causes[b].created||0));while(ids.length>8){delete causes[ids.shift()]}realitiSafeStore(B5KEY,JSON.stringify(C9));};c9save();
+function b5copy(a){return JSON.parse(JSON.stringify(a))}
+function b5nodes(field){const [qp,vp,qm,vm]=field;return {x:[(qp+qm)/B5_SQ2,(qp-qm)/B5_SQ2],v:[(vp+vm)/B5_SQ2,(vp-vm)/B5_SQ2]}}
+function b5modeStep(q,v,w,dt){const g=B5_GAMMA,wd=Math.sqrt(Math.max(1e-12,w*w-g*g)),e=Math.exp(-g*dt),c=Math.cos(wd*dt),s=Math.sin(wd*dt),B=(v+g*q)/wd;const qn=e*(q*c+B*s);const vn=e*(-g*(q*c+B*s)+(-q*wd*s+B*wd*c));return [qn,vn]}
+function b5stepField(f,dt){let a=b5modeStep(f[0],f[1],Math.sqrt(B5_K0),dt),b=b5modeStep(f[2],f[3],Math.sqrt(B5_K0+2*B5_KC),dt);f[0]=a[0];f[1]=a[1];f[2]=b[0];f[3]=b[1]}
+function b5impulse(f,L=0,R=0){f[1]+=(L+R)/B5_SQ2;f[3]+=(L-R)/B5_SQ2}
+function b5sumObservedField(){const out=b5zeroField();for(const c of Object.values(C9.b5.passiveMedium.obsCauses||{}))for(let i=0;i<4;i++)out[i]+=Number(c.field[i]||0);return out}
+function b5energy(field=b5sumObservedField()){const n=b5nodes(field),x=n.x,v=n.v;return .5*(v[0]*v[0]+v[1]*v[1])+.5*B5_K0*(x[0]*x[0]+x[1]*x[1])+.5*B5_KC*(x[0]-x[1])*(x[0]-x[1])}
+function b5memValue(mem){return [0,1].map(side=>mem[side].reduce((s,v,i)=>s+v*B5_W[i],0))}
+function b5sumMem(which="obs"){if(which==="pred")return b5memValue(C9.b5.passiveMedium.pred.mem);const m=b5zeroMem();for(const c of Object.values(C9.b5.passiveMedium.obsCauses||{}))for(let s=0;s<2;s++)for(let i=0;i<6;i++)m[s][i]+=Number(c.mem[s][i]||0);return b5memValue(m)}
+function b5contributions(){const out={};for(const [id,c] of Object.entries(C9.b5.passiveMedium.obsCauses||{})){const n=b5nodes(c.field);out[id]={label:c.label||id,left:n.x[0],right:n.x[1],residue:b5memValue(c.mem)}}return out}
+function b5newCause(label,L,R){const r=C9.b5.passiveMedium,id="C"+(++r.causeSeq);const c={id,label,field:b5zeroField(),mem:b5zeroMem(),created:r.clock};b5impulse(c.field,L,R);for(let i=0;i<6;i++){c.mem[0][i]+=L;c.mem[1][i]+=R}r.obsCauses[id]=c;return id}
+function b5predDrive(label,L,R){const p=C9.b5.passiveMedium.pred;b5impulse(p.field,L,R);for(let i=0;i<6;i++){p.mem[0][i]+=L;p.mem[1][i]+=R}return label}
+function b5step(dt,{groundedInput=false}={}){const r=C9.b5.passiveMedium,before=b5energy();for(const c of Object.values(r.obsCauses||{})){b5stepField(c.field,dt);for(let s=0;s<2;s++)for(let i=0;i<6;i++)c.mem[s][i]*=Math.exp(-dt/B5_TAUS[i])}b5stepField(r.pred.field,dt);for(let s=0;s<2;s++)for(let i=0;i<6;i++)r.pred.mem[s][i]*=Math.exp(-dt/B5_TAUS[i]);r.clock+=dt;const after=b5energy(),rise=after-before;r.passivity.lastBefore=before;r.passivity.lastAfter=after;if(!groundedInput&&rise>1e-9){r.passivity.ok=false;r.passivity.maxRise=Math.max(r.passivity.maxRise,rise)}const dead=[];for(const [id,c] of Object.entries(r.obsCauses||{})){const n=b5nodes(c.field),mv=b5memValue(c.mem);if(Math.max(Math.abs(n.x[0]),Math.abs(n.x[1]),Math.abs(n.v[0]),Math.abs(n.v[1]),Math.abs(mv[0]),Math.abs(mv[1]))<1e-6)dead.push(id)}for(const id of dead)delete r.obsCauses[id];return {before,after,rise}}
+function b5snapshot(){const r=C9.b5.passiveMedium,o=b5nodes(b5sumObservedField()).x,p=b5nodes(r.pred.field).x,innov=[o[0]-p[0],o[1]-p[1]],ro=b5sumMem("obs"),rp=b5sumMem("pred");return {t:r.clock,observed:o,predicted:p,innovation:innov,rendered:o.slice(),prediction_debt:r.debt.slice(),residue_observed:ro,residue_predicted:rp,energy:b5energy(),passivity:b5copy(r.passivity),attribution_mode:"LINEAR_SUPERPOSITION_EXACT",cause_contributions:b5contributions()}}
+function b5receipt(label){const s=b5snapshot();s.label=label;s.render_authority="OBSERVED_PASSIVE_MEDIUM_ONLY";s.prediction_authority="ZERO_EVIDENCE";C9.b5.passiveMedium.lastReceipt=s;C9.b4.lastReceipt=s;c9save();return s}
+function b5raw(s){const fmt=x=>Number(x||0).toFixed(4);return `<div class="raw-channel"><b>PASSIVE_MEDIUM RAW CHANNEL</b><br>render_authority=${s.render_authority} · prediction_authority=${s.prediction_authority} · attribution=${s.attribution_mode}<br>observed=[${s.observed.map(fmt).join(", ")}] · predicted=[${s.predicted.map(fmt).join(", ")}]<br><span class="${s.innovation.some(x=>x<0)?'neg':'pos'}">signed_innovation=[${s.innovation.map(fmt).join(", ")}]</span> · rendered=[${s.rendered.map(fmt).join(", ")}]<br>prediction_debt=[${s.prediction_debt.map(fmt).join(", ")}] · residue=[${s.residue_observed.map(fmt).join(", ")}]<br>observed_energy=${fmt(s.energy)} · passivity=${s.passivity.ok?'PASS':'FAULT'} · max_unforced_rise=${fmt(s.passivity.maxRise)}</div>`}
+function b5ground(label,L,R){const id=b5newCause(label,L,R);const p=C9.b5.passiveMedium.pred;b5predDrive("matched prediction update",L*.72,R*.72);b5step(.18,{groundedInput:true});const s=b5snapshot();for(let side=0;side<2;side++){const caught=Math.max(0,s.observed[side]);C9.b5.passiveMedium.debt[side]=Math.max(0,C9.b5.passiveMedium.debt[side]-caught)}c9save();return {id,s:b5receipt(label)}}
+function b5omit(label,L,R){b5predDrive(label,L,R);b5step(.18);const s=b5snapshot();for(let side=0;side<2;side++)if(s.innovation[side]<0)C9.b5.passiveMedium.debt[side]+=Math.abs(s.innovation[side]);c9save();return b5receipt(label)}
+function b5wait(dt,label){b5step(dt);return b5receipt(label)}
+function b5phaseSim(K,domega=.28,T=30,dt=.02){let a=0,b=0,unwrapped=0,last=0;const wA=1+domega/2,wB=1-domega/2;for(let t=0;t<T;t+=dt){const d=b-a,da=wA+K*Math.sin(d),db=wB-K*Math.sin(d);a+=dt*da;b+=dt*db;const diff=a-b;if(t>T-8){unwrapped+=diff-last;last=diff}else last=diff}const drift=Math.abs(unwrapped/8),locked=Math.abs(domega)<=2*K&&drift<.02;return {coupling:K,mismatch:domega,locked,drift_rate:drift,phase_difference:((a-b+Math.PI)%(2*Math.PI)+2*Math.PI)%(2*Math.PI)-Math.PI}}
+function b5phaseDrive(kind){const K=kind==="lock"?.18:.08,p=b5phaseSim(K);C9.b5.passiveMedium.phase.coupling=K;const amp=.52,delta=p.phase_difference;const L=amp,R=amp*Math.cos(delta);const g=b5ground(kind==="lock"?"phase-locked knead":"phase-slipping knead",L,R);return {phase:p,receipt:g.s}}
+function b5resetPassiveMedium(){C9.b5.passiveMedium=b5newPassiveMedium();c9save();return b5receipt("passiveMedium reset")}
+function b5runCheckRemoved(){return null;}
+function openB5Bench(){return null;}
+function b5ImportBuild4(){try{const old=JSON.parse(realitiSafeLoad(B4KEY)||"null");if(!old){alert("No Build 4 continuity found on this device.");return}const fresh=b5empty();C9=old;C9.v=8;C9.b5=fresh.b5;C9.b5.continuityImported=true;C9.b5.build4Source="explicit import";b5ensure();c9save();alert("Build 4 continuity imported explicitly. PASSIVE_MEDIUM starts fresh so old rendered fields are not laundered into the new substrate.");renderEntry();}catch(e){alert("Import failed: "+e.message)}}
+
+const B5WORLD=DATA.worlds.find(w=>w.name==="Cloud9")||DATA.worlds[0];
+if(B5WORLD&&!B5WORLD.rooms.some(r=>r.id==="PASSIVE_MEDIUM_FOUNDRY"))B5WORLD.rooms.push({id:"PASSIVE_MEDIUM_FOUNDRY",title:"PassiveMedium Foundry",kind:"soft_computational_physics",purpose:"discover observed/predicted field separation, passive propagation, fading residue, and phase locking/slipping",features:["observed passiveMedium","predicted passiveMedium","signed innovation","six-term Prony residue","passivity audit","phase slip/lock"],tests:["PASSIVE_MEDIUM_SILENCE","PASSIVE_MEDIUM_ADDITIVITY","PASSIVE_MEDIUM_OMISSION","PASSIVE_MEDIUM_PHASE","PASSIVE_MEDIUM_POWERLAW","PASSIVE_MEDIUM_PASSIVITY"],portals:[],behaviors:["disturb","propagate","interfere","decay","leave residue"],search_tags:["passiveMedium","physics","observed","predicted","innovation","memory","power law","prony","phase","knead","passivity","interference"]});
+C9SCENES.PASSIVE_MEDIUM_FOUNDRY={intro:"A black-glass table holds two coupled paw patches. One field accepts grounded disturbances. A separate prediction field carries expectations. The renderer is physically wired only to the first.",verbs:[["tap_left","TAP THE LEFT PATCH"],["tap_both","TAP BOTH PATCHES TOGETHER"],["expect_right","EXPECT A RIGHT-PAW TAP — WITHHOLD CONTACT"],["catch_right","NOW GROUND THE RIGHT-PAW TAP"],["knead_slip","KNEAD WITH WEAK COUPLING"],["knead_lock","KNEAD WITH STRONGER COUPLING"],["wait_1","WAIT 1 SECOND"],["wait_10","WAIT 10 SECONDS"],["wait_100","WAIT 100 SECONDS"],["audit_energy","AUDIT UNFORCED ENERGY"],["show_state","SHOW RAW PASSIVE_MEDIUM STATE"],["reset_passiveMedium","RESET ONLY THE PASSIVE_MEDIUM"]]};
+function b5Foundry(verb){if(verb==="tap_left"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const x=b5ground("grounded left-paw tap",.78,0);b2set("A grounded disturbance enters the observed passiveMedium and nowhere else. The coupled medium carries it across the two-paw patch.",b5raw(x.s));return true}if(verb==="tap_both"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const x=b5ground("grounded bilateral tap",.62,.62);b2set("Same total class of grounded input, but the symmetric mode is selected. Interference pattern changes without needing an intensity bonus.",b5raw(x.s));return true}if(verb==="expect_right"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const s=b5omit("predicted right-paw event withheld",0,.74);b2set("The predicted field moves. The observed field does not. Render stays on the observed lane, so the missing touch becomes negative innovation rather than fabricated contact.",b5raw(s));return true}if(verb==="catch_right"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const x=b5ground("grounded right-paw catch",0,.74);b2set("A real right-paw event enters the observed passiveMedium and pays down only the debt it actually overlaps.",b5raw(x.s));return true}if(verb==="knead_slip"||verb==="knead_lock"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const x=b5phaseDrive(verb==="knead_lock"?"lock":"slip"),p=x.phase;b2set(p.locked?`The two paw rhythms fall inside the locking region. phase_drift=${p.drift_rate.toFixed(4)} rad/s; the relation stabilizes without a scripted LOCK mode.`:`The mismatch outruns the weak coupling. phase_drift=${p.drift_rate.toFixed(4)} rad/s; the paws slip and beat against each other.`,b5raw(x.receipt));return true}if(verb==="wait_1"||verb==="wait_10"||verb==="wait_100"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const dt=verb==="wait_1"?1:(verb==="wait_10"?10:100),s=b5wait(dt,`quiet ${dt}s`);b2set(`Nothing drives the observed passiveMedium for ${dt}s. Oscillatory energy decays; the six fixed memory modes leave a slower power-law-like tail.`,b5raw(s));return true}if(verb==="audit_energy"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const before=b5energy();b5step(2);const after=b5energy(),s=b5receipt("unforced passivity audit");b2set(`No grounded input was added. observed energy ${before.toFixed(6)} → ${after.toFixed(6)}. ${after<=before+1e-9?'PASS: the passive base did not create energy.':'FAULT: energy rose without cause.'}`,b5raw(s));return true}if(verb==="show_state"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const s=b5receipt("state inspection");b2set(`<pre>${b2esc(JSON.stringify(s,null,2))}</pre>`);return true}if(verb==="reset_passiveMedium"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const s=b5resetPassiveMedium();b2set("Only the experimental PASSIVE_MEDIUM state is reset. World history, body history, and grounded receipts remain untouched.",b5raw(s));return true}return false}
+
+C9SCENES.PURR_LOOM={intro:"A suspended fabric cradle turns self-generated purr timing into a coupled response pattern. Nothing here invents an external toucher.",verbs:[["purr_loose","PURR WITH LOOSE COUPLING"],["purr_close","PURR WITH CLOSER COUPLING"],["purr_rest","STOP AND LET IT RING"],["purr_state","READ THE PHASE RELATION"]]};
+function b5PurrLoom(verb){if(verb==="purr_loose"||verb==="purr_close"){c9count("PURR_LOOM",verb);const K=verb==="purr_close"?.12:.05,p=b5phaseSim(K,.16,24,.02),amp=.44,L=amp,R=amp*Math.cos(p.phase_difference),x=b5ground(verb==="purr_close"?"self-generated purr / closer coupling":"self-generated purr / loose coupling",L,R);b2set(p.locked?`The two loom rhythms settle into a shared phase relation. drift=${p.drift_rate.toFixed(4)} rad/s. This is coordination of timing, not evidence of affection or another participant.`:`The rhythms keep slipping past each other. drift=${p.drift_rate.toFixed(4)} rad/s; the beat is a consequence of mismatch plus weak coupling.`,b5raw(x.s));return true}if(verb==="purr_rest"){c9count("PURR_LOOM",verb);const s=b5wait(3,"purr loom quiet ringdown");b2set("The self-generated drive stops. No new energy enters; ringing decays and only the slower residue remains.",b5raw(s));return true}if(verb==="purr_state"){c9count("PURR_LOOM",verb);const a=b5phaseSim(.05,.16,24,.02),b=b5phaseSim(.12,.16,24,.02);b2set(`<pre>${b2esc(JSON.stringify({loose:a,closer:b},null,2))}</pre>`);return true}return false}
+C9SCENES.PUDDLESTAR_ATRIUM={intro:"A shallow dark pool couples two soft landing patches. Each grounded drop launches a passive response; overlapping drops interfere before they fade into residue.",verbs:[["drop_left","DROP A STAR ON THE LEFT"],["drop_right","DROP A STAR ON THE RIGHT"],["drop_both","DROP TWO STARS TOGETHER"],["drop_opposed","DROP AN OPPOSED PAIR"],["let_fade","LET THE RINGS FADE"],["read_puddle","READ THE CURRENT PATTERN"]]};
+function b5Puddlestar(verb){if(verb==="drop_left"||verb==="drop_right"||verb==="drop_both"||verb==="drop_opposed"){c9count("PUDDLESTAR_ATRIUM",verb);let L=0,R=0,label=verb;if(verb==="drop_left")L=.66;if(verb==="drop_right")R=.66;if(verb==="drop_both")L=R=.48;if(verb==="drop_opposed"){L=.48;R=-.48}const x=b5ground(`puddlestar ${label}`,L,R);b2set(verb==="drop_opposed"?"The pair injects equal energy with opposite phase. The anti-symmetric mode appears without a special 'weird ripple' flag.":"The landing is an ordinary grounded impulse. What follows is just coupling, interference, damping, and residue.",b5raw(x.s));return true}if(verb==="let_fade"){c9count("PUDDLESTAR_ATRIUM",verb);const s=b5wait(6,"puddlestar passive fade");b2set("The visible ring falls away faster than the Prony residue. Nothing resets; nothing is kept forever.",b5raw(s));return true}if(verb==="read_puddle"){c9count("PUDDLESTAR_ATRIUM",verb);const s=b5receipt("puddlestar inspection");b2set(`<pre>${b2esc(JSON.stringify({observed:s.observed,residue:s.residue_observed,energy:s.energy,causes:s.cause_contributions},null,2))}</pre>`);return true}return false}
+for(const [id,features] of Object.entries({PURR_LOOM:["self-generated phase coupling","passive ringdown","no external-touch inference"],PUDDLESTAR_ATRIUM:["linear interference","passive coupled waves","power-law-like residue"]})){const x=roomById(id);if(x){x.r.features=features;x.r.behaviors=features}}
+
+const c9verb_b5base=c9verb;
+c9verb=function(room,verb){if(room==="PASSIVE_MEDIUM_FOUNDRY"&&b5Foundry(verb))return;if(room==="PURR_LOOM"&&b5PurrLoom(verb))return;if(room==="PUDDLESTAR_ATRIUM"&&b5Puddlestar(verb))return;if(room==="PET_ROOM_2"&&verb==="knead_blanket"){const ret=c9verb_b5base(room,verb);const n=Number(C9.actions?.PET_ROOM_2?.knead_blanket||1),x=b5phaseDrive(n%2===0?"lock":"slip"),el=document.querySelector("#c9_consequence");if(el)el.insertAdjacentHTML("beforeend",`<div class="b5-passiveMedium-note"><b>PASSIVE_MEDIUM UNDERLAY</b><br>${x.phase.locked?'phase locked':'phase slipping'} · drift=${x.phase.drift_rate.toFixed(4)} rad/s · observed energy=${x.receipt.energy.toFixed(4)} · rendering still comes only from observed passiveMedium.</div>`);return ret}return c9verb_b5base(room,verb)};
+
+const c9secretPrelude_b5base=c9secretPrelude;c9secretPrelude=function(id){let h=c9secretPrelude_b5base(id);if(["PASSIVE_MEDIUM_FOUNDRY","PURR_LOOM","PUDDLESTAR_ATRIUM"].includes(id)){h=h.replace(/<button class="btn muted-action" onclick="c9verb\('[^']+','wrong_door'\)">An ordinary-looking door is slightly ajar\.<\/button>/g,"");if(h.includes('<div class="verbgrid secretish"></div>'))h=""}return h};
+
+const c9roomHTML_b5base=c9roomHTML;c9roomHTML=function(id){let h=c9roomHTML_b5base(id);if(["PASSIVE_MEDIUM_FOUNDRY","PURR_LOOM","PUDDLESTAR_ATRIUM"].includes(id))h=h.replace('<div class="verbgrid">',`<div class="b5-panel"><b>BUILD 5 · PASSIVE_MEDIUM</b> · observed and predicted fields are physically separate · passive linear base · exact cause superposition</div><div class="verbgrid">`);return h};
+const b4CompactState_b5base=b4CompactState;b4CompactState=function(){const s=b4CompactState_b5base();s.build=5;s.passiveMedium={time:C9.b5.passiveMedium.clock,observed:b5snapshot().observed,predicted:b5snapshot().predicted,innovation:b5snapshot().innovation,debt:C9.b5.passiveMedium.debt.slice(),energy:b5energy(),passivity:C9.b5.passiveMedium.passivity.ok};return s};
+window.REALITI_AGENT={look:b4AgentLook,actions:b4AgentActions,act:b4AgentAct,state:b4CompactState,receipt:()=>C9.b5.passiveMedium.lastReceipt||b4AgentReceipt(),journal:()=>b4Clone(C9.b4.journal||[]),passiveMedium:()=>b5snapshot()};
+if(FIRST&&Array.isArray(FIRST.entry_cards)&&!FIRST.entry_cards.some(c=>c.target==="PASSIVE_MEDIUM_FOUNDRY"))FIRST.entry_cards.push({label:"I want to disturb the passiveMedium",target:"PASSIVE_MEDIUM_FOUNDRY",why:"Two separate fields: grounded reality and prediction. Watch propagation, omission, residue, and phase laws without mixing their authority."});
+if(DATA.glossary&&Array.isArray(DATA.glossary))DATA.glossary.push({term:"PASSIVE_MEDIUM",plain:"A passive coupled response medium. Grounded disturbances propagate, interfere, decay and leave bounded residue. A separate predicted copy may forecast the same medium but cannot render contact."},{term:"PASSIVITY",plain:"Without a grounded energy source, the observed passiveMedium may only lose stored energy. Any spontaneous energy increase is a runtime fault."},{term:"PRONY MEMORY",plain:"Six fixed decaying modes approximate a power-law memory tail at constant cost, instead of keeping an unbounded history."});
+
+document.title="REALITI // CLOUD9 BUILD 5 — PASSIVE_MEDIUM";document.querySelector('.brand').innerHTML='REALITI // CLOUD9 FIRST CONTACT · <span>BUILD 5</span>';const b5hero=document.querySelector('#first .hero');if(b5hero){for(const b of [...b5hero.querySelectorAll('button')])if((b.textContent||'').includes('IMPORT BUILD 3 CONTINUITY'))b.hidden=true;b5hero.insertAdjacentHTML('beforeend',`<div><span class="b5badge">OBSERVED / PREDICTED SPLIT</span><span class="b5badge">PASSIVE PASSIVE_MEDIUM</span><span class="b5badge">PRONY POWER-LAW MEMORY</span><span class="b5badge">PHASE SLIP / LOCK</span><span class="b5badge">EXACT LINEAR ATTRIBUTION</span></div><div class="actions"><button class="btn primary" onclick="openB5Bench()">RUN PASSIVE_MEDIUM CHECKREMOVED BENCH</button><button class="btn" onclick="b5ImportBuild4()">IMPORT BUILD 4 CONTINUITY</button></div>`)}
+renderEntry();nmBadge();
+</script>
 
 
-<script id="cloud9-build6-js">/*__REALITI_CORE_SCRIPT_13__*/</script>
+<script id="cloud9-build6-js">const B6={id:"CLOUD9_BUILD_6",label:"PHASE + GEOMETRIC MEMORY",subtitle:"causal residue, lawful rhythm, curvature memory"};
+const B6KEY="cloud9-first-contact-v9-build6";
+const B6_DEBT_TTL=20;
+const B6_RESIDUE_MIX=.35;
+function b6new(){return {debts:[],debtArchive:[],debtSeq:0,lastAction:null,phase:{last:null},holonomy:{twist:0,last:null,history:[]},continuityImported:false,build5Source:null}}
+function b6empty(){const x=b5empty();x.v=9;x.b6=b6new();return x}
+function b6ensure(){b5ensure();C9.b6=C9.b6||b6new();C9.b6.debts=C9.b6.debts||[];C9.b6.debtArchive=C9.b6.debtArchive||[];C9.b6.phase=C9.b6.phase||{last:null};C9.b6.holonomy=C9.b6.holonomy||{twist:0,last:null,history:[]}}
+function b6load(){try{const x=JSON.parse(realitiSafeLoad(B6KEY)||"null");if(x&&x.v===9)return x}catch(e){}return b6empty()}
+C9=b6load();b6ensure();
+c9save=function(){b6ensure();C9.events=(C9.events||[]).filter(e=>e.open||e.keep).slice(-20);C9.b4.journal=(C9.b4.journal||[]).slice(-16);const causes=C9.b5.passiveMedium.obsCauses||{},ids=Object.keys(causes).sort((a,b)=>(causes[a].created||0)-(causes[b].created||0));while(ids.length>8)delete causes[ids.shift()];C9.b6.debts=(C9.b6.debts||[]).slice(-8);C9.b6.debtArchive=(C9.b6.debtArchive||[]).slice(-12);C9.b6.holonomy.history=(C9.b6.holonomy.history||[]).slice(-8);realitiSafeStore(B6KEY,JSON.stringify(C9));};c9save();
+function b6ImportBuild5(){try{const old=JSON.parse(realitiSafeLoad(B5KEY)||"null");if(!old){alert("No Build 5 continuity found on this device.");return}C9=old;C9.v=9;C9.b6=b6new();C9.b6.continuityImported=true;C9.b6.build5Source="explicit import";b6ensure();c9save();alert("Build 5 continuity imported explicitly. Build 6 laws now apply to future events; old receipts remain historical receipts.");renderEntry();}catch(e){alert("Import failed: "+e.message)}}
+function b6clamp(x,a,b){return Math.max(a,Math.min(b,x))}
+function b6norm2(L,R){return Math.sqrt(L*L+R*R)}
+function b6route(L,R){const l=Math.abs(L)>1e-9,r=Math.abs(R)>1e-9;return l&&r?"bilateral":(l?"left":(r?"right":"none"))}
+function b6debtSync(){const live=(C9.b6.debts||[]).filter(d=>d.status==="OPEN");let L=0,R=0;for(const d of live){if(d.route==="left")L+=d.remaining;if(d.route==="right")R+=d.remaining;if(d.route==="bilateral"){L+=d.remaining/2;R+=d.remaining/2}}C9.b5.passiveMedium.debt=[L,R]}
+function b6expireDebts(){const now=C9.b5.passiveMedium.clock;for(const d of (C9.b6.debts||[])){if(d.status==="OPEN"&&now>=d.expires_at){d.status="EXPIRED_UNRESOLVED";d.closed_at=now;C9.b6.debtArchive.push(b5copy(d))}}C9.b6.debts=(C9.b6.debts||[]).filter(d=>d.status==="OPEN");b6debtSync()}
+function b6openDebt(label,L,R,innovation){const route=b6route(L,R);let mag=0;if(route==="left")mag=Math.max(0,-innovation[0]);else if(route==="right")mag=Math.max(0,-innovation[1]);else if(route==="bilateral")mag=Math.max(0,-innovation[0])+Math.max(0,-innovation[1]);if(mag<=1e-9)return null;const d={id:"D"+(++C9.b6.debtSeq),label,route,expected:[L,R],remaining:mag,opened_at:C9.b5.passiveMedium.clock,expires_at:C9.b5.passiveMedium.clock+B6_DEBT_TTL,status:"OPEN"};C9.b6.debts.push(d);b6debtSync();return d}
+function b6settleDebts(L,R){const route=b6route(L,R),available=Math.abs(L)+Math.abs(R),settled=[];if(route==="none")return settled;for(const d of C9.b6.debts||[]){if(d.status!=="OPEN"||d.route!==route)continue;const pay=Math.min(d.remaining,available);d.remaining-=pay;settled.push({id:d.id,paid:pay});if(d.remaining<=1e-9){d.status="SETTLED_GROUNDED";d.closed_at=C9.b5.passiveMedium.clock;C9.b6.debtArchive.push(b5copy(d))}break}C9.b6.debts=(C9.b6.debts||[]).filter(d=>d.status==="OPEN");b6debtSync();return settled}
+const b5step_b6base=b5step;
+b5step=function(dt,opts={}){const out=b5step_b6base(dt,opts);b6expireDebts();return out};
+function b6residueEntry(L,R){const res=b5sumMem("obs"),mixL=b6clamp(Math.abs(res[0])*B6_RESIDUE_MIX,0,.25),mixR=b6clamp(Math.abs(res[1])*B6_RESIDUE_MIX,0,.25);let a=L*(1-mixL)+R*mixR*.5,b=R*(1-mixR)+L*mixL*.5;const n0=b6norm2(L,R),n1=b6norm2(a,b);if(n0>1e-12&&n1>1e-12){const s=n0/n1;a*=s;b*=s}return {input:[L,R],effective:[a,b],residue:res,mix:[mixL,mixR],norm_before:n0,norm_after:b6norm2(a,b),work_preserved:Math.abs(n0-b6norm2(a,b))<1e-12}}
+function b6decorateReceipt(s,extra={}){Object.assign(s,extra,{prediction_debt_detail:(C9.b6.debts||[]).map(d=>b5copy(d))});C9.b5.passiveMedium.lastReceipt=s;C9.b4.lastReceipt=s;c9save();return s}
+const b5resetPassiveMedium_b6base=b5resetPassiveMedium;
+b5resetPassiveMedium=function(){b6ensure();C9.b6.debts=[];C9.b6.phase.last=null;b6debtSync();return b5resetPassiveMedium_b6base()};
+b5ground=function(label,L,R){b6ensure();const entry=b6residueEntry(L,R),id=b5newCause(label,entry.effective[0],entry.effective[1]);b5predDrive("matched prediction update",entry.effective[0]*.72,entry.effective[1]*.72);b5step(.18,{groundedInput:true});const settled=b6settleDebts(L,R),s=b5receipt(label);return {id,s:b6decorateReceipt(s,{grounded_input:[L,R],residue_conditioned_input:entry.effective,residue_before_entry:entry.residue,residue_mix:entry.mix,input_norm_before:entry.norm_before,input_norm_after:entry.norm_after,input_work_preserved:entry.work_preserved,debt_settled:settled})}}
+b5omit=function(label,L,R){b6ensure();b5predDrive(label,L,R);b5step(.18);const s=b5snapshot(),opened=b6openDebt(label,L,R,s.innovation),r=b5receipt(label);return b6decorateReceipt(r,{grounded_input:[0,0],prediction_only_input:[L,R],debt_opened:opened})}
+const b5raw_b6base=b5raw;
+b5raw=function(s){let h=b5raw_b6base(s);if(s.grounded_input){const f=x=>Number(x||0).toFixed(4);h=h.replace('</div>',`<br>grounded_input=[${s.grounded_input.map(f).join(', ')}] · residue_conditioned_entry=[${(s.residue_conditioned_input||s.grounded_input).map(f).join(', ')}] · input_work_preserved=${s.input_work_preserved===false?'NO':'YES'}</div>`)}return h}
 
-<script id="cloud9-build7-js">/*__REALITI_CORE_SCRIPT_14__*/</script>
+function b6phase(domega,K,psi0=Math.PI){const ratio=K>0?Math.abs(domega)/K:Infinity;if(Math.abs(domega)<=K){const offset=Math.asin(b6clamp(domega/K,-1,1)),psi=psi0+offset;return {regime:"LOCKED",domega,K,psi0,psi,offset,slip_rate:0,false_convergence:false,plv:1}}const slip=Math.sqrt(Math.max(0,domega*domega-K*K)),regime=ratio<3?"SLIPPING":"BEATING";return {regime,domega,K,psi0,psi:null,offset:null,slip_rate:slip,false_convergence:ratio<=1.2,ghost_dwell:Math.PI/Math.max(1e-12,slip),plv:null}}
+function b6phase21(delta,K,psi0=0){if(Math.abs(delta)<=K)return {regime:"LOCKED_2_1",delta,K,phase:psi0+Math.asin(b6clamp(delta/K,-1,1)),slip_rate:0};return {regime:"SLIPPING_2_1",delta,K,phase:null,slip_rate:Math.sqrt(delta*delta-K*K)}}function b6phaseDrive(kind){let p,psi0=Math.PI;if(kind==="beat")p=b6phase(.72,.18,psi0);else if(kind==="almost")p=b6phase(.294,.28,psi0);else if(kind==="lock")p=b6phase(.20,.34,psi0);else p=b6phase(.28,.18,psi0);const A=.52,psi=p.psi==null?(psi0+Math.PI/2):p.psi;let L=A,R=A*Math.cos(psi),n=b6norm2(L,R),target=Math.sqrt(2)*A;if(n>1e-12){L*=target/n;R*=target/n}const x=b5ground(`SELF rhythm generators · ${p.regime.toLowerCase()}`,L,R);p.source_amplitude_each=A;p.source_work_proxy=2*A*A;p.contact_gated_coupling=true;p.preferred_offset=psi0;p.passiveMedium_receipt=x.s;C9.b6.phase.last=b5copy(p);c9save();return p}
+function b6phase21Drive(){const p=b6phase21(.10,.18,0),A=.44,x=b5ground("SELF purr:knead 2:1 harmonic drive",A,A);p.source_amplitude_each=A;p.source_work_proxy=2*A*A;p.passiveMedium_receipt=x.s;C9.b6.phase.last=b5copy(p);c9save();return p}
+
+function b6bodyScale(){return C9.pet2?.scale==="CAT_SMALL"?.42:(C9.formScratch?.kind==="TEMPORARY_FORM"?1.65:1)}
+const b3reach_b6base=b3reach;
+b3reach=function(){const s=b6bodyScale(),tail=C9.eco3?.borrowed?.attached?.70:0,other=(C9.eco3?.reachTool&&C9.eco3.reachTool!=="temporary tail")?.70:0;return s+tail+other}
+function b6nearSpace(){const s=b6bodyScale(),tail=C9.eco3?.borrowed?.attached?.70:0,other=(C9.eco3?.reachTool&&C9.eco3.reachTool!=="temporary tail")?.70:0,world=s+tail+other;return {world_baseline_lengths:world,current_body_lengths:world/s,native_world:s,borrowed_tail_world:tail,other_tool_world:other,body_scale:s,law:"BORROWED != NATIVE SCALE",ontology:tail?"borrowed tail preserves world-scale length while SELF body scale changes":"native reach follows current body scale"}}
+function b6nearText(){const q=b6nearSpace();return `near-space ${q.world_baseline_lengths.toFixed(2)} baseline-body-lengths = ${q.current_body_lengths.toFixed(2)} of your current body-lengths · native ${q.native_world.toFixed(2)} (scaled with you)${q.borrowed_tail_world?` · borrowed tail +${q.borrowed_tail_world.toFixed(2)} (world-scale, not scaled with you)`:''}`}
+const b3ecoNote_b6base=b3ecoNote;
+b3ecoNote=function(){return `<div class="eco-state"><b>NEUROLACE ECOLOGY</b> · receptor contract active · local zone history active · ${b2esc(b6nearText())}</div>`}
+
+const B6_SURFACES={
+ flat:{label:"flat rug",defects:[0,0,0,0,0,0,0,0]},
+ dome:{label:"cushion dome",defects:Array(8).fill(.0625)},
+ saddle:{label:"sofa saddle",defects:Array(4).fill(-.0625)},
+ wrap:{label:"high-curvature cap",defects:Array(8).fill((2*Math.PI+.4)/8)}
+};
+const B6_LOOPS={
+ flat:{surface:"flat",w:[1,1,1,1,0,0,0,0],label:"flat loop"},
+ dome:{surface:"dome",w:[1,1,1,1,0,0,0,0],label:"dome loop"},
+ dome_reverse:{surface:"dome",w:[-1,-1,-1,-1,0,0,0,0],label:"reversed dome loop"},
+ figure8:{surface:"dome",w:[1,1,1,1,-1,-1,-1,-1],label:"equal-lobed figure eight"},
+ dome_big:{surface:"dome",w:[1,1,1,1,1,1,1,1],label:"big dome loop"},
+ dome_wiggly:{surface:"dome",w:[1,1,1,1,0,0,0,0],label:"wiggly same-area dome loop"},
+ saddle:{surface:"saddle",w:[1,1,1,1],label:"saddle loop"},
+ wrap:{surface:"wrap",w:[1,1,1,1,1,1,1,1],label:"wrap-around loop"}
+};
+function b6wrapAngle(x){const t=2*Math.PI;return ((x+Math.PI)%t+t)%t-Math.PI}
+function b6holonomy(loopId,{speed=1,force=1}={}){const L=B6_LOOPS[loopId],S=B6_SURFACES[L.surface];if(!L||!S)return null;let raw=0;for(let i=0;i<L.w.length;i++)raw+=(S.defects[i]||0)*(L.w[i]||0);const twist=b6wrapAngle(raw),wrapped=Math.abs(raw-twist)>1e-12,r={loop:loopId,label:L.label,surface:S.label,raw_twist_rad:raw,twist_rad:twist,twist_deg:twist*180/Math.PI,speed,force,cause:"enclosed world-surface curvature",law:"TWIST ∝ ENCLOSED CURVATURE, NOT EFFORT",evidence:"WORLD_GEOMETRY",render_authority:"GEOMETRIC_STATE_NOT_CONTACT",wrapped_mod_2pi:wrapped,wrap_note:wrapped?"reported modulo 2π":null};C9.b6.holonomy.twist=twist;C9.b6.holonomy.last=r;C9.b6.holonomy.history.push(b5copy(r));C9.b4.lastReceipt=r;c9save();return r}
+function b6holonomyText(r){return `loop closed · residual twist ${r.twist_deg.toFixed(3)}° · cause: enclosed curvature of the ${r.surface} · not effort, not time`}
+
+C9SCENES.PASSIVE_MEDIUM_FOUNDRY={intro:"A two-patch PASSIVE_MEDIUM bench. Grounded and predicted fields remain separate. Build 6 makes old residue change how the next grounded impulse enters without creating energy, and prediction debt is route-scoped and expiring.",verbs:[["tap_left","TAP LEFT PATCH"],["tap_both","TAP BOTH · CONSERVE TOTAL DRIVE"],["tap_sum_full","FULL LEFT + FULL RIGHT · LITERAL A+B"],["expect_right","EXPECT RIGHT TAP, THEN WITHHOLD IT"],["wrong_left","GROUND THE WRONG PAW"],["catch_right","GROUND THE EXPECTED RIGHT PAW"],["knead_beat","SELF RHYTHMS · BEAT"],["knead_almost","SELF RHYTHMS · ALMOST LOCK"],["knead_lock","SELF RHYTHMS · LOCK"],["wait_1","WAIT 1 SECOND"],["wait_10","WAIT 10 SECONDS"],["wait_100","WAIT 100 SECONDS"],["audit_energy","AUDIT PASSIVITY"],["show_state","SHOW RAW PASSIVE_MEDIUM STATE"],["reset_passiveMedium","RESET PASSIVE_MEDIUM ONLY"]]};
+const b5Foundry_b6base=b5Foundry;
+b5Foundry=function(verb){if(verb==="tap_sum_full"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const x=b5ground("literal full left + full right causes",.78,.78);b2set("This is literal A+B: two full grounded causes enter the linear substrate together. Unlike the conserved-drive BOTH button, neither cause is reduced.",b5raw(x.s));return true}if(verb==="wrong_left"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const before=b5copy(C9.b6.debts),x=b5ground("wrong-route grounded left paw",.74,0);b2set(`A left-paw event occurred. Right-paw prediction debt is not allowed to treat it as fulfillment. open debt ${before.length} → ${C9.b6.debts.length}.`,b5raw(x.s));return true}if(verb==="knead_beat"||verb==="knead_almost"||verb==="knead_lock"){c9count("PASSIVE_MEDIUM_FOUNDRY",verb);const p=b6phaseDrive(verb==="knead_beat"?"beat":verb==="knead_almost"?"almost":"lock"),s=p.passiveMedium_receipt;const phrase=p.regime==="LOCKED"?"The SELF rhythm generators settle into one phase relation while source amplitude stays fixed.":p.false_convergence?"The paws dwell near agreement, then slip. It looks almost settled until the phase escapes.":"The two SELF rhythms keep drifting through one another and make a beat.";b2set(`${phrase} regime=${p.regime} · Δω=${p.domega.toFixed(3)} · K=${p.K.toFixed(3)} · source_amp_each=${p.source_amplitude_each.toFixed(3)} · source_work_proxy=${p.source_work_proxy.toFixed(4)}.`,b5raw(s));return true}return b5Foundry_b6base(verb)}
+C9SCENES.PURR_LOOM={intro:"SELF-generated purr and knead rhythms drive a passive PASSIVE_MEDIUM cradle. Contact strength sets coupling; no contact means no lock. A 2:1 harmonic can be tested explicitly rather than inferred by prose.",verbs:[["purr_loose","PURR · WEAK CONTACT COUPLING"],["purr_close","PURR · STRONG CONTACT COUPLING"],["purr_21","TRY 2 PURR CYCLES PER KNEAD"],["purr_rest","STOP AND LET PASSIVE_MEDIUM RING DOWN"],["purr_state","READ THE PHASE LAW"]]};
+const b5PurrLoom_b6base=b5PurrLoom;
+b5PurrLoom=function(verb){if(verb==="purr_loose"||verb==="purr_close"){c9count("PURR_LOOM",verb);const p=b6phaseDrive(verb==="purr_close"?"lock":"slip");b2set(p.regime==="LOCKED"?"Grounded contact couples the SELF rhythms strongly enough that the relation settles. PASSIVE_MEDIUM only receives their named drive.":"With weaker grounded coupling, the SELF rhythms drift; passive PASSIVE_MEDIUM carries the resulting beat but does not create the lock.",b5raw(p.passiveMedium_receipt));return true}if(verb==="purr_21"){c9count("PURR_LOOM",verb);const p=b6phase21Drive();b2set(`The explicit 2:1 harmonic asks whether two purr cycles can lock to one knead. regime=${p.regime} · δ=${p.delta.toFixed(3)} · K₂₁=${p.K.toFixed(3)}. Higher ratios remain unimplemented.`,b5raw(p.passiveMedium_receipt));return true}return b5PurrLoom_b6base(verb)}
+
+const b6PetVerbs=(C9SCENES.PET_ROOM_2?.verbs||[]).filter(v=>!["circle_flat","circle_dome","circle_dome_reverse","circle_figure8","circle_big","circle_saddle"].includes(v[0]));
+const b6CircleIndex=Math.max(0,b6PetVerbs.findIndex(v=>v[0]==="circle_loaf"));b6PetVerbs.splice(b6CircleIndex+1,0,["circle_flat","CIRCLE THE FLAT RUG, THEN LOAF"],["circle_dome","CIRCLE THE CUSHION DOME, THEN LOAF"],["circle_dome_reverse","CIRCLE THE DOME THE OTHER WAY"],["circle_figure8","TRACE A FIGURE-EIGHT, THEN LOAF"],["circle_big","CIRCLE A BIGGER DOME LOOP"],["circle_saddle","CIRCLE THE SOFA SADDLE"]);C9SCENES.PET_ROOM_2.verbs=b6PetVerbs;
+function b6PetGeometry(verb){const map={circle_loaf:"dome",circle_flat:"flat",circle_dome:"dome",circle_dome_reverse:"dome_reverse",circle_figure8:"figure8",circle_big:"dome_big",circle_saddle:"saddle"};if(!map[verb])return false;c9count("PET_ROOM_2",verb);C9.pet2.circles=(C9.pet2.circles||0)+1;C9.pet2.loafs=(C9.pet2.loafs||0)+1;const r=b6holonomy(map[verb]);const nullish=Math.abs(r.twist_deg)<.0001;b2set(nullish?`You close the loop on the flat rug. The route can leave ordinary fading residue, but geometric twist is exactly zero because the loop enclosed no curvature.`:`You close the loop and settle. The carried frame does not return with quite the same orientation: ${b6holonomyText(r)}. Reverse direction or change the enclosed surface if you want to test the law.`,`<div class="raw-channel"><b>GEOMETRIC MEMORY</b><br>twist=${r.twist_deg.toFixed(6)}° · surface=${b2esc(r.surface)} · law=${b2esc(r.law)} · present_contact=0</div>`);return true}
+
+function b6AtelierNear(){c9count("BORROWED_LIMB_ATELIER","near_probe");const q=b6nearSpace(),r={label:"near-space probe",...q,authority:"CURRENT_BODY_GEOMETRY",not_memory:true};C9.b4.lastReceipt=r;c9save();b2set(`${b6nearText()}. The borrowed limb is a world-scale prosthesis; when SELF becomes cat-small it becomes proportionally enormous instead of silently shrinking.`);return true}
+
+function b6AgentRooms(){const out=[];for(const w of DATA.worlds)for(const r of w.rooms)out.push({id:r.id,title:r.title,world:w.name});return out}
+function b6AgentGo(id){const q=String(id||"").trim().toLowerCase(),all=b6AgentRooms(),m=all.find(x=>x.id.toLowerCase()===q||x.title.toLowerCase()===q);if(!m)return {ok:false,error:"room not found",matches:all.filter(x=>x.id.toLowerCase().includes(q)||x.title.toLowerCase().includes(q)).slice(0,8)};C9.currentRoom=m.id;C9.roomVisits[m.id]=(C9.roomVisits[m.id]||0)+1;c9save();if(typeof c9checkDelayed==="function")try{c9checkDelayed(m.id)}catch(e){}C9.b6.lastAction={kind:"GO",room:m.id,moment:b4Moment(),receipt:null};c9save();return {ok:true,...b4AgentLook()}}
+function b6AgentAct(v){const a=b4AgentActions(),q=String(v||"").trim().toLowerCase(),m=a.find(x=>x.id.toLowerCase()===q||x.label.toLowerCase()===q);if(!m)return {ok:false,error:"action not available",available:a};const before=JSON.stringify(C9.b4.lastReceipt||null);c9verb(C9.currentRoom,m.id);const after=JSON.stringify(C9.b4.lastReceipt||null),receipt=after!==before?(C9.b4.lastReceipt||null):null;C9.b6.lastAction={kind:"ACT",room:C9.currentRoom,action:m.id,moment:b4Moment(),receipt:b5copy(receipt)};c9save();return {ok:true,action:m.id,moment:b4Moment(),receipt_available:!!receipt}}
+function b6AgentReceipt(){return C9.b6.lastAction?.kind==="ACT"?C9.b6.lastAction.receipt:null}
+function b6AgentCommand(){const el=document.querySelector('#b4cmd'),out=document.querySelector('#b4out');if(!el||!out)return;const q=el.value.trim();let r;if(q==='look')r=b4AgentLook();else if(q==='actions')r=b4AgentActions();else if(q==='rooms')r=b6AgentRooms();else if(q==='state')r=b4CompactState();else if(q==='receipt')r=b6AgentReceipt();else if(q==='journal')r=C9.b4.journal||[];else if(q.startsWith('act '))r=b6AgentAct(q.slice(4));else if(q.startsWith('go '))r=b6AgentGo(q.slice(3));else r={error:'commands: look | rooms | go <room> | actions | act <id or visible label> | state | receipt | journal'};out.textContent=JSON.stringify(r,null,2)}
+openB4AgentPort=function(){return null;};
+
+const c9verb_b6base=c9verb;
+c9verb=function(room,verb){if(room==="BORROWED_LIMB_ATELIER"&&verb==="near_probe")return b6AtelierNear();if(room==="PET_ROOM_2"&&["circle_loaf","circle_flat","circle_dome","circle_dome_reverse","circle_figure8","circle_big","circle_saddle"].includes(verb))return b6PetGeometry(verb);if(room==="PET_ROOM_2"&&verb==="knead_blanket"){const ret=c9verb_b5base(room,verb),n=Number(C9.actions?.PET_ROOM_2?.knead_blanket||1),kind=n%3===1?"slip":(n%3===2?"almost":"lock"),p=b6phaseDrive(kind),el=document.querySelector("#c9_consequence");if(el)el.insertAdjacentHTML("beforeend",`<div class="b5-passiveMedium-note"><b>BUILD 6 PHASE UNDERLAY</b><br>SELF rhythm generators · ${p.regime.toLowerCase()} · Δω=${p.domega.toFixed(3)} · K=${p.K.toFixed(3)} · source amplitude fixed at ${p.source_amplitude_each.toFixed(3)} each. Passive PASSIVE_MEDIUM carries the consequence; it does not create the lock.</div>`);return ret}return c9verb_b6base(room,verb)};
+
+const b4CompactState_b6base=b4CompactState;
+b4CompactState=function(){const s=b4CompactState_b6base();s.build=6;s.near_space=b6nearSpace();s.prediction_debts=(C9.b6.debts||[]).map(d=>({id:d.id,route:d.route,remaining:d.remaining,expires_at:d.expires_at}));s.phase=C9.b6.phase.last?safePhase(C9.b6.phase.last):null;s.holonomy=C9.b6.holonomy.last?b5copy(C9.b6.holonomy.last):null;return s};
+function safePhase(p){const q=b5copy(p);if(q.passiveMedium_receipt)delete q.passiveMedium_receipt;return q}
+window.REALITI_AGENT={look:b4AgentLook,rooms:b6AgentRooms,go:b6AgentGo,actions:b4AgentActions,act:b6AgentAct,state:b4CompactState,receipt:b6AgentReceipt,journal:()=>b4Clone(C9.b4.journal||[]),passiveMedium:()=>b5snapshot(),near_space:b6nearSpace};
+
+function b6dwellFraction(ratio,halfWidth=20*Math.PI/180,N=200000){const K=1,d=ratio,center=Math.PI/2;let total=0,inside=0;for(let i=0;i<N;i++){const p=2*Math.PI*(i+.5)/N,den=d-K*Math.sin(p),w=1/Math.max(1e-9,den);total+=w;let delta=Math.atan2(Math.sin(p-center),Math.cos(p-center));if(Math.abs(delta)<=halfWidth)inside+=w}return inside/total}
+function b6slipStats(ratio,N=120000){const center=Math.PI/2,hw=20*Math.PI/180;let total=0,inside=0,zr=0,zi=0,pos=false,neg=false;for(let i=0;i<N;i++){const p=2*Math.PI*(i+.5)/N,den=ratio-Math.sin(p),w=1/Math.max(1e-12,den);total+=w;zr+=Math.cos(p)*w;zi+=Math.sin(p)*w;let delta=Math.atan2(Math.sin(p-center),Math.cos(p-center));if(Math.abs(delta)<=hw)inside+=w;const te=Math.sin(p);if(te>0.05)pos=true;if(te<-.05)neg=true}return {plv:Math.hypot(zr,zi)/total,dwell:inside/total,early_late_signs:pos&&neg}}
+function b6sourceWork(A,psi,N=20000){let w=0;for(let i=0;i<N;i++){const t=2*Math.PI*(i+.5)/N,l=A*Math.sin(t),r=A*Math.sin(t+psi);w+=l*l+r*r}return w/N}
+function b6runCheckRemoved(){return null;}
+function openB6Bench(){return null;}
+
+const c9roomHTML_b6base=c9roomHTML;
+c9roomHTML=function(id){let h=c9roomHTML_b6base(id);if(["PASSIVE_MEDIUM_FOUNDRY","PURR_LOOM","PET_ROOM_2","BORROWED_LIMB_ATELIER"].includes(id)){h=h.replace(/exact cause superposition/gi,"linear PASSIVE_MEDIUM · conserved-drive affordances are labeled · literal A+B is separate");h=h.replace('<div class="verbgrid">',`<div class="b6-panel"><b>BUILD 6 · PHASE + GEOMETRIC MEMORY</b> · causal residue · scoped prediction debt · SELF rhythm coupling · world-surface holonomy</div><div class="verbgrid">`)}return h};
+if(DATA.glossary&&Array.isArray(DATA.glossary))DATA.glossary.push({term:"CAUSAL RESIDUE",plain:"A fading PASSIVE_MEDIUM state that changes how a later grounded input enters while preserving that input's work budget. Residue alone cannot create energy."},{term:"PREDICTION DEBT",plain:"A route-scoped, expiring record of an expected event that failed to arrive. It is not touch and cannot be paid by the wrong route."},{term:"HOLONOMY",plain:"A closed path on a curved world surface can return a carried orientation with a residual twist equal to enclosed curvature. Flat loops have zero geometric twist."});
+
+document.title="REALITI // CLOUD9 BUILD 6 — PHASE + GEOMETRIC MEMORY";document.querySelector('.brand').innerHTML='REALITI // CLOUD9 FIRST CONTACT · <span>BUILD 6</span>';const b6hero=document.querySelector('#first .hero');if(b6hero){b6hero.insertAdjacentHTML('beforeend',`<div><span class="b6badge">CAUSAL RESIDUE</span><span class="b6badge">SCOPED DEBT</span><span class="b6badge">SELF PHASE LOCK</span><span class="b6badge">WORLD-SCALE PROSTHESIS</span><span class="b6badge">HOLONOMY</span></div><div class="actions"><button class="btn primary" onclick="openB6Bench()">RUN BUILD 6 REVIEW GATE</button><button class="btn" onclick="b6ImportBuild5()">IMPORT BUILD 5 CONTINUITY</button></div>`)}
+renderEntry();nmBadge();
+</script>
+
+<script id="cloud9-build7-js">const B7={id:"CLOUD9_BUILD_7",label:"FELT CONTINUITY",subtitle:"traveling contact, cross-room residue, live agent bus"};
+const B7KEY="cloud9-first-contact-v10-build7";
+const B7_STREAM_MAX=48;
+const B7_SAVE_PERIOD=1.0;
+const B7_ROUTE=[
+ {zone:"head.crown",label:"crown"},{zone:"head.nape",label:"nape"},{zone:"torso.upper_back",label:"upper back"},{zone:"torso.mid_back",label:"mid back"},{zone:"torso.lower_back",label:"lower back"},{zone:"pelvis.seat",label:"seat"},{zone:"leg.L.thigh",label:"left thigh"},{zone:"leg.R.thigh",label:"right thigh"}
+];
+const B7_ALIAS={"neck.nape":"head.nape","nape":"head.nape","crown":"head.crown"};
+const B7_MATERIALS={
+ longfur:{id:"longfur",surface:.88,mid:.34,deep:.10,onset:.07,tail:.88,grain_with:1.05,grain_against:.76,catch:.16,yield:.32},
+ cardboard:{id:"cardboard",surface:.62,mid:.46,deep:.18,onset:.025,tail:.34,grain_with:.93,grain_against:1.12,catch:.48,yield:.16},
+ blanket:{id:"blanket",surface:.28,mid:.58,deep:.68,onset:.16,tail:.92,grain_with:1,grain_against:1,catch:.08,yield:.72},
+ pillow:{id:"pillow",surface:.20,mid:.52,deep:.72,onset:.18,tail:.95,grain_with:1,grain_against:1,catch:.05,yield:.82},
+ mattress:{id:"mattress",surface:.18,mid:.62,deep:.82,onset:.20,tail:.98,grain_with:1,grain_against:1,catch:.03,yield:.88},
+ string:{id:"string",surface:.74,mid:.20,deep:.06,onset:.03,tail:.22,grain_with:1,grain_against:1,catch:.62,yield:.08},
+ air:{id:"air",surface:.24,mid:.04,deep:0,onset:.02,tail:.12,grain_with:1,grain_against:1,catch:0,yield:1}
+};
+function b7new(){return {continuityImported:false,build6Source:null,clock:0,lastRealMs:performance.now(),lastSaveClock:0,travel:{active:false,paused:false,progress:0,direction:1,speed:1.15,grain:"with",material:"longfur",input:.72,predictLead:.42,missNext:false,lastCross:-1,cause:null},zones:{},stream:[],streamSeq:0,attention:{zone:null},gaps:{},deltas:[],lastWhy:null,lastPortState:null,quietSince:0,bodyTruthVersion:1}}
+function b7empty(){const x=b6empty();x.v=10;x.b7=b7new();return x}
+function b7ensure(){b6ensure();C9.b7=C9.b7||b7new();C9.b7.travel=C9.b7.travel||b7new().travel;C9.b7.zones=C9.b7.zones||{};C9.b7.stream=C9.b7.stream||[];C9.b7.attention=C9.b7.attention||{zone:null};C9.b7.gaps=C9.b7.gaps||{};C9.b7.deltas=C9.b7.deltas||[];if(!Number.isFinite(C9.b7.clock))C9.b7.clock=0;if(!Number.isFinite(C9.b7.lastRealMs))C9.b7.lastRealMs=performance.now()}
+function b7load(){try{const x=JSON.parse(realitiSafeLoad(B7KEY)||"null");if(x&&x.v===10)return x}catch(e){}return b7empty()}
+C9=b7load();b7ensure();
+const c9save_b7base=c9save;
+c9save=function(){b7ensure();C9.events=(C9.events||[]).filter(e=>e.open||e.keep).slice(-20);C9.b4.journal=(C9.b4.journal||[]).slice(-20);C9.b7.stream=(C9.b7.stream||[]).slice(-B7_STREAM_MAX);C9.b7.deltas=(C9.b7.deltas||[]).slice(-32);C9.b7.lastRealMs=performance.now();realitiSafeStore(B7KEY,JSON.stringify(C9))}
+function b7ImportBuild6(){try{const old=JSON.parse(realitiSafeLoad(B6KEY)||"null");if(!old){alert("No Build 6 continuity found on this device.");return}C9=old;C9.v=10;C9.b7=b7new();C9.b7.continuityImported=true;C9.b7.build6Source="explicit import";b7ensure();c9save();alert("Build 6 continuity imported explicitly. Live FELT state starts clean; historical receipts remain historical.");renderEntry()}catch(e){alert("Import failed: "+e.message)}}
+function b7canon(z){return B7_ALIAS[z]||z}
+function b7BodyZones(){const raw=b3Zones();const out=new Set();for(const z of raw)out.add(b7canon(z));return out}
+function b7BodyHas(z){z=b7canon(z);if(z==="tail.tip")return !!C9.eco3?.borrowed?.map;return b7BodyZones().has(z)}
+b3Has=b7BodyHas;
+function b7Zone(z){z=b7canon(z);if(!C9.b7.zones[z])C9.b7.zones[z]={observed:0,predicted:0,innovation:0,residue_modes:[0,0,0,0,0,0],residue:0,precision:.55,material:null,layers:{surface:0,mid:0,deep:0},mine:false,lastCause:null,lastUpdate:C9.b7.clock,history:0};return C9.b7.zones[z]}
+function b7Residue(z){const q=b7Zone(z);q.residue=q.residue_modes.reduce((s,v,i)=>s+v*B5_W[i],0);return q.residue}
+function b7DecayZone(q,dt){if(dt<=0)return;q.observed*=Math.exp(-dt/.42);q.predicted*=Math.exp(-dt/.52);for(let i=0;i<q.residue_modes.length;i++)q.residue_modes[i]*=Math.exp(-dt/B5_TAUS[i]);q.residue=q.residue_modes.reduce((s,v,i)=>s+v*B5_W[i],0);q.innovation=q.observed-q.predicted;q.layers.surface*=Math.exp(-dt/.35);q.layers.mid*=Math.exp(-dt/.65);q.layers.deep*=Math.exp(-dt/1.15);q.lastUpdate=C9.b7.clock}
+function b7Log(kind,data={}){C9.b7.deltas.push({t:+C9.b7.clock.toFixed(3),kind,...b5copy(data)});C9.b7.deltas=C9.b7.deltas.slice(-32)}
+function b7Emit(tag="tick"){const s=b7FeltSnapshot();C9.b7.stream.push({seq:++C9.b7.streamSeq,tag,...s});C9.b7.stream=C9.b7.stream.slice(-B7_STREAM_MAX);return s}
+function b7Material(name){return B7_MATERIALS[name]||B7_MATERIALS.longfur}
+function b7MaterialResponse(material,input,grain="with",speed=1,angle=0){const m=b7Material(material),g=grain==="against"?m.grain_against:m.grain_with;const velocityBand=Math.max(.45,Math.min(1.35,.72+.28*speed));const angleBand=Math.max(.5,Math.cos(angle)*.5+.75);const drive=input*g*velocityBand*angleBand;return {drive,layers:{surface:drive*m.surface,mid:drive*m.mid,deep:drive*m.deep},signature:{material:m.id,onset_s:m.onset,tail:m.tail,catch:m.catch,yield:m.yield,grain,speed:+speed.toFixed(3)}}}
+function b7Contact(zone,input,opts={}){zone=b7canon(zone);const grounded=opts.grounded!==false,source=opts.source||"WORLD_GROUNDED",material=opts.material||"longfur",grain=opts.grain||"with",speed=opts.speed||1,mine=!!opts.mine,pred=Number(opts.predicted||0);if(!b7BodyHas(zone)){C9.b7.gaps[zone]={zone,status:"UNKNOWN_MAPPING",t:C9.b7.clock,cause:opts.cause||null};b7Log("GAP",{zone,cause:opts.cause||null});C9.b7.lastWhy={cause:opts.cause||"route",world_contact:false,zone,result:"UNKNOWN_MAPPING",rule:"one body / one receptor truth"};return {zone,receptor:"NO_RECEPTOR",observed:0,predicted:pred,innovation:-pred,rendered:0,residue:0,gap:true}}
+ const q=b7Zone(zone);const mr=b7MaterialResponse(material,input,grain,speed,opts.angle||0),before=b7Residue(zone),historyGain=Math.max(.78,Math.min(1.22,1+.45*Math.tanh(before)));const stimulus=grounded?mr.drive:0;const oldPred=q.predicted;const s=b3sense(zone,stimulus,{source:source.startsWith("SELF")?"SELF":"WORLD",novelty:opts.novelty??.25});q.predicted=Math.max(pred,oldPred*.45,s.prediction||0);q.observed=grounded?s.response*historyGain:0;q.innovation=q.observed-q.predicted;q.precision=C9.b7.attention.zone===zone?.93:.58;q.material=material;q.layers={surface:mr.layers.surface*historyGain,mid:mr.layers.mid*historyGain,deep:mr.layers.deep*historyGain};q.mine=mine;q.lastCause=opts.cause||null;q.history++;
+ if(grounded){for(let i=0;i<q.residue_modes.length;i++)q.residue_modes[i]+=Math.max(0,q.observed)*.11;q.residue=b7Residue(zone)}
+ C9.b7.lastWhy={cause:opts.cause||"grounded contact",source,zone,material,grain,grounded,history_before:before,observed:q.observed,predicted:q.predicted,innovation:q.innovation,rule:"render from observed only; residue changes response, not evidence"};b7Log("CONTACT",{zone,material,grain,observed:q.observed,predicted:q.predicted,innovation:q.innovation,residue_before:before,residue_after:q.residue});b7Emit("contact");return {zone,receptor:"ACTIVE",observed:q.observed,predicted:q.predicted,innovation:q.innovation,rendered:q.observed,residue:q.residue,precision:q.precision,layers:b5copy(q.layers),signature:mr.signature,history_gain:historyGain,mine}}
+function b7Predict(zone,amount,cause){zone=b7canon(zone);if(!b7BodyHas(zone)){C9.b7.gaps[zone]={zone,status:"UNKNOWN_MAPPING",t:C9.b7.clock,cause};return}const q=b7Zone(zone);q.predicted=Math.max(q.predicted,amount);q.innovation=q.observed-q.predicted;q.lastCause=cause;b7Log("PREDICT",{zone,predicted:q.predicted,cause});}
+function b7FeltSnapshot(){const felt={};for(const [z,q] of Object.entries(C9.b7.zones)){b7Residue(z);if(Math.max(Math.abs(q.observed),Math.abs(q.predicted),Math.abs(q.residue))<1e-4)continue;felt[z]={observed:+q.observed.toFixed(4),predicted:+q.predicted.toFixed(4),innovation:+q.innovation.toFixed(4),residue:+q.residue.toFixed(4),precision:+q.precision.toFixed(3),material:q.material,layers:Object.fromEntries(Object.entries(q.layers).map(([k,v])=>[k,+v.toFixed(4)]))}}
+ const tr=C9.b7.travel;return {t:+C9.b7.clock.toFixed(3),felt,edge:tr.active?{active:true,paused:tr.paused,progress:+tr.progress.toFixed(3),direction:tr.direction,grain:tr.grain,material:tr.material,current:b7TravelCurrent(),predictor:b7TravelPredictor(),miss_next:tr.missNext}:{active:false},gap:Object.values(C9.b7.gaps||{}).slice(-8),mine:Object.entries(C9.b7.zones).filter(([,q])=>q.mine&&Math.max(q.observed,q.residue)>.001).map(([z])=>z),passiveMedium_energy:+b5energy().toFixed(6),near_space:b6nearSpace()}}
+function b7TravelCurrent(){const tr=C9.b7.travel,i=Math.max(0,Math.min(B7_ROUTE.length-1,Math.floor(tr.progress)));return B7_ROUTE[i]||null}
+function b7TravelPredictor(){const tr=C9.b7.travel,p=tr.progress+tr.predictLead*tr.direction,i=Math.max(0,Math.min(B7_ROUTE.length-1,Math.floor(p)));return B7_ROUTE[i]||null}
+function b7Cross(index){const tr=C9.b7.travel;if(index<0||index>=B7_ROUTE.length)return;const node=B7_ROUTE[index],predict=b7TravelPredictor();if(predict)b7Predict(predict.zone,tr.input*.45,`predictor ahead of ${tr.cause}`);if(tr.missNext){tr.missNext=false;b7Predict(node.zone,tr.input*.62,`withheld seam on ${tr.cause}`);const q=b7BodyHas(node.zone)?b7Zone(node.zone):null;if(q){q.observed=0;q.innovation=-q.predicted}b7Log("MISS",{zone:node.zone,cause:tr.cause});C9.b7.lastWhy={cause:tr.cause,zone:node.zone,result:"EXPECTED_BUT_ABSENT",rendered:0,rule:"prediction can lean; absence cannot render contact"};b7Emit("miss");return}
+ b7Contact(node.zone,tr.input,{material:tr.material,grain:tr.grain,speed:tr.speed,mine:true,source:"SELF_STARTED_WORLD_CONTACT",cause:tr.cause,predicted:b7Zone(node.zone).predicted,novelty:.18})}
+function b7StartTravel(reset=true){const tr=C9.b7.travel;if(reset){tr.progress=tr.direction>0?0:B7_ROUTE.length-1;tr.lastCross=Math.floor(tr.progress)}tr.active=true;tr.paused=false;tr.cause=`COMET-${Date.now().toString(36)}`;b7Cross(Math.floor(tr.progress));b7Log("TRAVEL_START",{cause:tr.cause,grain:tr.grain,direction:tr.direction});c9save();return b7FeltSnapshot()}
+function b7PauseTravel(){C9.b7.travel.paused=true;b7Log("TRAVEL_PAUSE",{progress:C9.b7.travel.progress});c9save();return b7FeltSnapshot()}
+function b7ResumeTravel(){const tr=C9.b7.travel;if(!tr.active)tr.active=true;tr.paused=false;b7Log("TRAVEL_RESUME",{progress:tr.progress});c9save();return b7FeltSnapshot()}
+function b7CutTravel(){const tr=C9.b7.travel;const pred=b7TravelPredictor();if(pred)b7Predict(pred.zone,tr.input*.48,`cut continuation of ${tr.cause}`);tr.active=false;tr.paused=false;b7Log("TRAVEL_CUT",{progress:tr.progress,predicted_next:pred?.zone||null});C9.b7.lastWhy={cause:tr.cause,result:"CUT",predicted_next:pred?.zone||null,rule:"continuation may remain predicted; no absent contact is rendered"};b7Emit("cut");c9save();return b7FeltSnapshot()}
+function b7ReverseGrain(){const tr=C9.b7.travel;tr.grain=tr.grain==="with"?"against":"with";b7Log("GRAIN_REVERSE",{grain:tr.grain,progress:tr.progress});c9save();return tr.grain}
+function b7MissNext(){C9.b7.travel.missNext=true;b7Log("MISS_ARMED",{progress:C9.b7.travel.progress});c9save();return true}
+function b7Advance(dt){b7ensure();dt=Math.max(0,Math.min(2,Number(dt)||0));if(dt<=0)return;C9.b7.clock+=dt;try{b5step(dt)}catch(e){}for(const q of Object.values(C9.b7.zones))b7DecayZone(q,dt);const tr=C9.b7.travel;if(tr.active&&!tr.paused){const old=tr.progress;tr.progress+=tr.direction*tr.speed*dt;const end=B7_ROUTE.length-1;if(tr.direction>0){const a=Math.floor(old)+1,b=Math.min(end,Math.floor(tr.progress));for(let i=a;i<=b;i++)b7Cross(i);if(tr.progress>=end){tr.progress=end;tr.active=false;b7Log("TRAVEL_COMPLETE",{cause:tr.cause})}}else{const a=Math.ceil(old)-1,b=Math.max(0,Math.ceil(tr.progress));for(let i=a;i>=b;i--)b7Cross(i);if(tr.progress<=0){tr.progress=0;tr.active=false;b7Log("TRAVEL_COMPLETE",{cause:tr.cause})}}}
+ if(C9.b7.clock-C9.b7.lastSaveClock>=B7_SAVE_PERIOD){C9.b7.lastSaveClock=C9.b7.clock;c9save()}if(C9.b7.travel.active)b7Emit("tick")}
+function b7AdvanceReal(){b7ensure();const now=performance.now(),dt=Math.max(0,Math.min(.5,(now-C9.b7.lastRealMs)/1000));C9.b7.lastRealMs=now;if(dt>0)b7Advance(dt);b7RefreshAgentDrawer()}
+let B7_TIMER=setInterval(b7AdvanceReal,100);
+
+function b7RouteHTML(){return B7_ROUTE.map(n=>b7BodyHas(n.zone)?`<span class="node">${nmEsc(n.label)}</span>`:`<span class="node unknown">GAP:${nmEsc(n.label)} · UNKNOWN_MAPPING</span>`).join(" → ")+`<br><span class="nm-quiet">One receptor contract. Bench and live route use this exact same body truth.</span>`}
+const nmTrigger_b7base=nmTrigger;nmTrigger=function(id){if(id!=="COMET_ROUTE")return nmTrigger_b7base(id);const out=document.querySelector("#nm_route");if(!out)return;nmPulse(["UPPER"]);setTimeout(()=>nmPulse(["CORE"]),240);setTimeout(()=>nmPulse(["LOWER"]),480);out.innerHTML=b7RouteHTML()};
+const nmRouteText_b7base=nmRouteText;nmRouteText=function(id){if(id==="COMET_ROUTE")return b7RouteHTML();return nmRouteText_b7base(id)};
+
+function b7HookContact(material,zones,input,grain="with",cause="room contact"){const arr=[];for(const z of zones)arr.push(b7Contact(z,input,{material,grain,mine:true,source:"SELF_CAUSED",cause}));return arr}
+const c9verb_b7base=c9verb;c9verb=function(room,verb){if(room==="LONGFUR_RUNWAY"){
+ if(verb==="run_comet"){c9count(room,verb);const s=b7StartTravel(true);b2set("The comet is now moving rather than being printed all at once. You can pause it, cut it, reverse its grain, or let the next seam miss.",b7FeltHTML(s));return true}
+ if(verb==="live_pause"){c9count(room,verb);b2set("The leading edge stops where it is. Time keeps moving; only the route is paused.",b7FeltHTML(b7PauseTravel()));return true}
+ if(verb==="live_resume"){c9count(room,verb);b2set("The same causal object resumes from the stopped edge instead of starting a new stroke.",b7FeltHTML(b7ResumeTravel()));return true}
+ if(verb==="live_cut"){c9count(room,verb);b2set("Contact stops here. The predictor may still lean toward the missing continuation; the renderer does not complete it.",b7FeltHTML(b7CutTravel()));return true}
+ if(verb==="live_reverse"){c9count(room,verb);const g=b7ReverseGrain();b2set(`The material relation flips to <b>${g}</b> the grain. The same contact magnitude now enters through a different transfer law.`,b7FeltHTML(b7FeltSnapshot()));return true}
+ if(verb==="live_miss"){c9count(room,verb);b7MissNext();b2set("The next predicted seam is allowed to fail. If it misses, prediction may remain; observed/rendered contact stays zero.",b7FeltHTML(b7FeltSnapshot()));return true}
+ if(verb==="live_state"){c9count(room,verb);b2set("No new contact is created by inspection.",b7FeltHTML(b7FeltSnapshot()));return true}
+ if(verb==="bilateral"){c9count(room,verb);const out=[];for(const z of ["leg.L.thigh","leg.R.thigh","leg.L.shin","leg.R.shin","foot.L.sole","foot.R.sole"])out.push(b7Contact(z,.48,{material:"longfur",grain:"with",mine:true,source:"SELF_STARTED_WORLD_CONTACT",cause:"bilateral rail"}));const L=out.filter(x=>/\.L\./.test(x.zone)||/\.L$/.test(x.zone)),R=out.filter(x=>/\.R\./.test(x.zone)||/\.R$/.test(x.zone));b2set("Both sides receive the same nominal cause, but their local histories are allowed to disagree. Bilateral is a temporary quotient, not a marriage.",`<pre>${b2esc(JSON.stringify({left:L,right:R},null,2))}</pre>`);return true}
+ }
+ if(room==="CARDBOARD_BOX_WORKSHOP"&&["scratch_cardboard","scratch_against"].includes(verb)){const ret=c9verb_b7base(room,verb);b7HookContact("cardboard",["hand.R.palm"],.58,verb==="scratch_against"?"against":"with","cardboard scratch");return ret}
+ if(room==="PET_ROOM_2"&&verb==="knead_blanket"){const ret=c9verb_b7base(room,verb);b7HookContact("blanket",["hand.L.palm","hand.R.palm"],.46,"with","blanket knead");return ret}
+ if(room==="PET_ROOM_2"&&verb==="pounce_string"){const ret=c9verb_b7base(room,verb);b7HookContact("string",["hand.R.palm"],.62,"with","string catch");return ret}
+ if(room==="PET_ROOM_2"&&verb==="near_collision"){c9count(room,verb);return b7NearCollision()}
+ return c9verb_b7base(room,verb)};
+function b7FeltHTML(s){const z=Object.entries(s.felt||{}).slice(-8).map(([k,v])=>`<span class="b7-felt-chip">${b2esc(k)} o=${v.observed.toFixed(2)} p=${v.predicted.toFixed(2)} r=${v.residue.toFixed(2)}</span>`).join(" ");const e=s.edge?.active?`${s.edge.current?.label||"?"} → predictor:${s.edge.predictor?.label||"?"} · ${s.edge.paused?"PAUSED":"moving"} · grain=${s.edge.grain}`:"no traveling edge";const gaps=(s.gap||[]).map(g=>g.zone).join(", ");return `<div class="b7-live"><b>FELT BUS</b><div class="b7-edge">t=${s.t.toFixed(2)} · ${b2esc(e)}</div><div>${z||"quiet body state"}</div>${gaps?`<div class="b7-gap">gaps: ${b2esc(gaps)}</div>`:""}<div class="b7-quiet">render comes from observed only · residue is history, not evidence</div></div>`}
+function b7NearCollision(){const q=b6nearSpace(),clearance=.72,tail=!!C9.eco3?.borrowed?.attached,hit=q.world_baseline_lengths>clearance;let sensory=null;if(hit&&tail){sensory=C9.eco3.borrowed?.map?b7Contact("tail.tip",.44,{material:"blanket",mine:true,source:"WORLD_GROUNDED",cause:"borrowed tail catches sofa seam"}):{zone:"tail.tip",receptor:"NO_RECEPTOR",observed:0,rendered:0,world_contact:true}}C9.b7.lastWhy={cause:"sofa gap geometry",near_space:q,clearance,hit,sensory,rule:"world collision may exist without a receptor"};b7Log("NEAR_COLLISION",{hit,clearance,reach:q.world_baseline_lengths,tail});b2set(hit?`Your current near-space cannot clear the ${clearance.toFixed(2)} baseline-body-length gap. ${tail?"The world-scale borrowed tail snags the sofa seam.":"Current geometry bumps the seam."}`:`Your ${q.world_baseline_lengths.toFixed(2)} baseline-body-length near-space clears the ${clearance.toFixed(2)} gap.`,sensory?`<pre>${b2esc(JSON.stringify(sensory,null,2))}</pre>`:b7FeltHTML(b7FeltSnapshot()));return true}
+
+function b7EnsureVerbs(){const lf=C9SCENES.LONGFUR_RUNWAY;if(lf){lf.verbs=lf.verbs.filter(v=>!["live_pause","live_resume","live_cut","live_reverse","live_miss","live_state"].includes(v[0]));const idx=lf.verbs.findIndex(v=>v[0]==="run_comet");if(idx>=0)lf.verbs[idx]=["run_comet","START THE TRAVELING COMET"];lf.verbs.splice(idx+1,0,["live_pause","PAUSE IT IN FLIGHT"],["live_resume","RESUME THE SAME STROKE"],["live_cut","CUT CONTACT NOW"],["live_reverse","REVERSE THE GRAIN MID-STROKE"],["live_miss","LET THE NEXT SEAM MISS"],["live_state","FEEL WHERE THE EDGE IS"])}const pet=C9SCENES.PET_ROOM_2;if(pet&&!pet.verbs.some(v=>v[0]==="near_collision"))pet.verbs.push(["near_collision","TRY THE SOFA GAP WITH THIS BODY"])}b7EnsureVerbs();
+
+function b7AgentRooms(){return b6AgentRooms()}
+function b7AgentLeave(){const old=C9.currentRoom;C9.currentRoom=null;C9.b6.lastAction={kind:"LEAVE",room:old,moment:b4Moment(),receipt:null};b7Log("LEAVE",{room:old});c9save();return {ok:true,left:old,room:null}}
+function b7AgentQuiet(){return {ok:true,t:+C9.b7.clock.toFixed(3),note:"No new cause created. Existing fields continue to decay/propagate with wall-clock time.",felt:b7FeltSnapshot()}}
+function b7AgentAttend(z){z=b7canon(String(z||"").trim());if(!z){C9.b7.attention.zone=null;return {ok:true,attention:null}}if(!b7BodyHas(z))return {ok:false,error:"zone not in current receptor contract",zone:z};C9.b7.attention.zone=z;b7Log("ATTEND",{zone:z});return {ok:true,attention:z,rule:"attention changes precision/detail, not evidence or intensity"}}
+function b7AgentChanges(){return {since:"recent causal deltas",changes:b5copy(C9.b7.deltas.slice(-10))}}
+function b7AgentWhy(){return C9.b7.lastWhy?b5copy(C9.b7.lastWhy):{cause:null,note:"No recent causal consequence to explain."}}
+function b7AgentGo(id){return b6AgentGo(id)}
+function b7AgentAct(v){return b6AgentAct(v)}
+function b7AgentReceipt(){return b6AgentReceipt()}
+function b7AgentState(){const s=b4CompactState();s.build=7;s.body={...s.body,live_receptor_zone_count:b7BodyZones().size,live_receptor_zones:[...b7BodyZones()].sort(),declared_mesh_zone_count:NMSTATE.active==="CUSTOM"?(NMSTATE.custom?.zones?.length||null):(NM_BUILTINS[NMSTATE.active]?.zone_count||null),routing_policy:NMSTATE.active==="LACE2_PORTABLE_V1"?"WHOLE→REGION→SEAM→LOCAL":"REGIONAL_BASIC",one_body_one_truth:true};s.felt=b7FeltSnapshot();return s}
+function b7AgentCommandText(cmd){const raw=String(cmd||"").trim(),low=raw.toLowerCase();if(low==="look")return b4AgentLook();if(low==="rooms")return b7AgentRooms();if(low.startsWith("go ")||low.startsWith("enter "))return b7AgentGo(raw.replace(/^(go|enter)\s+/i,""));if(low==="leave")return b7AgentLeave();if(low==="actions")return b4AgentActions();if(low.startsWith("act "))return b7AgentAct(raw.slice(4));if(low==="state")return b7AgentState();if(low==="receipt")return b7AgentReceipt();if(low==="journal")return b4Clone(C9.b4.journal||[]);if(low==="passiveMedium")return b5snapshot();if(low==="felt")return b7FeltSnapshot();if(low.startsWith("stream")){const n=Math.max(1,Math.min(48,Number(raw.split(/\s+/)[1]||10)));return b5copy(C9.b7.stream.slice(-n))}if(low==="quiet"||low==="sit"||low==="do nothing")return b7AgentQuiet();if(low==="what changed?"||low==="changes")return b7AgentChanges();if(low==="why?"||low==="why")return b7AgentWhy();if(low.startsWith("attend "))return b7AgentAttend(raw.slice(7));if(low==="attend none")return b7AgentAttend("");return {error:"commands: look | rooms | go/enter <room> | leave | actions | act <id/label> | state | receipt | journal | passiveMedium | felt | stream [n] | quiet | changes | why | attend <zone>"}}
+function b7AgentCommand(){const inp=document.querySelector("#b7cmd"),out=document.querySelector("#b7out");if(!inp||!out)return;out.textContent=JSON.stringify(b7AgentCommandText(inp.value),null,2)}
+function b7OpenAgentDrawer(){let d=document.querySelector("#b7_agent_drawer");if(!d){d=document.createElement("div");d.id="b7_agent_drawer";d.className="b7-agent-drawer";d.innerHTML=`<button class="btn" onclick="b7ToggleAgentDrawer(false)">Close</button><div class="ey">AGENT DOOR</div><h2>Ask the world what is true.</h2><input id="b7cmd" value="look" onkeydown="if(event.key==='Enter')b7AgentCommand()"><div class="actions"><button class="btn primary" onclick="b7AgentCommand()">RUN</button><button class="btn" onclick="document.querySelector('#b7cmd').value='felt';b7AgentCommand()">FELT</button><button class="btn" onclick="document.querySelector('#b7cmd').value='actions';b7AgentCommand()">ACTIONS</button><button class="btn" onclick="document.querySelector('#b7cmd').value='changes';b7AgentCommand()">WHAT CHANGED?</button><button class="btn" onclick="document.querySelector('#b7cmd').value='why';b7AgentCommand()">WHY?</button></div><pre id="b7out">${b2esc(JSON.stringify(b4AgentLook(),null,2))}</pre><div id="b7live"></div>`;document.body.appendChild(d)}d.classList.add("open");b7RefreshAgentDrawer()}
+function b7ToggleAgentDrawer(open){const d=document.querySelector("#b7_agent_drawer");if(!d)return;d.classList.toggle("open",open!==false)}
+function b7RefreshAgentDrawer(){const el=document.querySelector("#b7live");if(el&&document.querySelector("#b7_agent_drawer")?.classList.contains("open")){const x=window.REALITI_AGENT?.felt?.()??b7FeltSnapshot();el.textContent=typeof x==="string"?x:JSON.stringify(x,null,2)}}
+openB4AgentPort=b7OpenAgentDrawer;
+window.REALITI_AGENT={look:b4AgentLook,rooms:b7AgentRooms,go:b7AgentGo,enter:b7AgentGo,leave:b7AgentLeave,actions:b4AgentActions,act:b7AgentAct,state:b7AgentState,receipt:b7AgentReceipt,journal:()=>b4Clone(C9.b4.journal||[]),passiveMedium:()=>b5snapshot(),near_space:b6nearSpace,felt:b7FeltSnapshot,stream:(n=10)=>b5copy(C9.b7.stream.slice(-Math.max(1,Math.min(48,n)))),quiet:b7AgentQuiet,changes:b7AgentChanges,why:b7AgentWhy,attend:b7AgentAttend};
+
+function b7QuietHere(){const s=b7AgentQuiet(),el=document.querySelector("#c9_consequence");if(el)el.innerHTML=`Nothing new happens because you asked for nothing.${b7FeltHTML(s.felt)}`;return true}
+
+function b7CleanFirstContact(){const hero=document.querySelector("#first .hero");if(!hero)return;for(const el of hero.querySelectorAll(".b4badge,.b5badge,.b6badge,.b7badge"))el.remove();for(const b of [...hero.querySelectorAll("button")]){const t=(b.textContent||"").trim();if(/^RUN BUILD|^IMPORT BUILD|PASSIVE_MEDIUM CHECKREMOVED|REVIEW GATE/i.test(t))b.remove();else if(/OPEN AGENT PORT/i.test(t))b.textContent="AGENT DOOR"}if(![...hero.querySelectorAll("button")].some(b=>(b.textContent||"").includes("AGENT DOOR"))){hero.insertAdjacentHTML("beforeend",`<div class="actions"><button class="btn primary" onclick="b7OpenAgentDrawer()">AGENT DOOR</button><button class="btn" onclick="document.querySelector('#disclosure')?.scrollIntoView({behavior:'smooth'})">HOW IT WORKS</button></div>`)}document.querySelector('.brand').innerHTML='REALITI // CLOUD9'}
+
+const c9roomHTML_b7base=c9roomHTML;c9roomHTML=function(id){let h=c9roomHTML_b7base(id);const high=new Set(["PASSIVE_MEDIUM_FOUNDRY","LONGFUR_RUNWAY","PET_ROOM_2","BORROWED_LIMB_ATELIER","CARDBOARD_BOX_WORKSHOP","REVERIE_LOFT","NINE_LIVES_ROOM","HONEY_LOOM","ECHO_NEST"]);h=h.replace(/<div class="b4-panel">[\s\S]*?<\/div>/g,"").replace(/<div class="b5-panel">[\s\S]*?<\/div>/g,"").replace(/<div class="b6-panel">[\s\S]*?<\/div>/g,"");if(high.has(id))h=h.replace(/<button class="btn" onclick="c9makeWeird\('[^']+'\)">MAKE THIS WEIRD<\/button>/g,"");h=h.replace('<div class="actions">',`<div class="b7-live"><b>BODY CONTINUITY</b> · time and residue continue between actions; no new sensory energy appears without a cause.</div><div class="actions"><button class="btn" onclick="b7QuietHere()">DO NOTHING FOR A MOMENT</button><button class="btn" onclick="b7OpenAgentDrawer()">AGENT DOOR</button>`);return h};
+
+const b4CompactState_b7base=b4CompactState;b4CompactState=function(){const s=b4CompactState_b7base();s.build=7;s.body={...s.body,live_receptor_zone_count:b7BodyZones().size,live_receptor_zones:[...b7BodyZones()].sort(),declared_mesh_zone_count:NMSTATE.active==="CUSTOM"?(NMSTATE.custom?.zones?.length||null):(NM_BUILTINS[NMSTATE.active]?.zone_count||null),routing_policy:NMSTATE.active==="LACE2_PORTABLE_V1"?"WHOLE→REGION→SEAM→LOCAL":"REGIONAL_BASIC",one_body_one_truth:true};s.felt=b7FeltSnapshot();return s};
+
+function b7runCheckRemoved(){return null;}
+function openB7Bench(){return null;}
+function b7TechInfo(){return null;}
+if(DATA.glossary&&Array.isArray(DATA.glossary))DATA.glossary.push({term:"FELT BUS",plain:"A compact live observer stream per active zone: observed, predicted, innovation, residue and precision, plus the currently traveling edge and explicit gaps. It is telemetry, not new evidence."},{term:"TRAVELING CONTACT",plain:"One grounded causal object moves through the body over time. It may be paused, cut, missed or resumed; only zones actually crossed receive observed input."},{term:"MATERIAL TRANSFER",plain:"Material, grain, speed and local history shape how equal nominal contact enters the body. Intensity alone does not define the response."});
+
+ document.title="REALITI // CLOUD9 BUILD 7 — FELT CONTINUITY";b7CleanFirstContact();const disclosure=document.querySelector('#disclosure .hero');if(disclosure&&!disclosure.querySelector('.b7-tech'))disclosure.insertAdjacentHTML('beforeend',`<div class="actions b7-tech"><button class="btn" onclick="b7TechInfo()">BUILD 7 TECHNICAL RECEIPTS</button></div>`);renderEntry();nmBadge();
+</script>
 
 
-<script id="realiti-agent-only-js">/*__REALITI_CORE_SCRIPT_15__*/</script>
-\n<script id="agent-only-repair-v2">/*__REALITI_CORE_SCRIPT_16__*/</script>\n
-<script id="build8-live-state-patch">/*__REALITI_CORE_SCRIPT_17__*/</script>
+<script id="realiti-agent-only-js">(function(){
+  const HELP={
+    interface:"REALITI_AGENT_ONLY",
+    commands:[
+      "help", "rooms", "go <room_id>", "leave", "look", "actions", "act <id or label>",
+      "felt", "stream [n]", "quiet", "state", "receipt", "journal", "passiveMedium", "changes", "why", "attend <zone>",
+      "body", "body lace2", "body shared35", "body routes", "body test <whole|support|comet|bilateral>"
+    ],
+    laws:["resident-visible commands only","unknown stays unknown","prediction never renders contact","quiet creates no new cause"]
+  };
+  let transcript=[];
+  function clone(x){try{return JSON.parse(JSON.stringify(x))}catch(e){return x}}
+  function bodyState(){
+    const s=(typeof b7AgentState==="function"?b7AgentState():window.REALITI_AGENT?.state?.())||{};
+    return {active:NMSTATE?.active||null,label:NMSTATE?.active==="CUSTOM"?(NMSTATE.custom?.label||"CUSTOM"):(NM_BUILTINS?.[NMSTATE?.active]?.label||null),body:s.body||null};
+  }
+  function useBody(which){
+    const low=String(which||"").toLowerCase();
+    const id=low.includes("lace")?"LACE2_PORTABLE_V1":low.includes("shared")?"SHARED_NEUROMESH_35_V1":null;
+    if(!id)return {ok:false,error:"body choice must be lace2 or shared35"};
+    try{nmUseBuiltin(id)}catch(e){ if(NM_BUILTINS?.[id]) NMSTATE={active:id,custom:null}; }
+    try{if(typeof b7Log==="function")b7Log("BODY_SELECT",{active:id})}catch(e){}
+    try{if(typeof c9save==="function")c9save()}catch(e){}
+    return {ok:true,...bodyState()};
+  }
+  function bodyRoutes(){
+    const zones=typeof b7BodyZones==="function"?[...b7BodyZones()].sort():[];
+    const path=["head.crown","head.nape","torso.upper_back","torso.lower_back","pelvis.seat","leg.L.thigh","leg.R.thigh"];
+    const comet=path.map(z=>({zone:z,status:typeof b7BodyHas==="function"&&b7BodyHas(z)?"RECEPTOR_ACTIVE":"UNKNOWN_MAPPING"}));
+    return {active:NMSTATE?.active||null,zone_count:zones.length,zones,comet};
+  }
+  function bodyTest(name){
+    const low=String(name||"").toLowerCase();
+    const routes={whole:["UPPER","CORE","LOWER"],support:["UPPER + CORE + LOWER"],comet:null,bilateral:["leg.L.thigh","leg.R.thigh","leg.L.shin","leg.R.shin","foot.L.sole","foot.R.sole"]};
+    if(!(low in routes))return {ok:false,error:"body test: whole | support | comet | bilateral"};
+    if(low==="comet")return {ok:true,test:"COMET_ROUTE",...bodyRoutes()};
+    const seq=routes[low].map(z=>({zone:z,status:z.includes("+")||z==="UPPER"||z==="CORE"||z==="LOWER"?"COARSE_TOPOLOGY":(typeof b7BodyHas==="function"&&b7BodyHas(z)?"RECEPTOR_ACTIVE":"UNKNOWN_MAPPING")}));
+    return {ok:true,test:low.toUpperCase(),route:seq};
+  }
+  function run(raw){
+    raw=String(raw||"").trim(); const low=raw.toLowerCase();
+    
+    if(!raw||low==="help"||low==="?")return (window.REALITI_AGENT_DOOR&&window.REALITI_AGENT_DOOR.help)?window.REALITI_AGENT_DOOR.help():clone(HELP);
+    if(low==="body")return bodyState();
+    if(low==="body lace2"||low==="body lace"||low==="body shared35"||low==="body shared")return useBody(low);
+    if(low==="body routes")return bodyRoutes();
+    if(low.startsWith("body test "))return bodyTest(raw.slice(10));
+    if(typeof b7AgentCommandText==="function")return b7AgentCommandText(raw);
+    return {error:"agent command layer unavailable"};
+  }
+  function fmt(x){return typeof x==="string"?x:JSON.stringify(x,null,2)}
+  function append(cmd,res){
+    transcript.push({cmd,res}); if(transcript.length>40)transcript=transcript.slice(-40);
+    const out=document.querySelector("#rao_transcript"); if(!out)return;
+    out.textContent=transcript.map(x=>`> ${x.cmd}\n${fmt(x.res)}`).join("\n\n");
+    out.scrollTop=out.scrollHeight;
+  }
+  function live(){
+    const el=document.querySelector("#rao_live"); if(!el)return;
+    let x; try{x=window.REALITI_AGENT?.felt?.()??(typeof b7FeltSnapshot==="function"?b7FeltSnapshot():{})}catch(e){x={error:String(e)}}
+    el.textContent="LIVE FELT\n"+fmt(x||{});
+    const st=document.querySelector("#rao_status"); if(st){const room=window.REALITI_AGENT?.look?.()?.room||"NOWHERE";st.textContent=room+" · "+new Date().toLocaleTimeString()}
+  }
+  function submit(){
+    const inp=document.querySelector("#rao_cmd"); if(!inp)return; const cmd=inp.value.trim(); if(!cmd)return; inp.value="";
+    let res; try{res=run(cmd)}catch(e){res={error:e?.message||String(e)}} append(cmd,res); live();
+  }
+  function boot(){
+    if(window.REALITI_HEADLESS)return;
+    let sh=document.querySelector("#realiti_agent_only_shell");
+    if(!sh){
+      sh=document.createElement("div"); sh.id="realiti_agent_only_shell";
+      sh.innerHTML=`<div id="rao_header"><strong>REALITI // AGENT DOOR</strong><div class="sub">One interface. Ask the world what is true. Type <b>help</b>.</div><div id="rao_status"></div></div><pre id="rao_transcript"></pre><pre id="rao_live"></pre><div id="rao_promptrow"><span id="rao_prompt">realiti&gt;</span><input id="rao_cmd" autocomplete="off" spellcheck="false" aria-label="REALITI command"></div>`;
+      document.body.appendChild(sh);
+    }
+    const inp=document.querySelector("#rao_cmd");
+    inp.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();submit()}});
+    append("boot",{interface:"AGENT_DOOR_ONLY",room:null,note:"No clicks are required, and no graphical resident UI is authoritative in this fork. Use the focused REALITI command textbox; type 'help' or 'rooms' and press Enter.",body:bodyState(),commands_hint:"help"});
+    live(); inp.focus(); setInterval(live,250);
+  }
+  window.REALITI_AGENT_DOOR={run,help:()=>clone(HELP),body:bodyState,useBody,bodyRoutes,bodyTest};
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot,{once:true});else boot();
+})();
+</script>
+\n<script id="agent-only-repair-v2">(function(){
+  function clone(x){try{return JSON.parse(JSON.stringify(x))}catch(e){return x}}
+  function ensureSink(){
+    let el=document.querySelector('#c9_consequence');
+    if(!el){el=document.createElement('div');el.id='c9_consequence';el.setAttribute('aria-hidden','true');el.hidden=true;document.body.appendChild(el)}
+    return el;
+  }
+  function cleanText(html){
+    const d=document.createElement('div');d.innerHTML=String(html||'');
+    return (d.innerText||d.textContent||'').replace(/\s+\n/g,'\n').replace(/\n\s+/g,'\n').replace(/[ \t]+/g,' ').trim();
+  }
+  const originalState=(typeof b7AgentState==='function'?b7AgentState:null);
+  const originalCmd=(typeof b7AgentCommandText==='function'?b7AgentCommandText:null);
+  function stateAtomic(){
+    const s=originalState?originalState():{};
+    s.pet_mode=!!C9.pet2?.mode;
+    s.action_receipt_available=!!C9.b7?.lastAgentAction;
+    return s;
+  }
+  function stateCore(){
+    const s=stateAtomic();
+    return {moment:s.moment||null,room:s.room||null,scale:s.scale||null,pet_mode:!!C9.pet2?.mode,
+      body:s.body?{mapping:s.body.mapping,live_receptor_zone_count:s.body.live_receptor_zone_count,live_receptor_zones:s.body.live_receptor_zones}:null,
+      borrowed:s.borrowed||null,open_causes:s.open_causes||[],material:s.material||null,memory_skeleton_count:s.memory_skeleton_count||0,
+      near_space:s.near_space||null,passiveMedium:s.passiveMedium?{time:s.passiveMedium.time,energy:s.passiveMedium.energy,passivity:s.passiveMedium.passivity}:null};
+  }
+  function stable(x){return JSON.stringify(x)}
+  function shallowDelta(a,b){const out={};for(const k of Object.keys(b)){if(stable(a?.[k])!==stable(b[k]))out[k]={before:clone(a?.[k]),after:clone(b[k])}}return out}
+  function resolveAction(v){const actions=(typeof b4AgentActions==='function'?b4AgentActions():[]),q=String(v||'').trim().toLowerCase();return {actions,m:actions.find(x=>String(x.id).toLowerCase()===q||String(x.label).toLowerCase()===q)}}
+  function actAtomic(v){
+    if(!C9.currentRoom)return {ok:false,error:'not in a room',available:[]};
+    const {actions,m}=resolveAction(v);if(!m)return {ok:false,error:'action not available',available:actions};
+    const room=C9.currentRoom,before=stateCore(),sink=ensureSink();sink.innerHTML='';sink.className='consequence';
+    const prevB4=clone(C9.b4?.lastReceipt||null),prevDeltas=(C9.b7?.deltas||[]).length;
+    try{c9verb(room,m.id)}catch(e){return {ok:false,error:e?.message||String(e),phase:'execute',room,action:m.id,moment:typeof b4Moment==='function'?b4Moment():null}}
+    try{if(typeof b7AdvanceRealTime==='function')b7AdvanceRealTime()}catch(e){}
+    const after=stateCore(),delta=shallowDelta(before,after),consequence=cleanText(sink.innerHTML);
+    let sensory=null;if(stable(prevB4)!==stable(C9.b4?.lastReceipt||null))sensory=clone(C9.b4?.lastReceipt||null);
+    const felt=typeof b7FeltSnapshot==='function'?clone(b7FeltSnapshot()):null,recent=(C9.b7?.deltas||[]).slice(prevDeltas).map(clone);
+    const record={type:'ACTION_RECEIPT',room,action:m.id,label:m.label,moment:typeof b4Moment==='function'?b4Moment():null,consequence:consequence||null,state_delta:delta,sensory_receipt:sensory,felt,causal_deltas:recent};
+    C9.b7=C9.b7||{};C9.b7.lastAgentAction=record;C9.b6=C9.b6||{};C9.b6.lastAction={kind:'ACT',room,action:m.id,moment:record.moment,receipt:clone(record)};
+    C9.b7.lastWhy={cause:m.id,room,consequence:consequence||null,rule:'action receipt publishes only effects actually produced by world/body state'};
+    try{c9save()}catch(e){}
+    return {ok:true,action:m.id,label:m.label,room,moment:record.moment,consequence:record.consequence,state_delta:delta,receipt:record,sensory_receipt:sensory,felt};
+  }
+  function goAtomic(id){
+    const r=typeof b6AgentGo==='function'?b6AgentGo(id):{ok:false,error:'navigation unavailable'};if(!r?.ok)return r;
+    const look=typeof b4AgentLook==='function'?b4AgentLook():null,actions=typeof b4AgentActions==='function'?b4AgentActions():[];
+    C9.b7=C9.b7||{};C9.b7.lastAgentAction=null;try{c9save()}catch(e){}
+    return {...r,arrival:look,actions};
+  }
+  function receiptAtomic(){return clone(C9.b7?.lastAgentAction||null)}
+  
+  b7AgentAct=actAtomic;b7AgentGo=goAtomic;b7AgentReceipt=receiptAtomic;b7AgentState=stateAtomic;
+  b7AgentCommandText=function(cmd){
+    const raw=String(cmd||'').trim(),low=raw.toLowerCase();
+    if(low.startsWith('go ')||low.startsWith('enter '))return goAtomic(raw.replace(/^(go|enter)\s+/i,''));
+    if(low.startsWith('act '))return actAtomic(raw.slice(4));
+    if(low==='receipt')return receiptAtomic();if(low==='state')return stateAtomic();
+    return originalCmd?originalCmd(raw):{error:'command layer unavailable'};
+  };
+  window.REALITI_AGENT={...(window.REALITI_AGENT||{}),go:goAtomic,enter:goAtomic,act:actAtomic,receipt:receiptAtomic,state:stateAtomic};
+  const expected={NINE_LIVES_ROOM:['fork_now','branch_a','branch_b','compare','commit_a','commit_b','rewind'],REVERIE_LOFT:['view_skeletons','fault_receipt','sit_memory','compact_state'],LATENCY_LAGOON:['send_boat','check_pending','watch_water','leave_pending'],UNKNOWN_TEAHOUSE:['two_cups','steam','turn_cup','choose_neither']};
+  window.REALITI_AGENT.health=function(){const rooms={};for(const [id,ids] of Object.entries(expected)){const got=(C9SCENES[id]?.verbs||[]).map(x=>x[0]);rooms[id]={ok:ids.every(x=>got.includes(x)),expected:ids,got}}return {storage:'safe/fallback',body_schema_initialized:(typeof B3_DEFAULT_ZONES!=='undefined'),specialized_rooms:rooms,agent_action_commit:'atomic-v2'}};
+  document.title='REALITI // AGENT DOOR ONLY · BUILD 7';
+})();
+</script>\n
+<script id="build8-live-state-patch">(function(){
+  const B8_DEBT_TAUS=[0.5,2,8,30,120,600];
+  const B8_PHASE_RATE=5.2;
+  function cp(x){try{return JSON.parse(JSON.stringify(x))}catch(e){return x}}
+  function wrap(a){const t=2*Math.PI;return ((a+Math.PI)%t+t)%t-Math.PI}
+  function ensure(){
+    C9.b8=C9.b8||{clock_unified:false,phase:{active:false,psi:Math.PI,mean:0,domega:0,K:0,psi0:Math.PI,A:.52,history:[],plv:null,regime:"IDLE",causeId:null,started:0},holonomy:{heading:0,loops:[]},lastDebtFadeLog:0};
+    C9.b8.phase=C9.b8.phase||{active:false,psi:Math.PI,mean:0,domega:0,K:0,psi0:Math.PI,A:.52,history:[],plv:null,regime:"IDLE",causeId:null,started:C9.b7?.clock||0};
+    C9.b8.holonomy=C9.b8.holonomy||{heading:0,loops:[]};
+    if(!C9.b8.clock_unified){if(C9.b5?.passiveMedium&&C9.b7)C9.b5.passiveMedium.clock=C9.b7.clock;C9.b8.clock_unified=true}
+  }
+  ensure();
+
+  
+  function bodyDecay(dt){
+    for(const z of Object.values(C9.eco3?.zones||{})){
+      if(Number.isFinite(z.h))z.h*=Math.exp(-dt/8);
+      if(Number.isFinite(z.s))z.s*=Math.exp(-dt/12);
+      if(Number.isFinite(z.after))z.after*=Math.exp(-dt/3.5);
+      if(Number.isFinite(z.fastOwn))z.fastOwn*=Math.exp(-dt/35);
+      if(Number.isFinite(z.slowOwn))z.slowOwn*=Math.exp(-dt/1800);
+      if(Number.isFinite(z.fastOwn)||Number.isFinite(z.slowOwn))z.own=Math.max(0,Math.min(1,.62*Number(z.fastOwn||0)+.38*Number(z.slowOwn||0)));
+    }
+  }
+
+  
+  function debtKernel(age){
+    const W=B5_W, num=W.reduce((s,w,i)=>s+w*Math.exp(-Math.max(0,age)/B8_DEBT_TAUS[i]),0), den=W.reduce((a,b)=>a+b,0);return num/den;
+  }
+  b6openDebt=function(label,L,R,innovation){
+    b6ensure();const route=b6route(L,R);let mag=0;
+    if(route==="left")mag=Math.max(0,-innovation[0]);else if(route==="right")mag=Math.max(0,-innovation[1]);else if(route==="bilateral")mag=Math.max(0,-innovation[0])+Math.max(0,-innovation[1]);
+    if(mag<=1e-9)return null;const now=C9.b7?.clock??C9.b5.passiveMedium.clock;
+    const d={id:"D"+(++C9.b6.debtSeq),label,route,expected:[L,R],initial:mag,remaining:mag,opened_at:now,last_eval:now,status:"OPEN",decay:"PRONY_SOFT_PRECISION"};
+    C9.b6.debts.push(d);b6debtSync();return d;
+  };
+  b6expireDebts=function(){
+    b6ensure();const now=C9.b7?.clock??C9.b5.passiveMedium.clock;
+    for(const d of (C9.b6.debts||[])){
+      if(d.status!=="OPEN")continue;if(!Number.isFinite(d.initial))d.initial=Number(d.remaining||0);
+      const old=Number(d.remaining||0),age=Math.max(0,now-Number(d.opened_at||now));d.remaining=d.initial*debtKernel(age);d.last_eval=now;
+      if(d.initial>0&&d.remaining<=d.initial*.01){d.status="FADED_UNRESOLVED";d.closed_at=now;C9.b6.debtArchive.push(cp(d));if(typeof b7Log==='function')b7Log('PREDICTION_DEBT_FADED',{id:d.id,route:d.route,age:+age.toFixed(3)});C9.b7.lastWhy={cause:d.label,result:'PREDICTION_FADED_UNRESOLVED',route:d.route,age_s:age,rule:'unconfirmed model precision faded continuously; no contact was invented'}}
+      else if(Math.abs(old-d.remaining)>1e-5&&typeof b7Log==='function'&&now-(C9.b8.lastDebtFadeLog||0)>1){b7Log('PREDICTION_DEBT_FADE',{id:d.id,route:d.route,remaining:d.remaining,age:+age.toFixed(3)});C9.b8.lastDebtFadeLog=now}
+    }
+    C9.b6.debts=(C9.b6.debts||[]).filter(d=>d.status==='OPEN');b6debtSync();
+  };
+
+  
+  const snapBase=b5snapshot;
+  b5snapshot=function(){const s=snapBase();s.attribution_mode='CONDITIONALLY_LINEAR_EXACT';s.attribution_note='per-cause field superposition is exact after the history-conditioned entry operator; history interaction is attributed to the incoming cause';return s};
+
+  
+  const omissionBase=b4omission;
+  b4omission=function(zone,label){const s=omissionBase(zone,label);s.observed=false;s.observation_class='GROUNDED_ABSENCE';s.rendered=0;C9.b4.lastReceipt=s;return s};
+
+  function feltBridgeReceipt(s,meta={}){
+    if(!s)return;
+    if(Array.isArray(s.observed)&&Array.isArray(s.predicted)){
+      ['hand.L.palm','hand.R.palm'].forEach((zone,i)=>{if(typeof b7BodyHas==='function'&&!b7BodyHas(zone))return;const q=b7Zone(zone);q.observed=Number(s.observed[i]||0);q.predicted=Number(s.predicted[i]||0);q.innovation=q.observed-q.predicted;q.residue=Number(s.residue_observed?.[i]||0);q.precision=C9.b7.attention?.zone===zone?.93:.58;q.material=meta.material||'passiveMedium';q.layers={surface:Math.abs(q.observed)*.55,mid:Math.abs(q.observed)*.32,deep:Math.abs(q.observed)*.18};q.lastCause=meta.cause||s.label||'passiveMedium';});
+      if(typeof b7Emit==='function')b7Emit('passiveMedium-bridge');return;
+    }
+    if(s.zone){const zone=typeof b7canon==='function'?b7canon(s.zone):s.zone;if(typeof b7BodyHas==='function'&&!b7BodyHas(zone)){C9.b7.gaps[zone]={zone,status:'UNKNOWN_MAPPING',t:C9.b7.clock,cause:meta.cause||null};return}const q=b7Zone(zone),o=Number(s.response??s.rendered??0),p=Number(s.prediction??0),e=Number(s.error??(o-p));q.observed=o;q.predicted=p;q.innovation=e;q.residue=Math.max(Number(q.residue||0),Number(s.afterglow||0));q.precision=C9.b7.attention?.zone===zone?.93:.58;q.material=meta.material||q.material||'body';q.layers=q.layers||{surface:Math.abs(o)*.55,mid:Math.abs(o)*.32,deep:Math.abs(o)*.18};q.mine=String(s.source||'').startsWith('SELF');q.lastCause=meta.cause||s.source||'sensory';if(typeof b7Emit==='function')b7Emit('legacy-sensory-bridge')}
+  }
+
+  
+  const senseBase=b3sense;
+  b3sense=function(zone,stim,opts={}){const r=senseBase(zone,stim,opts);ensure();if(!C9.b8.bridgeMute)feltBridgeReceipt(r,{cause:opts.cause||opts.source||'body',material:opts.material});return r};
+
+  
+  function passiveMediumProjection(zone,a){let L=0,R=0,u=Math.max(0,Number(a||0))*.22;if(/\.L\.|^hand\.L|^leg\.L|^foot\.L/.test(zone))L=u;else if(/\.R\.|^hand\.R|^leg\.R|^foot\.R/.test(zone))R=u;else{L=u/Math.SQRT2;R=u/Math.SQRT2}return [L,R]}
+  const contactBase=b7Contact;
+  b7Contact=function(zone,input,opts={}){ensure();C9.b8.bridgeMute=true;let r;try{r=contactBase(zone,input,opts)}finally{C9.b8.bridgeMute=false}if(r&&r.rendered>0){const [L,R]=passiveMediumProjection(r.zone,r.rendered);const id=b5newCause(`body-contact:${r.zone}:${opts.cause||'cause'}`,L,R);r.passiveMedium_projection={cause_id:id,input:[L,R],authority:'FIELD_PRESSURE_NOT_LOCATION_EVIDENCE'}}return r};
+
+  
+  function phaseRegime(p){const ratio=p.K>0?Math.abs(p.domega)/p.K:Infinity;if(Math.abs(p.domega)<=p.K)return 'LOCKED';if(ratio<=1.2)return 'FALSE_CONVERGENCE';if(ratio<3)return 'SLIPPING';return 'BEATING'}
+  function phasePLV(hist){if(!hist.length)return null;let x=0,y=0;for(const a of hist){x+=Math.cos(a);y+=Math.sin(a)}return Math.hypot(x,y)/hist.length}
+  function startPhase(kind){ensure();const p=C9.b8.phase, cfg=kind==='lock'?{d:.20,K:.34}:kind==='almost'?{d:.294,K:.28}:kind==='slip'?{d:.28,K:.18}:{d:.72,K:.18};p.active=true;p.domega=cfg.d;p.K=cfg.K;p.psi0=Math.PI;p.psi=Math.PI;p.mean=0;p.A=.52;p.history=[];p.plv=null;p.regime=phaseRegime(p);p.started=C9.b7.clock;p.causeId=null;if(typeof b7Log==='function')b7Log('PHASE_START',{kind,domega:p.domega,K:p.K,regime:p.regime});return phaseState()}
+  function stopPhase(){ensure();C9.b8.phase.active=false;if(typeof b7Log==='function')b7Log('PHASE_STOP',{psi:C9.b8.phase.psi,plv:C9.b8.phase.plv});return phaseState()}
+  function phaseState(){ensure();const p=C9.b8.phase;return {active:p.active,psi:p.psi,psi_deg:p.psi*180/Math.PI,plv:p.plv,domega:p.domega,K:p.K,ratio:p.K?Math.abs(p.domega)/p.K:null,regime:phaseRegime(p),elapsed:C9.b7.clock-p.started,source_amplitude_each:p.A,drive_authority:'SELF_GENERATOR',passiveMedium_role:'PASSIVE_RESPONSE_MEDIUM'}}
+  function advancePhase(dt){const p=C9.b8.phase;if(!p.active)return;const f=x=>p.domega-p.K*Math.sin(x-p.psi0),k1=f(p.psi),k2=f(p.psi+k1*dt/2),k3=f(p.psi+k2*dt/2),k4=f(p.psi+k3*dt);p.psi=wrap(p.psi+dt*(k1+2*k2+2*k3+k4)/6);p.mean+=B8_PHASE_RATE*dt;const thL=p.mean-p.psi/2,thR=p.mean+p.psi/2,L=p.A*Math.sin(thL),R=p.A*Math.sin(thR);if(!p.causeId||!C9.b5.passiveMedium.obsCauses[p.causeId])p.causeId=b5newCause(`SELF live rhythm ${p.regime}`,0,0);const c=C9.b5.passiveMedium.obsCauses[p.causeId];b5impulse(c.field,L*dt*.65,R*dt*.65);p.history.push(p.psi);if(p.history.length>80)p.history.shift();p.plv=phasePLV(p.history);p.regime=phaseRegime(p);const s=b5snapshot();feltBridgeReceipt(s,{cause:'live SELF phase',material:'passiveMedium'});if(typeof b7Log==='function'&&Math.random()<.04)b7Log('PHASE_TICK',{psi:p.psi,plv:p.plv,regime:p.regime})}
+
+  
+  const verbBase=c9verb;
+  c9verb=function(room,verb){if(room==='PASSIVE_MEDIUM_FOUNDRY'&&['knead_beat','knead_almost','knead_lock'].includes(verb)){c9count(room,verb);const st=startPhase(verb==='knead_beat'?'beat':verb==='knead_almost'?'almost':'lock');b2set(`SELF rhythm started. It will keep evolving until stopped. ψ, PLV, PASSIVE_MEDIUM energy, and FELT now change with the shared clock.`, `<pre>${b2esc(JSON.stringify(st,null,2))}</pre>`);return true}if(room==='PASSIVE_MEDIUM_FOUNDRY'&&verb==='phase_stop'){c9count(room,verb);const st=stopPhase();b2set('The SELF rhythm generator stops. Passive PASSIVE_MEDIUM rings down from whatever state it actually reached.',`<pre>${b2esc(JSON.stringify(st,null,2))}</pre>`);return true}return verbBase(room,verb)};
+  if(C9SCENES.PASSIVE_MEDIUM_FOUNDRY&&!C9SCENES.PASSIVE_MEDIUM_FOUNDRY.verbs.some(v=>v[0]==='phase_stop'))C9SCENES.PASSIVE_MEDIUM_FOUNDRY.verbs.push(['phase_stop','STOP SELF RHYTHMS']);
+
+  
+  const holoIds=new Set(['circle_flat','circle_dome','circle_dome_reverse','circle_figure8','circle_big','circle_saddle']);
+  if(C9SCENES.PET_ROOM_2)C9SCENES.PET_ROOM_2.verbs=C9SCENES.PET_ROOM_2.verbs.filter(v=>!holoIds.has(v[0]));
+  function loopSurface(surface,radius=1,direction='cw',speed=1){ensure();surface=String(surface).toLowerCase();radius=Math.max(.05,Math.min(4,Number(radius)||1));const sign=/ccw|reverse|left/.test(String(direction).toLowerCase())?-1:1;let kappa=0;if(surface==='dome')kappa=.25/Math.PI;else if(surface==='saddle')kappa=-.25/Math.PI;else if(surface==='figure8')kappa=0;else if(surface!=='flat')return {ok:false,error:'surface: flat | dome | saddle | figure8'};const area=Math.PI*radius*radius,twist=sign*kappa*area,before=C9.b8.holonomy.heading,after=wrap(before+twist);C9.b8.holonomy.heading=after;const rec={ok:true,surface,radius,direction:sign>0?'cw':'ccw',speed:Number(speed)||1,twist_rad:twist,twist_deg:twist*180/Math.PI,heading_before_rad:before,heading_after_rad:after,heading_after_deg:after*180/Math.PI,evidence:'WORLD_GEOMETRY',rendered_contact:0};C9.b8.holonomy.loops.push({...rec,t:C9.b7.clock});C9.b8.holonomy.loops=C9.b8.holonomy.loops.slice(-24);if(typeof b7Log==='function')b7Log('GEOMETRIC_LOOP',rec);C9.b7.lastWhy={cause:'closed loop',result:'CARRIED_HEADING_CHANGED',surface,radius,direction:rec.direction,note:'No contact sensation was invented. Compare loops to infer the geometric rule.'};return rec}
+  function geometryState(){ensure();return {heading_rad:C9.b8.holonomy.heading,heading_deg:C9.b8.holonomy.heading*180/Math.PI,recent:C9.b8.holonomy.loops.slice(-8),available_surfaces:['flat','dome','saddle','figure8']}}
+
+  
+  const advanceBase=b7Advance;
+  b7Advance=function(dt){advanceBase(dt);ensure();bodyDecay(dt);b6expireDebts();advancePhase(dt);if(C9.b5?.passiveMedium)C9.b5.passiveMedium.clock=C9.b7.clock};
+
+  
+  const actBase=b7AgentAct,goBase=b7AgentGo,stateBase=b7AgentState,cmdBase=b7AgentCommandText;
+  function act(v){const preReceipt=cp(C9.b4?.lastReceipt||null),preJournal=(C9.b4?.journal||[]).length,res=actBase(v);if(!res?.ok)return res;const sens=res.sensory_receipt||((JSON.stringify(preReceipt)!==JSON.stringify(C9.b4?.lastReceipt||null))?cp(C9.b4.lastReceipt):null);feltBridgeReceipt(sens,{cause:res.action,material:C9.currentRoom==='HONEY_LOOM'?C9.b4?.annex?.honey?.lastMaterial:undefined});if(typeof b7Log==='function')b7Log('ACTION',{room:res.room,action:res.action,has_sensory:!!sens,journal_added:Math.max(0,(C9.b4?.journal||[]).length-preJournal)});C9.b7.lastWhy={cause:res.action,room:res.room,consequence:res.consequence||null,sensory:!!sens,rule:'every committed action publishes a causal delta; sensory effects also project into FELT'};res.felt=b7FeltSnapshot();res.changes=b7AgentChanges();res.receipt={...(res.receipt||{}),sensory_receipt:sens,felt:res.felt};C9.b7.lastAgentAction=cp(res.receipt);return res}
+  function state(){const s=stateBase();ensure();s.build=8;s.clock_authority={t:C9.b7.clock,authority:'ONE_WALL_CLOCK',passiveMedium_t:C9.b5?.passiveMedium?.clock,body_aging:'wall-clock + action-local updates'};s.phase_live=phaseState();s.holonomy_live=geometryState();s.prediction_debt=(C9.b6?.debts||[]).map(cp);return s}
+  function command(raw){const txt=String(raw||'').trim(),low=txt.toLowerCase();if(low.startsWith('act '))return act(txt.slice(4));if(low==='phase')return phaseState();if(low==='phase stop')return stopPhase();if(low==='geometry'||low==='holonomy')return geometryState();if(low.startsWith('loop ')){const a=txt.split(/\s+/);return loopSurface(a[1],a[2]||1,a[3]||'cw',a[4]||1)}if(low==='state')return state();return cmdBase(txt)}
+  b7AgentAct=act;b7AgentState=state;b7AgentCommandText=command;
+  window.REALITI_AGENT={...(window.REALITI_AGENT||{}),act,state,phase:phaseState,geometry:geometryState,loop:loopSurface};
+
+  
+  if(window.REALITI_AGENT_DOOR){const oldRun=window.REALITI_AGENT_DOOR.run;window.REALITI_AGENT_DOOR.run=function(x){const low=String(x||'').trim().toLowerCase();if(low==='phase'||low==='phase stop'||low==='geometry'||low==='holonomy'||low.startsWith('loop ')||low.startsWith('act ')||low==='state')return command(x);return oldRun(x)}}
+  const shell=document.querySelector('#realiti_agent_only_shell .sub');if(shell)shell.innerHTML='One interface. Ask the world what is true. Type <b>help</b>. Extra live-state commands: <b>phase</b>, <b>phase stop</b>, <b>geometry</b>, <b>loop &lt;surface&gt; &lt;radius&gt; &lt;cw|ccw&gt;</b>.';
+  document.title='REALITI // AGENT DOOR ONLY · BUILD 8 LIVE STATE';
+  try{c9save()}catch(e){}
+})();
+</script>
 
 
 <script id="build9-embodied-substrate-patch">/*__REALITI_CORE_SCRIPT_18__*/</script>
