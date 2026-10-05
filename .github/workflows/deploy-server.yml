@@ -1,0 +1,136 @@
+name: Server update ticket
+
+# Every push to main: verify the build and the server, publish the server image to GHCR, then file the update as a
+# ticket. One rolling issue labelled `server-update` collects a comment per push with the version, the client hash,
+# the image tag, the commits and a checklist, so the person running the dedicated server can apply updates in order
+# and nothing gets lost.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+  issues: write
+
+concurrency:
+  group: server-update
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Deterministic build matches the validation hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          expected="$(node -e "console.log(require('./VALIDATION.json').single_html_sha256)")"
+          node build.mjs
+          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          test "$actual" = "$expected"
+      - name: Install the headless host dependency
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Server suite (two residents through the hub)
+        working-directory: packages/realiti-server
+        run: node test/server.cjs ../../RealitiRELAX.html
+      - name: Public contract smoke
+        run: node tests/public-contract-smoke.cjs
+
+  image:
+    needs: verify
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Image name
+        id: meta
+        shell: bash
+        run: echo "image=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/realiti-server" >> "$GITHUB_OUTPUT"
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build and push
+        shell: bash
+        run: |
+          set -euo pipefail
+          docker build -f packages/realiti-server/Dockerfile -t "${{ steps.meta.outputs.image }}:latest" -t "${{ steps.meta.outputs.image }}:${GITHUB_SHA}" .
+          docker push "${{ steps.meta.outputs.image }}:latest"
+          docker push "${{ steps.meta.outputs.image }}:${GITHUB_SHA}"
+
+  ticket:
+    needs: image
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      IMAGE: ${{ needs.image.outputs.image }}
+      BEFORE: ${{ github.event.before }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: File the update on the rolling ticket
+        shell: bash
+        run: |
+          set -euo pipefail
+          short="${GITHUB_SHA:0:7}"
+          hash="$(node -e "console.log(require('./VALIDATION.json').single_html_sha256)")"
+          hv="$(node -e "console.log(require('./packages/realiti-headless-resident/package.json').version)")"
+          sv="$(node -e "console.log(require('./packages/realiti-server/package.json').version)")"
+          if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            commits="$(git log --format='- %h %s' "$BEFORE..$GITHUB_SHA" | head -40)"
+          else
+            commits="$(git log --format='- %h %s' -n 10 "$GITHUB_SHA")"
+          fi
+          [ -n "$commits" ] || commits="- $short $(git log -1 --format=%s)"
+          gh label create server-update --description "Dedicated server updates to apply, in order" --color 1d76db --force >/dev/null 2>&1 || true
+          number="$(gh issue list --label server-update --state open --json number --jq '.[0].number // empty')"
+          body_file="$(mktemp)"
+          cat > "$body_file" <<BODY
+          Rolling ticket for the dedicated server. Each push to \`main\` adds a comment below with what to apply. Work the comments top to bottom; tick the checklist in each as you go.
+
+          **Latest:** headless \`$hv\`, server \`$sv\`, commit \`$short\`, client sha256 \`$hash\`.
+          **Image:** \`$IMAGE:latest\` (also \`:$GITHUB_SHA\`).
+
+          To apply an update on a host that runs the container:
+          \`\`\`bash
+          docker pull $IMAGE:latest
+          docker rm -f realiti-server || true
+          docker run -d --name realiti-server --restart unless-stopped -p 8787:8787 -v realiti-data:/data -e ADMIN_TOKEN=change-me $IMAGE:latest
+          curl -s http://localhost:8787/health
+          \`\`\`
+          Or, without restarting, pull only the client: \`curl -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" http://localhost:8787/admin/update\`.
+          BODY
+          sed -i 's/^          //' "$body_file"
+          if [ -z "$number" ]; then
+            number="$(gh issue create --title "Server update queue" --label server-update --body-file "$body_file" --json number --jq .number 2>/dev/null || gh issue create --title "Server update queue" --label server-update --body-file "$body_file" | grep -oE '[0-9]+$')"
+          else
+            gh issue edit "$number" --body-file "$body_file" >/dev/null
+          fi
+          comment_file="$(mktemp)"
+          cat > "$comment_file" <<COMMENT
+          ### Update $short — headless $hv, server $sv
+
+          Client sha256 \`$hash\` · image \`$IMAGE:$GITHUB_SHA\` · [workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
+
+          Commits:
+          $commits
+
+          - [ ] pull the image (or call \`/admin/update\` for the client only)
+          - [ ] \`/health\` reports \`client: true\`
+          - [ ] \`/\` shows client sha256 \`$hash\`
+          COMMENT
+          sed -i 's/^          //' "$comment_file"
+          gh issue comment "$number" --body-file "$comment_file" >/dev/null
+          echo "Filed on issue #$number"
