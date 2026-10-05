@@ -2,6 +2,20 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.10.0 — Chapter 5 groundwork, pass B: typed schemas and a stdio MCP server
+
+### Added
+
+- `source/scripts/71-schemas-public.js` (`REALITI_SCHEMAS_V1`, `realiti://schemas`): every public operation declared once with an argument schema and a QUERY/ACTION classification; `realiti://capabilities` carries `tool_schemas` and `read_only_operations`; door `schemas`.
+- `packages/realiti-headless-resident/mcp.cjs` (`realiti-mcp`): a stdio MCP server with no SDK dependency whose tools are generated from the schemas, with read purity (reads and resources never reach invoke), `_meta.may_mutate` on every call, and the stale-observation witness. Headless suite `test/mcp.cjs`.
+
+## 2.9.0 — Chapter 5 groundwork, pass A: causal timeline, seeded randomness, checkpoint envelope
+
+### Added
+
+- `source/scripts/58p-timeline.js` (`REALITI_TIMELINE_V1`): an event heap with superdense tags (integer microseconds, microstep, kind rank, stable id) so same-time events fire in one order everywhere, cancel by generation, a Zeno guard, and firing between ticks outside any world tick. The continuity stepper bounds each tick at the next event, so ticks land exactly on event times. Producers: sunrise, sunset, high and low water (logged in `C9.chapter2.events` for `since` and `calendar`), and the journey's arrival. A seeded generator and a next-reaction channel (one exponential draw, internal time, no redraw on rate change) for replayable stochastic frontiers.
+- Headless host: file storage is a checkpoint envelope `{schema, saved_wall_ms, sha256, data}` written atomically; on reopen the window carries `REALITI_STORE_CHECKPOINT` with integrity (OK, MISMATCH, LEGACY) and downtime. Headless suite `test/timeline.cjs`.
+
 ## 2.8.0 — Chapter 4, pass 5: companions and journeys
 
 ### Added

@@ -52,17 +52,25 @@ function installHostPrimitives(w){
   if(!w.matchMedia)w.matchMedia=()=>({matches:false,addListener(){},removeListener(){},addEventListener(){},removeEventListener(){}});
 }
 
+// File storage is one checkpoint envelope: {schema, saved_wall_ms, sha256, data}. The hash covers the data; a torn or
+// edited file is detected and reported through `checkpoint`, never silently trusted. A legacy flat object still loads.
+const STORE_SCHEMA='REALITI_STORE_CHECKPOINT_V1';
 function makeFileStorage(filePath){
-  const target=path.resolve(filePath);let data={};
-  try{data=JSON.parse(fs.readFileSync(target,'utf8'));if(!data||typeof data!=='object'||Array.isArray(data))data={}}catch{data={}}
+  const target=path.resolve(filePath);let data={},checkpoint={schema:STORE_SCHEMA,loaded:false,saved_wall_ms:null,downtime_ms:null,integrity:'FRESH'};
+  try{const raw=JSON.parse(fs.readFileSync(target,'utf8'));
+    if(raw&&raw.schema===STORE_SCHEMA&&raw.data&&typeof raw.data==='object'){const sha=crypto.createHash('sha256').update(JSON.stringify(raw.data)).digest('hex');data=raw.data;checkpoint={schema:STORE_SCHEMA,loaded:true,saved_wall_ms:Number(raw.saved_wall_ms)||null,downtime_ms:Number.isFinite(Number(raw.saved_wall_ms))?Math.max(0,Date.now()-Number(raw.saved_wall_ms)):null,integrity:sha===raw.sha256?'OK':'MISMATCH'}}
+    else if(raw&&typeof raw==='object'&&!Array.isArray(raw)){data=raw;checkpoint={schema:STORE_SCHEMA,loaded:true,saved_wall_ms:null,downtime_ms:null,integrity:'LEGACY'}}
+  }catch{data={}}
   const keys=()=>Object.keys(data);
   const flush=()=>{
     fs.mkdirSync(path.dirname(target),{recursive:true});
     const tmp=target+'.tmp-'+process.pid;
-    fs.writeFileSync(tmp,JSON.stringify(data,null,2));
+    const body=JSON.stringify(data);
+    fs.writeFileSync(tmp,JSON.stringify({schema:STORE_SCHEMA,saved_wall_ms:Date.now(),sha256:crypto.createHash('sha256').update(body).digest('hex'),data},null,2));
     fs.renameSync(tmp,target);
   };
   return {
+    checkpoint:()=>({...checkpoint}),
     getItem:k=>Object.prototype.hasOwnProperty.call(data,String(k))?String(data[String(k)]):null,
     setItem(k,v){data[String(k)]=String(v);flush()},
     removeItem(k){delete data[String(k)];flush()},
@@ -114,6 +122,7 @@ async function openResident(options={}){
       installHostPrimitives(w);
       if(options.storagePath){
         const backing=makeFileStorage(options.storagePath);
+        try{Object.defineProperty(w,'REALITI_STORE_CHECKPOINT',{value:backing.checkpoint(),configurable:true})}catch{}
         Object.defineProperty(w,'localStorage',{value:backing,configurable:true});
       }
       if(options.residentId!==undefined)w.REALITI_RESIDENT_ID=String(options.residentId);

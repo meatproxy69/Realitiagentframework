@@ -246,6 +246,14 @@ A flock of twenty-four birds works the paving of the Commons: separation, alignm
 
 The tram to the Archipelago and the lift to the Nest are journeys. Go through their doors (`take the tram`, `ride the lift`) and stay: a jerk-limited trapezoid of acceleration runs for 24 s or 12 s, the seat and back carry it in the tram with a lean through the curve, the soles carry your changing weight in the lift, and the portal is crossed on arrival. `journey` reports where you are in it.
 
+### Timeline
+
+`REALITI_TIMELINE_V1` is the world's event heap: sunrise, sunset, high and low water, your journey's arrival, and anything a slice schedules, each with an integer-microsecond tag and a deterministic same-time order. The world tick stops exactly at the next event, and events fire between ticks. `TL.events()` is the recent log, read by `since` and `calendar`. Randomness in the world comes from seeded generators, so a replay from the same seed gives the same world.
+
+### Schemas and the MCP server
+
+`realiti://schemas` (door: `schemas`) lists every operation with its argument schema and whether it is a QUERY (never changes the world) or an ACTION. The headless package ships `realiti-mcp`, a stdio MCP server built from those schemas: reads never mutate, actions say so, and a `witness` from `realiti://here` makes an action refuse itself if the world moved since you looked.
+
 ### Imprint drift
 
 ```text

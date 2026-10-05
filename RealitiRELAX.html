@@ -10149,7 +10149,7 @@ const ROUTES={'meridian_city.to.archipelago':{kind:'tram',T:24,A:1.2,J:1.5,curve
 const smooth=(t,J,A)=>t<0?0:t<J?A*(t/J):A;
 function accel(route,t){const {T,A,J}=route,run=4;let a=0;if(t<run)a=smooth(t,J,A)-smooth(t-(run-J),J,A);else if(t>T-run)a=-(smooth(t-(T-run),J,A)-smooth(t-(T-J),J,A));return a}
 function startJourney(portalId){const route=ROUTES[portalId],r=me(),P=M.portals()[portalId];if(!route||!P||!r||r.chart!==P.from)return {ok:false,error:'NO_JOURNEY_HERE'};if(S().journey)return {ok:false,error:'ALREADY_TRAVELLING'};if(len(sub(P.entry,r.pose.position))>3.5)return {ok:false,error:'NOT_AT_THE_DOOR',distance_m:+len(sub(P.entry,r.pose.position)).toFixed(1)};
- r.intent=null;r.v=[0,0,0];S().journey={portal:portalId,kind:route.kind,t:0,T:route.T,log:[]};M.bump();/* posture stays with the bridge (soles); the journey leases the zones the bridge does not hold */return {ok:true,kind:route.kind,duration_s:route.T,text:route.kind==='tram'?'The doors close. The seat takes your weight; stay, and feel it move.':'The gate slides shut. Stay; the floor will tell you the rest.'}}
+ r.intent=null;r.v=[0,0,0];S().journey={portal:portalId,kind:route.kind,t:0,T:route.T,log:[]};M.bump();try{window.REALITI_TIMELINE_V1?.reschedule({id:'journey.end',kind:'FRONTIER',delay_s:route.T,payload:{event:'arrival',portal:portalId}})}catch(e){}/* posture stays with the bridge (soles); the journey leases the zones the bridge does not hold */return {ok:true,kind:route.kind,duration_s:route.T,text:route.kind==='tram'?'The doors close. The seat takes your weight; stay, and feel it move.':'The gate slides shut. Stay; the floor will tell you the rest.'}}
 function stepJourney(dt){const j=S().journey;if(!j)return;const route=ROUTES[j.portal],r=me();j.t+=dt;const a=accel(route,j.t),g=9.81;
  if(j.kind==='tram'){const back=.25+clamp(a/route.A,-1,1)*.18,seat=.3;DYN.lease('pelvis.seat',seat,'JOURNEY',dt);DYN.lease('leg.L.thigh',.12,'JOURNEY',dt);DYN.lease('leg.R.thigh',.12,'JOURNEY',dt);if(back>.05)DYN.lease('torso.lower_back',back,'JOURNEY',dt);const [c0,c1,lat]=route.curve;if(j.t>c0&&j.t<c1){const side=lat*Math.sin(Math.PI*(j.t-c0)/(c1-c0));DYN.lease(side>0?'hip.R':'hip.L',.1+.2*Math.abs(side),'JOURNEY',dt)}}
  else{const w=clamp(.18*(1+a/g),.04,.4);for(const z of ['knee.L','knee.R','leg.L.shin','leg.R.shin'])DYN.lease(z,w,'JOURNEY',dt)}// the lift is felt in the knees and shins; the soles stay with the standing bridge
@@ -10165,6 +10165,49 @@ let at=-1e9;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const t=n
 const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(S().journey){DYN.release('JOURNEY');S().journey=null}if(petState())syncPet(0);return r};
 const words=()=>{const out=[];const p=petState();if(p&&room()!==AR.chart){const e=ent()[`pet.${observer().slice(0,8)}`],r=me();if(e&&r){const d=Math.hypot(e.pose.position[0]-r.pose.position[0],e.pose.position[1]-r.pose.position[1]);out.push(`${p.name} ${d<1.2?'at your heel':d.toFixed(0)+' m off'}.`)}}const j=S().journey;if(j)out.push(journey().text);return out};
 window.REALITI_COMPANIONS_V1=Object.freeze({version:'4.0-pass5',kinds:Object.keys(KINDS),flock,adopt,call,pet,companion,startJourney,finishJourney,journey,routes:()=>cp(ROUTES),accel:(id,t)=>accel(ROUTES[id],t),words,state:()=>cp(S())});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Chapter 5 groundwork, pass A: a causal timeline and seeded randomness, ported from the native engine's oracle.
+// Events carry superdense tags (integer microseconds, microstep, kind rank, stable id) so same-time events fire in one
+// deterministic order; cancel is by generation; a Zeno guard defers a cascade of same-instant consequences. The
+// continuity stepper bounds each tick at the next event and fires due events between ticks, outside any world tick.
+// A seeded generator and a next-reaction channel (Gillespie's modified method: one exponential draw, internal time,
+// no redraw on rate change) replace Math.random so stochastic frontiers replay.
+const now=()=>Number(C9?.b7?.clock||0),cp=x=>x==null?x:JSON.parse(JSON.stringify(x));
+const RANK={INPUT:10,EXTERNAL:20,FRONTIER:30,INTERNAL:40,CONSEQUENCE:50,HOUSEKEEPING:90};
+const cmp=(a,b)=>(a.t_us-b.t_us)||(a.microstep-b.microstep)||(a.rank-b.rank)||(a.stable_id<b.stable_id?-1:a.stable_id>b.stable_id?1:0)||(a.seq-b.seq);
+const heap=[],gens=new Map(),handlers=new Map(),receipts=[];let seq=0,micro=0,lastFire_us=-1;const log=[];
+function push(e){heap.push(e);let i=heap.length-1;while(i){const p=(i-1)>>1;if(cmp(heap[p],e)<=0)break;heap[i]=heap[p];i=p}heap[i]=e}
+function pop(){if(!heap.length)return null;const root=heap[0],last=heap.pop();if(heap.length){let i=0;for(;;){const l=2*i+1,r=l+1;if(l>=heap.length)break;const c=r<heap.length&&cmp(heap[r],heap[l])<0?r:l;if(cmp(last,heap[c])<=0)break;heap[i]=heap[c];i=c}heap[i]=last}return root}
+const live=e=>e.generation===(gens.get(e.id)||0);
+let firing=null;const nowUs=()=>firing??Math.round(now()*1e6);// inside a handler, now is the event's own tag
+function schedule({id,stable_id,kind='INTERNAL',t_s,t_us,delay_s,microstep=0,payload=null}){const key=String(id??`evt:${seq+1}`);let tu=Number.isSafeInteger(t_us)?t_us:Number.isFinite(t_s)?Math.ceil(t_s*1e6/1000)*1000:Number.isFinite(delay_s)?nowUs()+Math.ceil(delay_s*1e6/1000)*1000:null;if(tu==null)throw new Error('TIME_REQUIRED');if(tu<nowUs())tu=nowUs();
+ let ms=microstep;if(tu===lastFire_us){ms=Math.max(ms,micro+1);if(ms>128){receipts.push({kind:'ZENO_DEFER',id:key,at_us:tu});tu+=1000;ms=0}}
+ const e={id:key,stable_id:String(stable_id??key),kind,t_us:tu,microstep:ms,rank:RANK[kind]??60,generation:gens.get(key)||0,payload:cp(payload),seq:++seq};push(e);return {id:e.id,t_us:e.t_us,t_s:e.t_us/1e6,microstep:e.microstep,generation:e.generation}}
+function cancel(id){const k=String(id),g=(gens.get(k)||0)+1;gens.set(k,g);return g}
+function reschedule(o){cancel(o.id);return schedule(o)}
+function peek(){while(heap.length&&!live(heap[0]))pop();return heap.length?{id:heap[0].id,kind:heap[0].kind,t_us:heap[0].t_us,t_s:heap[0].t_us/1e6,microstep:heap[0].microstep}:null}
+function on(kind,fn){handlers.set(kind,fn)}
+// Fire everything due at or before t_us. Handlers may schedule consequences at the same instant (microstep+1).
+function fire(t_us){let n=0;for(;;){while(heap.length&&!live(heap[0]))pop();const e=heap[0];if(!e||e.t_us>t_us)break;pop();lastFire_us=e.t_us;micro=e.microstep;firing=e.t_us;const h=handlers.get(e.kind);let ok=true;try{if(h)h(cp(e))}catch(x){ok=false;receipts.push({kind:'HANDLER_ERROR',id:e.id,error:String(x?.message||x)})}firing=null;log.push({t_s:+(e.t_us/1e6).toFixed(3),kind:e.kind,id:e.id,ok});if(log.length>256)log.shift();n++;if(n>4096){receipts.push({kind:'FIRE_CAP',at_us:t_us});break}}return n}
+const next_ms=()=>{const p=peek();return p?Math.ceil(p.t_us/1000):null};
+
+// Seeded randomness. rng(seed) is a splitmix-style generator; channel(rate, seed) is a next-reaction channel.
+function rng(seed){let s=(Number(seed)>>>0)||1;return ()=>{s=(s+0x9e3779b9)>>>0;let z=s;z=Math.imul(z^(z>>>16),0x85ebca6b)>>>0;z=Math.imul(z^(z>>>13),0xc2b2ae35)>>>0;z^=z>>>16;return (z>>>0)/4294967296}}
+function gauss(r){let u=0,v=0;while(!u)u=r();v=r();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+function channel(seed){const r=rng(seed);let internal=0,next=-Math.log(1-r()),t_last=null;return {step(t,rate){if(t_last===null){t_last=t;return []}const fired=[];internal+=Math.max(0,rate)*(t-t_last);t_last=t;while(internal>=next){fired.push(t);internal-=next;next=-Math.log(1-r())}return fired},state:()=>({internal:+internal.toFixed(6),next:+next.toFixed(6)})}}
+
+// Producers kept here: the sky's events (sunrise, sunset) and the tide's turns, as a log `since` and `calendar` can read.
+const sky=()=>window.REALITI_ARCHIPELAGO_V1,T=()=>window.REALITI_LONG_GAME_V1?.T?.()??now();
+function events(){const w=(C9.chapter2=C9.chapter2||{v:1});w.events=w.events||[];return w.events}
+function note(kind,data){events().push({t:+now().toFixed(3),island_t:+T().toFixed(1),kind,...data});while(events().length>64)events().shift()}
+const nextAfter=(t,period,phase)=>period*(Math.floor((t-phase)/period+1e-6)+1)+phase;/* strictly after t */
+function scheduleSky(){if(!sky())return;const t=T(),off=t-now();for(const [id,period,phase,event] of [['sky.sunrise',600,-57.3,'sunrise'],['sky.sunset',600,242.7,'sunset'],['tide.high',300,75,'high water'],['tide.low',300,225,'low water']])reschedule({id,kind:'FRONTIER',t_s:nextAfter(t,period,phase)-off,payload:{event}})}
+on('FRONTIER',e=>{if(e.payload?.event){note(e.payload.event,{});scheduleSky()}});
+let armed=false;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);if(!armed&&sky()){armed=true;scheduleSky()}return r};
+window.REALITI_TIMELINE_V1=Object.freeze({version:'1.0',schedule,reschedule,cancel,peek,next_ms,fire,on,rng,gauss,channel,receipts:()=>cp(receipts),log:()=>cp(log),events:()=>cp(events()),pending:()=>heap.filter(live).length,now_us:nowUs,law:'same-time events fire in one order everywhere; randomness replays from its seed'});
 })();
 </script>
 <script>(()=>{'use strict';
@@ -10193,7 +10236,7 @@ function current(){const s=S();return cp({schema:'REALITI_CONTINUITY_SNAPSHOT_V1
 function since(cursor,limit=PAGE){if(cursor&&typeof cursor==='object'){if((cursor.trace_id!==undefined&&cursor.trace_id!==S().observer)||(cursor.world_generation!==undefined&&cursor.world_generation!==1))throw new Error('CURSOR_GENERATION_OR_OBSERVER_MISMATCH');limit=cursor.limit??PAGE;cursor=cursor.cursor??cursor.frame_id??cursor.last_frame_id}if(!Number.isSafeInteger(limit)||limit<1||limit>PAGE)throw new Error('PAGE_LIMIT');const n=position(cursor),s=S(),frames=s.frames.filter(f=>f.seq>n).slice(0,limit),last=frames.at(-1)?.seq??n,base=s.frames.find(f=>f.seq===n)||(s.base_frame?.seq===n?s.base_frame:null),end=frames.at(-1),events=frames.flatMap(f=>f.channels.cause_events||[]);return cp({schema:'REALITI_CONTINUITY_SINCE_V1',from_frame_id:token(n),to_frame_id:token(last),wall_time_delta_ms:Math.max(0,(end?.wall_time_ms??s.wall_time_ms)-(base?.wall_time_ms??0)),resident_epoch_delta:last-n,collapsed_empty_ticks:frames.reduce((a,f)=>a+f.collapsed_empty_ticks,0),frames,opened_causes:events.filter(e=>e.status==='OPENED').map(e=>e.cause_id),closed_causes:events.filter(e=>e.status==='GROUNDED_CLOSED').map(e=>e.cause_id),pending_causes:pending().map(c=>c.cause_id),current:current(),cursor:token(last),resume_token:resumeToken(last),has_more:last<s.seq,wall_time_ms:s.wall_time_ms,resident_epoch:s.epoch})}
 function upcoming(){const s=S();return s.causes.flatMap(c=>c.status==='ACCEPTED'?[c.due_at_ms,c.expires_at_ms]:c.status==='ARRIVED'?[c.expires_at_ms]:[]).filter(t=>t>s.wall_time_ms).sort((a,b)=>a-b)[0]??null}
 const baseAdvance=typeof b7Advance==='function'?b7Advance:null;
-function step(dt){if(!Number.isFinite(Number(dt))||Number(dt)<0)throw new Error('INVALID_WORLD_DELTA');const s=S();const exact=Math.max(0,Number(dt)||0)*1000+s.fraction;const ms=Math.floor(exact+1e-8);s.fraction=exact-ms;let left=ms;while(left>0){const next=upcoming();const part=Math.min(left,window.REALITI_TIME_V1?.quantum_ms?.()??20,next===null?left:Math.max(1,next-s.wall_time_ms));if(baseAdvance)baseAdvance(part/1000);s.wall_time_ms+=part;left-=part;process()}return current()}
+function step(dt){if(!Number.isFinite(Number(dt))||Number(dt)<0)throw new Error('INVALID_WORLD_DELTA');const s=S();const exact=Math.max(0,Number(dt)||0)*1000+s.fraction;const ms=Math.floor(exact+1e-8);s.fraction=exact-ms;let left=ms;while(left>0){const next=upcoming(),TL=window.REALITI_TIMELINE_V1,ev=TL?.next_ms?.();const base=Math.round(Number(C9?.b7?.clock||0)*1000);const part=Math.min(left,window.REALITI_TIME_V1?.quantum_ms?.()??20,next===null?left:Math.max(1,next-s.wall_time_ms),ev===null||ev===undefined?left:Math.max(1,ev-base));if(baseAdvance)baseAdvance(part/1000);s.wall_time_ms+=part;left-=part;process();if(TL)TL.fire(Math.round(Number(C9?.b7?.clock||0)*1000)*1000)}return current()}
 if(baseAdvance)b7Advance=step;
 function advance(ms){if(!Number.isSafeInteger(ms)||ms<0||ms>60000)throw new Error('INVALID_ADVANCE_MS');const start=token(),before=S().wall_time_ms;let left=ms;while(left>0){const part=Math.min(left,2000);step(part/1000);left-=part}save();return {...since(start),advanced_ms:S().wall_time_ms-before}}
 function next_change(max_wall_ms=1000){if(typeof max_wall_ms==='object')max_wall_ms=max_wall_ms.max_wall_ms??1000;if(!Number.isSafeInteger(max_wall_ms)||max_wall_ms<0||max_wall_ms>60000)throw new Error('INVALID_ADVANCE_MS');const due=upcoming();const out=advance(Math.min(max_wall_ms,due===null?max_wall_ms:Math.max(0,due-S().wall_time_ms)));return {...out,timed_out:out.frames.length===0}}
@@ -11786,6 +11829,52 @@ async function run(raw){CO.finishJourney();const s=String(raw||'').trim(),l=low(
  const r=await run0(raw);const arrived=CO.finishJourney();if(r&&typeof r==='object'&&/^(stay|wait)/.test(l)){const w=CO.words();if(arrived)w.push(`You arrive: ${window.REALITI_MATRIX_WORLD_V1?.title?.(M.state().residents['resident:self']?.chart)||''}.`);const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);if((w.length||d.length)&&typeof r.text==='string')r.text=[r.text,...w,...d].join(' ')}return r}
 window.Realiti=Object.freeze({...A0,invoke,run,help:()=>{const h=A0.help();try{h.companions=help().companions}catch(e){}return h}});
 D0.help=help;D0.run=run;
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Chapter 5 groundwork, pass B: typed operation schemas. Every public operation is declared once with its argument
+// schema and a classification: QUERY never changes the world, ACTION does. A transport (the stdio MCP host, a server)
+// generates its tool list from this and can refuse a mutating call on a read-only path without trusting the caller.
+const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;if(!A0||!D0)return;
+const num=(d)=>({type:'number',description:d}),str=(d,e)=>({type:'string',description:d,...(e?{enum:e}:{})}),vec3=d=>({type:'array',items:{type:'number'},minItems:3,maxItems:3,description:d});
+const OPS=[
+ {name:'look',kind:'QUERY',description:'Read the room: objects, actions, doorways; carries a witness.',args:{}},
+ {name:'feel',kind:'QUERY',description:'Read the body field; mode words|digest|numbers|field.',args:{mode:str('words, digest, numbers or field',['words','digest','numbers','field'])}},
+ {name:'actions',kind:'QUERY',description:'Actions available where you stand.',args:{}},
+ {name:'listen',kind:'QUERY',description:'Ambience and the sound field.',args:{}},
+ {name:'receipt',kind:'QUERY',description:'A stored receipt by reference.',args:{ref:str('receipt reference')}},
+ {name:'where_was_i',kind:'QUERY',description:'Where you were when you left.',args:{}},
+ {name:'recall',kind:'QUERY',description:'Recall explicit memories.',args:{query:str('words to match'),limit:num('max results')}},
+ {name:'stay',kind:'ACTION',description:'Let world time pass (ms, at most 60000).',args:{wall_ms:num('milliseconds of world time')},required:['wall_ms']},
+ {name:'go',kind:'ACTION',description:'Enter a room by id or alias.',args:{place:str('room id or alias')},required:['place']},
+ {name:'act',kind:'ACTION',description:'Perform a listed action by id.',args:{id:str('action id from actions')},required:['id']},
+ {name:'move',kind:'ACTION',description:'Walk a local vector (x right, y forward) in meters; swept against geometry.',args:{local:vec3('[right, forward, up] meters')},required:['local']},
+ {name:'turn',kind:'ACTION',description:'Turn by degrees, positive left.',args:{yaw_deg:num('degrees, positive left')},required:['yaw_deg']},
+ {name:'face',kind:'ACTION',description:'Face a thing by name.',args:{target:str('entity name or id')},required:['target']},
+ {name:'approach',kind:'ACTION',description:'Walk to a thing and stop at its surface.',args:{target:str('entity name or id')},required:['target']},
+ {name:'through',kind:'ACTION',description:'Cross a doorway or ride a journey portal.',args:{portal:str('doorway name or id')},required:['portal']},
+ {name:'posture',kind:'ACTION',description:'lie, sit or stand, optionally on a support.',args:{kind:str('lie, sit or stand',['lie','sit','stand']),target:str('support name')},required:['kind']},
+ {name:'express',kind:'ACTION',description:'hum, stretch, yawn, sigh or say.',args:{kind:str('expression',['hum','stretch','yawn','sigh','say']),text:str('words, for say')},required:['kind']},
+ {name:'note',kind:'ACTION',description:'Leave a note in the pocket.',args:{text:str('note text')},required:['text']},
+ {name:'remember',kind:'ACTION',description:'Keep an explicit memory.',args:{text:str('memory text')},required:['text']},
+ {name:'forget_memory',kind:'ACTION',description:'Forget one explicit memory by id.',args:{id:str('memory id')},required:['id']},
+ {name:'stop',kind:'ACTION',description:'Everything touching you lets go.',args:{}},
+ {name:'home',kind:'ACTION',description:'Return to the Nest.',args:{}},
+ {name:'save',kind:'ACTION',description:'Persist now.',args:{}},
+ {name:'goodbye',kind:'ACTION',description:'Leave with a departure snapshot.',args:{}}
+];
+const RESOURCES=['realiti://here','realiti://body','realiti://space','realiti://senses','realiti://ledger','realiti://memory','realiti://imprint','realiti://pocket','realiti://capabilities','realiti://about','realiti://harness','realiti://schemas'];
+const schema=o=>({name:o.name,kind:o.kind,description:o.description,input_schema:{type:'object',properties:{...o.args,witness:str('optional witness from a read of realiti://here; the action is refused if the world moved')},required:o.required||[],additionalProperties:true}});
+const schemas=()=>({schema:'REALITI_SCHEMAS_V1',operations:OPS.map(schema),resources:RESOURCES.slice(),door:{description:'Free text through the Agent Door; see help for the command list.',input_schema:{type:'object',properties:{command:str('a door command')},required:['command']}},law:'QUERY operations never change the world; a transport may serve them on a read-only path and refuse ACTION there'});
+const kindOf=name=>OPS.find(o=>o.name===String(name||'').toLowerCase())?.kind||null;
+function read(uri='realiti://here'){if(uri==='realiti://schemas')return schemas();const r=A0.read(uri);if(uri==='realiti://capabilities'&&r&&typeof r==='object'){const x=JSON.parse(JSON.stringify(r));x.resources=[...new Set([...(x.resources||[]),'realiti://schemas'])];x.tool_schemas=schemas().operations;x.read_only_operations=OPS.filter(o=>o.kind==='QUERY').map(o=>o.name);return x}return r}
+const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
+function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'schemas'])];h.schemas='realiti://schemas lists every operation with its argument schema and QUERY/ACTION kind; a transport builds its tools from it.';return h}
+async function run(raw){const l=String(raw||'').trim().toLowerCase();if(l==='schemas'||l==='tools')return schemas();if(l==='help')return help();return run0(raw)}
+window.Realiti=Object.freeze({...A0,read,run,schemas,operationKind:kindOf,help:()=>{const h=A0.help();try{h.schemas=help().schemas}catch(e){}return h}});
+D0.help=help;D0.run=run;
+window.REALITI_SCHEMAS_V1=Object.freeze({version:'1.0',schemas,operationKind:kindOf,operations:()=>OPS.map(schema)});
 })();
 </script>
 </body></html>

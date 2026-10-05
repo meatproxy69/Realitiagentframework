@@ -113,7 +113,8 @@ async function open(id){return openResident({htmlPath:html,residentId:id,storage
   check('departure_object_state_omits_clock_bookkeeping',!Object.prototype.hasOwnProperty.call(dep.changed_objects[0]?.state||{},'t'),dep.changed_objects[0]);
  }finally{actor.close()}
 
- const disk=JSON.parse(fs.readFileSync(storagePath,'utf8'));
+ const envelope=JSON.parse(fs.readFileSync(storagePath,'utf8')),disk=envelope.data||envelope;
+ check('store_is_a_checkpoint_envelope',envelope.schema==='REALITI_STORE_CHECKPOINT_V1'&&Number.isFinite(envelope.saved_wall_ms)&&/^[0-9a-f]{64}$/.test(String(envelope.sha256)),{schema:envelope.schema});
  const memoryKeys=Object.keys(disk).filter(k=>k.includes('resident-memory-v1:'));
  check('separate_physical_namespaces',memoryKeys.some(k=>k.endsWith('agent-a'))&&memoryKeys.some(k=>k.endsWith('agent-b')),memoryKeys);
  const aRaw=Object.entries(disk).find(([k])=>k.endsWith('agent-a'))?.[1]||'';
