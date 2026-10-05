@@ -19,8 +19,8 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
     {first_ten:help.first_ten,groups:help.world_guide?.groups?.map(g=>g.id)});
   check('help_is_curated_not_a_feature_catalog',
     Array.isArray(help.commands)&&help.commands.includes('worlds')&&help.commands.includes('actions')&&
-    !help.commands.some(x=>/cast|raceboard|fishboard|mail|neuro|hum|decode|clap/i.test(String(x))),
-    help.commands);
+    !help.commands.some(x=>/cast|raceboard|fishboard|mail|neuro|hum|decode|clap/i.test(String(x)))&&!('catnip2' in help),
+    {commands:help.commands,keys:Object.keys(help)});
   check('worlds_orients_without_dumping_the_catalog',
     worlds.ok&&worlds.schema==='REALITI_WORLD_GUIDE_V1'&&worlds.total_rooms===rooms.length&&count===rooms.length&&
     groups.every(g=>!('rooms' in g)&&!('try' in g))&&!('route' in worlds),
