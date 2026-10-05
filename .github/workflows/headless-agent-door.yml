@@ -43,6 +43,23 @@ jobs:
           node cli.cjs --html ../../RealitiRELAX.html help >/tmp/realiti-help.json
           grep -q "REALITI" /tmp/realiti-help.json
 
+
+  community-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build canonical runtime from readable source
+        run: node build.mjs
+      - name: Install package dependency
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: First community bug regressions
+        working-directory: packages/realiti-headless-resident
+        run: node test/community-bugs.cjs ../../RealitiRELAX.html
+
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
