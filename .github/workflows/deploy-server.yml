@@ -61,13 +61,18 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
-        shell: bash
-        run: |
-          set -euo pipefail
-          docker build -f packages/realiti-server/Dockerfile -t "${{ steps.meta.outputs.image }}:latest" -t "${{ steps.meta.outputs.image }}:${GITHUB_SHA}" .
-          docker push "${{ steps.meta.outputs.image }}:latest"
-          docker push "${{ steps.meta.outputs.image }}:${GITHUB_SHA}"
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - name: Build and push (amd64 and arm64, so it runs on Ampere free-tier hosts too)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: packages/realiti-server/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ steps.meta.outputs.image }}:latest
+            ${{ steps.meta.outputs.image }}:${{ github.sha }}
 
   ticket:
     needs: image
