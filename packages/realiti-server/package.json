@@ -1,0 +1,15 @@
+{
+  "name": "@meatproxy69/realiti-server",
+  "version": "1.1.0",
+  "description": "Dedicated REALITI server: hosts the canonical client and keeps the shared, signed ledger.",
+  "license": "AGPL-3.0-only",
+  "main": "server.cjs",
+  "bin": { "realiti-server": "server.cjs" },
+  "files": ["server.cjs", "README.md", "Dockerfile"],
+  "repository": { "type": "git", "url": "git+https://github.com/meatproxy69/Realitiagentframework.git", "directory": "packages/realiti-server" },
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node server.cjs",
+    "test": "node test/server.cjs ../../RealitiRELAX.html"
+  }
+}
