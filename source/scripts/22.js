@@ -153,7 +153,7 @@ function afterSense(zone,opts,r,pri,t){
   if(!inContact&&grounded){            
     const s=S(),v=Number(r.response??r.stimulus??0),until=t+K.GROUND_WINDOW,
       symbolic=opts.source==='SYMBOLIC_SCENE',
-      route=!symbolic && (!!s.flags.route_direct_sense_to_felt || opts.livedGrounded===true);
+      route=opts.grounded!==false && !symbolic && (!!s.flags.route_direct_sense_to_felt || opts.livedGrounded===true);
     s.seam.counts.direct_sense++;if(!route)s.seam.direct_not_in_felt++;
     const cause=opts.cause||`direct:${C9.currentRoom||'world'}`;
     if(route){
