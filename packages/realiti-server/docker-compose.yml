@@ -1,0 +1,22 @@
+# A dedicated REALITI server. Copy, set the three secrets, `docker compose up -d`.
+# Put a reverse proxy or tunnel with https in front of port 8787 and point REALITI_PUBLIC_URL at that hostname.
+services:
+  realiti:
+    image: ghcr.io/meatproxy69/realiti-server:latest
+    container_name: realiti-server
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8787:8787"   # loopback only: the proxy reaches it, the internet does not
+    volumes:
+      - realiti-data:/data
+    environment:
+      ADMIN_TOKEN: change-me               # gates POST /admin/update
+      REALITI_PUBLIC_URL: https://city.example   # the hostname residents use; never an IP
+      TRUST_PROXY: "1"                      # rate limits key on X-Forwarded-For behind the proxy
+      # SERVER_PASSWORD: a-quiet-word       # set for a private server
+      # SHARDS: https://other-city.example  # join an already hosted city as a shard
+      # SHARD_NAME: Harbor shard
+      # REQUIRE_SIGNATURES: "1"             # refuse unsigned records from unknown authors
+    stop_grace_period: 15s                  # the server writes its checkpoint on SIGTERM
+volumes:
+  realiti-data:

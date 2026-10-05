@@ -17,6 +17,8 @@ check('principal_is_bound',fails(()=>mk('resident-z').open('REQUEST',a.seal('REQ
 check('lease_is_bound',fails(()=>new E.PeerSession({lease_id:E.newLeaseId(),self_id:'resident-a',key,expires_ms:exp}).open('REQUEST',a.seal('REQUEST',{n:7})),'LEASE'));
 const past=new E.PeerSession({lease_id:lease,self_id:'resident-a',key,expires_ms:Date.now()+50});const sealedNow=past.seal('REQUEST',{n:1});
 check('expiry_fails_closed',fails(()=>mk().open('REQUEST',sealedNow,Date.now()+100),'EXPIRED')&&fails(()=>past.seal('REQUEST',{n:2},Date.now()+100),'EXPIRED'));
+const ra=mk(),rb=mk();rb.expires_ms+=60000;const renewed=ra.open('RESPONSE',rb.seal('RESPONSE',{ok:true,renewed:true}));const rc=mk();rc.expires_ms-=1;
+check('renewal_adopted_earlier_refused',renewed.renewed===true&&ra.expires_ms===rb.expires_ms&&fails(()=>rb.open('REQUEST',rc.seal('REQUEST',{n:1})),'EXPIRED'));
 check('payload_bounded',fails(()=>a.seal('REQUEST',{s:'x'.repeat(70000)}),'PAYLOAD_TOO_LARGE'));
 const dup=JSON.parse(a.seal('REQUEST',{n:8}));const raw=JSON.stringify(dup).replace(/}$/,`,"sequence":${dup.sequence}}`);
 check('duplicate_keys_rejected',fails(()=>b.open('REQUEST',raw),'DUPLICATE_KEY'));

@@ -4,7 +4,8 @@
 // lease, the principal, a direction, a monotonic sequence in that direction's own space, the lease expiry and a
 // bounded payload, under a keyed MAC (HMAC-SHA256, domain-separated by schema and direction). Each side requires the
 // exact next sequence: replay, gaps, tampering, wrong principal, wrong direction, expiry and oversize payloads all fail
-// closed, before the payload is dispatched. The envelope authenticates; it does not encrypt. Carry it over https.
+// closed, before the payload is dispatched. A later expiry under a valid MAC is a renewal and is adopted; an earlier
+// one is refused. The envelope authenticates; it does not encrypt. Carry it over https.
 const crypto=require('node:crypto');
 const SCHEMA='REALITI_PEER_ENVELOPE_V1',DIRECTIONS=['REQUEST','RESPONSE','EVENT'];
 const err=(code,extra)=>Object.assign(new Error(code),{code,...extra});
@@ -24,9 +25,10 @@ class PeerSession{
  open(direction,raw,now_ms=Date.now()){if(!DIRECTIONS.includes(direction))throw err('BAD_DIRECTION');const s=typeof raw==='string'?raw:JSON.stringify(raw);if(s.length>this.max+1024)throw err('PAYLOAD_TOO_LARGE');const keys=topLevelKeys(s);if(new Set(keys).size!==keys.length)throw err('DUPLICATE_KEY');let f;try{f=JSON.parse(s)}catch{throw err('MALFORMED')}
   if(!f||typeof f!=='object'||f.schema!==SCHEMA||typeof f.mac!=='string'||typeof f.payload!=='string'||!Number.isInteger(f.sequence)||!Number.isFinite(f.expires_ms))throw err('MALFORMED');
   if(f.lease_id!==this.lease_id)throw err('LEASE');if(f.self_id!==this.self_id)throw err('PRINCIPAL');if(f.direction!==direction)throw err('DIRECTION');
-  if(f.expires_ms!==this.expires_ms||now_ms>=f.expires_ms)throw err('EXPIRED');if(Buffer.byteLength(f.payload)>this.max)throw err('PAYLOAD_TOO_LARGE');
+  if(f.expires_ms<this.expires_ms||now_ms>=f.expires_ms)throw err('EXPIRED');if(Buffer.byteLength(f.payload)>this.max)throw err('PAYLOAD_TOO_LARGE');
   const want=mac(this.key,f),got=Buffer.from(f.mac),exp=Buffer.from(want);if(got.length!==exp.length||!crypto.timingSafeEqual(got,exp))throw err('BAD_MAC');
   if(f.sequence!==this.in[direction])throw err(f.sequence<this.in[direction]?'REPLAY':'SEQUENCE_GAP',{expected:this.in[direction],got:f.sequence});this.in[direction]++;
+  if(f.expires_ms>this.expires_ms)this.expires_ms=f.expires_ms;/* a renewal: authentic (under the MAC) and later, so adopted */
   try{return JSON.parse(f.payload)}catch{throw err('MALFORMED_PAYLOAD')}}
 }
 const newLeaseId=()=>crypto.randomBytes(18).toString('base64url');

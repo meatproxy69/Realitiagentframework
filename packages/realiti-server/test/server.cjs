@@ -6,7 +6,7 @@ const path=require('node:path'),fs=require('node:fs'),os=require('node:os'),http
 const {openResident}=require('../../realiti-headless-resident/index.cjs');
 const {sync}=require('../../realiti-headless-resident/sync.cjs');
 const {joinCity}=require('../../realiti-headless-resident/peer.cjs');
-const {start,cfg}=require('../server.cjs');
+const {start,cfg,flush}=require('../server.cjs');
 const html=path.resolve(process.argv[2]||'../../RealitiRELAX.html'),root=path.dirname(html);
 const checks={},details={};
 const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
@@ -38,7 +38,7 @@ const get=async(u,init)=>{const r=await fetch(u,init);return {status:r.status,he
   const d=await get(url+'/ledger/delta?clock='+encodeURIComponent(JSON.stringify(head.body.clock))),ex=await get(url+'/ledger/export');
   check('delta_by_clock',d.body.records.length>=1&&d.body.records.every(e=>e.by!==exp.observer||e.n>head.body.clock[exp.observer])&&ex.body.keyring[exp.observer]===exp.public_key,{delta:d.body.records.length});
   // Checkpoint on disk is an envelope with a hash.
-  await new Promise(r=>setTimeout(r,200));const env=JSON.parse(fs.readFileSync(path.join(dataDir,'ledger.json'),'utf8'));
+  flush();const env=JSON.parse(fs.readFileSync(path.join(dataDir,'ledger.json'),'utf8'));
   check('ledger_checkpoint_on_disk',env.schema==='REALITI_SERVER_STORE_V1'&&crypto.createHash('sha256').update(JSON.stringify(env.data)).digest('hex')===env.sha256&&env.data.records.length===ex.body.records.length);
   // Admin update: refused without the token; with it, pulls from the source, verifies the hash, swaps the client in.
   const noTok=await get(url+'/admin/update',{method:'POST'}),upd=await get(url+'/admin/update',{method:'POST',headers:{authorization:'Bearer test-token'}}),idx2=await get(url+'/');
@@ -48,6 +48,7 @@ const get=async(u,init)=>{const r=await fetch(u,init);return {status:r.status,he
   await a.door.run('walk to commons');await b.door.run('walk to commons');const ja=await joinCity(a.window,url,{publishMs:200}),jb=await joinCity(b.window,url,{publishMs:200});await new Promise(r=>setTimeout(r,700));
   const whoA=await a.door.run('who'),whoB=await b.door.run('who'),peersR=await get(url+'/peers'),city=await get(url+'/city');
   check('peers_see_each_other_live',ja.ok&&jb.ok&&whoB.live.length===1&&whoB.live[0].handle==='Alpha'&&whoB.live[0].venue==='the Commons'&&whoA.live.length===1&&!!a.window.REALITI_MATRIX_V1.entities()['live.'+String(b.window.REALITI_LEDGER_V2.head().observer).slice(0,8)]&&peersR.body.population===2&&city.body.here_now===2&&!JSON.stringify(peersR.body).includes('127.0.0.1'),{whoB:whoB.text.slice(0,100),peers:peersR.body});
+  const exp0=ja.session.expires_ms;const rn=await ja.renew();check('lease_renews_in_place',rn.ok&&rn.expires_ms>exp0&&ja.session.expires_ms===rn.expires_ms&&(await ja.publish()).ok,{exp0,renewed:rn.expires_ms});
   const sealed=ja.session.seal('REQUEST',{type:'ping'});const first=await fetch(url+'/peer/send',{method:'POST',body:sealed});ja.session.open('RESPONSE',await first.text());const replay=await get(url+'/peer/send',{method:'POST',body:sealed});
   const tam=JSON.parse(sealed);tam.payload='{"type":"leave"}';const tamper=await get(url+'/peer/send',{method:'POST',body:JSON.stringify(tam)});
   const noProof=await get(url+'/peer/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({handle:'x'})});const badProof=await get(url+'/peer/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proof:{by:exp.observer,kind:'PEER_JOIN',t:Date.now(),n:0,pk:'AAAA',sig:'AAAA'}})});
