@@ -24,20 +24,20 @@ const slopeAt=(x,y)=>Math.hypot(h(x+1,y)-h(x-1,y),h(x,y+1)-h(x,y-1))/2;
 
 // Sky and weather. The sun follows the Star Deck's sidereal angle (one day per 600 s of world time); wind shares the
 // Kite Field's Ornstein–Uhlenbeck speed and turns slowly; a rain band crosses the sea.
-const sunAlt=()=>70*Math.sin(TAU*(now()/600)+.6);
+const sunAlt=()=>70*Math.sin(TAU*((now()+(C9?.chapter2?.long?.away_s||0))/600)+.6);// island time: world time plus counted absence
 const isNight=()=>sunAlt()<0;
 function wind(){const v=C9?.wonder?.kite?.v??5.5,th=.9+.3*Math.sin(now()/190)+.15*Math.sin(now()/47);return {speed:v,dir:[Math.cos(th),Math.sin(th)],deg:Math.round(((th*180/Math.PI)%360+360)%360)}}
 function rain(x,y){const t=now(),u=(x*.6+y*.8),phase=((u-t*3)%2400+2400)%2400;return Math.exp(-(((phase-1200)/260)**2))*clamp(.4+.6*(noise(t/400,0)))}
 const current=(x,y)=>[-.35*Math.sin(y/400)+.1,.35*Math.cos(x/400)];
 
 // Chart, landmarks, boat. The harbour sits on the computed shoreline south of Harbor Isle, wherever the noise put it.
-const SIZE=1000,SHORE=(()=>{let y=-150;while(h(0,y)>-.6&&y>-900)y-=2;return y})(),SPAWN=[0,SHORE+22];
+const SIZE=1000,SHORE=(()=>{let y=-150;while(h(0,y)>-.6&&y>-900)y-=2;return y})(),SPAWN=[0,SHORE+33];
 M.define(ISLE,{bounds:{kind:'BOX',center:[0,0,60],halfExtents:[SIZE,SIZE,60]},spawn:{position:[SPAWN[0],SPAWN[1],h(...SPAWN)+.85],rotation:[0,0,0,1]},view:()=>isNight()?60:400,stride:300,tags:['outdoors','archipelago']});
 M.addEntity({id:'isle.ground',chart:ISLE,position:[0,0,0],shape:{kind:'HEIGHTFIELD',h,sea:SEA,slope:.6},tags:['floor','terrain','structure'],collision:true,material:'sand',label:'ground'});
 for(const [k,x,y,hx,hy] of [['east',SIZE+.5,0,.5,SIZE+1],['west',-SIZE-.5,0,.5,SIZE+1],['north',0,SIZE+.5,SIZE+1,.5],['south',0,-SIZE-.5,SIZE+1,.5]])M.addEntity({id:`isle.edge.${k}`,chart:ISLE,position:[x,y,30],shape:{kind:'BOX',halfExtents:[hx,hy,60]},tags:['edge','structure'],collision:true,label:'the edge of the chart'});
 const onGround=(x,y,dz=0)=>[x,y,h(x,y)+dz];
 const LAND=[
- ['harbor.dock','BOX',[0,SHORE+2],[2,8,.15],['dock','wood','support','landmark'],'wood',['sit']],
+ ['harbor.dock','BOX',[0,SHORE+12],[2,18,.15],['dock','wood','support','landmark'],'wood',['sit']],
  ['harbor.boathouse','BOX',[14,SHORE+14],[3,3,2.2],['boathouse','landmark','shelter'],'wood',[]],
  ['harbor.cairn','BOX',[0,0],[.6,.6,1.2],['cairn','stone','landmark','summit'],'ceramic',['reach']],
  ['lantern.lighthouse','CAPSULE',[620,380],{radius:3,height:18},['lighthouse','landmark','light'],'ceramic',['reach']],
@@ -49,10 +49,10 @@ const LAND=[
  ['grove.clearing','VOLUME',[-420,-520],[30,30,.5],['clearing','grove','landmark','plantable'],'longfur',['plant']],
  ['grove.old_oak','SPHERE',[-380,-470],5,['oak','tree','landmark'],'wood',['lean']]
 ];
-for(const [id,kind,[x,y],size,tags,material,aff] of LAND){const base=id==='harbor.dock'?h(0,SHORE+10):h(x,y),pos=kind==='SPHERE'?[x,y,base+size]:kind==='CAPSULE'?[x,y,base+size.height/2]:[x,y,base+(size[2]||0)];M.addEntity({id,chart:ISLE,position:pos,shape:kind==='SPHERE'?{kind,radius:size}:kind==='CAPSULE'?{kind,...size}:{kind,halfExtents:size},tags,collision:kind!=='VOLUME',material,affordances:aff,label:({'lantern.door':'lighthouse door','stones.north':'north stone','stones.east':'east stone','stones.west':'west stone','grove.clearing':'grove clearing','hollow.cave_mouth':'cave mouth'})[id]||id.split('.').pop().replaceAll('_',' ')})}
+for(const [id,kind,[x,y],size,tags,material,aff] of LAND){const base=id==='harbor.dock'?h(0,SHORE+26):h(x,y),pos=kind==='SPHERE'?[x,y,base+size]:kind==='CAPSULE'?[x,y,base+size.height/2]:[x,y,base+(size[2]||0)];M.addEntity({id,chart:ISLE,position:pos,shape:kind==='SPHERE'?{kind,radius:size}:kind==='CAPSULE'?{kind,...size}:{kind,halfExtents:size},tags,collision:kind!=='VOLUME',material,affordances:aff,label:({'lantern.door':'lighthouse door','stones.north':'north stone','stones.east':'east stone','stones.west':'west stone','grove.clearing':'grove clearing','hollow.cave_mouth':'cave mouth'})[id]||id.split('.').pop().replaceAll('_',' ')})}
 M.addEntity({id:'harbor.boat',chart:ISLE,position:[1.2,SHORE-7,SEA+.3],shape:{kind:'BOX',halfExtents:[.7,1.4,.3]},tags:['boat','rowing','support','landmark'],collision:false,material:'wood',label:'rowing boat',affordances:['board'],dynamic:true});
 // Doors: the Kite Field's north fence has a gate to the harbor; the boathouse is the home door.
-M.definePortal({id:'kite_field.to.archipelago',from:'KITE_FIELD',to:ISLE,entry:[-6,27.4,.85],exit:onGround(2,SHORE+18,.85),label:'gate in the fence to the Archipelago'});
+M.definePortal({id:'kite_field.to.archipelago',from:'KITE_FIELD',to:ISLE,entry:[-6,27.4,.85],exit:onGround(6,SHORE+22,.85),label:'gate in the fence to the Archipelago'});
 M.definePortal({id:'archipelago.to.kite_field',from:ISLE,to:'KITE_FIELD',entry:onGround(20,SHORE+18,.85),exit:[-6,25.5,.85],label:'boathouse gate back to the Kite Field'});
 M.definePortal({id:'archipelago.to.cloud_nine_nest',from:ISLE,to:'CLOUD_NINE_NEST',entry:onGround(14,SHORE+24,.85),exit:[0,4.4,.85],label:'boathouse door home to Cloud Nine Nest'});
 

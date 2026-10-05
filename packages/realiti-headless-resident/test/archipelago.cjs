@@ -20,11 +20,11 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('terrain_is_analytic_and_deterministic',AR.h(0,0)>15&&AR.h(0,AR.shore_y-40)<-.6&&AR.h(620,380)>35&&AR.h(300,200)<0&&AR.shore_y<-200,{summit:AR.h(0,0),sea:AR.h(0,AR.shore_y-40),shore_y:AR.shore_y,lantern:AR.h(620,380),between:AR.h(300,200)});
   const go=await door.run('go ARCHIPELAGO');
   const sp0=space();
-  check('arrive_standing_on_the_ground',sp0.chart==='ARCHIPELAGO'&&sp0.body.posture==='standing'&&sp0.body.support==='isle.ground'&&Math.abs(sp0.pose.position[2]-(AR.h(0,AR.shore_y+22)+.85))<.05&&/Harbor Isle/.test(String(go.text)),{pose:sp0.pose,text:go.text.slice(0,120)});
+  check('arrive_standing_on_the_ground',sp0.chart==='ARCHIPELAGO'&&sp0.body.posture==='standing'&&sp0.body.support==='isle.ground'&&Math.abs(sp0.pose.position[2]-(AR.h(0,AR.shore_y+33)+.85))<.05&&/Harbor Isle/.test(String(go.text)),{pose:sp0.pose,text:go.text.slice(0,120)});
 
   // The sea stops a walk with the reason; the boat crosses it.
-  await door.run('walk to dock');
-  const toSea=await R.invoke('move',{local:[0,-40,0]});// south off the dock is water
+  await R.invoke('move',{local:[0,-30,0]});// south along the pier
+  const toSea=await R.invoke('move',{local:[0,-40,0]});// off the end of the pier is water
   check('sea_blocks_walking',toSea.result.moved_m<15&&toSea.result.blocked_by==='isle.ground',toSea.result);
   const board=await door.run('board boat');
   const sp1=space();

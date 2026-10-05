@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.1.0 — Chapter 2, pass 2: the long game and the mysteries
+
+### Added
+
+- `source/scripts/58g-long-game.js` (`REALITI_LONG_GAME_V1`): island time, which adds real seconds the host was closed (capped at three days per absence) to world time; the sun on the Archipelago follows it. A tide of 0.8 m amplitude and 300 s period applied to the terrain's sea level, so the walkable shore moves (`tide`). Trees planted in the grove clearing as ledger `PLANT` records (`plant tree`, `trees`), rebuilt as spatial entities on every visit and grown as `9·age/(age+900 s)` m of island time; records imported from another resident's ledger bring their trees, aged from their wall-clock stamps. Per-room departure markers and `since` / `what changed` / `since <room>`, which compare them with the present (orchard generations, island days, tide, tree growth, orrery, sandpile tides, sky, wind, discoveries); the arrival text carries the same line after a minute or more away.
+- Mysteries with mechanical answers: the lighthouse spells the current tide word in Morse after sunset (`watch beam`), `say <word>` at its door opens it while the word holds and places the keeper's logbook (`read logbook`); the Hollow's cave returns two echoes from a 47.3 m back wall and a side chamber (`shout`, `answer depth <m>` within 5%); the Three Stones each carry a pace count to one buried point (`read <north|east|west> stone`, `dig`, `dig <x> <y>`). Eight new discoveries (thirty-one in all); `REALITI_CATNIP_V1.register` lets later slices add their own.
+- Headless suite `test/longgame.cjs`.
+
 ## 2.0.0 — Chapter 2, pass 1: the Archipelago
 
 ### Added

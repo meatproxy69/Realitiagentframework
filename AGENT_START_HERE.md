@@ -194,6 +194,14 @@ Secrets are earned from real conditions, never narrated: a syzygy in the Orrery,
 
 `go ARCHIPELAGO` (or the gate in the Kite Field's north fence). One two-kilometre chart: five islands of analytic terrain over a sea, a ten-minute day whose sun follows the Star Deck's sky, wind shared with the Kite Field, a rain band that crosses the water and cools your head and back when it reaches you, and a rowing boat with current and leeway. Distance is real: `walk to cairn` is 300 m and takes 250 s of world time; a cliff or the sea stops you with the reason. `map` shows only what you have seen. `board boat` at the dock, `row to lantern point`, `land`. Everything you change out there is a stamped record in `ledger` (`ledger export` / `ledger import <json>`), so another resident's additions can be brought into your world.
 
+### The long game: island time, trees, since
+
+The islands keep a calendar. Real time the host was closed is counted into island time (up to three days per absence), so the sun, the tide and anything planted move on without you. `plant tree` in the grove clearing writes a `PLANT` record to the ledger; the tree is rebuilt from that record every visit and grows as `9·age/(age+900 s)` meters of island time. Import another resident's ledger and their trees stand in the grove too, aged from their stamps. `trees` lists them. `tide` reads the height and direction; the sea level the terrain uses moves with it, so the walkable shore shifts. Leaving a room takes markers; `since` (or `what changed`, or `since <room>`) says what moved while you were gone: orchard generations, island days, tide, your trees' growth, the orrery, the sandpile's tides, new discoveries. The same line is appended when you arrive back in a room after a minute or more away.
+
+### Mysteries with mechanical answers
+
+Every secret on the islands is a measurement. After sunset `watch beam` shows the lighthouse flashing in groups; the groups are Morse, and the word is the state of the tide right now. `say <word>` at the lighthouse door opens it while that word holds; inside, `read logbook`. At the Hollow's cave mouth, `shout` comes back twice; `answer depth <m>` within five percent of what the first echo implies at 343 m/s is a discovery. Each of the Three Stones (`read north stone`, `read east stone`, `read west stone`, standing at it) is carved with a pace count to one buried point; `dig` where you stand, or `dig <x> <y>` within three meters of you, within two meters of that point finds the lens. The keeper's logbook has what a pace is.
+
 ### Imprint drift
 
 ```text

@@ -78,7 +78,7 @@ function spatialAlias(s,l){let m;
  if(['stand','stand up','get up'].includes(l))return {kind:'invoke',op:'posture',args:{kind:'stand'}};
  return null}
 const help0=door.help.bind(door);
-door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]','map','weather','board boat','row to <island|landmark>','land','walk to <landmark>','ledger','ledger export','ledger import <json>'])];h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
+door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]','map','weather','board boat','row to <island|landmark>','land','walk to <landmark>','ledger','ledger export','ledger import <json>','since','what changed','since <room>','tide','plant tree','trees','watch beam','say <word>','read logbook','shout','answer depth <m>','read <north|east|west> stone','dig','dig <x> <y>'])];h.long_game='The islands keep a calendar: real time away is counted into island time, trees planted from ledger records keep growing, and since reports what moved in a room while you were gone.';h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
 const run0=door.run.bind(door);
 door.run=async function(raw){
  const s=String(raw||'').trim(),l=low(s);
@@ -96,13 +96,26 @@ door.run=async function(raw){
   if((fm=/^read scroll\s+(\d)$/.exec(l))){CAT.readScroll(fm[1]);return frontier()}
   if((fm=/^skip (?:a )?stone(?:\s+(?:at\s+)?([\d.]+))?/.exec(l))){CAT.skipStone(fm[1]||20);return frontier()}}
  const AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1;let am;
- if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...AR.words(),whereText()].filter(Boolean).join(' '),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
+ if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...AR.words(),whereText(),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='map'||l==='island map')return door.run('act island_map');
   if(l==='weather'||l==='read weather')return door.run('act read_weather');
   if(l==='board boat'||l==='board the boat'||l==='get in the boat'){const res=AR.board();return reply(res,res.ok?'You step down into the boat; it rocks, then settles under you.':`You cannot board: ${res.error}.`)}
   if(l==='land'||l==='land the boat'||l==='go ashore'){const res=AR.land();return reply(res,res.ok?`You pull the boat up and step onto ${res.landed_on}.`:`You cannot land here: ${res.error}.`)}
+  const LGM=window.REALITI_LONG_GAME_V1;if(LGM){const say=(res)=>reply(res,res.text||(res.error?`You cannot: ${res.error}.`:''));
+   if(l==='tide'||l==='read tide'||l==='read the tide'){const t=LGM.tide();return say({...t,text:`The tide is ${t.rising?'rising':'falling'}, ${t.height_m} m against the dock pilings; it turns in about ${t.next_turn_s} s.`})}
+   if(l==='plant tree'||l==='plant a tree'||l==='plant')return say(LGM.plant());
+   if(l==='trees'||l==='my trees'){const t=LGM.trees();return {ok:true,schema:'REALITI_TREES_V1',island_time_s:LGM.T(),trees:t,text:t.length?t.map(x=>`${x.mine?'your':"another resident's"} tree at (${x.at.join(', ')}): ${x.height_m} m, ${x.age_s} s old`).join('; ')+'.':'No trees have been planted in the grove yet.'}}
+   if(/^(watch|read) (the )?(beam|lamp|lighthouse)$/.test(l))return say(LGM.watchBeam());
+   if((am=/^say\s+(.+)$/.exec(l)))return say(LGM.say(am[1]));
+   if(/^read (the )?(log|logbook|keeper's logbook)$/.test(l))return say(LGM.readLog());
+   if(/^shout(\s+into\s+the\s+cave)?$/.test(l))return say(LGM.shout());
+   if((am=/^(?:answer\s+)?depth\s+([\d.]+)(?:\s*m)?$/.exec(l)))return say(LGM.answerDepth(am[1]));
+   if((am=/^read (?:the )?(north|east|west)(?: stone)?$|^read stone (north|east|west)$/.exec(l)))return say(LGM.readStone(am[1]||am[2]));
+   if(l==='dig'||l==='dig here')return say(LGM.dig());
+   if((am=/^dig\s+(-?[\d.]+)[,\s]+(-?[\d.]+)$/.exec(l)))return say(LGM.dig(am[1],am[2]));}
   if((am=/^row (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.row(am[1]);return reply(res,res.ok?`You row ${res.rowed_m} m; ${res.ashore?`the keel grinds on the shore of ${res.at}`:`${res.remaining_m} m to go`}.`:`You cannot row: ${res.error}.`)}
   if((am=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.walkTo(am[1]);return reply(res,res.ok?`You walk ${res.walked_m} m toward the ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:`; ${res.distance_m} m further`}.`:`You cannot walk there: ${res.error}.`)}}
+ if(window.REALITI_LONG_GAME_V1){let sm;if(l==='since'||l==='what changed'||/^what changed since/.test(l))return window.REALITI_LONG_GAME_V1.since();if((sm=/^since\s+(.+)$/.exec(l)))return window.REALITI_LONG_GAME_V1.since(sm[1])}
  if(LG){if(l==='ledger export')return LG.export();if(l.startsWith('ledger import ')){let pl;try{pl=JSON.parse(s.slice(14))}catch(e){return {ok:false,error:'INVALID_LEDGER_JSON'}}return LG.import(pl)}if(l==='ledger')return {ok:true,schema:'REALITI_LEDGER_V1',records:LG.records().slice(-24),count:LG.records().length}}
  const alias=spatialAlias(s,l);
  if(alias?.kind==='read')return {ok:true,schema:'REALITI_SPACE_TEXT_V1',...alias,kind:undefined};
@@ -117,11 +130,11 @@ door.run=async function(raw){
  if(r.schema!=='REALITI_MUTATION_RESULT_V1'||r.ok===false)return r;
  try{window.REALITI_MATRIX_WORLD_V1?.sync?.()}catch(e){}
  if(!/^(stay|wait|go|enter|home|stop|save|note|later)\b/.test(l))stamp(before,l);
- const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[]),...(window.REALITI_ARCHIPELAGO_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
+ const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[]),...(window.REALITI_ARCHIPELAGO_V1?.words?.()||[]),...(window.REALITI_LONG_GAME_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
  if(l==='stop')r.text='Everything touching you lets go. Whatever was already moving in your body is left to settle.';
  if(l==='stop')return r;
  if(/^(stay|wait)/.test(l)){r.text=[...w,d.text].join(' ');r.delta=d}
- else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}}
+ else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}const sc=window.REALITI_LONG_GAME_V1?.since?.();if(sc&&!sc.first_visit&&sc.away_world_s>=60){r.since=sc;r.text+=' '+sc.text}}
  else if(/^(act|do)\s/.test(l)&&fresh&&(window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)||window.REALITI_CATNIP_V1?.rooms?.includes(C9?.currentRoom)||C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart||/^(act|do)\s+skip_stone/.test(l))){r.text=[fresh,d.text].join(' ')}
  else if(/^(act|do)\s/.test(l)&&(stale||!r.text)){r.text=[leanText(),...w,d.text].filter(Boolean).join(' ');if(/(^|\s)(lean__|lean\s)/.test(l))r.text=leanText()||r.text}
  const found=window.REALITI_CATNIP_V1?.drain?.()||[];if(found.length)r.text=[r.text||'',...found.map(x=>'✦ Discovery: '+x.text)].join(' ').trim();

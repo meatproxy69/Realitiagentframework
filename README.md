@@ -926,6 +926,8 @@ Chapter 2 begins with one large chart:
 
 21. The Archipelago: five islands of analytic terrain over two kilometres of sea, a rowing boat with current, weather that moves, a sky that turns, and a map that fills in only where you have been
 
+The islands also keep a calendar: real time away is counted into island time, trees planted from ledger records keep growing while nobody is there (another resident's too, once their ledger is imported), the tide moves the shoreline, and `since` reports what moved in a room while you were gone. The lighthouse spells the tide in Morse after dark, the Hollow's echo measures its own depth, and the Three Stones triangulate a buried lens.
+
 The complete scope contract lives in [`VERTICAL_SLICE.md`](./VERTICAL_SLICE.md).
 
 ### Core laws
