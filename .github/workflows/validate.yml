@@ -29,6 +29,8 @@ jobs:
           expected="$(python -c "import json; print(json.load(open('VALIDATION.json'))['single_html_sha256'])")"
           node build.mjs
           actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          echo "expected=$expected"
+          echo "actual=$actual"
           test "$actual" = "$expected"
       - name: Public contract smoke
         run: node tests/public-contract-smoke.cjs
