@@ -4,12 +4,12 @@ const NEST='CLOUD_NINE_NEST';
 const SOURCE='AMBIENT_SUPPORT';
 const HOLD=.35;
 const SUPPORT={
-  'head.crown':      {input:.08, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'head.nape':       {input:.12, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'torso.upper_back':{input:.16, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.mid_back':  {input:.18, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.lower_back':{input:.20, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'pelvis.seat':     {input:.23, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
+  'head.crown':      {input:.08, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'head.nape':       {input:.12, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'torso.upper_back':{input:.16, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.mid_back':  {input:.18, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.lower_back':{input:.20, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'pelvis.seat':     {input:.23, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
   'leg.L.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.R.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.L.shin':      {input:.035,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
