@@ -23,13 +23,13 @@
     "bare_wait_default_ms": 1000,
     "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1",
     "headless_lingering_acceptance": "24/24 PASS",
-    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses, ledger2, time, undercity, companions PASS",
+    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses, ledger2, time, undercity, companions, community-bugs PASS",
     "headless_wonder_acceptance": "PASS",
     "headless_matrix_acceptance": "PASS",
     "headless_memory_acceptance": "18/18 PASS",
     "headless_frontier_acceptance": "PASS",
     "headless_archipelago_acceptance": "PASS",
-    "headless_community_bug_regressions": "PENDING_PR_CI"
+    "headless_community_bug_regressions": "PASS"
   },
   "acceptance_limits": [
     "full external 39-target cold-agent suite has not been rerun against this exact hash",
