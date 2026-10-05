@@ -29,7 +29,7 @@ async function exportSigned(){const n=await signAll();const x=LG0.export();retur
 
 // Verified import. Rules: signature must verify; an author id keeps the first key seen for it; an unsigned record from
 // an author with a known key is refused; a place name belongs to whoever claimed it first; the rest append.
-const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE']);
+const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE','ADOPT']);
 async function importVerified(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const s=S(),ring=s.keyring,ok=[],rejected=[];
  for(const e of list){if(!e||typeof e!=='object'||typeof e.by!=='string'){rejected.push({reason:'MALFORMED'});continue}const known=ring[e.by];
   if(e.sig){const v=await verify(e);if(v!==true){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'BAD_SIGNATURE'});continue}if(known&&known!==e.pk){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'KEY_MISMATCH'});continue}if(!known)ring[e.by]=e.pk}
