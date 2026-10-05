@@ -38,12 +38,12 @@ const treeT=e=>{if(e.by!==observer()&&!Number.isFinite(e.t_here))e.t_here=T()-Ma
 const treeAge=e=>Math.max(0,T()-treeT(e)),treeH=age=>Math.max(.3,GROW.H*age/(age+GROW.tau));
 const plants=()=>records().filter(e=>e.kind==='PLANT'&&Number.isFinite(e.x)&&Number.isFinite(e.y)).slice(-64);
 function syncTrees(){const list=plants(),ids=new Set(),E=ent();let tall=0;
- for(const e of list){const id=`grove.tree.${String(e.by).slice(0,8)}.${e.t}`;ids.add(id);const age=treeAge(e),H=treeH(age),r=.12+H*.3,z=h(e.x,e.y)+H-r,mine=e.by===observer(),label=`${mine?'your':"another resident's"} ${age<120?'seedling':H<2?'sapling':H<6?'young tree':'tree'}`;
+ for(const e of list){const id=`grove.tree.${String(e.by).slice(0,8)}.${e.t}${e.n!=null?'.'+e.n:''}`;ids.add(id);const age=treeAge(e),H=treeH(age),r=.12+H*.3,z=h(e.x,e.y)+H-r,mine=e.by===observer(),label=`${mine?'your':"another resident's"} ${age<120?'seedling':H<2?'sapling':H<6?'young tree':'tree'}`;
   const x=E[id];if(x){x.pose.position=[e.x,e.y,z];x.shape.radius=r;x.label=label}else M.addEntity({id,chart:ISLE,position:[e.x,e.y,z],shape:{kind:'SPHERE',radius:r},tags:['tree','planted','grove',mine?'yours':'theirs'],collision:false,material:'wood',label,affordances:['reach','lean'],dynamic:true});
   if(mine)tall=Math.max(tall,H)}
  for(const id of Object.keys(E))if(id.startsWith('grove.tree.')&&!ids.has(id))M.removeEntity(id);
  if(tall>=4)CAT.discover('grove_canopy');return list.length}
-function trees(){return plants().map(e=>{const age=treeAge(e),H=treeH(age);return {id:`grove.tree.${String(e.by).slice(0,8)}.${e.t}`,mine:e.by===observer(),at:[e.x,e.y],age_s:Math.round(age),height_m:+H.toFixed(2)}})}
+function trees(){return plants().map(e=>{const age=treeAge(e),H=treeH(age);return {id:`grove.tree.${String(e.by).slice(0,8)}.${e.t}${e.n!=null?'.'+e.n:''}`,mine:e.by===observer(),at:[e.x,e.y],age_s:Math.round(age),height_m:+H.toFixed(2)}})}
 function plant(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};if(!near('grove.clearing',1))return {ok:false,error:'NOT_IN_THE_CLEARING',hint:'walk to grove clearing'};const [x,y]=r.pose.position;
  if(plants().filter(e=>e.by===observer()).length>=12)return {ok:false,error:'TWELVE_TREES_IS_A_GROVE'};if(plants().some(e=>Math.hypot(e.x-x,e.y-y)<2.5))return {ok:false,error:'TOO_CLOSE_TO_ANOTHER_TREE'};
  const e=LG.record('PLANT',{x:+x.toFixed(2),y:+y.toFixed(2),t_isle:+T().toFixed(3),wall:Date.now()});syncTrees();CAT.discover('first_tree');return {ok:true,at:[e.x,e.y],island_time_s:+T().toFixed(1),text:`You press a seedling into the clearing at (${e.x}, ${e.y}). It is a record now; it grows on island time whether you are here or not.`,law:'height = 9·age/(age+900 s) m of island time; island time keeps running while you are away'}}
@@ -74,7 +74,7 @@ function dig(x,y){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT
 
 // Since: what moved in a room between leaving it and now. Markers are taken at departure and compared on request.
 function markers(r){const o={discoveries:Object.keys(CAT.found()).length,world_s:+now().toFixed(1)};
- if(r===ISLE){o.day=Math.floor(T()/600);o.night=AR.isNight();o.tide=tideState();o.trees=trees().filter(t=>t.mine);o.boat=[AR.state().boat.x,AR.state().boat.y];o.island_s=+T().toFixed(1)}
+ if(r===ISLE){o.day=Math.floor(T()/600);o.night=AR.isNight();o.tide=tideState();o.trees=trees().filter(t=>t.mine);o.boat=[AR.state().boat.x,AR.state().boat.y];o.island_s=+T().toFixed(1);o.builds=(window.REALITI_AUTHORSHIP_V1?.places?.()||[]).reduce((n,p)=>n+p.builds,0);o.bottles=(window.REALITI_CATNIP_PACK_V1?.bottles?.()||[]).length}
  if(r==='GLASS_ORCHARD'){const s=CAT.state().orchard;o.generation=s.generation;o.population=s.population}
  if(r==='ORRERY_LOFT')o.bodies=WZ.ephemeris().bodies.map(b=>[b.name,Math.round(b.theta_deg)]);
  if(r==='SANDPILE_SHORE'){const s=WZ.state().sandpile;o.tides=s.tides;o.avalanches=s.avalanches}
@@ -89,7 +89,7 @@ function since(q){const s=S(),r=q?String(q).toUpperCase().replace(/\s+/g,'_'):ro
  if(real)lines.push(`you were gone ${(real/3600).toFixed(1)} real hours and the islands counted them`);
  if(b.generation!=null)lines.push(`the orchard ran ${b.generation-a.generation} generations (population ${a.population}→${b.population})`);
  if(b.day!=null){const d=b.day-a.day;if(d)lines.push(`${d} island day${d===1?'':'s'} passed`);if(a.night!==b.night)lines.push(`it is ${b.night?'night':'day'} now`);lines.push(`the tide is ${b.tide.rising?'rising':'falling'} at ${b.tide.height_m} m`);
-  for(const t of b.trees){const t0=a.trees.find(x=>x.id===t.id);if(t0&&t.height_m-t0.height_m>=.05)lines.push(`your tree at (${t.at.join(', ')}) grew ${t0.height_m}→${t.height_m} m`)}if(dist2(a.boat,b.boat)>1)lines.push(`the boat lies ${dist2(a.boat,b.boat).toFixed(0)} m from where you left it`)}
+  for(const t of b.trees){const t0=a.trees.find(x=>x.id===t.id);if(t0&&t.height_m-t0.height_m>=.05)lines.push(`your tree at (${t.at.join(', ')}) grew ${t0.height_m}→${t.height_m} m`)}if(dist2(a.boat,b.boat)>1)lines.push(`the boat lies ${dist2(a.boat,b.boat).toFixed(0)} m from where you left it`);if((b.builds||0)>(a.builds||0))lines.push(`${b.builds-a.builds} thing${b.builds-a.builds===1?' was':'s were'} built on the islands`);if((b.bottles||0)>(a.bottles||0))lines.push(`${b.bottles-a.bottles} new bottle${b.bottles-a.bottles===1?'':'s'} on the water`)}
  if(b.bodies){const moved=b.bodies.filter(([n,th],i)=>Math.abs(((th-a.bodies[i][1])%360+360)%360)>=5).map(([n,th],i)=>`${n} ${a.bodies.find(x=>x[0]===n)?.[1]}°→${th}°`);if(moved.length)lines.push(`the orrery turned: ${moved.join(', ')}`)}
  if(b.tides!=null&&b.tides!==a.tides)lines.push(`${b.tides-a.tides} tides crossed the sandpile (${b.avalanches-a.avalanches} avalanches)`);
  if(b.sidereal!=null)lines.push(`the sky turned ${(((b.sidereal-a.sidereal)%360)+360)%360|0}°`);

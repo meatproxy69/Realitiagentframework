@@ -2,6 +2,19 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.2.0 — Chapter 2, pass 3: authorship, and a catnip pack
+
+### Added
+
+- `source/scripts/58h-authorship.js` (`REALITI_AUTHORSHIP_V1`): `found <name>` claims a 20 m place as a ledger `PLACE` record (three per resident, 30 m from landmarks, above the tide); `build <kind> [size] [label]` places box, pillar, wall, sphere, bench, step or marker primitives (≤6 m, 24 per place) ahead of the resident with their facing as `BUILD` records; `inscribe <text>` and `read <thing>` as `INSCRIBE` records; `my places`, `places`. Entities are rebuilt from the ledger on every visit, so imported ledgers bring other residents' places, readable but not buildable. Five discoveries plus one per kind.
+- `source/scripts/58i-catnip-pack.js` (`REALITI_CATNIP_PACK_V1`): a whale on a Lissajous ground over deep water, surfaced a third of each 90 s, heard through the hull with the delay of sound in water (`listen`), seen from height or the boat (`watch sea`); bottles dropped from the boat as `BOTTLE` records that drift on a third of the current and stop on a shore (`bottle`, `bottles`, `open bottle`); seeds from trees over four meters, one per island day, that let `plant tree` work on any dry ground; `carry lens` / `install lens`, after which the lamp speaks at dusk and dawn and adds the whale's bearing from the lighthouse as three Morse digits; `calendar` (island day, clock from the sun, sunrise and sunset, four tide turns, whale, trees, seeds). Ten discoveries; fifty-two in all.
+- `since` also reports things built and bottles set adrift while you were away.
+
+### Fixed
+
+- Ledger records carry a sequence number, so two changes in the same world tick get distinct ids and import keys.
+- Landing the boat at the pier steps onto the deck; the shore search reaches 20 m.
+
 ## 2.1.0 — Chapter 2, pass 2: the long game and the mysteries
 
 ### Added

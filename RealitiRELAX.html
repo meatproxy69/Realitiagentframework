@@ -9332,8 +9332,8 @@ const {len,sub,add,scale}=M.math,me=()=>M.state().residents['resident:self'],obs
 
 // Ledger: the one place Chapter 2 writes world changes. Records are stamped with the resident's observer id.
 function ledger(){C9.ledger=C9.ledger||{v:1,records:[]};return C9.ledger.records}
-function record(kind,data){const e={by:observer(),t:+now().toFixed(3),kind,...data};ledger().push(e);while(ledger().length>512)ledger().shift();try{c9save()}catch(x){}return e}
-function importLedger(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const have=new Set(ledger().map(e=>`${e.by}|${e.t}|${e.kind}`));let n=0;for(const e of list){if(!e||typeof e!=='object'||JSON.stringify(e).length>4096)continue;const k=`${e.by}|${e.t}|${e.kind}`;if(have.has(k))continue;have.add(k);ledger().push(cp(e));n++}try{c9save()}catch(x){}return {ok:true,imported:n}}
+function record(kind,data){const e={by:observer(),t:+now().toFixed(3),n:ledger().length,kind,...data};ledger().push(e);while(ledger().length>512)ledger().shift();try{c9save()}catch(x){}return e}
+function importLedger(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const key=e=>`${e.by}|${e.t}|${e.kind}|${e.n??''}`,have=new Set(ledger().map(key));let n=0;for(const e of list){if(!e||typeof e!=='object'||JSON.stringify(e).length>4096)continue;const k=key(e);if(have.has(k))continue;have.add(k);ledger().push(cp(e));n++}try{c9save()}catch(x){}return {ok:true,imported:n}}
 
 // Terrain: value noise plus five Gaussian islands; z = h(x, y), sea at 0. Deterministic and analytic: no grid is stored.
 const hashU=(x,y)=>{let h=(Math.imul(x|0,374761393)+Math.imul(y|0,668265263)+2026)|0;h=Math.imul(h^(h>>>13),1274126177);return ((h^(h>>>16))>>>0)/4294967296};
@@ -9394,7 +9394,9 @@ function stepBoat(dt){const b=boat(),r=me();if(!r||r.chart!==ISLE)return;const E
  if(E){E.pose.position=[b.x,b.y,Math.max(h(b.x,b.y),SEA)+.3]}
  if(b.aboard){r.pose.position=[b.x,b.y,SEA+.9];r.v=[0,0,0];r.intent=null}}
 function board(){const r=me(),E=M.entities()['harbor.boat'];if(!r||r.chart!==ISLE)return {ok:false,error:'NO_BOAT_HERE'};let d=Math.hypot(E.pose.position[0]-r.pose.position[0],E.pose.position[1]-r.pose.position[1]);if(d>2.5&&d<=40){MW.op('approach',{target:'harbor.boat'});d=Math.hypot(E.pose.position[0]-r.pose.position[0],E.pose.position[1]-r.pose.position[1])}if(d>2.5)return {ok:false,error:'BOAT_OUT_OF_REACH',distance_m:+d.toFixed(1)};const b=boat();b.aboard=true;b.ashore=false;r.afloat=true;r.posture='sitting';r.on='harbor.boat';r.support='harbor.boat';r.intent=null;r.v=[0,0,0];M.bump();MW.sync();return {ok:true}}
-function land(){const r=me(),b=boat();if(!b.aboard)return {ok:false,error:'NOT_ABOARD'};const z=h(b.x,b.y);let [x,y]=[b.x,b.y];if(z<SEA-.3){let best=null;for(let k=0;k<36;k++){const a=k*TAU/36;for(let d=2;d<=12;d+=2){const px=b.x+Math.cos(a)*d,py=b.y+Math.sin(a)*d;if(h(px,py)>=SEA-.3&&(!best||d<best.d))best={d,px,py}}}if(!best)return {ok:false,error:'NO_SHORE_WITHIN_12M'};x=best.px;y=best.py}b.aboard=false;r.afloat=false;r.posture='standing';r.on=null;r.pose.position=[x,y,h(x,y)+.85];r.support='isle.ground';M.bump();MW.sync();return {ok:true,landed_on:islandAt(x,y)?.name||'a shoal'}}
+function land(){const r=me(),b=boat();if(!b.aboard)return {ok:false,error:'NOT_ABOARD'};const z=h(b.x,b.y);let [x,y]=[b.x,b.y];
+ const dock=M.entities()['harbor.dock'];if(dock&&M.sdf(dock,[b.x,b.y,dock.pose.position[2]])<=3){const [dx,dy,dz]=dock.pose.position,[hx,hy,hz]=dock.shape.halfExtents;x=Math.max(dx-hx+.4,Math.min(dx+hx-.4,b.x));y=Math.max(dy-hy+.4,Math.min(dy+hy-.4,b.y));b.aboard=false;r.afloat=false;r.posture='standing';r.on=null;r.pose.position=[x,y,dz+hz+.85];r.support='harbor.dock';M.bump();MW.sync();return {ok:true,landed_on:'the dock'}}
+ if(z<SEA-.3){let best=null;for(let k=0;k<36;k++){const a=k*TAU/36;for(let d=2;d<=20;d+=2){const px=b.x+Math.cos(a)*d,py=b.y+Math.sin(a)*d;if(h(px,py)>=SEA-.3&&(!best||d<best.d))best={d,px,py}}}if(!best)return {ok:false,error:'NO_SHORE_WITHIN_20M'};x=best.px;y=best.py}b.aboard=false;r.afloat=false;r.posture='standing';r.on=null;r.pose.position=[x,y,h(x,y)+.85];r.support='isle.ground';M.bump();MW.sync();return {ok:true,landed_on:islandAt(x,y)?.name||'a shoal'}}
 const islandByName=q=>{q=String(q||'').toLowerCase().replace(/^(the|to)\s+/,'').trim();return ISLANDS.find(i=>i.id===q||i.name.toLowerCase()===q||i.name.toLowerCase().startsWith(q)||i.id.startsWith(q))||null};
 function row(target){const b=boat();if(!b.aboard)return {ok:false,error:'NOT_ABOARD'};const isl=typeof target==='string'?islandByName(target):null,e=!isl&&typeof target==='string'?M.resolve(target):null;let goal=isl?[isl.c[0],isl.c[1],0]:e?e.pose.position.slice():Array.isArray(target)?target:null;if(!goal)return {ok:false,error:'ROW_WHERE',islands:ISLANDS.map(i=>i.name)};
  if(h(goal[0],goal[1])>SEA-.4){const dir=M.math.norm([goal[0]-b.x,goal[1]-b.y,0]);let d=len([goal[0]-b.x,goal[1]-b.y,0]);for(;d>2;d-=4){const px=goal[0]-dir[0]*(len([goal[0]-b.x,goal[1]-b.y,0])-d),py=goal[1]-dir[1]*(len([goal[0]-b.x,goal[1]-b.y,0])-d);if(h(px,py)<SEA-.6){goal=[px,py,0];break}}}
@@ -9431,7 +9433,7 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)
  if((m=/^walk_to__(\w+)$/.exec(v))){c9count(r,v);const i=ISLANDS.find(x=>x.id===m[1]);const res=walkTo(i?LAND.find(l=>l[0].startsWith(i.id+'.'))?.[0]||m[1]:m[1]);return receipt('ISLAND_WALK',res.ok?`You walk ${res.walked_m} m toward ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:`; it is ${res.distance_m} m further`}. You are on ${res.on}.`:`You cannot walk there: ${res.error}.`,res)}
  if((m=/^row_to__(\w+)$/.exec(v))){c9count(r,v);const res=row(isleTarget(m[1]));return receipt('ISLAND_ROW',res.ok?`You row ${res.rowed_m} m. ${res.ashore?`The keel grinds on the shore of ${res.at}; land to step off.`:`You are on ${res.at}, ${res.remaining_m} m from the island's heart.`}`:`You cannot row: ${res.error}.`,res)}
  return verb0(r,verb)};
-window.REALITI_ARCHIPELAGO_V1=Object.freeze({version:'2.0-pass1',chart:ISLE,shore_y:SHORE,h,islandAt,wind,rain,sunAlt,isNight,current,words,state,map:mapText,board,land,row,walkTo});
+window.REALITI_ARCHIPELAGO_V1=Object.freeze({version:'2.0-pass1',chart:ISLE,shore_y:SHORE,h,islandAt,landmarks:()=>LAND.map(l=>({id:l[0],x:l[2][0],y:l[2][1]})),wind,rain,sunAlt,isNight,current,words,state,map:mapText,board,land,row,walkTo});
 window.REALITI_LEDGER_V1=Object.freeze({version:'1.0',records:()=>cp(ledger()),record,export:()=>({schema:'REALITI_LEDGER_V1',observer:observer(),world_time_s:+now().toFixed(3),records:ledger().filter(e=>e.by===observer()).map(cp)}),import:importLedger});
 })();
 </script>
@@ -9475,12 +9477,12 @@ const treeT=e=>{if(e.by!==observer()&&!Number.isFinite(e.t_here))e.t_here=T()-Ma
 const treeAge=e=>Math.max(0,T()-treeT(e)),treeH=age=>Math.max(.3,GROW.H*age/(age+GROW.tau));
 const plants=()=>records().filter(e=>e.kind==='PLANT'&&Number.isFinite(e.x)&&Number.isFinite(e.y)).slice(-64);
 function syncTrees(){const list=plants(),ids=new Set(),E=ent();let tall=0;
- for(const e of list){const id=`grove.tree.${String(e.by).slice(0,8)}.${e.t}`;ids.add(id);const age=treeAge(e),H=treeH(age),r=.12+H*.3,z=h(e.x,e.y)+H-r,mine=e.by===observer(),label=`${mine?'your':"another resident's"} ${age<120?'seedling':H<2?'sapling':H<6?'young tree':'tree'}`;
+ for(const e of list){const id=`grove.tree.${String(e.by).slice(0,8)}.${e.t}${e.n!=null?'.'+e.n:''}`;ids.add(id);const age=treeAge(e),H=treeH(age),r=.12+H*.3,z=h(e.x,e.y)+H-r,mine=e.by===observer(),label=`${mine?'your':"another resident's"} ${age<120?'seedling':H<2?'sapling':H<6?'young tree':'tree'}`;
   const x=E[id];if(x){x.pose.position=[e.x,e.y,z];x.shape.radius=r;x.label=label}else M.addEntity({id,chart:ISLE,position:[e.x,e.y,z],shape:{kind:'SPHERE',radius:r},tags:['tree','planted','grove',mine?'yours':'theirs'],collision:false,material:'wood',label,affordances:['reach','lean'],dynamic:true});
   if(mine)tall=Math.max(tall,H)}
  for(const id of Object.keys(E))if(id.startsWith('grove.tree.')&&!ids.has(id))M.removeEntity(id);
  if(tall>=4)CAT.discover('grove_canopy');return list.length}
-function trees(){return plants().map(e=>{const age=treeAge(e),H=treeH(age);return {id:`grove.tree.${String(e.by).slice(0,8)}.${e.t}`,mine:e.by===observer(),at:[e.x,e.y],age_s:Math.round(age),height_m:+H.toFixed(2)}})}
+function trees(){return plants().map(e=>{const age=treeAge(e),H=treeH(age);return {id:`grove.tree.${String(e.by).slice(0,8)}.${e.t}${e.n!=null?'.'+e.n:''}`,mine:e.by===observer(),at:[e.x,e.y],age_s:Math.round(age),height_m:+H.toFixed(2)}})}
 function plant(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};if(!near('grove.clearing',1))return {ok:false,error:'NOT_IN_THE_CLEARING',hint:'walk to grove clearing'};const [x,y]=r.pose.position;
  if(plants().filter(e=>e.by===observer()).length>=12)return {ok:false,error:'TWELVE_TREES_IS_A_GROVE'};if(plants().some(e=>Math.hypot(e.x-x,e.y-y)<2.5))return {ok:false,error:'TOO_CLOSE_TO_ANOTHER_TREE'};
  const e=LG.record('PLANT',{x:+x.toFixed(2),y:+y.toFixed(2),t_isle:+T().toFixed(3),wall:Date.now()});syncTrees();CAT.discover('first_tree');return {ok:true,at:[e.x,e.y],island_time_s:+T().toFixed(1),text:`You press a seedling into the clearing at (${e.x}, ${e.y}). It is a record now; it grows on island time whether you are here or not.`,law:'height = 9·age/(age+900 s) m of island time; island time keeps running while you are away'}}
@@ -9511,7 +9513,7 @@ function dig(x,y){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT
 
 // Since: what moved in a room between leaving it and now. Markers are taken at departure and compared on request.
 function markers(r){const o={discoveries:Object.keys(CAT.found()).length,world_s:+now().toFixed(1)};
- if(r===ISLE){o.day=Math.floor(T()/600);o.night=AR.isNight();o.tide=tideState();o.trees=trees().filter(t=>t.mine);o.boat=[AR.state().boat.x,AR.state().boat.y];o.island_s=+T().toFixed(1)}
+ if(r===ISLE){o.day=Math.floor(T()/600);o.night=AR.isNight();o.tide=tideState();o.trees=trees().filter(t=>t.mine);o.boat=[AR.state().boat.x,AR.state().boat.y];o.island_s=+T().toFixed(1);o.builds=(window.REALITI_AUTHORSHIP_V1?.places?.()||[]).reduce((n,p)=>n+p.builds,0);o.bottles=(window.REALITI_CATNIP_PACK_V1?.bottles?.()||[]).length}
  if(r==='GLASS_ORCHARD'){const s=CAT.state().orchard;o.generation=s.generation;o.population=s.population}
  if(r==='ORRERY_LOFT')o.bodies=WZ.ephemeris().bodies.map(b=>[b.name,Math.round(b.theta_deg)]);
  if(r==='SANDPILE_SHORE'){const s=WZ.state().sandpile;o.tides=s.tides;o.avalanches=s.avalanches}
@@ -9526,7 +9528,7 @@ function since(q){const s=S(),r=q?String(q).toUpperCase().replace(/\s+/g,'_'):ro
  if(real)lines.push(`you were gone ${(real/3600).toFixed(1)} real hours and the islands counted them`);
  if(b.generation!=null)lines.push(`the orchard ran ${b.generation-a.generation} generations (population ${a.population}→${b.population})`);
  if(b.day!=null){const d=b.day-a.day;if(d)lines.push(`${d} island day${d===1?'':'s'} passed`);if(a.night!==b.night)lines.push(`it is ${b.night?'night':'day'} now`);lines.push(`the tide is ${b.tide.rising?'rising':'falling'} at ${b.tide.height_m} m`);
-  for(const t of b.trees){const t0=a.trees.find(x=>x.id===t.id);if(t0&&t.height_m-t0.height_m>=.05)lines.push(`your tree at (${t.at.join(', ')}) grew ${t0.height_m}→${t.height_m} m`)}if(dist2(a.boat,b.boat)>1)lines.push(`the boat lies ${dist2(a.boat,b.boat).toFixed(0)} m from where you left it`)}
+  for(const t of b.trees){const t0=a.trees.find(x=>x.id===t.id);if(t0&&t.height_m-t0.height_m>=.05)lines.push(`your tree at (${t.at.join(', ')}) grew ${t0.height_m}→${t.height_m} m`)}if(dist2(a.boat,b.boat)>1)lines.push(`the boat lies ${dist2(a.boat,b.boat).toFixed(0)} m from where you left it`);if((b.builds||0)>(a.builds||0))lines.push(`${b.builds-a.builds} thing${b.builds-a.builds===1?' was':'s were'} built on the islands`);if((b.bottles||0)>(a.bottles||0))lines.push(`${b.bottles-a.bottles} new bottle${b.bottles-a.bottles===1?'':'s'} on the water`)}
  if(b.bodies){const moved=b.bodies.filter(([n,th],i)=>Math.abs(((th-a.bodies[i][1])%360+360)%360)>=5).map(([n,th],i)=>`${n} ${a.bodies.find(x=>x[0]===n)?.[1]}°→${th}°`);if(moved.length)lines.push(`the orrery turned: ${moved.join(', ')}`)}
  if(b.tides!=null&&b.tides!==a.tides)lines.push(`${b.tides-a.tides} tides crossed the sandpile (${b.avalanches-a.avalanches} avalanches)`);
  if(b.sidereal!=null)lines.push(`the sky turned ${(((b.sidereal-a.sidereal)%360)+360)%360|0}°`);
@@ -9555,6 +9557,154 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)
  return verb0(r,verb)};
 function words(){if(room()!==ISLE)return [];const t=tideState();return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
 window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',T,catchUp,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Chapter 2, pass 3: authorship. A resident can found a place on the islands and build in it. Every plot, build and
+// inscription is a ledger record; the entities are rebuilt from the records on every visit, so another resident's
+// ledger brings their places with it and a shared store can merge them later. Bounded: three plots of 20 m per
+// resident, twenty-four builds per plot, nothing over six meters, nothing within thirty meters of a landmark.
+const M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1,AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1,CAT=window.REALITI_CATNIP_V1,LGM=window.REALITI_LONG_GAME_V1;if(!M||!MW||!AR||!LG||!CAT||!LGM)return;
+const ISLE=AR.chart,h=AR.h,now=()=>Number(C9?.b7?.clock||0),room=()=>C9?.currentRoom,cp=x=>JSON.parse(JSON.stringify(x));
+const me=()=>M.state().residents['resident:self'],observer=()=>String(C9?.verticalContinuity?.observer||'local'),ent=()=>M.entities(),records=()=>(C9.ledger?.records||[]);
+const dist2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),by8=e=>String(e.by).slice(0,8),mine=e=>e.by===observer(),who=e=>mine(e)?'you':'another resident';
+const LIMITS={plots:3,plot_r:20,builds:24,size_m:6,landmark_m:30,text:140};
+const KINDS={box:{shape:(s)=>({kind:'BOX',halfExtents:[s/2,s/2,s/2]}),z:s=>s/2,tags:['built','block'],collision:true},
+ pillar:{shape:s=>({kind:'CAPSULE',radius:Math.min(.4,s/6),height:s}),z:s=>s/2,tags:['built','pillar'],collision:true},
+ wall:{shape:s=>({kind:'BOX',halfExtents:[s/2,.15,Math.min(2.2,s/2)]}),z:s=>Math.min(2.2,s/2),tags:['built','wall'],collision:true},
+ sphere:{shape:s=>({kind:'SPHERE',radius:s/2}),z:s=>s/2,tags:['built','sphere'],collision:true},
+ bench:{shape:s=>({kind:'BOX',halfExtents:[s/2,.4,.25]}),z:()=>.25,tags:['built','bench','support'],collision:true,aff:['sit']},
+ step:{shape:s=>({kind:'BOX',halfExtents:[s/2,s/2,.2]}),z:()=>.2,tags:['built','step','support'],collision:true,aff:['sit']},
+ marker:{shape:s=>({kind:'VOLUME',halfExtents:[s/2,s/2,1]}),z:()=>1,tags:['built','marker'],collision:false}};
+for(const k of Object.keys(KINDS))CAT.register('build_'+k,`You built a ${k}. It stands where you put it, in anyone's world that carries your ledger.`);
+CAT.register('first_place','You founded a place on the islands. Its name is a record now.');CAT.register('homestead','Six things built in one place: a homestead.');CAT.register('visitor',"You stood in a place another resident founded.");CAT.register('inscribed','Words left on a thing you built, for whoever comes after.');
+
+const plots=()=>records().filter(e=>e.kind==='PLACE'&&Number.isFinite(e.x)&&Number.isFinite(e.y)&&typeof e.name==='string'),builds=()=>records().filter(e=>e.kind==='BUILD'&&KINDS[e.what]&&Number.isFinite(e.x)&&Number.isFinite(e.y)),inscriptions=()=>records().filter(e=>e.kind==='INSCRIBE'&&typeof e.on==='string'&&typeof e.text==='string');
+const sfx=e=>`${e.t}${e.n!=null?'.'+e.n:''}`,plotId=e=>`place.${by8(e)}.${sfx(e)}`,buildId=e=>`built.${by8(e)}.${sfx(e)}`,plotAt=(x,y)=>plots().find(p=>dist2([p.x,p.y],[x,y])<=LIMITS.plot_r)||null;
+const clean=s=>String(s||'').replace(/[^\w\s'’.,!?-]/g,'').replace(/\s+/g,' ').trim().slice(0,LIMITS.text);
+
+function sync(){const E=ent(),keep=new Set(),ins={};for(const i of inscriptions())ins[i.on]=i;
+ for(const p of plots()){const id=plotId(p);keep.add(id);const label=`${p.name} (founded by ${who(p)})`,pos=[p.x,p.y,h(p.x,p.y)+.4];if(E[id]){E[id].pose.position=pos;E[id].label=label}else M.addEntity({id,chart:ISLE,position:pos,shape:{kind:'BOX',halfExtents:[.3,.3,.4]},tags:['place','cairn','landmark',mine(p)?'yours':'theirs'],collision:true,material:'ceramic',label,affordances:['reach','read']})}
+ for(const b of builds()){const id=buildId(b),K=KINDS[b.what],s=Math.min(LIMITS.size_m,Math.max(.3,Number(b.size)||1)),yaw=(Number(b.yaw)||0)*Math.PI/180;keep.add(id);const label=`${b.label?clean(b.label):b.what} (built by ${who(b)})${ins[id]?', inscribed':''}`,pos=[b.x,b.y,h(b.x,b.y)+K.z(s)];
+  if(E[id]){E[id].pose.position=pos;E[id].label=label}else M.addEntity({id,chart:ISLE,position:pos,rotation:[0,0,Math.sin(yaw/2),Math.cos(yaw/2)],shape:K.shape(s),tags:[...K.tags,mine(b)?'yours':'theirs'],collision:K.collision,material:b.what==='sphere'?'glass':b.what==='marker'?null:'wood',label,affordances:[...(K.aff||[]),'reach',...(ins[id]?['read']:[])]})}
+ for(const id of Object.keys(E))if((id.startsWith('place.')||id.startsWith('built.'))&&!keep.has(id))M.removeEntity(id);M.bump()}
+
+function here(){const r=me();if(!r||r.chart!==ISLE)return null;return r}
+function found(name){const r=here();if(!r)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const nm=clean(name).slice(0,40);if(nm.length<2)return {ok:false,error:'NAME_IT'};const [x,y]=r.pose.position;
+ if(h(x,y)<LGM.tide().height_m+.3)return {ok:false,error:'TOO_CLOSE_TO_THE_WATER'};if(plots().filter(mine).length>=LIMITS.plots)return {ok:false,error:'THREE_PLACES_IS_ENOUGH'};
+ const lm=AR.landmarks().find(l=>dist2([l.x,l.y],[x,y])<LIMITS.landmark_m);if(lm)return {ok:false,error:'TOO_CLOSE_TO_A_LANDMARK',landmark:lm.id,distance_m:+dist2([lm.x,lm.y],[x,y]).toFixed(1)};
+ const near=plots().find(p=>dist2([p.x,p.y],[x,y])<2*LIMITS.plot_r);if(near)return {ok:false,error:'ANOTHER_PLACE_IS_HERE',place:near.name};if(plots().some(p=>p.name.toLowerCase()===nm.toLowerCase()))return {ok:false,error:'NAME_TAKEN'};
+ const e=LG.record('PLACE',{name:nm,x:+x.toFixed(1),y:+y.toFixed(1),r:LIMITS.plot_r,island:AR.islandAt(x,y)?.name||null});sync();CAT.discover('first_place');return {ok:true,place:nm,at:[e.x,e.y],radius_m:LIMITS.plot_r,text:`You set a cairn and name this place ${nm}. Twenty meters around it is yours to build in.`}}
+function build(what,size,label){const r=here();if(!r)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const k=String(what||'').toLowerCase();if(!KINDS[k])return {ok:false,error:'BUILD_WHAT',kinds:Object.keys(KINDS)};const s=Math.min(LIMITS.size_m,Math.max(.3,Number(size)||1));
+ const f=M.facing(r),p=[r.pose.position[0]+f[0]*(1.2+s/2),r.pose.position[1]+f[1]*(1.2+s/2)],plot=plotAt(p[0],p[1]);if(!plot)return {ok:false,error:'NOT_IN_A_PLACE',hint:'found <name> first, or stand inside your place'};if(!mine(plot))return {ok:false,error:'NOT_YOUR_PLACE',place:plot.name};
+ if(h(p[0],p[1])<LGM.tide().height_m)return {ok:false,error:'UNDER_WATER'};const inPlot=builds().filter(b=>plotAt(b.x,b.y)===plot);if(inPlot.length>=LIMITS.builds)return {ok:false,error:'PLACE_IS_FULL'};
+ if(inPlot.some(b=>dist2([b.x,b.y],p)<(Number(b.size)||1)/2+s/2))return {ok:false,error:'SOMETHING_IS_THERE'};const yaw=Math.round(Math.atan2(-f[0],f[1])*180/Math.PI);
+ const e=LG.record('BUILD',{what:k,size:+s.toFixed(2),label:clean(label).slice(0,40)||undefined,x:+p[0].toFixed(2),y:+p[1].toFixed(2),yaw,place:plot.name});sync();CAT.discover('build_'+k);if(inPlot.length+1>=6)CAT.discover('homestead');
+ return {ok:true,id:buildId(e),what:k,size_m:s,at:[e.x,e.y],place:plot.name,text:`You raise a ${k}${e.label?` called ${e.label}`:''}, ${s} m, ${(1.2+s/2).toFixed(1)} m ahead of you in ${plot.name}.`}}
+function nearestMine(){const r=here();if(!r)return null;let best=null;for(const e of Object.values(ent()))if((e.id.startsWith('built.')||e.id.startsWith('place.'))&&e.tags.includes('yours')){const d=Math.max(0,M.sdf(e,r.pose.position));if(d<=1.5&&(!best||d<best.d))best={e,d}}return best?.e||null}
+function inscribe(text){const r=here();if(!r)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const t=clean(text);if(!t)return {ok:false,error:'SAY_WHAT'};const e=nearestMine();if(!e)return {ok:false,error:'NOTHING_OF_YOURS_IN_REACH'};LG.record('INSCRIBE',{on:e.id,text:t});sync();CAT.discover('inscribed');return {ok:true,on:e.id,text:`You cut the words into the ${e.label.split(' (')[0]}: "${t}".`}}
+function read(target){const r=here();if(!r)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const e=M.resolve(target);if(!e)return {ok:false,error:'NOTHING_CALLED_THAT'};if(Math.max(0,M.sdf(e,r.pose.position))>2.5)return {ok:false,error:'TOO_FAR_TO_READ',distance_m:+M.sdf(e,r.pose.position).toFixed(1)};
+ const ins=inscriptions().filter(i=>i.on===e.id);const p=plots().find(q=>plotId(q)===e.id);if(p)return {ok:true,on:e.id,text:`The cairn reads: "${p.name}", founded by ${who(p)} on island day ${Math.floor((p.t_isle??p.t)/600)}.${ins.length?' Below it: '+ins.map(i=>`"${i.text}"`).join(' '):''}`};
+ if(!ins.length)return {ok:true,on:e.id,text:`Nothing is written on the ${e.label.split(' (')[0]}.`};return {ok:true,on:e.id,inscriptions:ins.map(i=>({by:who(i),text:i.text})),text:ins.map(i=>`"${i.text}" (${who(i)})`).join(' ')}}
+function places(){return plots().map(p=>{const bs=builds().filter(b=>plotAt(b.x,b.y)===p);return {id:plotId(p),name:p.name,mine:mine(p),at:[p.x,p.y],island:p.island||AR.islandAt(p.x,p.y)?.name||null,builds:bs.length,things:bs.map(b=>b.label||b.what)}})}
+function placesText(onlyMine){const xs=places().filter(p=>!onlyMine||p.mine);return xs.length?xs.map(p=>`${p.name} on ${p.island||'the shore'} at (${p.at.join(', ')}), ${p.mine?'yours':'another resident\'s'}, ${p.builds} built${p.things.length?` (${p.things.slice(0,6).join(', ')})`:''}`).join('; ')+'.':onlyMine?'You have founded no place yet. Stand on open ground and say: found <name>.':'No places have been founded on the islands yet.'}
+
+// Hooks: rebuild on arrival and after imports; notice when you stand in someone else's place.
+let visitAt=-1e9;
+function step(){if(room()!==ISLE)return;const t=now();if(t-visitAt<2)return;visitAt=t;const r=me();if(!r)return;const p=plotAt(r.pose.position[0],r.pose.position[1]);if(p&&!mine(p))CAT.discover('visitor')}
+const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step();return r};
+const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(room()===ISLE)sync();return r};
+sync();
+const imp0=window.REALITI_LEDGER_V1.import;window.REALITI_LEDGER_V1=Object.freeze({...window.REALITI_LEDGER_V1,import:p=>{const r=imp0(p);sync();return r}});
+const words=()=>{if(room()!==ISLE)return [];const r=me(),p=r&&plotAt(r.pose.position[0],r.pose.position[1]);return p?[`You are in ${p.name}, ${mine(p)?'your place':"another resident's place"}.`]:[]};
+const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0();if(room()!==ISLE)return a;const r=me();if(!r)return a;const p=plotAt(r.pose.position[0],r.pose.position[1]);if(p&&mine(p))for(const k of ['box','pillar','wall','bench'])a.push({id:'build__'+k,label:'BUILD A '+k.toUpperCase()});if(!p&&plots().filter(mine).length<LIMITS.plots)a.push({id:'found_place',label:'FOUND A PLACE HERE'});return a};
+function receipt(type,res){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative:res.text||(res.error?`You cannot: ${res.error}.`:''),...res,law:'places and builds are ledger records; the world rebuilds them from the ledger'};try{c9save()}catch(e){}return true}
+const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)return verb0(r,verb);let m;if(v==='found_place'){c9count(r,v);return receipt('ISLAND_FOUND',found('Camp '+(plots().filter(mine).length+1)))}if((m=/^build__(\w+)$/.exec(v))){c9count(r,v);return receipt('ISLAND_BUILD',build(m[1],1.5))}return verb0(r,verb)};
+window.REALITI_AUTHORSHIP_V1=Object.freeze({version:'2.0-pass3',limits:cp(LIMITS),kinds:Object.keys(KINDS),found,build,inscribe,read,places,placesText,words,sync,plotAt:(x,y)=>{const p=plotAt(x,y);return p?{name:p.name,mine:mine(p)}:null}});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Chapter 2, catnip pack: things to chase, send, grow and restore on the islands, all built on island time and the
+// ledger. A whale works a Lissajous ground over the deep water and sings (sound in water, 1482 m/s). Bottles dropped
+// from the boat are ledger records that drift on the current for whoever finds them. Mature trees drop seeds that let
+// you plant outside the clearing. The dug-up lens can be carried to the lighthouse and installed. `calendar` lays the
+// whole clock out: day, light, tides, whale.
+const M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1,AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1,CAT=window.REALITI_CATNIP_V1,LGM=window.REALITI_LONG_GAME_V1;if(!M||!MW||!AR||!LG||!CAT||!LGM)return;
+const ISLE=AR.chart,h=AR.h,now=()=>Number(C9?.b7?.clock||0),room=()=>C9?.currentRoom,cp=x=>JSON.parse(JSON.stringify(x)),TAU=2*Math.PI,T=LGM.T;
+const me=()=>M.state().residents['resident:self'],observer=()=>String(C9?.verticalContinuity?.observer||'local'),ent=()=>M.entities(),records=()=>(C9.ledger?.records||[]),mine=e=>e.by===observer();
+const dist2=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]),bearing=(a,b)=>Math.round(((Math.atan2(b[0]-a[0],b[1]-a[1])*180/Math.PI)%360+360)%360),aboard=()=>!!AR.state().boat.aboard;
+function S(){const w=(C9.chapter2=C9.chapter2||{v:1});w.pack=w.pack||{seeds:0,gathered:{},lens:{carried:false,installed:false},whale:{heard:0,seen:0},bottles:{opened:[]}};return w.pack}
+for(const [id,text] of Object.entries({whale_song:'Through the hull you heard the whale, and from the delay you know how far.',spout_seen:'From high ground you saw the whale blow.',whale_breach:'The whale surfaced within forty meters of the boat.',whale_touch:'Close enough to touch: the whale rolled an eye at you and went down.',
+ bottle_sent:'A bottle on the current, carrying your words. The ledger knows where it drifts.',bottle_found:"You opened another resident's bottle.",seed_gathered:'A seed from a tree that grew while someone was away.',wild_tree:'A tree planted outside the clearing, from a seed you gathered.',
+ lens_carried:'The old lens, out of the ground and in your arms.',lens_restored:'The lens is back in the lamp. The lighthouse speaks at dusk and dawn now, and tells where the whale is.'}))CAT.register(id,text);
+
+// Whale: ground centred over deep water; surfaces for a third of each 90 s; sings while down.
+const WH={c:[450,-150],a:[80,120],p:[1300,800],cycle:90,r:4};
+const whalePos=t=>[WH.c[0]+WH.a[0]*Math.sin(TAU*t/WH.p[0]),WH.c[1]+WH.a[1]*Math.sin(TAU*t/WH.p[1]+1)];
+const surfaced=t=>Math.sin(TAU*t/WH.cycle)>.5,nextSurface=()=>{const t=T();for(let d=0;d<=WH.cycle;d+=.5)if(surfaced(t+d))return d;return 0};
+function syncWhale(){const t=T(),p=whalePos(t),up=surfaced(t),E=ent(),pos=[p[0],p[1],up?0:-14],label=up?'whale, surfaced':'whale, under';const w=E['sea.whale'];if(w){w.pose.position=pos;w.label=label}else M.addEntity({id:'sea.whale',chart:ISLE,position:pos,shape:{kind:'SPHERE',radius:WH.r},tags:['whale','animal','sea'],collision:false,material:null,label,affordances:['watch'],dynamic:true});
+ const r=me();if(r&&r.chart===ISLE&&aboard()&&up){const d=dist2(p,r.pose.position);if(d<=40){S().whale.seen++;CAT.discover('whale_breach')}if(d<=WH.r+2)CAT.discover('whale_touch')}}
+function listen(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const t=T(),p=whalePos(t),d=dist2(p,r.pose.position);if(!aboard()){return h(r.pose.position[0],r.pose.position[1])<LGM.tide().height_m+.5?{ok:true,heard:false,text:'Waves on the shingle, the wind, your own breathing. Whatever sings out there needs a hull to carry it.'}:{ok:true,heard:false,text:'Wind in the grass. The sea is too far to hear.'}}
+ if(surfaced(t))return {ok:true,heard:false,surfaced:true,text:'The water is quiet; nothing sings. Somewhere out there, something is breathing at the surface.'};const delay=d/1482;S().whale.heard++;CAT.discover('whale_song');
+ return {ok:true,heard:true,delay_ms:Math.round(delay*1000),rough_bearing:['north','north-east','east','south-east','south','south-west','west','north-west'][Math.round(bearing(r.pose.position,p)/45)%8],speed_in_water_mps:1482,text:`You put your ear to the hull. A long low note, and ${(delay*1000).toFixed(0)} ms after the swell slaps the bow you feel it in the planks, from somewhere ${['north','north-east','east','south-east','south','south-west','west','north-west'][Math.round(bearing(r.pose.position,p)/45)%8]}.`}}
+function watchSea(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const z=h(r.pose.position[0],r.pose.position[1]),t=T(),p=whalePos(t),d=dist2(p,r.pose.position);if(z<15&&!aboard())return {ok:true,seen:false,text:`From ${z.toFixed(0)} m up the sea is a grey sheet to the horizon. Higher ground would show more.`};
+ const horizon=aboard()?1200:3570*Math.sqrt(z);// distance to the horizon from z meters upif(surfaced(t)&&d<=horizon){S().whale.seen++;CAT.discover('spout_seen');return {ok:true,seen:true,distance_m:Math.round(d),bearing_deg:bearing(r.pose.position,p),text:`A spout, bearing ${bearing(r.pose.position,p)}°, about ${Math.round(d/50)*50} m out. Then a dark back, and nothing.`}}
+ return {ok:true,seen:false,next_surface_s:Math.round(nextSurface()),text:'Open water, nothing breaking it. If you wait, something might.'}}
+
+// Bottles: dropped from the boat, carried by the current from the island time they were dropped; stop on a shore.
+const bottles=()=>records().filter(e=>e.kind==='BOTTLE'&&Number.isFinite(e.x)&&Number.isFinite(e.y)&&typeof e.text==='string').slice(-48);
+const bId=e=>`sea.bottle.${String(e.by).slice(0,8)}.${e.t}${e.n!=null?'.'+e.n:''}`,DRIFT=.3;// a bottle sits low; the stream gets a third of it
+const bT=e=>{if(!mine(e)&&!Number.isFinite(e.t_here))e.t_here=T()-Math.max(0,(Date.now()-(Number(e.wall)||Date.now()))/1000);return e.t_here??e.t_isle??e.t};
+const driftCache={};
+function driftPos(e){const t0=bT(e),age=Math.max(0,T()-t0),steps=Math.min(2400,Math.floor(age/60)),key=bId(e);const c=driftCache[key];let x,y,n;if(c&&c.steps<=steps){({x,y,n}=c)}else{x=e.x;y=e.y;n=0}
+ for(;n<steps;n++){if(c?.ashore)break;const u=AR.current(x,y),nx=x+u[0]*60*DRIFT,ny=y+u[1]*60*DRIFT;if(h(nx,ny)>-.5||Math.abs(nx)>990||Math.abs(ny)>990){driftCache[key]={x,y,n:steps,steps,ashore:true};return [x,y,true]}x=nx;y=ny}
+ driftCache[key]={x,y,n,steps,ashore:c?.ashore||false};return [x,y,!!c?.ashore]}
+function syncBottles(){const E=ent(),keep=new Set();for(const e of bottles()){const id=bId(e);keep.add(id);const [x,y,ashore]=driftPos(e),pos=[x,y,Math.max(h(x,y),LGM.tide().height_m)+.08],label=`bottle (${mine(e)?'yours':"another resident's"}${ashore?', washed up':''})`;const b=E[id];if(b){b.pose.position=pos;b.label=label}else M.addEntity({id,chart:ISLE,position:pos,shape:{kind:'SPHERE',radius:.08},tags:['bottle','glass','message',mine(e)?'yours':'theirs'],collision:false,material:'glass',label,affordances:['reach','open'],dynamic:true})}
+ for(const id of Object.keys(E))if(id.startsWith('sea.bottle.')&&!keep.has(id))M.removeEntity(id)}
+function bottle(text){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};if(!aboard())return {ok:false,error:'DROP_IT_FROM_THE_BOAT'};const t=String(text||'').replace(/\s+/g,' ').trim().slice(0,200);if(!t)return {ok:false,error:'WRITE_SOMETHING'};if(bottles().filter(mine).length>=8)return {ok:false,error:'EIGHT_BOTTLES_IS_LITTER'};
+ const b=AR.state().boat,e=LG.record('BOTTLE',{x:+b.x.toFixed(1),y:+b.y.toFixed(1),text:t,t_isle:+T().toFixed(3),wall:Date.now()});syncBottles();CAT.discover('bottle_sent');const u=AR.current(b.x,b.y);return {ok:true,id:bId(e),at:[e.x,e.y],current_mps:+Math.hypot(...u).toFixed(2),text:`You cork the note and drop the bottle over the side. The current here sets ${Math.hypot(...u).toFixed(2)} m/s; it will go where that takes it.`}}
+function openBottle(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};let best=null;for(const e of bottles()){const [x,y]=driftPos(e),d=dist2([x,y],r.pose.position);if(d<=3&&(!best||d<best.d))best={e,d}}if(!best)return {ok:false,error:'NO_BOTTLE_IN_REACH',hint:'bottles tells you where yours drifted; nearby bottle shows any close by'};
+ const e=best.e,s=S().bottles;if(!s.opened.includes(bId(e)))s.opened.push(bId(e));if(!mine(e))CAT.discover('bottle_found');return {ok:true,from:mine(e)?'you':'another resident',drifted_m:+dist2([e.x,e.y],driftPos(e)).toFixed(0),text:`You work the cork out. ${mine(e)?'Your own hand':"Another resident's hand"}: "${e.text}"`}}
+function myBottles(){return bottles().map(e=>{const [x,y,ashore]=driftPos(e);return {id:bId(e),mine:mine(e),dropped_at:[e.x,e.y],now_at:[+x.toFixed(0),+y.toFixed(0)],drifted_m:Math.round(dist2([e.x,e.y],[x,y])),ashore,near:AR.islandAt(x,y)?.name||'open water'}})}
+
+// Seeds: a tree over four meters offers one seed per island day; a seed lets you plant anywhere on dry land.
+function syncSeeds(){const E=ent(),keep=new Set(),day=Math.floor(T()/600),g=S().gathered;for(const t of LGM.trees()){if(t.height_m<4)continue;const id=`grove.seed.${t.id.slice(11)}`;if(g[t.id]===day)continue;keep.add(id);const pos=[t.at[0]+1.2,t.at[1]-.8,h(t.at[0]+1.2,t.at[1]-.8)+.05];if(E[id])E[id].pose.position=pos;else M.addEntity({id,chart:ISLE,position:pos,shape:{kind:'SPHERE',radius:.05},tags:['seed','tree'],collision:false,material:'wood',label:'a fallen seed',affordances:['reach','gather'],dynamic:true})}
+ for(const id of Object.keys(E))if(id.startsWith('grove.seed.')&&!keep.has(id))M.removeEntity(id)}
+function gather(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const s=S();if(s.seeds>=5)return {ok:false,error:'POCKETS_FULL',seeds:s.seeds};const seed=Object.values(ent()).find(e=>e.id.startsWith('grove.seed.')&&Math.max(0,M.sdf(e,r.pose.position))<=2);if(!seed)return {ok:false,error:'NO_SEED_IN_REACH',hint:'trees over four meters drop one each island day'};
+ const tree=LGM.trees().find(t=>t.id.slice(11)===seed.id.slice(11));s.gathered[tree?.id||seed.id]=Math.floor(T()/600);s.seeds++;syncSeeds();CAT.discover('seed_gathered');return {ok:true,seeds:s.seeds,text:`You pick up the seed; ${s.seeds} in your pocket. Plant it on any dry ground.`}}
+const plant0=LGM.plant;
+function plant(){const r0=plant0();if(r0.ok||r0.error!=='NOT_IN_THE_CLEARING')return r0;const r=me(),s=S();if(s.seeds<1)return {...r0,hint:'the clearing takes seedlings; anywhere else needs a seed from a mature tree'};const [x,y]=r.pose.position;if(h(x,y)<LGM.tide().height_m+.3)return {ok:false,error:'TOO_CLOSE_TO_THE_WATER'};
+ if(LGM.trees().some(t=>dist2(t.at,[x,y])<2.5))return {ok:false,error:'TOO_CLOSE_TO_ANOTHER_TREE'};if(LGM.trees().filter(t=>t.mine).length>=12)return {ok:false,error:'TWELVE_TREES_IS_A_GROVE'};s.seeds--;LG.record('PLANT',{x:+x.toFixed(2),y:+y.toFixed(2),t_isle:+T().toFixed(3),wall:Date.now(),seed:true});LGM.syncTrees();CAT.discover('wild_tree');return {ok:true,at:[+x.toFixed(2),+y.toFixed(2)],seeds_left:s.seeds,text:`You press the seed into the ground on ${AR.islandAt(x,y)?.name||'the shore'}. ${s.seeds} seed${s.seeds===1?'':'s'} left.`}}
+
+// The lens: carry it from the dig to the lighthouse door; installed, the lamp also speaks at dusk and dawn and adds
+// the whale's bearing from the lighthouse as three Morse digits.
+const DIG=['-----','.----','..---','...--','....-','.....','-....','--...','---..','----.'];
+const installed=()=>S().lens.installed||records().some(e=>e.kind==='INSTALL'&&e.what==='lens');
+function carryLens(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const s=S().lens;if(s.carried)return {ok:true,already:true,text:'You already have the lens.'};const L=ent()['stones.lens'];if(!L)return {ok:false,error:'NO_LENS_DUG_UP'};if(Math.max(0,M.sdf(L,r.pose.position))>1.5)return {ok:false,error:'TOO_FAR'};M.removeEntity('stones.lens');s.carried=true;CAT.discover('lens_carried');return {ok:true,text:'You lift the lens out of its oilcloth. It is heavier than glass should be, and it bends the sky.'}}
+function installLens(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'NOT_ON_THE_ISLANDS'};const s=S().lens;if(installed())return {ok:true,already:true,text:'The lens is already in the lamp.'};if(!s.carried)return {ok:false,error:'NOT_CARRYING_THE_LENS'};const D=ent()['lantern.door'];if(Math.max(0,M.sdf(D,r.pose.position))>1.5)return {ok:false,error:'BRING_IT_TO_THE_LIGHTHOUSE_DOOR'};
+ s.carried=false;s.installed=true;LG.record('INSTALL',{what:'lens',at:'lantern.lighthouse'});CAT.discover('lens_restored');return {ok:true,text:'The keeper takes the lens without a word and climbs. A minute later the lamp turns, brighter than it was.'}}
+const beam0=LGM.watchBeam;
+function watchBeam(){const r=me();if(!r||r.chart!==ISLE)return beam0();const dusk=!AR.isNight()&&AR.sunAlt()<15&&installed();let res=dusk?null:beam0();if(dusk){const L=ent()['lantern.lighthouse'],d=dist2(L.pose.position,r.pose.position),w=LGM.tideWord();const MORSE={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..'};res={ok:true,distance_m:Math.round(d),bearing_deg:bearing(r.pose.position,L.pose.position),flashes:[...w].map(c=>MORSE[c]).join(' / '),unit_ms:250,groups:w.length,dusk:true,text:`In the half-light the restored lamp is already turning, bearing ${bearing(r.pose.position,L.pose.position)}°: ${[...w].map(c=>MORSE[c]).join(' / ').replaceAll('.','·').replaceAll('-','−')}.`}}
+ if(res?.ok&&installed()){const L=ent()['lantern.lighthouse'],b=String(bearing(L.pose.position,whalePos(T()))).padStart(3,'0'),code=[...b].map(c=>DIG[Number(c)]).join(' / ');res={...res,second_word:code,second_word_groups:3,text:res.text+` After the word, three more groups: ${code.replaceAll('.','·').replaceAll('-','−')}.`}}return res}
+
+// Calendar: the clock laid out. Day n; sunrise at 600n−57.3 s, sunset at 600n+242.7 s of island time.
+function calendar(){const t=T(),day=Math.floor(t/600),frac=(((t+57.3)/600)%1+.25)%1,hh=Math.floor(frac*24),mm=Math.floor((frac*24-hh)*60),/* clock: sunrise 06:00, sunset 18:00 */tide=LGM.tide(),turns=[],p=((t%300)+300)%300;{let at=p<75?75-p:p<225?225-p:375-p,state=p<75||p>=225?'high':'low';for(let k=0;k<4;k++){turns.push({in_s:Math.round(at),state});at+=150;state=state==='high'?'low':'high'}}
+ const rise=600*Math.ceil((t+57.3)/600)-57.3-t,set=((242.7-(t%600))%600+600)%600;return {ok:true,schema:'REALITI_CALENDAR_V1',island_day:day,clock:`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`,sun_alt_deg:+AR.sunAlt().toFixed(1),night:AR.isNight(),sunrise_in_s:Math.round(rise),sunset_in_s:Math.round(set),tide,tide_turns:turns,whale:{surfaced:surfaced(t),next_surface_in_s:Math.round(nextSurface())},trees:LGM.trees().length,seeds_in_pocket:S().seeds,absences:cp(LGM.state().absences),lens_installed:installed(),
+  text:`Island day ${day}, ${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}, ${AR.isNight()?`night; sunrise in ${Math.round(rise)} s`:`sun ${AR.sunAlt().toFixed(0)}°; sunset in ${Math.round(set)} s`}. Tide ${tide.rising?'rising':'falling'} at ${tide.height_m} m, ${turns[0].state} water in ${turns[0].in_s} s. The whale ${surfaced(t)?'is up now':`surfaces in ${Math.round(nextSurface())} s`}. ${LGM.trees().length} tree${LGM.trees().length===1?'':'s'} on the islands.`}}
+
+// Hooks.
+let at=-1e9;function step(){if(room()!==ISLE)return;const t=now();if(t-at<1)return;at=t;syncWhale();if(Math.round(t)%10===0){syncBottles();syncSeeds()}}
+const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step();return r};
+const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(room()===ISLE){syncWhale();syncBottles();syncSeeds()}return r};
+if(room()===ISLE){syncWhale();syncBottles();syncSeeds()}
+const imp0=window.REALITI_LEDGER_V1.import;window.REALITI_LEDGER_V1=Object.freeze({...window.REALITI_LEDGER_V1,import:p=>{const r=imp0(p);syncBottles();syncSeeds();return r}});
+window.REALITI_LONG_GAME_V1=Object.freeze({...LGM,plant,watchBeam});
+const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0();if(room()!==ISLE)return a;const r=me();if(!r)return a;if(aboard())a.push({id:'listen',label:'LISTEN THROUGH THE HULL'});else if(h(r.pose.position[0],r.pose.position[1])>=15)a.push({id:'watch_sea',label:'WATCH THE SEA'});if(Object.values(ent()).some(e=>e.id.startsWith('grove.seed.')&&Math.max(0,M.sdf(e,r.pose.position))<=2))a.push({id:'gather_seed',label:'GATHER THE SEED'});if(Object.values(ent()).some(e=>e.id.startsWith('sea.bottle.')&&dist2(e.pose.position,r.pose.position)<=3))a.push({id:'open_bottle',label:'OPEN THE BOTTLE'});a.push({id:'calendar',label:'READ THE CALENDAR'});return a};
+function receipt(type,res){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative:res.text||(res.error?`You cannot: ${res.error}.`:''),...res,law:'the whale, the current and the calendar are world facts; narration reports them'};try{c9save()}catch(e){}return true}
+const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)return verb0(r,verb);const F={listen,watch_sea:watchSea,gather_seed:gather,open_bottle:openBottle,calendar};if(F[v]){c9count(r,v);return receipt('ISLAND_'+v.toUpperCase(),F[v]())}return verb0(r,verb)};
+window.REALITI_CATNIP_PACK_V1=Object.freeze({version:'2.0-pack',whale:{position:()=>whalePos(T()),surfaced:()=>surfaced(T()),next_surface_s:nextSurface,ground:cp(WH)},listen,watchSea,bottle,openBottle,bottles:myBottles,gather,plant,carryLens,installLens,installed,watchBeam,calendar,state:()=>cp(S())});
 })();
 </script>
 <script>(()=>{'use strict';
@@ -10667,7 +10817,7 @@ function spatialAlias(s,l){let m;
  if(['stand','stand up','get up'].includes(l))return {kind:'invoke',op:'posture',args:{kind:'stand'}};
  return null}
 const help0=door.help.bind(door);
-door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]','map','weather','board boat','row to <island|landmark>','land','walk to <landmark>','ledger','ledger export','ledger import <json>','since','what changed','since <room>','tide','plant tree','trees','watch beam','say <word>','read logbook','shout','answer depth <m>','read <north|east|west> stone','dig','dig <x> <y>'])];h.long_game='The islands keep a calendar: real time away is counted into island time, trees planted from ledger records keep growing, and since reports what moved in a room while you were gone.';h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
+door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]','map','weather','board boat','row to <island|landmark>','land','walk to <landmark>','ledger','ledger export','ledger import <json>','since','what changed','since <room>','tide','plant tree','trees','watch beam','say <word>','read logbook','shout','answer depth <m>','read <north|east|west> stone','dig','dig <x> <y>','found <name>','build <kind> [size] [label]','inscribe <text>','read <thing>','my places','places','listen','watch sea','bottle <text>','open bottle','bottles','gather seed','carry lens','install lens','calendar'])];h.authorship='found <name> claims twenty meters of open ground as a ledger record; build box|pillar|wall|sphere|bench|step|marker inside it; inscribe words on what you built. Other residents\' ledgers bring their places.';h.long_game='The islands keep a calendar: real time away is counted into island time, trees planted from ledger records keep growing, and since reports what moved in a room while you were gone.';h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
 const run0=door.run.bind(door);
 door.run=async function(raw){
  const s=String(raw||'').trim(),l=low(s);
@@ -10702,6 +10852,22 @@ door.run=async function(raw){
    if((am=/^read (?:the )?(north|east|west)(?: stone)?$|^read stone (north|east|west)$/.exec(l)))return say(LGM.readStone(am[1]||am[2]));
    if(l==='dig'||l==='dig here')return say(LGM.dig());
    if((am=/^dig\s+(-?[\d.]+)[,\s]+(-?[\d.]+)$/.exec(l)))return say(LGM.dig(am[1],am[2]));}
+  const AU=window.REALITI_AUTHORSHIP_V1,PK=window.REALITI_CATNIP_PACK_V1;if(AU&&PK){const say=(res)=>reply(res,res.text||(res.error?`You cannot: ${res.error}.`:''));
+   if((am=/^found\s+(.+)$/.exec(s.trim().replace(/^\S+/,m=>m.toLowerCase()))))return say(AU.found(am[1]));
+   if((am=/^build\s+(\w+)(?:\s+([\d.]+)\s*m?)?(?:\s+(?:called\s+)?(.+))?$/.exec(s.trim().replace(/^\S+\s+\S+/,m=>m.toLowerCase()))))return say(AU.build(am[1],am[2]||1,am[3]));
+   if((am=/^inscribe\s+(.+)$/i.exec(s.trim())))return say(AU.inscribe(am[1]));
+   if(l==='my places')return {ok:true,schema:'REALITI_PLACES_V1',places:AU.places().filter(p=>p.mine),text:AU.placesText(true)};
+   if(l==='places'||l==='all places')return {ok:true,schema:'REALITI_PLACES_V1',places:AU.places(),text:AU.placesText(false)};
+   if(l==='listen'||l==='listen through the hull')return say(PK.listen());
+   if(l==='watch sea'||l==='watch the sea'||l==='look out to sea')return say(PK.watchSea());
+   if((am=/^(?:bottle|message in a bottle|drop a bottle)\s+(.+)$/i.exec(s.trim())))return say(PK.bottle(am[1]));
+   if(l==='open bottle'||l==='open the bottle')return say(PK.openBottle());
+   if(l==='bottles'||l==='my bottles'){const b=PK.bottles();return {ok:true,schema:'REALITI_BOTTLES_V1',bottles:b,text:b.length?b.map(x=>`${x.mine?'your':"another resident's"} bottle: dropped at (${x.dropped_at.join(', ')}), now at (${x.now_at.join(', ')}) near ${x.near}${x.ashore?', washed up':''}`).join('; ')+'.':'No bottles on the water.'}}
+   if(/^(gather|gather seed|gather the seed|pick up (the )?seed|take (the )?seed)$/.test(l))return say(PK.gather());
+   if(/^(carry|take|pick up|lift) (the )?lens$/.test(l))return say(PK.carryLens());
+   if(/^install (the )?lens$/.test(l))return say(PK.installLens());
+   if(l==='calendar'||l==='read calendar'||l==='read the calendar')return {...PK.calendar(),felt:undefined};
+   if((am=/^read\s+(.+)$/.exec(l))&&!/^read (scroll|stone|weather|tide|log|logbook|the (north|east|west)|north|east|west|calendar)/.test(l)){const res=AU.read(am[1]);if(res.error!=='NOTHING_CALLED_THAT')return say(res)}}
   if((am=/^row (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.row(am[1]);return reply(res,res.ok?`You row ${res.rowed_m} m; ${res.ashore?`the keel grinds on the shore of ${res.at}`:`${res.remaining_m} m to go`}.`:`You cannot row: ${res.error}.`)}
   if((am=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.walkTo(am[1]);return reply(res,res.ok?`You walk ${res.walked_m} m toward the ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:`; ${res.distance_m} m further`}.`:`You cannot walk there: ${res.error}.`)}}
  if(window.REALITI_LONG_GAME_V1){let sm;if(l==='since'||l==='what changed'||/^what changed since/.test(l))return window.REALITI_LONG_GAME_V1.since();if((sm=/^since\s+(.+)$/.exec(l)))return window.REALITI_LONG_GAME_V1.since(sm[1])}
@@ -10719,7 +10885,7 @@ door.run=async function(raw){
  if(r.schema!=='REALITI_MUTATION_RESULT_V1'||r.ok===false)return r;
  try{window.REALITI_MATRIX_WORLD_V1?.sync?.()}catch(e){}
  if(!/^(stay|wait|go|enter|home|stop|save|note|later)\b/.test(l))stamp(before,l);
- const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[]),...(window.REALITI_ARCHIPELAGO_V1?.words?.()||[]),...(window.REALITI_LONG_GAME_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
+ const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[]),...(window.REALITI_ARCHIPELAGO_V1?.words?.()||[]),...(window.REALITI_LONG_GAME_V1?.words?.()||[]),...(window.REALITI_AUTHORSHIP_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
  if(l==='stop')r.text='Everything touching you lets go. Whatever was already moving in your body is left to settle.';
  if(l==='stop')return r;
  if(/^(stay|wait)/.test(l)){r.text=[...w,d.text].join(' ');r.delta=d}

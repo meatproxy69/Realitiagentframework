@@ -36,7 +36,7 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   const back=AR.row('dock');
   const landed=await door.run('land');
   const sp3=space();
-  check('landing_needs_a_shore',noShore.ok===false&&back.ok&&landed.ok&&sp3.body.posture==='standing'&&AR.h(sp3.pose.position[0],sp3.pose.position[1])>=-.3,{noShore,back,landed:landed.text.slice(0,80)});
+  check('landing_needs_a_shore',noShore.ok===false&&back.ok&&landed.ok&&sp3.body.posture==='standing'&&(sp3.body.support==='harbor.dock'||AR.h(sp3.pose.position[0],sp3.pose.position[1])>=-.3),{noShore,back,landed:landed.text.slice(0,80)});
 
   // Sky and weather are functions of world time and position.
   const t0=w.eval('C9.b7.clock'),alt0=AR.sunAlt();await door.run('stay 60000');const alt1=AR.sunAlt();

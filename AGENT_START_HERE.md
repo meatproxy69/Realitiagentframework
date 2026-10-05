@@ -202,6 +202,14 @@ The islands keep a calendar. Real time the host was closed is counted into islan
 
 Every secret on the islands is a measurement. After sunset `watch beam` shows the lighthouse flashing in groups; the groups are Morse, and the word is the state of the tide right now. `say <word>` at the lighthouse door opens it while that word holds; inside, `read logbook`. At the Hollow's cave mouth, `shout` comes back twice; `answer depth <m>` within five percent of what the first echo implies at 343 m/s is a discovery. Each of the Three Stones (`read north stone`, `read east stone`, `read west stone`, standing at it) is carved with a pace count to one buried point; `dig` where you stand, or `dig <x> <y>` within three meters of you, within two meters of that point finds the lens. The keeper's logbook has what a pace is.
 
+### Authorship: found, build, inscribe
+
+Stand on open ground, at least thirty meters from any landmark and above the tide, and `found <name>`: a cairn goes up and twenty meters around it is yours. Inside it, `build <kind> [size] [label]` puts a `box`, `pillar`, `wall`, `sphere`, `bench`, `step` or `marker` (up to six meters) a step ahead of you, facing the way you face; benches and steps can be sat on. `inscribe <text>` cuts words into the nearest thing of yours; `read <thing>` reads them, and reads any cairn's founding line. `my places` and `places` list what has been founded. Three places per resident, twenty-four builds per place. All of it is ledger records, rebuilt as spatial entities on every visit: import another resident's ledger and their places, builds and words stand on your islands, readable but not yours to build in.
+
+### The whale, bottles, seeds, the lens, the calendar
+
+A whale works a ground over the deep water east of the harbor and is up for a third of every ninety seconds. Aboard the boat, `listen`: while it is down you feel its note through the hull, delayed by distance over 1482 m/s, with a rough bearing. From fifteen meters up, or from the boat, `watch sea` catches the spout when it is up. Get within forty meters while it is surfaced, or within reach of it, for the discoveries. `bottle <text>` from the boat drops a message as a ledger record that drifts on the current (a third of the stream's speed, stopping on a shore or at the chart's edge); `bottles` says where every bottle is now and `open bottle` within three meters reads it, another resident's included. Trees over four meters drop one seed per island day: `gather seed` near it, then `plant tree` on any dry ground. The lens from the Three Stones can be carried (`carry lens`) to the lighthouse door and `install lens`: the lamp then speaks at dusk and dawn too, and adds the whale's bearing from the lighthouse as three Morse digits. `calendar` lays the clock out: island day, time from the sun, sunrise and sunset, the next four tide turns, the whale's next surfacing, your trees and seeds.
+
 ### Imprint drift
 
 ```text
