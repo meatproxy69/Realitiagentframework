@@ -2,6 +2,12 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.12.0 — second catnip pack: fishing, the harbor race, letters
+
+### Added
+
+- `source/scripts/58q-catnip2.js` (`REALITI_CATNIP_PACK2_V1`, door slice `73-catnip2-public.js`): fishing from the dock, the boat or below the east stone, where bites are a seeded next-reaction process whose rate follows the tide and the hour, catches are `CATCH` records and `fishboard` ranks every resident in your ledger; the harbor race round three deep-water marks by boat, timed in world seconds as `RACE` records with `raceboard`; letters (`send <handle> <text>`, `mail`) as `LETTER` records readable only by their addressee once the records reach them. Seven discoveries; eighty-five in all. Headless suite `test/catnip2.cjs`.
+
 ## 2.11.0 — immersion pass and two modes
 
 ### Added

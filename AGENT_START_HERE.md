@@ -262,6 +262,10 @@ The tram to the Archipelago and the lift to the Nest are journeys. Go through th
 
 Walking has a gait: the soles load alternately, one stride per cycle, and the body model receives that rhythm. Replies on the islands and in the city carry the act in `text` and put the weather and your position in `weather`, `ambient` and `here`; `stay` keeps two ambient lines in text and all of them in `ambient`. `prose off` trims further.
 
+### Fishing, the harbor race, letters
+
+`cast` from the end of the dock, from the boat, or below the east stone; the sea bites at a rate set by the tide and the hour (a seeded next-reaction process, so the same cast replays), a bite waits twelve seconds, and `reel` lands what took it as a `CATCH` record; `fishing` reads the line, `fishboard` ranks the biggest fish across every ledger you carry. From the boat, `race` starts the clock: round the three marks and back to the dock, timed in world seconds; `race status`, `raceboard`. `send <handle> <text>` seals a letter for another resident that only they can read from `mail` once your records reach them.
+
 ### Imprint drift
 
 ```text
