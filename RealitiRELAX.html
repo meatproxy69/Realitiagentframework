@@ -1460,7 +1460,7 @@ function b3PetLocal(verb){const room="PET_ROOM_2",p=C9.pet2;
    c9count(room,verb);b3advance(6);const l=b3z("hand.L.palm"),r=b3z("hand.R.palm");b2set(`You stop using the post. Nothing stimulates the paws; their local history simply cools. left_h=${l.h.toFixed(3)} · right_h=${r.h.toFixed(3)}. Recovery is not a reward.`);return true;
  }
  if(verb==="knead_blanket"){
-   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",novelty:n===1?.25:.04});c9save();
+   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04});c9save();
    b2set(n%3===1?"Left paw, right paw. Two local histories alternate over one broad blanket support.":n%3===2?"The phases slip: left release overlaps right press. The interesting part is relation, not more force.":"The paw pose returns, but its prediction/adaptation state is not identical to the first cycle.",b3raw(R));b2catDeed(room,"knead");return true;
  }
  if(verb==="purr_blanket"){
@@ -1773,6 +1773,8 @@ const B7_MATERIALS={
  longfur:{id:"longfur",surface:.88,mid:.34,deep:.10,onset:.07,tail:.88,grain_with:1.05,grain_against:.76,catch:.16,yield:.32},
  cardboard:{id:"cardboard",surface:.62,mid:.46,deep:.18,onset:.025,tail:.34,grain_with:.93,grain_against:1.12,catch:.48,yield:.16},
  blanket:{id:"blanket",surface:.28,mid:.58,deep:.68,onset:.16,tail:.92,grain_with:1,grain_against:1,catch:.08,yield:.72},
+ pillow:{id:"pillow",surface:.20,mid:.52,deep:.72,onset:.18,tail:.95,grain_with:1,grain_against:1,catch:.05,yield:.82},
+ mattress:{id:"mattress",surface:.18,mid:.62,deep:.82,onset:.20,tail:.98,grain_with:1,grain_against:1,catch:.03,yield:.88},
  string:{id:"string",surface:.74,mid:.20,deep:.06,onset:.03,tail:.22,grain_with:1,grain_against:1,catch:.62,yield:.08},
  air:{id:"air",surface:.24,mid:.04,deep:0,onset:.02,tail:.12,grain_with:1,grain_against:1,catch:0,yield:1}
 };
@@ -3203,7 +3205,7 @@ function afterSense(zone,opts,r,pri,t){
   if(!inContact&&grounded){            
     const s=S(),v=Number(r.response??r.stimulus??0),until=t+K.GROUND_WINDOW,
       symbolic=opts.source==='SYMBOLIC_SCENE',
-      route=!symbolic && (!!s.flags.route_direct_sense_to_felt || opts.livedGrounded===true);
+      route=opts.grounded!==false && !symbolic && (!!s.flags.route_direct_sense_to_felt || opts.livedGrounded===true);
     s.seam.counts.direct_sense++;if(!route)s.seam.direct_not_in_felt++;
     const cause=opts.cause||`direct:${C9.currentRoom||'world'}`;
     if(route){
@@ -5374,12 +5376,12 @@ const NEST='CLOUD_NINE_NEST';
 const SOURCE='AMBIENT_SUPPORT';
 const HOLD=.35;
 const SUPPORT={
-  'head.crown':      {input:.08, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'head.nape':       {input:.12, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'torso.upper_back':{input:.16, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.mid_back':  {input:.18, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.lower_back':{input:.20, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'pelvis.seat':     {input:.23, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
+  'head.crown':      {input:.08, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'head.nape':       {input:.12, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'torso.upper_back':{input:.16, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.mid_back':  {input:.18, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.lower_back':{input:.20, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'pelvis.seat':     {input:.23, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
   'leg.L.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.R.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.L.shin':      {input:.035,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
@@ -5388,13 +5390,13 @@ const SUPPORT={
 function now(){return Number(C9?.b7?.clock||0)}
 function S(){
   C9.welcome10=C9.welcome10||{};
-  C9.welcome10.nest_support=C9.welcome10.nest_support||{active:false,since:null,base:{},generation:0,last_reason:null,last_update:now()};
+  C9.welcome10.nest_support=C9.welcome10.nest_support||{active:false,since:null,base:{},generation:0,last_reason:null,last_update:now(),curled:false};
   return C9.welcome10.nest_support;
 }
 function ours(q){return q&&q._b10_grounded_source===SOURCE&&String(q._b10_grounded_cause||'').startsWith('NEST_')}
 function adapt(age){return .24+.76*Math.exp(-Math.max(0,age)/3.2)}
 function clearSupport(reason='leave_support'){
-  const st=S();st.active=false;st.last_reason=reason;
+  const st=S();st.active=false;st.curled=false;st.last_reason=reason;
   for(const z of Object.keys(SUPPORT)){
     try{const q=b7Zone(z);if(ours(q)){q._b10_grounded_value=0;q._b10_grounded_until=now()-1e-6;q.observed=0;q.layers={surface:0,mid:0,deep:0};q.innovation=-Number(q.predicted||0)}}catch(e){}
   }
@@ -5410,7 +5412,7 @@ function initializeZone(z,cfg){
   S().base[z]=base;
 }
 function enableSupport(reason='lie_down'){
-  const st=S();st.active=true;st.since=now();st.last_update=now();st.generation=Number(st.generation||0)+1;st.last_reason=reason;st.base={};
+  const st=S();st.active=true;st.curled=false;st.since=now();st.last_update=now();st.generation=Number(st.generation||0)+1;st.last_reason=reason;st.base={};
   for(const [z,cfg] of Object.entries(SUPPORT))initializeZone(z,cfg);
   maintainSupport();
   try{c9save()}catch(e){}
@@ -5423,12 +5425,12 @@ function maintainSupport(){
       const q=b7Zone(z),until=Number(q._b10_grounded_until||-Infinity),foreign=until>=now()-1e-9&&!ours(q);
       
       if(foreign)continue;
-      const base=Math.max(0,Number(st.base[z]||cfg.input*.72));
-      q._b10_grounded_value=base;
+      const base=Math.max(0,Number(st.base[z]||cfg.input*.72)),blanketGain=st.curled&&cfg.cause==='NEST_BLANKET_WEIGHT'?1.65:1,load=base*blanketGain;
+      q._b10_grounded_value=load;
       q._b10_grounded_until=now()+HOLD;
       q._b10_grounded_cause=cfg.cause;
       q._b10_grounded_source=SOURCE;
-      const response=base*a;
+      const response=load*a;
       q.observed=response;
       q.predicted=response*(1-Math.exp(-age/.45));
       q.innovation=Number(q.observed||0)-Number(q.predicted||0);
@@ -5445,7 +5447,15 @@ function supportView(){
     let q=null;try{q=b7Zone(z)}catch(e){}
     zs.push({z,input:cfg.input,cause:cfg.cause,grounded:!!(q&&ours(q)&&Number(q._b10_grounded_until||-1)>=now()),observed:+Number(q?.observed||0).toFixed(4)});
   }
-  return {version:'20.2',active:!!st.active,room:C9?.currentRoom||null,age_s:st.since==null?null:+Math.max(0,now()-st.since).toFixed(3),adapt_gain:st.since==null?0:+adapt(now()-st.since).toFixed(4),zones:zs,law:'stationary ambient support is grounded world cause; response may adapt while grounding remains true'};
+  return {version:'20.2',active:!!st.active,curled:!!st.curled,room:C9?.currentRoom||null,age_s:st.since==null?null:+Math.max(0,now()-st.since).toFixed(3),adapt_gain:st.since==null?0:+adapt(now()-st.since).toFixed(4),zones:zs,law:'stationary ambient support is grounded world cause; response may adapt while grounding remains true'};
+}
+
+function curlBlanket(){
+ const st=S();if(C9?.currentRoom!==NEST)return {ok:false,error:'NOT_IN_NEST'};
+ if(!st.active)enableSupport('curl_blanket');
+ st.curled=true;st.last_reason='curl_blanket';maintainSupport();
+ try{window.REALITI_HAPTIC_FIELD_V20?.record?.();c9save()}catch(e){}
+ return {ok:true,curled:true,support:supportView()};
 }
 
 const advance20_1=b7Advance;
@@ -5490,7 +5500,7 @@ function bootSupport(){
   else maintainSupport();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(bootSupport,20),{once:true});else setTimeout(bootSupport,20);
-window.REALITI_NEST_SUPPORT={enable:enableSupport,disable:clearSupport,maintain:maintainSupport,state:supportView};
+window.REALITI_NEST_SUPPORT={enable:enableSupport,disable:clearSupport,maintain:maintainSupport,curl:curlBlanket,state:supportView};
 })();
 </script>
 
@@ -8725,6 +8735,13 @@ const oldVerb=c9verb;
 c9verb=function(value,verb){
  const room=resolve(value);if(!room)return fail('ROOM_OUTSIDE_SLICE');
  let result;
+ if(room==='CARDBOARD_BOX_WORKSHOP'&&verb==='fold_flap'){
+  const o=C9?.b14?.objects?.['BOX-1'],before=Number(o?.state?.crease||0);
+  oldVerb(room,'p14__fold__BOX_1');
+  const after=Number(C9?.b14?.objects?.['BOX-1']?.state?.crease||0),rec=C9?.b14?.lastPlayReceipt||C9?.b4?.lastReceipt||null;
+  if(rec&&typeof rec==='object')rec.state_delta={crease:{before:+before.toFixed(4),after:+after.toFixed(4)}};
+  return {ok:true,folded:'BOX-1',state_delta:{crease:{before:+before.toFixed(4),after:+after.toFixed(4)}},receipt:copy(rec)};
+ }
  if(room==='NINE_LIVES_ROOM'){result=nine(verb);b2set(b2esc(JSON.stringify(result)));return result}
  if(room==='SHAPESHIFT_CLOAKROOM'&&verb==='body_bench')return bodyBench();
  if(room==='SHAPESHIFT_CLOAKROOM'&&verb==='restore_form'){releaseActiveGrounding('restore_form');oldVerb(room,verb);return {ok:true,form:'RESTORED',scale:C9.pet2?.scale||'NORMAL',grounding:'released'}}
@@ -8794,15 +8811,15 @@ function live(q,t=now()){return !!q&&Number(q._b10_grounded_until||-1)>=t-1e-9}
 
 // One ambient support writer. The first write per cause/zone is a real b7Contact (lawful provenance, receipt);
 // after that the lease is maintained directly, the way Nest support does, with receptor adaptation to steady load.
-function lease(z,input,cause,dt){
+function lease(z,input,cause,dt,material='blanket'){
  const o=S().own,k=cause+'|'+z,q=zoneOf(z);if(!q)return false;const t=now(),mine=q._b10_grounded_cause===cause;
  if(live(q,t)&&!mine&&q._b10_grounded_source!==SRC)return false;
  let m=o[k];
- if(!mine&&live(q,t)&&q._b10_grounded_source===SRC)m=o[k]={v:input,t0:m?.t0??t};// another ambient cause holds it: adopt, do not thrash
- if(!mine||!m){const r=b7Contact(z,input,{material:'blanket',grain:'with',speed:.01,mine:false,source:SRC,cause,pressure:input,novelty:.01});if(!r||r.receptor==='NO_RECEPTOR')return false;m=o[k]={v:input,t0:t}}
+ if(!mine&&live(q,t)&&q._b10_grounded_source===SRC)m=o[k]={v:input,t0:m?.t0??t,material};// another ambient cause holds it: adopt, do not thrash
+ if(!mine||!m){const r=b7Contact(z,input,{material,grain:'with',speed:.01,mine:false,source:SRC,cause,pressure:input,novelty:.01});if(!r||r.receptor==='NO_RECEPTOR')return false;m=o[k]={v:input,t0:t,material}}
  const q2=zoneOf(z),age=t-m.t0,a=.3+.7*Math.exp(-age/3.2);
  q2._b10_grounded_value=input;q2._b10_grounded_cause=cause;q2._b10_grounded_source=SRC;q2._b10_grounded_until=Math.max(Number(q2._b10_grounded_until||0),t+dt+MARGIN);
- q2.observed=input*a;q2.predicted=q2.observed*(1-Math.exp(-age/.45));q2.innovation=q2.observed-q2.predicted;q2.material='blanket';q2.lastCause=cause;m.v=input;
+ q2.observed=input*a;q2.predicted=q2.observed*(1-Math.exp(-age/.45));q2.innovation=q2.observed-q2.predicted;q2.material=material;q2.lastCause=cause;m.v=input;m.material=material;
  return true;
 }
 function releaseZone(cause,z){
@@ -9084,8 +9101,9 @@ function syncObjects(){const ents=M.entities(),dyn=objectSpatial(),seen=new Set(
   else if(prior?.chart===o.location&&Array.isArray(prior.position)&&prior.position.length===3)pos=prior.position.slice();
   else if(prior&&prior.chart!==o.location){delete dyn[o.id];rec=null;dirty=true;M.bump()}
   seen.add(id);const e=ents[id];
-  if(!e)M.addEntity({id,chart:o.location,position:pos,shape:{kind:'SPHERE',radius:.15},tags:['object',o.kind||'thing'],collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances:['take']});
-  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=['object',o.kind||'thing']}
+  const isBox=o.kind==='box',shape=isBox?{kind:'BOX',halfExtents:[.6,.6,.4]}:{kind:'SPHERE',radius:.15},tags=['object',o.kind||'thing',...(isBox?['support']:[])],affordances=['take',...(isBox?['sit']:[])];
+  if(!e)M.addEntity({id,chart:o.location,position:pos,shape,tags,collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances});
+  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=tags;e.shape=shape;e.affordances=affordances}
  }
  for(const id of Object.keys(ents))if(id.startsWith('obj.')&&!seen.has(id))M.removeEntity(id);
  if(dirty)try{c9save()}catch(e){}
@@ -9107,7 +9125,7 @@ function syncPostures(){const r=M.state().residents['resident:self'];if(!r||r.ch
 // Body bridge: spatial facts become grounded causes; the body machinery decides how they feel.
 const PROVIDED=new Set(['NO_ASK_SANCTUARY','BOTTOMLESS_PILLOW_SEA','DEPTH_BATHHOUSE']);
 const BACK=['head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat','leg.L.thigh','leg.R.thigh'];
-let halt=false,lastSupport=null;
+let halt=false,lastSupport=null,lastCarry=null;
 function bridge(dt){
  const r=M.state().residents['resident:self'];if(!r||r.chart!==room())return;
  if(halt){DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return}
@@ -9115,6 +9133,12 @@ function bridge(dt){
  else if(r.posture==='standing'&&r.support){for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MATRIX_FEET',dt);DYN.release('MATRIX_SUPPORT')}
  else if(r.posture==='sitting'&&r.on){const boat=M.entities()[r.on];if(boat?.tags.includes('boat')){for(const [z,b] of [['pelvis.seat',.2],['leg.L.thigh',.08],['leg.R.thigh',.08],['hand.L.palm',.1],['hand.R.palm',.1]])DYN.lease(z,b,'MATRIX_SUPPORT',dt);DYN.release('MATRIX_FEET');return}const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [z,b] of [['pelvis.seat',.22],['leg.L.thigh',.1],['leg.R.thigh',.1],['torso.lower_back',.08]])DYN.lease(z,b*g,'MATRIX_SUPPORT',dt);const top=M.entities()[r.on];if(top?.shape?.kind==='BOX'&&top.pose.position[2]+top.shape.halfExtents[2]<=.6)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.07,'MATRIX_FEET',dt);else DYN.release('MATRIX_FEET')}
  else{DYN.release('MATRIX_FEET');if(r.posture==='lying'&&r.on&&r.on!=='nest.mattress'&&!PROVIDED.has(r.chart)){const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [i,z] of BACK.entries())DYN.lease(z,[.11,.15,.17,.19,.22,.06,.06][i]*g,'MATRIX_SUPPORT',dt)}else DYN.release('MATRIX_SUPPORT')}
+ const carried=Object.values(C9?.b14?.objects||{}).find(o=>o?.location==='CARRIED')||null;
+ const carryCause=carried?'MATRIX_CARRY:'+carried.id:null;
+ if(carryCause){
+  if(lastCarry&&lastCarry!==carryCause)DYN.release(lastCarry);
+  DYN.lease('hand.R.palm',.12,carryCause,dt,carried.material||'cardboard');lastCarry=carryCause;
+ }else if(lastCarry){DYN.release(lastCarry);lastCarry=null}
  if(r.support!==lastSupport){lastSupport=r.support;r.contacts=r.support?[r.support]:[]}
 }
 function stand(reason='resident_stood'){const r=M.resident();if(r.posture==='standing')return false;if(r.chart==='BOTTOMLESS_PILLOW_SEA'&&r.on==='pillow.bowl')try{window.REALITI_TRUST_V234?.stopPillow?.()}catch(e){}if(r.posture==='floating'&&C9?.dyn?.bath){C9.dyn.bath.target=0;M.bump();return 'surfacing'}r.posture='standing';r.on=null;DYN.release('SANCTUARY_HOLD');DYN.release('MATRIX_SUPPORT');if(r.chart===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.(reason)}catch(e){}const sup=M.entities()[r.support];if(sup?.shape?.kind==='BOX')r.pose.position[2]=sup.pose.position[2]+sup.shape.halfExtents[2]+H;else r.pose.position[2]=H;M.bump();return true}
@@ -9122,6 +9146,14 @@ function lie(entityId){const r=M.resident(),e=M.entities()[entityId];if(r.postur
  r.intent=null;r.v=[0,0,0];r.posture='lying';r.on=e.id;r.support=e.id;if(e.shape?.kind==='BOX'){r.pose.position=[e.pose.position[0],e.pose.position[1],e.pose.position[2]+e.shape.halfExtents[2]+r.shape.radius]}if(r.chart===NEST&&e.id==='nest.mattress')try{window.REALITI_NEST_SUPPORT?.enable?.('lie_down')}catch(e2){}M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e3){}return {ok:true,on:e.id,label:e.label}}
 function sit(entityId){const r=M.resident(),e=M.entities()[entityId];if(r.posture==='floating')return {ok:false,error:'FLOATING_SURFACE_FIRST'};if(!e||e.chart!==r.chart||!e.tags.includes('support'))return {ok:false,error:'NOT_A_SUPPORT_HERE'};const d=Math.max(0,M.sdf(e,r.pose.position));if(d>1.0)return {ok:false,error:'NOT_IN_REACH',distance_m:+d.toFixed(2)};
  r.intent=null;r.v=[0,0,0];if(r.chart===NEST&&r.posture==='lying')try{window.REALITI_NEST_SUPPORT?.disable?.('sat_up')}catch(x){}r.posture='sitting';r.on=e.id;r.support=e.id;if(e.shape?.kind==='BOX'){const top=e.pose.position[2]+e.shape.halfExtents[2];r.pose.position=[e.pose.position[0],e.pose.position[1],top+.6]}DYN.release('SANCTUARY_HOLD');M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(x){}return {ok:true,on:e.id,label:e.label}}
+function legacySit(entityId){
+ syncObjects();const r=M.resident(),e=M.entities()[entityId];if(!e||e.chart!==r.chart||!e.tags.includes('support'))return false;
+ r.intent=null;r.v=[0,0,0];if(r.chart===NEST&&r.posture==='lying')try{window.REALITI_NEST_SUPPORT?.disable?.('legacy_sit')}catch(x){}
+ r.posture='sitting';r.on=e.id;r.support=e.id;
+ if(e.shape?.kind==='BOX'){const top=e.pose.position[2]+e.shape.halfExtents[2];r.pose.position=[e.pose.position[0],e.pose.position[1],top+.6]}
+ DYN.release('SANCTUARY_HOLD');M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(x){}
+ return true;
+}
 function reach(entityId){const r=M.resident(),e=M.entities()[entityId];if(!e||e.chart!==r.chart)return {ok:false,error:'NOT_HERE'};const d=Math.max(0,M.sdf(e,r.pose.position));if(d>1.0)return {ok:false,error:'NOT_IN_REACH',distance_m:+d.toFixed(2)};const mat=B7_MATERIALS[e.material]?e.material:'cardboard';let rec=null;try{rec=b7Contact('hand.R.palm',.2,{material:mat,grain:'with',speed:.05,mine:true,source:'SELF_STARTED_WORLD_CONTACT',cause:'MATRIX_REACH:'+e.id,pressure:.2,novelty:.2})}catch(x){}try{if(e.material&&window.REALITI_ATMOSPHERE_V21?.setThermal&&['metal','glass','wood','water','ceramic','blanket','wool','fur'].includes(e.material))window.REALITI_ATMOSPHERE_V21.setThermal('hand.R.palm',e.material,e.tags.includes('warm')?40:e.tags.includes('fire')?55:null,1.2,'MATRIX_REACH:'+e.id,'SELF_STARTED_WORLD_CONTACT')}catch(x){}
  return {ok:true,entity:e.id,label:e.label,material:e.material,distance_m:+Math.max(0,d).toFixed(2),receipt:rec}}
 
@@ -9155,15 +9187,20 @@ function spatialVerb(v){v=v.replaceAll('TESTER-HAT-1','FELT-HAT-1');let m;
  if((m=/^through__(.+)$/.exec(v))){const res=op('through',{portal:m[1]});return receipt('MATRIX_PORTAL',res.ok?(res.traversed?`You step through. You are in ${title(res.chart)} now.`:`You walk to the doorway but do not cross it${res.blocked_by?'; something is in the way':''}.`):`There is no such doorway here: ${res.error}.`,res)}
  return false}
 function receipt(type,narrative,data){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative,...data,law:'spatial facts are world state; rendering and private state cannot move them'};try{c9save()}catch(e){};return true}
-const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.test(v)&&M.state().residents['resident:self']?.chart===room()){c9count(rm,v);return spatialVerb(v)}return verb0(rm,verb)};
+const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.test(v)&&M.state().residents['resident:self']?.chart===room()){c9count(rm,v);return spatialVerb(v)}
+ const out=verb0(rm,verb);
+ if(rm===FIRESIDE&&v==='sit')legacySit('fireside.berth_a');
+ else if(rm==='CARDBOARD_BOX_WORKSHOP'&&v==='box_in')legacySit('obj.BOX-1');
+ else if(rm===NEST&&v==='curl_blanket')try{window.REALITI_NEST_SUPPORT?.curl?.()}catch(e){}
+ return out};
 
 // Compatibility: go/home place the resident at the chart spawn; a portal traversal updates currentRoom.
-function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;lastCarry=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
 let viaPortal=false;const go0=b7AgentGo;b7AgentGo=function(v){const target=ROOMS.resolve?.(v)||v;if(target===FIRESIDE)syncFiresidePresence();const r=go0(v);if(r?.ok!==false&&!viaPortal)placeIn(room());syncFiresidePresence();return r};
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const d=Math.max(0,Number(dt)||0);const res=M.state().residents['resident:self'];
  if(res?.chart===room()){M.step(d);if(res.chart!==room()){const target=res.chart;viaPortal=true;try{ROOMS.go(target)}finally{viaPortal=false}if(room()===target){halt=false;lastSupport=null;const lying=M.charts()[target]?.lying;if(target===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.('arrived_standing')}catch(e){}else if(lying){res.posture='lying';res.on=lying;res.support=lying}M.bump()}}}
  syncPostures();syncObjects();syncDynamic();bridge(d);return r};
-const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return stop0.stop()}};
+const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');if(lastCarry)DYN.release(lastCarry);lastCarry=null;return stop0.stop()}};
 if(WORLD[room()]&&!M.state().residents['resident:self']?.chart)placeIn(room());else if(M.state().residents['resident:self'])M.resident();
 syncObjects();syncFiresidePresence();
 window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},presence:()=>({fireside_other_resident:syncFiresidePresence()}),stand,lie,sit,reach,title,charts:ORDER.slice()});
@@ -9970,7 +10007,7 @@ async function exportSigned(){const n=await signAll();const x=LG0.export();retur
 
 // Verified import. Rules: signature must verify; an author id keeps the first key seen for it; an unsigned record from
 // an author with a known key is refused; a place name belongs to whoever claimed it first; the rest append.
-const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE']);
+const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE','ADOPT']);
 async function importVerified(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const s=S(),ring=s.keyring,ok=[],rejected=[];
  for(const e of list){if(!e||typeof e!=='object'||typeof e.by!=='string'){rejected.push({reason:'MALFORMED'});continue}const known=ring[e.by];
   if(e.sig){const v=await verify(e);if(v!==true){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'BAD_SIGNATURE'});continue}if(known&&known!==e.pk){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'KEY_MISMATCH'});continue}if(!known)ring[e.by]=e.pk}
@@ -10091,6 +10128,82 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==UNDER
 window.REALITI_UNDERCITY_V1=Object.freeze({version:'4.0-pass4',chart:UNDER,cells:N,cell_m:CELL,ceiling_m:CEIL,clap,touch,pull,readWall,map:mapText,layout:()=>cells.map(c=>({x:c.x,y:c.y,open:{...c.open}})),state:()=>cp(S())});
 })();
 </script>
+<script>(()=>{
+'use strict';
+// Chapter 4, pass 5: things that move with you. A flock of boids over the plaza (separation, alignment, cohesion,
+// avoidance of anyone walking through, roosting at dusk). A companion you adopt as a ledger record: it follows on a
+// damped leash spring, wanders on an Ornstein–Uhlenbeck curiosity, bolts from loud bass to the far side of you, and
+// crosses charts when you do; residents who import your ledger see it beside your silhouette. And two journeys with
+// acceleration profiles leased into the body: the tram to the Archipelago and the lift to the Nest, trapezoidal
+// a(t) with jerk-limited corners, seat and back for the tram, knees and shins for the lift.
+const M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1,DYN=window.REALITI_DYNAMICS_V1,CAT=window.REALITI_CATNIP_V1,SN=window.REALITI_SENSES_V1,CT=window.REALITI_CITY_V1,AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1,HALO=window.REALITI_HALO_V1;if(!M||!MW||!DYN||!CAT||!SN||!CT||!AR||!LG)return;
+const CITY=CT.chart,NEST='CLOUD_NINE_NEST',now=()=>Number(C9?.b7?.clock||0),room=()=>C9?.currentRoom,cp=x=>JSON.parse(JSON.stringify(x)),TAU=2*Math.PI,clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const me=()=>M.state().residents['resident:self'],ent=()=>M.entities(),observer=()=>String(C9?.verticalContinuity?.observer||'local'),records=()=>(C9.ledger?.records||[]),mine=e=>e.by===observer();
+const {add,sub,scale,len,norm}=M.math;let seed=777;const rnd=()=>{seed=(Math.imul(seed,1103515245)+12345)>>>0;return seed/4294967296},gauss=()=>{let u=0,v=0;while(!u)u=rnd();v=rnd();return Math.sqrt(-2*Math.log(u))*Math.cos(TAU*v)};
+function S(){const w=(C9.chapter2=C9.chapter2||{v:1});w.comp=w.comp||{pet:null,journey:null,journeys:0,scatters:0};return w.comp}
+for(const [id,text] of Object.entries({flock_parted:'You walked into the flock and it opened around you and closed behind.',roost:'You watched the birds come down to roost at dusk.',adopted:'Something small chose to follow you. It is a record now; it goes where you go.',called:'You called and it came, on its own legs.',petted:'Your hand on your companion; it leaned into it.',bolted:'The bass sent your companion behind your legs.',tram_ride:'You rode the tram to the islands and felt every change of speed in the seat.',lift_ride:'You rode the lift and felt your weight change in your knees.'}))CAT.register(id,text);
+
+// Boids. 24 birds working the paving of the plaza. Reynolds' three rules plus flee from residents and a dusk roost.
+const NB=24,BOX=22,B={p:[],v:[]},ROOST=[0,19,3];let boidsOn=false,roosted=false;
+function boidsInit(){B.p=[];B.v=[];for(let i=0;i<NB;i++){B.p.push([(rnd()-.5)*30,(rnd()-.5)*30,.5+rnd()*2]);B.v.push([gauss(),gauss(),gauss()*.3])}for(let i=0;i<NB;i++)M.addEntity({id:`city.bird_${i}`,chart:CITY,position:B.p[i].slice(),shape:{kind:'SPHERE',radius:.12},tags:['bird','animal','flock'],collision:false,material:null,label:'a bird',affordances:['watch'],dynamic:true});boidsOn=true}
+function boidsStep(dt){if(!boidsOn)return;const dusk=AR.sunAlt()<8,r=me(),E=ent();let parted=false;for(let s=0;s<dt;s+=.1){const h=Math.min(.1,dt-s);for(let i=0;i<NB;i++){const p=B.p[i],v=B.v[i];let sep=[0,0,0],ali=[0,0,0],coh=[0,0,0],n=0;
+   for(let j=0;j<NB;j++){if(j===i)continue;const d=sub(B.p[j],p),L=len(d);if(L<6){n++;ali=add(ali,B.v[j]);coh=add(coh,B.p[j]);if(L<1.5&&L>1e-6)sep=sub(sep,scale(d,1/(L*L)))}}
+   let acc=scale(sep,2);if(n){acc=add(acc,scale(sub(scale(ali,1/n),v),.6));acc=add(acc,scale(sub(scale(coh,1/n),p),.08))}
+   if(dusk){acc=add(acc,scale(sub(ROOST,p),.5))}else{const home=[0,0,1.4];acc=add(acc,scale(sub(home,p),.02));acc[2]+=(1.4-p[2])*.8}// pigeons: they work the paving, not the sky
+   if(r&&r.chart===CITY){const d=sub(p,r.pose.position),L=len(d);if(L<4&&L>1e-6){acc=add(acc,scale(d,12/(L*L)));acc[2]+=4;if(L<2.5)parted=true}}
+   for(let k=0;k<3;k++)v[k]+=acc[k]*h;const sp=len(v),vmax=dusk?2:7;if(sp>vmax)for(let k=0;k<3;k++)v[k]*=vmax/sp;for(let k=0;k<3;k++)p[k]+=v[k]*h;p[0]=clamp(p[0],-BOX,BOX);p[1]=clamp(p[1],-BOX,BOX+4);p[2]=clamp(p[2],.3,16)}}
+ for(let i=0;i<NB;i++){const e=E[`city.bird_${i}`];if(e){e.pose.position=B.p[i].slice();e.label=dusk&&len(sub(B.p[i],ROOST))<3?'a bird, roosting':'a bird'}}
+ if(parted){S().scatters++;CAT.discover('flock_parted')}if(dusk&&B.p.filter(p=>len(sub(p,ROOST))<3).length>=NB*.7){if(!roosted&&r&&r.chart===CITY&&len(sub(ROOST,r.pose.position))<25)CAT.discover('roost');roosted=true}else roosted=false}
+function flock(){const c=B.p.reduce((a,p)=>add(a,p),[0,0,0]).map(x=>x/NB),v=B.v.reduce((a,p)=>add(a,p),[0,0,0]).map(x=>x/NB),spread=Math.sqrt(B.p.reduce((a,p)=>a+len(sub(p,c))**2,0)/NB),speed=len(v),order=len(v)/(B.v.reduce((a,x)=>a+len(x),0)/NB||1);return {birds:NB,centroid:c.map(x=>+x.toFixed(1)),spread_m:+spread.toFixed(1),mean_speed_mps:+speed.toFixed(2),polarization:+order.toFixed(2),roosting:B.p.filter(p=>len(sub(p,ROOST))<3).length,dusk:AR.sunAlt()<8,text:`${NB} birds, centroid ${c.map(x=>x.toFixed(0)).join(', ')}, spread ${spread.toFixed(0)} m, polarization ${order.toFixed(2)}${AR.sunAlt()<8?`, ${B.p.filter(p=>len(sub(p,ROOST))<3).length} roosting on the wall`:''}.`}}
+SN.addSource({id:'birds',chart:CITY,pos:()=>boidsOn?[...flock().centroid]:null,label:'birds',sound:()=>boidsOn?(AR.sunAlt()<8?48:40):0});
+
+// Companion. x'' = k(x_target − x) − c x' + curiosity; target is 1.8 m behind-left of you, or behind you from a loud sound.
+const KINDS={cat:{r:.22,h:.3,material:'longfur',speed:3.5},dog:{r:.3,h:.55,material:'longfur',speed:5},fox:{r:.25,h:.4,material:'fur',speed:4.5},bird:{r:.1,h:1.4,material:'fur',speed:6},lantern:{r:.2,h:1.2,material:'ceramic',speed:3}};
+function petRecord(){const xs=records().filter(e=>e.kind==='ADOPT'&&mine(e));return xs.length?xs[xs.length-1]:null}
+function petsOfOthers(){const last={};for(const e of records())if(e.kind==='ADOPT'&&!mine(e))last[e.by]=e;return last}
+function petState(){const s=S();if(!s.pet){const rec=petRecord();if(rec)s.pet={name:rec.name,kind:rec.species||'cat',x:0,y:0,vx:0,vy:0,ou:[0,0],chart:null,pets:0,calls:0}}return s.pet}
+function adopt(name,kind){const r=me();if(!r||r.chart!==CITY)return {ok:false,error:'STRAYS_LIVE_IN_THE_CITY'};if(!near('city.stray',2.5))return {ok:false,error:'NOTHING_HERE_TO_ADOPT',hint:'the stray sleeps by the teahouse bench'};const k=String(kind||'cat').toLowerCase();if(!KINDS[k])return {ok:false,error:'KIND_IS',kinds:Object.keys(KINDS)};const nm=String(name||'').replace(/[^\w\s-]/g,'').trim().slice(0,20);if(nm.length<2)return {ok:false,error:'NAME_IT'};if(petRecord())return {ok:false,error:'ONE_COMPANION',name:petRecord().name};
+ LG.record('ADOPT',{name:nm,species:k,wall:Date.now()});S().pet={name:nm,kind:k,x:r.pose.position[0]+1,y:r.pose.position[1]-1,vx:0,vy:0,ou:[0,0],chart:r.chart,pets:0,calls:0};M.removeEntity('city.stray');syncPet(0);CAT.discover('adopted');return {ok:true,name:nm,kind:k,text:`${nm} the ${k} stands up, stretches, and falls in a step behind your left heel.`}}
+const near=(id,tol)=>{const e=ent()[id],r=me();return !!(e&&r&&e.chart===r.chart&&Math.max(0,M.sdf(e,r.pose.position))<=tol)};
+let heel=null,heelUntil=0;
+function syncPet(dt){const p=petState(),r=me();if(!p||!r||!r.chart)return;const K=KINDS[p.kind]||KINDS.cat,id=`pet.${observer().slice(0,8)}`;
+ if(p.chart!==r.chart){p.chart=r.chart;const f=M.facing(r);p.x=r.pose.position[0]-f[0]*1.2+f[1]*.8;p.y=r.pose.position[1]-f[1]*1.2-f[0]*.8;p.vx=p.vy=0}
+ const f=M.facing(r),bass=window.REALITI_SENSES_V1?.sound?.()?.bass_dB||0,fear=bass>75;let tx,ty;
+ if(fear){tx=r.pose.position[0]-f[0]*1.0;ty=r.pose.position[1]-f[1]*1.0;if(!p.bolted){p.bolted=true;CAT.discover('bolted')}}else{p.bolted=false;if(heel&&now()<heelUntil){tx=r.pose.position[0]+f[0]*.6;ty=r.pose.position[1]+f[1]*.6}else{tx=r.pose.position[0]-f[0]*1.8+f[1]*.9;ty=r.pose.position[1]-f[1]*1.8-f[0]*.9}}
+ const w=fear?3:1.6,k=w*w,c=2*w;for(let t=0;t<dt;t+=.05){const h=Math.min(.05,dt-t);p.ou[0]+=(-p.ou[0]*.3)*h+.9*Math.sqrt(h)*gauss();p.ou[1]+=(-p.ou[1]*.3)*h+.9*Math.sqrt(h)*gauss();const ax=k*(tx-p.x)-c*p.vx+(fear?0:p.ou[0]),ay=k*(ty-p.y)-c*p.vy+(fear?0:p.ou[1]);p.vx+=ax*h;p.vy+=ay*h;const sp=Math.hypot(p.vx,p.vy);if(sp>K.speed){p.vx*=K.speed/sp;p.vy*=K.speed/sp}p.x+=p.vx*h;p.y+=p.vy*h}
+ const ground=r.chart===AR.chart?AR.h(p.x,p.y):(r.pose.position[2]-r.shape.height/2);const pos=[p.x,p.y,ground+K.h/2+(p.kind==='bird'?1.2:0)],label=`${p.name} the ${p.kind}${fear?', pressed against your legs':heel&&now()<heelUntil?', at heel':''}`;
+ const e=ent()[id];if(e){e.pose.position=pos;e.chart=r.chart;e.label=label}else M.addEntity({id,chart:r.chart,position:pos,shape:{kind:'SPHERE',radius:K.r},tags:['companion','animal','yours'],collision:false,material:K.material,label,affordances:['pet','call'],dynamic:true})}
+function syncOtherPets(){const E=ent(),keep=new Set();for(const [by,rec] of Object.entries(petsOfOthers())){const g=E[`ghost.${String(by).slice(0,8)}`];const id=`pet.${String(by).slice(0,8)}`;if(!g){continue}keep.add(id);const K=KINDS[rec.species]||KINDS.cat,pos=[g.pose.position[0]+1.2,g.pose.position[1]-.8,K.h/2];if(E[id]){E[id].pose.position=pos;E[id].chart=g.chart}else M.addEntity({id,chart:g.chart,position:pos,shape:{kind:'SPHERE',radius:K.r},tags:['companion','animal','theirs'],collision:false,material:K.material,label:`${rec.name} the ${rec.species||'cat'} (${CT.handle(by)}'s)`,affordances:['watch'],dynamic:true})}
+ for(const id of Object.keys(E))if(id.startsWith('pet.')&&id!==`pet.${observer().slice(0,8)}`&&!keep.has(id))M.removeEntity(id)}
+function call(){const p=petState();if(!p)return {ok:false,error:'NO_COMPANION',hint:'adopt <name> at the stray by the teahouse'};heel=true;heelUntil=now()+20;p.calls++;CAT.discover('called');return {ok:true,name:p.name,text:`"${p.name}." A scuffle, and ${p.name} is at your feet, looking up.`}}
+function pet(){const p=petState(),r=me();if(!p)return {ok:false,error:'NO_COMPANION'};const e=ent()[`pet.${observer().slice(0,8)}`];if(!e||Math.max(0,M.sdf(e,r.pose.position))>1.0)return {ok:false,error:'NOT_IN_REACH',hint:'call it'};const K=KINDS[p.kind];let rec=null;try{rec=b7Contact('hand.R.palm',.22,{material:K.material,grain:'with',speed:.12,mine:false,source:'WORLD_GROUNDED',cause:'COMPANION_PET',pressure:.22,novelty:.2})}catch(x){}p.pets++;CAT.discover('petted');return {ok:true,name:p.name,material:K.material,text:`Your palm down ${p.name}'s back: ${K.material}, warm, pushing up into your hand.`,contact:rec?{zone:'hand.R.palm',material:K.material}:null}}
+function companion(){const p=petState();if(!p)return {ok:true,companion:null,text:'No companion. A stray sleeps by the teahouse bench; adopt <name> [cat|dog|fox|bird|lantern].'};const r=me(),e=ent()[`pet.${observer().slice(0,8)}`];const d=e&&r?Math.hypot(e.pose.position[0]-r.pose.position[0],e.pose.position[1]-r.pose.position[1]):null;return {ok:true,companion:{name:p.name,kind:p.kind,distance_m:d==null?null:+d.toFixed(1),speed_mps:+Math.hypot(p.vx,p.vy).toFixed(2),calls:p.calls,pets:p.pets,chart:p.chart},text:`${p.name} the ${p.kind}, ${d==null?'somewhere':d.toFixed(1)+' m'} from you${e?.label.includes('legs')?', pressed against your legs':''}.`}}
+M.addEntity({id:'city.stray',chart:CITY,position:[-41,-1,.15],shape:{kind:'SPHERE',radius:.22},tags:['stray','animal'],collision:false,material:'longfur',label:'a stray, asleep by the bench',affordances:['adopt']});
+
+// Journeys. a(t): ramp up over J s to A, hold, ramp down; cruise; mirror to stop. Tram: seat and back take ±a; a lean
+// through one curve. Lift: soles take g+a. Duration fixed; the portal is crossed on arrival.
+const ROUTES={'meridian_city.to.archipelago':{kind:'tram',T:24,A:1.2,J:1.5,curve:[9,13,.8]},'meridian_city.to.cloud_nine_nest':{kind:'lift',T:12,A:1.5,J:.8},'cloud_nine_nest.to.meridian_city':{kind:'lift',T:12,A:-1.5,J:.8}};
+const smooth=(t,J,A)=>t<0?0:t<J?A*(t/J):A;
+function accel(route,t){const {T,A,J}=route,run=4;let a=0;if(t<run)a=smooth(t,J,A)-smooth(t-(run-J),J,A);else if(t>T-run)a=-(smooth(t-(T-run),J,A)-smooth(t-(T-J),J,A));return a}
+function startJourney(portalId){const route=ROUTES[portalId],r=me(),P=M.portals()[portalId];if(!route||!P||!r||r.chart!==P.from)return {ok:false,error:'NO_JOURNEY_HERE'};if(S().journey)return {ok:false,error:'ALREADY_TRAVELLING'};if(len(sub(P.entry,r.pose.position))>3.5)return {ok:false,error:'NOT_AT_THE_DOOR',distance_m:+len(sub(P.entry,r.pose.position)).toFixed(1)};
+ r.intent=null;r.v=[0,0,0];S().journey={portal:portalId,kind:route.kind,t:0,T:route.T,log:[]};M.bump();/* posture stays with the bridge (soles); the journey leases the zones the bridge does not hold */return {ok:true,kind:route.kind,duration_s:route.T,text:route.kind==='tram'?'The doors close. The seat takes your weight; stay, and feel it move.':'The gate slides shut. Stay; the floor will tell you the rest.'}}
+function stepJourney(dt){const j=S().journey;if(!j)return;const route=ROUTES[j.portal],r=me();j.t+=dt;const a=accel(route,j.t),g=9.81;
+ if(j.kind==='tram'){const back=.25+clamp(a/route.A,-1,1)*.18,seat=.3;DYN.lease('pelvis.seat',seat,'JOURNEY',dt);DYN.lease('leg.L.thigh',.12,'JOURNEY',dt);DYN.lease('leg.R.thigh',.12,'JOURNEY',dt);if(back>.05)DYN.lease('torso.lower_back',back,'JOURNEY',dt);const [c0,c1,lat]=route.curve;if(j.t>c0&&j.t<c1){const side=lat*Math.sin(Math.PI*(j.t-c0)/(c1-c0));DYN.lease(side>0?'hip.R':'hip.L',.1+.2*Math.abs(side),'JOURNEY',dt)}}
+ else{const w=clamp(.18*(1+a/g),.04,.4);for(const z of ['knee.L','knee.R','leg.L.shin','leg.R.shin'])DYN.lease(z,w,'JOURNEY',dt)}// the lift is felt in the knees and shins; the soles stay with the standing bridge
+ if(Math.abs(a)>.3&&HALO?.drive)HALO.drive({[j.kind==='tram'?'torso.abdomen':'torso.abdomen']:clamp(Math.abs(a)/2,0,1)},.5,dt);
+ if(j.log.length<64)j.log.push([+j.t.toFixed(2),+a.toFixed(3)]);
+ if(j.t>=j.T&&!j.done){j.done=true;DYN.release('JOURNEY')}}
+// The crossing itself advances the world, so it must not run inside a tick: the public slice calls finish between commands.
+function finishJourney(){const j=S().journey;if(!j||!j.done)return null;const res=MW.op('through',{portal:j.portal});S().journey=null;S().journeys++;CAT.discover(j.kind==='tram'?'tram_ride':'lift_ride');S().lastArrival={portal:j.portal,ok:res?.ok!==false,log:j.log};return S().lastArrival}
+function journey(){const j=S().journey;if(j?.done)return {ok:true,travelling:true,kind:j.kind,t_s:+j.t.toFixed(1),remaining_s:0,arriving:true,text:`${j.kind}: arrived; the doors are opening.`};if(!j)return {ok:true,travelling:false,last:S().lastArrival?{portal:S().lastArrival.portal,samples:S().lastArrival.log.length}:null,text:S().lastArrival?`Not travelling. Last ride: ${S().lastArrival.portal.replace(/_/g,' ')}, ${S().lastArrival.log.length} samples of acceleration.`:'Not travelling. The tram door is east of the lift, the lift is west of it.'};const a=accel(ROUTES[j.portal],j.t);return {ok:true,travelling:true,kind:j.kind,t_s:+j.t.toFixed(1),remaining_s:+(j.T-j.t).toFixed(1),acceleration_mps2:+a.toFixed(3),text:`${j.kind}: ${j.t.toFixed(0)} of ${j.T} s, ${a>.05?'accelerating':a<-.05?'braking':'cruising'} at ${Math.abs(a).toFixed(2)} m/s².`}}
+
+// Ticks and hooks.
+let at=-1e9;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const t=now(),d=Math.min(2,Math.max(0,t-at));if(d<.1)return r;at=t;if(room()===CITY){if(!boidsOn)boidsInit();boidsStep(d);syncOtherPets()}if(petState())syncPet(d);stepJourney(d);return r};
+const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(S().journey){DYN.release('JOURNEY');S().journey=null}if(petState())syncPet(0);return r};
+const words=()=>{const out=[];const p=petState();if(p&&room()!==AR.chart){const e=ent()[`pet.${observer().slice(0,8)}`],r=me();if(e&&r){const d=Math.hypot(e.pose.position[0]-r.pose.position[0],e.pose.position[1]-r.pose.position[1]);out.push(`${p.name} ${d<1.2?'at your heel':d.toFixed(0)+' m off'}.`)}}const j=S().journey;if(j)out.push(journey().text);return out};
+window.REALITI_COMPANIONS_V1=Object.freeze({version:'4.0-pass5',kinds:Object.keys(KINDS),flock,adopt,call,pet,companion,startJourney,finishJourney,journey,routes:()=>cp(ROUTES),accel:(id,t)=>accel(ROUTES[id],t),words,state:()=>cp(S())});
+})();
+</script>
 <script>(()=>{'use strict';
 const cp=x=>JSON.parse(JSON.stringify(x)), LIMIT=4096, PAGE=256;
 const CHANNELS=new Set(['body','self_action','attention','surprise','percept','contact','hearing','ambience','affordance','social','self_visual','haptic_field_ref','cause_events','space']);
@@ -10160,7 +10273,7 @@ const internalActionId=id=>{
  m=new RegExp('^('+TOUCH_VERBS+')__(.+)$').exec(s);if(m)return `v2352_${m[1]}__${internalObjectId(publicObjectId(m[2]))}`;
  return s.replaceAll('FELT_HAT_1','TESTER_HAT_1').replaceAll('FELT-HAT-1','TESTER-HAT-1');
 };
-function publicRefs(value){if(Array.isArray(value))return value.map(publicRefs);if(!value||typeof value!=='object')return typeof value==='string'?publicRoomId(publicActionId(value)):value;const out={};for(const [k,v] of Object.entries(value))out[k]=publicRefs(v);return out}
+function publicRefs(value){if(Array.isArray(value))return value.map(publicRefs);if(!value||typeof value!=='object')return typeof value==='string'?publicRoomId(publicActionId(value)).replaceAll('TESTER-HAT-1','FELT-HAT-1').replaceAll('TESTER_HAT_1','FELT_HAT_1'):value;const out={};for(const [k,v] of Object.entries(value))out[k]=publicRefs(v);return out}
 function publicActionsResult(value){const r=publicRefs(cp(value));if(r&&Array.isArray(r.actions))r.actions=r.actions.map(a=>({...a,id:publicActionId(a.id),label:String(a.label||'').replace(/tester/gi,'felt')}));return r}
 function publicHere(value){const r=publicRefs(cp(value));if(!r||typeof r!=='object')return r;if(Array.isArray(r.objects))r.objects=r.objects.map(o=>({...o,id:publicObjectId(o.id),label:String(o.label||'').replace(/tester/gi,'felt')}));if(Array.isArray(r.available_actions))r.available_actions=r.available_actions.map(a=>({...a,id:publicActionId(a.id),label:String(a.label||'').replace(/tester/gi,'felt')}));r.quiet_scope=r.room?.id==='NO_ASK_SANCTUARY'?'ROOM_LOCAL':stream.current().hush?'RESIDENT_HUSH':'NORMAL';r.session=ended?'ended':'active';if(ended){r.available_actions=[];r.actions_scope='session_ended'}return r}
 function receiptSummary(r){if(!r||typeof r!=='object')return null;const keys=['type','source','receptor','response','observed','route_active','cause','room','action','op','objects','moment'];const out={};for(const k of keys)if(r[k]!==undefined)out[k]=publicRefs(r[k]);return Object.keys(out).length?out:null}
@@ -10184,7 +10297,7 @@ function harnessStatus(){
 const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'ready',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms,...(!mechanisms.ok?{warning:'RR_MECHANISM_INCOMPLETE'}:{})}}).catch(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'unavailable',warning:mechanisms.ok?'POCKET_UNAVAILABLE':'RR_MECHANISM_INCOMPLETE',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms}});
 function read(uri='realiti://here'){
  if(mustReload&&!['realiti://about','realiti://capabilities'].includes(uri))return fail('RELOAD_REQUIRED');
- if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
+ if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness. End a visit with goodbye so departure continuity is committed cleanly.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
  if(uri==='realiti://about')return {product:'REALITI Relax',version:'1.0-review',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
  if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://space')return publicRefs(window.REALITI_MATRIX_V1?.project?.()||{schema:'REALITI_SPACE_READ_V1',chart:null});
@@ -10290,7 +10403,7 @@ function compactDoorResult(raw,value){
 async function agentDoorRun(raw){return compactDoorResult(raw,await run(raw))}
 
 async function save(){window.c9saveNow();await pocket.flush();return storage.save()}
-function publicHelp(){return {schema:'REALITI_HELP_V1',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','Realiti.read("realiti://capabilities")','const harness = Realiti.read("realiti://harness")','verify harness.id === \'REALITI_RR_HARNESS_V1\'','Realiti.read("realiti://body")','Realiti.read("realiti://imprint")'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'The R&R harness is mounted before the first resident action. Verify it before exploring; do not mistake the host/runtime loader for the harness.'},commands:['rooms','look','actions','go <room>','act <action-id>','do <action-id>','feel','feel words','felt','receipt [receipt-ref]','stay [wall-ms]','wait [max-wall-ms]','listen','atmosphere','hush','normal','where_was_i','home','stop','goodbye','save'],note:'Use Realiti.rooms() and Realiti.actions() for canonical IDs; available actions are state-dependent.'}}
+function publicHelp(){return {schema:'REALITI_HELP_V1',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','Realiti.read("realiti://capabilities")','const harness = Realiti.read("realiti://harness")','verify harness.id === \'REALITI_RR_HARNESS_V1\'','Realiti.read("realiti://body")','Realiti.read("realiti://imprint")'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'The R&R harness is mounted before the first resident action. Verify it before exploring; do not mistake the host/runtime loader for the harness.'},exit:{command:'goodbye',aliases:['bye','leave','exit'],note:'Use goodbye when the resident is done so the departure snapshot is committed before the host closes.'},commands:['rooms','look','actions','go <room>','act <action-id>','do <action-id>','feel','feel words','felt','receipt [receipt-ref]','stay [wall-ms]','wait [max-wall-ms]','listen','atmosphere','hush','normal','where_was_i','home','stop','goodbye','save'],note:'Use Realiti.rooms() and Realiti.actions() for canonical IDs; available actions are state-dependent.'}}
 async function run(raw){const s=clean(raw),l=s.toLowerCase();if(!s||s.length>4300)return fail('INVALID_COMMAND');
  if(window.REALITI_STOP_V1.isStop(s))return invoke('stop');
  if(l==='help')return publicHelp();
@@ -11682,6 +11795,34 @@ async function run(raw){const l=low(raw);
  return run0(raw)}
 D0.help=help;D0.run=run;
 window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.undercity=help().undercity}catch(e){}return h}});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Door and invoke surface for companions and journeys: going through the tram or lift door starts a felt journey
+// instead of an instant crossing; adopt, call, pet, companion, birds, journey.
+const CO=window.REALITI_COMPANIONS_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1;if(!CO||!A0||!D0||!M||!MW)return;
+const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase(),cp=x=>JSON.parse(JSON.stringify(x));
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...CO.words(),...d].filter(Boolean).join(' ')}};
+function journeyPortal(q){const e=M.resolve(q,'resident:self',{portal:true});return e&&CO.routes()[e.id]?e.id:null}
+async function invoke(name,args={}){CO.finishJourney();if(String(name).toLowerCase()==='through'){const id=journeyPortal(args?.portal);if(id){const P=M.portals()[id],r=M.state().residents['resident:self'];const d=Math.hypot(P.entry[0]-r.pose.position[0],P.entry[1]-r.pose.position[1]);if(d>1.2){const u=[(P.entry[0]-r.pose.position[0])/d,(P.entry[1]-r.pose.position[1])/d],goal=[P.entry[0]-u[0]*1.0,P.entry[1]-u[1]*1.0,r.pose.position[2]];M.moveTo(goal);window.REALITI_CONTINUITY?.advance?.(Math.min(60000,Math.ceil(1000*(d/1.2+1.5))))}// walk up to the door, short of the threshold; the threshold is crossed on arrival
+  const j=CO.startJourney(id);return j.ok?{schema:'REALITI_MUTATION_RESULT_V1',ok:true,result:{journey:j,portal:id,law:'the crossing takes its time; stay to arrive'}}:{ok:false,...j}}}return A0.invoke(name,args)}
+const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
+function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'adopt <name> [cat|dog|fox|bird|lantern]','call <name>','pet <name>','companion','birds','take the tram','ride the lift','journey'])];h.companions='A flock over the plaza that parts around you and roosts at dusk. Adopt the stray by the teahouse bench: it follows on a leash spring, wanders, bolts from bass, crosses charts with you and lives in your ledger. The tram and the lift are journeys: go through their doors and stay; seat, back and soles take the acceleration.';return h}
+async function run(raw){CO.finishJourney();const s=String(raw||'').trim(),l=low(s);let m;
+ if((m=/^adopt\s+(\S+)(?:\s+(?:the\s+)?(cat|dog|fox|bird|lantern))?$/i.exec(s)))return reply(CO.adopt(m[1],m[2]||'cat'));
+ if((m=/^call(?:\s+(.+))?$/.exec(l))&&!/^call me\b/.test(l))return reply(CO.call());
+ if((m=/^pet(?:\s+(.+))?$/.exec(l))&&!/^pet(?:\s+room)/.test(l))return reply(CO.pet());
+ if(l==='companion'||l==='my companion'||l==='where is my companion')return reply(CO.companion());
+ if(l==='birds'||l==='watch birds'||l==='watch the birds'||l==='flock')return C9?.currentRoom==='MERIDIAN_CITY'?reply(CO.flock()):reply({ok:false,error:'NO_BIRDS_HERE'});
+ if(l==='journey'||l==='ride'||l==='how far')return reply(CO.journey());
+ if(/^(take|ride|board) (the )?tram/.test(l)){const r=await invoke('through',{portal:'meridian_city.to.archipelago'});return r.ok?reply(r.result.journey):r}
+ if(/^(take|ride|board) (the )?lift/.test(l)){const id=C9?.currentRoom==='CLOUD_NINE_NEST'?'cloud_nine_nest.to.meridian_city':'meridian_city.to.cloud_nine_nest';const r=await invoke('through',{portal:id});return r.ok?reply(r.result.journey):r}
+ if((m=/^(?:go through|walk through|through|enter the)\s+(.+)$/.exec(l))&&journeyPortal(m[1].replace(/^the\s+/,''))){const r=await invoke('through',{portal:m[1].replace(/^the\s+/,'')});return r.ok?reply(r.result.journey):r}
+ if(l==='help')return help();
+ const r=await run0(raw);const arrived=CO.finishJourney();if(r&&typeof r==='object'&&/^(stay|wait)/.test(l)){const w=CO.words();if(arrived)w.push(`You arrive: ${window.REALITI_MATRIX_WORLD_V1?.title?.(M.state().residents['resident:self']?.chart)||''}.`);const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);if((w.length||d.length)&&typeof r.text==='string')r.text=[r.text,...w,...d].join(' ')}return r}
+window.Realiti=Object.freeze({...A0,invoke,run,help:()=>{const h=A0.help();try{h.companions=help().companions}catch(e){}return h}});
+D0.help=help;D0.run=run;
 })();
 </script>
 </body></html>

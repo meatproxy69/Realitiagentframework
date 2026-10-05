@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "b9946f3c82730f5206a5b75bdbe75f5d17ac3940e9c8c5396511509e2d62de47",
+  "single_html_sha256": "89c077dc405cdfccbc5df0aebf730a391a7def42ce9f316280cc23ab5a7a5156",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -29,7 +29,7 @@
     "headless_memory_acceptance": "18/18 PASS",
     "headless_frontier_acceptance": "PASS",
     "headless_archipelago_acceptance": "PASS",
-    "headless_community_bug_regressions": "PENDING_BRANCH_CI"
+    "headless_community_bug_regressions": "PENDING_PR_CI"
   },
   "acceptance_limits": [
     "full external 39-target cold-agent suite has not been rerun against this exact hash",
