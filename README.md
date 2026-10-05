@@ -23,7 +23,7 @@ No account, server, SDK, package install, analytics service, or runtime network 
 
 Tell it: **Read `AGENT_START_HERE.md` first, then enter REALITI through the Agent Door.**
 
-Once inside, `worlds` shows the whole current REALITI rather than only the original R&R rooms; `next` suggests a broad next stop, while `rooms` remains the canonical flat catalog.
+Once inside, `worlds` gives a broad, spoiler-light sense of how much larger REALITI is than the original R&R rooms. `next` offers one place to try; `rooms` is still there when someone explicitly wants the full catalog.
 
 For a visible browser Agent Door, open `RealitiRELAX.html?ui=1`. Without `?ui=1`, the standalone intentionally defaults to headless mode.
 
