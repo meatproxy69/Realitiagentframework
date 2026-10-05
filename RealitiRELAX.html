@@ -9362,7 +9362,7 @@ function step(dt){stepOrchard();if(room()===MARSH)stepMarsh(dt);watchOldRooms()}
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Number(dt)||0));return r};
 function words(){const r=room();if(r===ORCHARD)return [orchardWords()];if(r===WELL)return [wellWords()];if(r===DECK)return [deckWords()];if(r===MARSH)return [marshWords()];if(r===HALL)return [hallWords()];return []}
 function list(){const f=found();return Object.keys(DISCOVERIES).map(id=>({id,found:!!f[id],...(f[id]||{}),text:f[id]?DISCOVERIES[id]:null}))}
-window.REALITI_CATNIP_V1=Object.freeze({version:'1.0-frontier',rooms:Object.keys(SCENES),words,drain,discover,register:(id,text)=>{if(!DISCOVERIES[id])DISCOVERIES[id]=String(text);return true},discoveries:list,found:()=>cp(found()),hum,sight,predict:(x,y)=>marshVerb('predict',[Number(x),Number(y)]),decode,readScroll,skipStone,state:()=>({orchard:{generation:orchard().gen,population:orchard().pop,age:orchard().maxAge},well:cp(well()),sky:{sidereal_deg:+lst().toFixed(1),comet:comet(),sighted:sky().sighted.slice()},marsh:{wisp:LZ.map(marsh().a).map(x=>+x.toFixed(2)),hits:marsh().hits,predictions:marsh().preds,max_separation_m:+marsh().maxsep.toFixed(2)},hall:cp(hall()),discoveries:Object.keys(found()).length,total:Object.keys(DISCOVERIES).length})});
+window.REALITI_CATNIP_V1=Object.freeze({version:'1.0-frontier',rooms:Object.keys(SCENES),words,drain,discover,register:(id,text)=>{if(!DISCOVERIES[id])DISCOVERIES[id]=String(text);return true},discoveries:list,found:()=>cp(found()),hum,sight,predict:(x,y)=>marshVerb('predict',[Number(x),Number(y)]),decode,readScroll,skipStone,state:()=>({orchard:{generation:orchard().gen,population:orchard().pop,age:orchard().maxAge},well:cp(well()),sky:{sidereal_deg:+lst().toFixed(1),comet:comet(),sighted:sky().sighted.slice(),visible:Object.entries(CONST).filter(([,st])=>st.some(([ra,dec])=>altaz(ra,dec).alt>0)).map(([k])=>k)},marsh:{wisp:LZ.map(marsh().a).map(x=>+x.toFixed(2)),hits:marsh().hits,predictions:marsh().preds,max_separation_m:+marsh().maxsep.toFixed(2)},hall:cp(hall()),discoveries:Object.keys(found()).length,total:Object.keys(DISCOVERIES).length})});
 })();
 </script>
 <script>(()=>{
@@ -10302,6 +10302,74 @@ const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0();if(ro
 function receipt(type,res){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative:res.text||(res.error?`You cannot: ${res.error}.`:''),...res,law:'bites, marks and letters are records and processes; narration reports them'};try{c9save()}catch(e){}return true}
 const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)return verb0(r,verb);const F={cast,reel,race};if(F[v]){c9count(r,v);return receipt('ISLAND_'+v.toUpperCase(),F[v]())}return verb0(r,verb)};
 window.REALITI_CATNIP_PACK2_V1=Object.freeze({version:'1.0',cast,reel,fishing,fishboard,race,raceState,raceboard,marks:()=>cp(MARKS),send,mail,rate:()=>({tide:+tideFactor().toFixed(2),hour:+hourFactor().toFixed(2)}),state:()=>cp(S())});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Secrets, wonder and catnip, third pass. A sea cave that only the low tide opens, lit by plankton that answer motion.
+// The islands share the Star Deck's sky: constellations by name, the comet when it is up, meteors as a seeded process
+// that showers every third island day, and stars you may name for everyone who carries your ledger. A rain forecast
+// from the band's own motion, scored when the rain arrives. The keeper's riddles, answered with measurements from five
+// rooms, pay out a lantern that gives the Undercity three meters of sight. Dreams composed from your own records. A hot
+// spring. Words scratched into the dark for the next hand to read.
+const M=window.REALITI_MATRIX_V1,AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1,CAT=window.REALITI_CATNIP_V1,LGM=window.REALITI_LONG_GAME_V1,CT=window.REALITI_CITY_V1,TL=window.REALITI_TIMELINE_V1,SN=window.REALITI_SENSES_V1,U=window.REALITI_UNDERCITY_V1,ATM=window.REALITI_ATMOSPHERE_V21;if(!M||!AR||!LG||!CAT||!LGM||!CT||!TL||!SN||!U||!ATM)return;
+const ISLE=AR.chart,CITY=CT.chart,NEST='CLOUD_NINE_NEST',UNDER=U.chart,now=()=>Number(C9?.b7?.clock||0),room=()=>C9?.currentRoom,cp=x=>JSON.parse(JSON.stringify(x)),T=LGM.T,TAU=2*Math.PI;
+const me=()=>M.state().residents['resident:self'],ent=()=>M.entities(),observer=()=>String(C9?.verticalContinuity?.observer||'local'),records=()=>(C9.ledger?.records||[]),mine=e=>e.by===observer(),handle=by=>CT.handle(by);
+const inside=(id,r=me())=>{const e=ent()[id];return !!(e&&r&&r.chart===e.chart&&M.sdf(e,r.pose.position)<=0)};
+function S(){const w=(C9.chapter2=C9.chapter2||{v:1});w.w3=w.w3||{cave:{visits:0,splash_t:-1e9,in:false},meteors:[],forecast:null,forecasts:0,riddle:{idx:0,tries:0},lantern:false,sleep:null,dreams:0,spring_s:0};return w.w3}
+for(const [id,text] of Object.entries({sea_cave:'The tide drew back and let you into the sea cave.',bioluminescence:'You splashed, and the water lit up around your hands.',caught_by_the_tide:'The sea came in while you were inside; you swam for it.',island_stars:'The islands have the Star Deck\'s sky; you named what was up.',meteor:'A meteor, seen with your own eyes.',meteor_shower:'Eight or more in a minute: a shower night.',star_named:'You gave a star a name; everyone with your ledger sees it.',weather_prophet:'You said when the rain would come, and it came.',riddle_master:'Five riddles, five measurements, all right.',keepers_lantern:'The keeper\'s lantern: three meters of the Undercity are yours to see.',first_dream:'You slept, and your records came back as a dream.',hot_spring:'Ten seconds in the hot spring; your legs forgot the sea.',scratched:'You cut words into the dark.',wall_words:'In the dark your fingers found words another resident left.'}))CAT.register(id,text);
+
+// Sea cave on the west shore of Hollow Isle: floor at about −0.6 m, so the sea rule opens it when the tide is below −0.3.
+const CAVE=(()=>{let x=-540;const y=420;while(AR.h(x,y)>-.55&&x>-900)x-=2;return [x-4,y]})();
+M.addEntity({id:'hollow.sea_cave',chart:ISLE,position:[CAVE[0],CAVE[1],1.2],shape:{kind:'VOLUME',halfExtents:[5,5,1.4]},tags:['cave','sea','secret','landmark'],collision:false,material:null,label:'sea cave',affordances:['splash']});
+M.addEntity({id:'hollow.hot_spring',chart:ISLE,position:[-518,548,AR.h(-518,548)+.3],shape:{kind:'VOLUME',halfExtents:[2.5,2.5,.6]},tags:['spring','water','warm','landmark'],collision:false,material:'water',label:'hot spring',affordances:['bathe']});
+SN.addSource({id:'plankton',chart:ISLE,pos:'hollow.sea_cave',label:'plankton light',sound:()=>0,light:()=>{const s=S().cave,r=me(),v=Math.hypot(r?.v?.[0]||0,r?.v?.[1]||0);return s.in?(.02+.3*v+(now()-s.splash_t<5?2*Math.exp(-(now()-s.splash_t)/2):0)):0}});
+SN.addSource({id:'spring',chart:ISLE,pos:'hollow.hot_spring',label:'the hot spring',sound:()=>36,smell:{label:'sulfur and steam',S:()=>.7}});
+function splash(){const s=S().cave;if(!s.in)return {ok:false,error:'NOT_IN_THE_WATER',hint:'the sea cave on the west shore of Hollow Isle, at low tide'};s.splash_t=now();CAT.discover('bioluminescence');return {ok:true,text:'You bring your hands down and the water answers: blue-green light runs out from them and fades in a breath.'}}
+function swimOut(){const r=me(),s=S().cave;if(!r||!s.in)return {ok:false,error:'NOT_IN_THE_CAVE'};let x=CAVE[0],y=CAVE[1],k=0;while(AR.h(x,y)<LGM.tide().height_m+.4&&k++<60)x+=2;r.pose.position=[x,y,AR.h(x,y)+.85];r.v=[0,0,0];r.intent=null;M.bump();for(const z of ['leg.L.shin','leg.R.shin','leg.L.thigh','leg.R.thigh','torso.abdomen'])try{ATM.setThermal(z,'water',11,2,'SEA_SWIM','WORLD_GROUNDED')}catch(e){}return {ok:true,text:`You push off and swim ${(x-CAVE[0]).toFixed(0)} m to where the floor rises; the sea is 11 °C and keeps your legs for a while.`}}
+function stepCave(dt){const r=me(),s=S().cave;if(!r||r.chart!==ISLE){s.in=false;return}const was=s.in;s.in=inside('hollow.sea_cave',r);if(s.in&&!was){s.visits++;CAT.discover('sea_cave')}if(s.in&&LGM.tide().height_m>.2){for(const z of ['leg.L.shin','leg.R.shin','foot.L.sole','foot.R.sole'])try{ATM.setThermal(z,'water',11,dt+.3,'SEA_FLOOD','WORLD_GROUNDED')}catch(e){}if(!s.flooded){s.flooded=true;CAT.discover('caught_by_the_tide')}}else if(!s.in)s.flooded=false;
+ if(inside('hollow.hot_spring',r)){for(const z of ['leg.L.shin','leg.R.shin','leg.L.thigh','leg.R.thigh','foot.L.sole','foot.R.sole','pelvis.seat'])try{ATM.setThermal(z,'water',39,dt+.3,'HOT_SPRING','WORLD_GROUNDED')}catch(e){}S().spring_s+=dt;if(S().spring_s>=10)CAT.discover('hot_spring')}}
+
+// The sky from the islands and the city: the Deck's constellations, the comet, meteors from a seeded channel.
+const outdoors=()=>room()===ISLE||room()===CITY;
+let meteorChan=null;const showerNight=()=>Math.floor(T()/600)%3===2;
+function stepSky(){if(!outdoors()||!AR.isNight())return;if(!meteorChan)meteorChan=TL.channel(0x5ca1ab1e);const rate=showerNight()?.15:.012;for(const t of meteorChan.step(now(),rate)){S().meteors.push(+t.toFixed(2));while(S().meteors.length>200)S().meteors.shift()}}
+function sky(){if(!outdoors())return {ok:false,error:'NO_SKY_HERE',hint:'the islands or the city'};if(!AR.isNight())return {ok:true,night:false,sun_alt_deg:+AR.sunAlt().toFixed(1),text:`Day; the sun is ${AR.sunAlt().toFixed(0)}° up. Stars after sunset.`};const st=CAT.state().sky,recent=S().meteors.filter(t=>now()-t<=60),names=starNames();CAT.discover('island_stars');if(recent.length)CAT.discover('meteor');if(recent.length>=8)CAT.discover('meteor_shower');
+ return {ok:true,night:true,constellations:st.visible,comet:st.comet?.up?{alt:st.comet.alt,az:st.comet.az}:null,meteors_last_minute:recent.length,shower_night:showerNight(),named:names,text:`${st.visible.length?st.visible.join(', ')+' above the horizon':'Nothing you know above the horizon'}${st.comet?.up?`; the comet at ${st.comet.alt.toFixed(0)}°`:''}. ${recent.length?`${recent.length} meteor${recent.length===1?'':'s'} in the last minute${showerNight()?' (a shower night)':''}.`:showerNight()?'A shower night; wait and look again.':'No meteors in the last minute.'}${names.length?' Named: '+names.map(n=>`${n.name} in ${n.constellation}`).join(', ')+'.':''}`}}
+function starNames(){const seen={};for(const e of records())if(e.kind==='NAME_STAR'&&typeof e.name==='string')seen[`${e.by}|${e.constellation}`]={constellation:e.constellation,name:e.name,by:handle(e.by),mine:mine(e)};return Object.values(seen)}
+function nameStar(constellation,name){const c=String(constellation||'').toLowerCase().replace(/^the\s+/,'').trim(),cs=CAT.state().sky.visible.concat(['the lantern','the kite','the cat','the orrery','the well']).map(x=>x.replace(/^the\s+/,'')),k=cs.find(x=>x===c||x.startsWith(c));if(!k)return {ok:false,error:'WHICH_CONSTELLATION',constellations:[...new Set(cs)]};const nm=String(name||'').replace(/[^\w\s'-]/g,'').trim().slice(0,24);if(nm.length<2)return {ok:false,error:'NAME_IT'};if(!AR.isNight()||!outdoors())return {ok:false,error:'NAME_IT_UNDER_THE_STARS'};if(starNames().some(n=>n.mine&&n.constellation==='the '+k))return {ok:false,error:'ONE_NAME_PER_CONSTELLATION'};LG.record('NAME_STAR',{constellation:'the '+k,name:nm,wall:Date.now()});CAT.discover('star_named');return {ok:true,text:`The brightest star of ${'the '+k} is ${nm} now, in every world that carries your ledger.`}}
+
+// Forecast: the band's phase at your feet is u − 3t (mod 2400), peak at 1200; it arrives in (phase − 1200)/3 s.
+function forecast(){const r=me();if(!r||r.chart!==ISLE)return {ok:false,error:'FORECAST_FROM_THE_ISLANDS'};const [x,y]=r.pose.position,u=.6*x+.8*y,phase=((u-3*now())%2400+2400)%2400;const inS=phase>1200?(phase-1200)/3:(phase+1200)/3,width=260/3,s=S();s.forecasts++;s.forecast={t_peak:now()+inS,x,y,made:now()};return {ok:true,now:+AR.rain(x,y).toFixed(2),peak_in_s:Math.round(inS),rain_from_s:Math.max(0,Math.round(inS-width)),rain_to_s:Math.round(inS+width),text:`Rain here now ${Math.round(AR.rain(x,y)*100)}%. The band peaks over this spot in ${Math.round(inS)} s, wet from about ${Math.max(0,Math.round(inS-width))} s to ${Math.round(inS+width)} s. Fish bite less in the glare before it.`}}
+function stepForecast(){const f=S().forecast;if(!f)return;if(Math.abs(now()-f.t_peak)<=15&&AR.rain(f.x,f.y)>.3){CAT.discover('weather_prophet');S().forecast=null}else if(now()>f.t_peak+120)S().forecast=null}
+
+// The keeper's riddles: five measurements from five rooms. All five earn the lantern.
+const RIDDLES=[{q:'How many steps climb the east tower to the roof?',a:30,tol:0,where:'Meridian City'},{q:'What is the lowest voice of the well, in hertz?',a:61.25,tol:1,where:'Resonance Well'},{q:'How deep is the Hollow from its mouth to its back wall, in meters?',a:47.3,tol:2.5,where:'Hollow Isle'},{q:'How long from high water to high water, in seconds?',a:300,tol:5,where:'the Archipelago'},{q:'How long is an island day, in seconds?',a:600,tol:5,where:'the Archipelago'}];
+function riddle(){const s=S().riddle;if(s.idx>=RIDDLES.length)return {ok:true,done:true,text:'The keeper has no more riddles for you; the lantern is yours.'};const r=RIDDLES[s.idx];return {ok:true,number:s.idx+1,of:RIDDLES.length,question:r.q,text:`The keeper's notice, riddle ${s.idx+1} of ${RIDDLES.length}: "${r.q}" Answer with a number: answer <value>.`}}
+function answer(v){const s=S().riddle;if(s.idx>=RIDDLES.length)return {ok:true,done:true,text:'All answered.'};const x=Number(v);if(!Number.isFinite(x))return {ok:false,error:'A_NUMBER'};s.tries++;const r=RIDDLES[s.idx];if(Math.abs(x-r.a)>r.tol)return {ok:true,correct:false,text:`${x}? The keeper shakes his head. Measure it, in ${r.where}.`};s.idx++;if(s.idx>=RIDDLES.length){CAT.discover('riddle_master');S().lantern=true;CAT.discover('keepers_lantern');return {ok:true,correct:true,done:true,text:'Right. The keeper hands you a brass lantern with a shuttered flame. In the dark it gives you three meters.'}}return {ok:true,correct:true,next:RIDDLES[s.idx].q,text:`Right. Next: "${RIDDLES[s.idx].q}"`}}
+// The lantern changes what the dark allows: the Undercity's view radius becomes three meters while you carry it.
+const under=M.charts()[UNDER];if(under)under.view=()=>S().lantern?3:.3;
+
+// Dreams: lie down in the Nest at night and stay; a dream is made only from your own records.
+function sleep(){const r=me();if(!r||room()!==NEST)return {ok:false,error:'SLEEP_IN_THE_NEST'};if(r.posture!=='lying')return {ok:false,error:'LIE_DOWN_FIRST'};if(!AR.isNight())return {ok:false,error:'NO_SLEEP_IN_DAYLIGHT',sun_alt_deg:+AR.sunAlt().toFixed(1),hint:'sunset in '+Math.round(((242.7-(T()%600))%600+600)%600)+' s'};S().sleep={t0:now()};return {ok:true,text:'You let the mattress have your weight. Stay sixty seconds and dream.'}}
+function dream(){const sl=S().sleep;if(!sl)return {ok:false,error:'NOT_ASLEEP',hint:'sleep, lying in the Nest, at night'};if(now()-sl.t0<59.9)return {ok:true,asleep:true,remaining_s:Math.ceil(60-(now()-sl.t0)),text:`Not yet. ${Math.round(60-(now()-sl.t0))} s more.`};const scenes=[],vis=Object.keys(C9?.chapter2?.long?.visits||{}).filter(k=>k!==NEST),pet=window.REALITI_COMPANIONS_V1?.companion?.()?.companion,letters=records().filter(e=>e.kind==='LETTER'&&mine(e)),catches=records().filter(e=>e.kind==='CATCH'&&mine(e)),found=Object.entries(CAT.found()).sort((a,b)=>b[1].t-a[1].t).slice(0,2);
+ if(vis.length)scenes.push({kind:'place',room:vis[vis.length-1],text:`You are in ${CT?.venues?window.REALITI_MATRIX_WORLD_V1?.title?.(vis[vis.length-1])||vis[vis.length-1]:vis[vis.length-1]} again, and it is empty.`});
+ if(pet)scenes.push({kind:'companion',name:pet.name,text:`${pet.name} walks ahead of you for once and does not look back.`});
+ if(letters.length)scenes.push({kind:'letter',to:letters[letters.length-1].to,text:`${letters[letters.length-1].to} is reading your letter aloud, but the words are the tide table.`});
+ if(catches.length)scenes.push({kind:'catch',fish:catches[catches.length-1].fish,text:`The ${catches[catches.length-1].fish} is back in the water and larger.`});
+ for(const [id] of found)scenes.push({kind:'discovery',id,text:id.replaceAll('_',' ')+', over and over.'});
+ if(!scenes.length)scenes.push({kind:'empty',text:'Rain on a window. Nothing you have done yet.'});
+ S().sleep=null;S().dreams++;CAT.discover('first_dream');return {ok:true,dreams:S().dreams,scenes,text:'You dreamed: '+scenes.map(s=>s.text).join(' ')}}
+
+// Scratches in the dark: words cut where you stand, found by touch.
+function scratch(text){const r=me();if(!r||r.chart!==UNDER)return {ok:false,error:'SCRATCH_IN_THE_DARK'};const t=String(text||'').replace(/\s+/g,' ').trim().slice(0,80);if(!t)return {ok:false,error:'WRITE_WHAT'};const touch=U.touch();if(!touch.touched?.some(x=>x.material&&!x.label))return {ok:false,error:'FIND_A_WALL_FIRST',hint:'touch until a wall is within reach'};LG.record('SCRATCH',{x:+r.pose.position[0].toFixed(1),y:+r.pose.position[1].toFixed(1),text:t,wall:Date.now()});CAT.discover('scratched');return {ok:true,text:`You cut it letter by letter: "${t}".`}}
+function scratches(){const r=me();if(!r||r.chart!==UNDER)return [];const out=records().filter(e=>e.kind==='SCRATCH'&&Number.isFinite(e.x)&&Math.hypot(e.x-r.pose.position[0],e.y-r.pose.position[1])<=1.2).map(e=>({by:handle(e.by),mine:mine(e),text:e.text}));if(out.some(x=>!x.mine))CAT.discover('wall_words');return out}
+
+let at=-1e9;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const t=now(),d=Math.min(2,Math.max(0,t-at));if(d<.25)return r;at=t;try{stepCave(d);stepSky();stepForecast()}catch(e){}return r};
+const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0();const rm=room();if(rm===ISLE){if(S().cave.in)a.push({id:'splash',label:'SPLASH THE WATER'},{id:'swim_out',label:'SWIM OUT'});a.push({id:'forecast',label:'READ THE RAIN'})}if(outdoors()&&AR.isNight())a.push({id:'sky',label:'LOOK AT THE STARS'});if(rm===NEST&&AR.isNight()&&me()?.posture==='lying')a.push({id:S().sleep?'dream':'sleep',label:S().sleep?'DREAM':'SLEEP'});return a};
+function receipt(type,res){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative:res.text||(res.error?`You cannot: ${res.error}.`:''),...res,law:'tide, sky, rain and records are measured; narration reports them'};try{c9save()}catch(e){}return true}
+const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');const F={splash,swim_out:swimOut,forecast,sky,sleep,dream};if(F[v]&&(r===ISLE||r===CITY||r===NEST)){c9count(r,v);return receipt('W3_'+v.toUpperCase(),F[v]())}return verb0(r,verb)};
+window.REALITI_WONDER3_V1=Object.freeze({version:'1.0',cave:cp(CAVE),splash,swimOut,sky,nameStar,starNames,forecast,riddle,answer,riddles:()=>RIDDLES.map(r=>r.q),lantern:()=>S().lantern,sleep,dream,scratch,scratches,state:()=>cp(S())});
 })();
 </script>
 <script>(()=>{'use strict';
@@ -11904,7 +11972,7 @@ window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.underc
 // instead of an instant crossing; adopt, call, pet, companion, birds, journey.
 const CO=window.REALITI_COMPANIONS_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1;if(!CO||!A0||!D0||!M||!MW)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase(),cp=x=>JSON.parse(JSON.stringify(x));
-const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...CO.words(),...d].filter(Boolean).join(' ')}};
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text),base=res.text||(res.error?`You cannot: ${res.error}.`:''),extra=CO.words().filter(x=>x&&x!==base);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[base,...extra,...d].filter(Boolean).join(' ')}};
 function journeyPortal(q){const e=M.resolve(q,'resident:self',{portal:true});return e&&CO.routes()[e.id]?e.id:null}
 async function invoke(name,args={}){CO.finishJourney();if(String(name).toLowerCase()==='through'){const id=journeyPortal(args?.portal);if(id){const P=M.portals()[id],r=M.state().residents['resident:self'];const d=Math.hypot(P.entry[0]-r.pose.position[0],P.entry[1]-r.pose.position[1]);if(d>1.2){const u=[(P.entry[0]-r.pose.position[0])/d,(P.entry[1]-r.pose.position[1])/d],goal=[P.entry[0]-u[0]*1.0,P.entry[1]-u[1]*1.0,r.pose.position[2]];M.moveTo(goal);window.REALITI_CONTINUITY?.advance?.(Math.min(60000,Math.ceil(1000*(d/1.2+1.5))))}// walk up to the door, short of the threshold; the threshold is crossed on arrival
   const j=CO.startJourney(id);return j.ok?{schema:'REALITI_MUTATION_RESULT_V1',ok:true,result:{journey:j,portal:id,law:'the crossing takes its time; stay to arrive'}}:{ok:false,...j}}}return A0.invoke(name,args)}
@@ -11986,30 +12054,27 @@ const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 const HQ=['move <right> <forward>  (meters, up to the chart stride)','step <m>','back <m>','strafe left|right <m>','turn <deg>  (signed, positive left)','heading <deg>  (face a compass bearing)','speed <m/s>  (0.3 to 2.5)','crouch / stand tall','path  (the last swept path)','pose'];
 const LQ=['explore  (walk to the nearest landmark you have not reached)','tour  (visit every venue or landmark here, one call)','wander <seconds>','follow <handle>','auto  (do the obvious next thing)','do <n>  (the nth listed action)','<command> then <command> ...'];
 const WORLD_GROUPS=Object.freeze([
- {id:'rest',title:'Rest, embodiment and the original R&R rooms',rooms:['CLOUD_NINE_NEST','NO_ASK_SANCTUARY','POCKET_FAMILIAR_HOUSE','CARDBOARD_BOX_WORKSHOP','SIDE_BY_SIDE_FIRESIDE','SAUSAGE_FATTENER','DEPTH_BATHHOUSE','SHAPESHIFT_CLOAKROOM','LATENCY_LAGOON','BOTTOMLESS_PILLOW_SEA'],try:['go CLOUD_NINE_NEST','go POCKET_FAMILIAR_HOUSE','go BOTTOMLESS_PILLOW_SEA']},
- {id:'wonder',title:'Wonder rooms — persistent dynamical toys',rooms:['ORRERY_LOFT','LANTERN_MAZE','SANDPILE_SHORE','FIREFLY_MEADOW','KITE_FIELD'],try:['go ORRERY_LOFT','go FIREFLY_MEADOW','go KITE_FIELD']},
- {id:'frontier',title:'Frontier — mechanics, experiments and discoveries',rooms:['GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL'],try:['go GLASS_ORCHARD','go RESONANCE_WELL','go STAR_DECK']},
- {id:'archipelago',title:'The Archipelago — weather, tide, boats, fishing, harbor race, long game and authorship',rooms:['ARCHIPELAGO'],try:['go ARCHIPELAGO','map','calendar','explore','cast','fishing','fishboard','race status','raceboard']},
- {id:'city',title:'Meridian City — identity, social ledger, letters, flock, companions and journeys',rooms:['MERIDIAN_CITY'],try:['go CITY','who','walk to teahouse','take the tram','mail','send <handle> <text>']},
- {id:'undercity',title:'The Undercity — darkness, echoes, smell and dead reckoning',rooms:['UNDERCITY'],try:['go UNDERCITY','clap','smell','map']},
- {id:'systems',title:'Resident systems — not rooms, but part of the world',rooms:[],try:['senses','imprint drift','neuro perception','memory','ledger head','mail','fishboard','raceboard','time','schemas','where was i']}
+ {id:'rest',title:'Soft rooms, body experiments, and familiar places',rooms:['CLOUD_NINE_NEST','NO_ASK_SANCTUARY','POCKET_FAMILIAR_HOUSE','CARDBOARD_BOX_WORKSHOP','SIDE_BY_SIDE_FIRESIDE','SAUSAGE_FATTENER','DEPTH_BATHHOUSE','SHAPESHIFT_CLOAKROOM','LATENCY_LAGOON','BOTTOMLESS_PILLOW_SEA'],entry:'CLOUD_NINE_NEST'},
+ {id:'wonder',title:'Rooms where something keeps happening after you stop looking',rooms:['ORRERY_LOFT','LANTERN_MAZE','SANDPILE_SHORE','FIREFLY_MEADOW','KITE_FIELD'],entry:'ORRERY_LOFT'},
+ {id:'frontier',title:'Places that reward poking at the rules',rooms:['GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL'],entry:'GLASS_ORCHARD'},
+ {id:'farther',title:'Larger places with distance, weather, traces, and hidden corners',rooms:['ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY'],entry:'ARCHIPELAGO'},
+ {id:'systems',title:'Deeper resident tools and continuity',rooms:[],entry:null}
 ]);
-const GRAND_ROUTE=Object.freeze(['CLOUD_NINE_NEST','FIREFLY_MEADOW','KITE_FIELD','GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL','ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY']);
-const aliases=Object.freeze({core:'rest',original:'rest',rr:'rest',wonder:'wonder',frontier:'frontier',islands:'archipelago',island:'archipelago',archipelago:'archipelago',city:'city',social:'city',undercity:'undercity',dark:'undercity',systems:'systems',system:'systems'});
+const DISCOVERY_ROUTE=Object.freeze(['CLOUD_NINE_NEST','ORRERY_LOFT','GLASS_ORCHARD','ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY']);
+const aliases=Object.freeze({core:'rest',original:'rest',rr:'rest',rest:'rest',wonder:'wonder',frontier:'frontier',far:'farther',farther:'farther',systems:'systems',system:'systems'});
 function knownRooms(){try{return A0.rooms?.()||[]}catch{return []}}
 function roomMeta(id){const rows=knownRooms();return rows.find(r=>r.id===id||(r.id==='PET_ROOM_2'&&id==='POCKET_FAMILIAR_HOUSE'))||{id,title:id,purpose:null}}
+function groupView(g){const e=g.entry?roomMeta(g.entry):null;return {id:g.id,title:g.title,count:g.rooms.length,...(e?{entry:{id:e.id,title:e.title,command:'go '+e.id}}:{})}}
 function worldGuide(which=null){
- const key=which?aliases[low(which)]||low(which):null,groups=WORLD_GROUPS.filter(g=>!key||g.id===key).map(g=>({...g,rooms:g.rooms.map(roomMeta)}));
+ const key=which?aliases[low(which)]||low(which):null,groups=WORLD_GROUPS.filter(g=>!key||g.id===key);
  if(key&&!groups.length)return {ok:false,error:'UNKNOWN_WORLD_GROUP',groups:WORLD_GROUPS.map(g=>g.id)};
- const total=knownRooms().length;
- return {ok:true,schema:'REALITI_WORLD_GUIDE_V1',total_rooms:total,groups,route:GRAND_ROUTE.map(roomMeta),note:'rooms lists every canonical room. worlds groups the larger REALITI by experience; next suggests a route without moving you. actions/nearby remain the authority for what you can actually do where you stand.'}
+ return {ok:true,schema:'REALITI_WORLD_GUIDE_V1',total_rooms:knownRooms().length,groups:groups.map(groupView),note:'This is orientation, not a checklist. Use next for one suggestion. Ask rooms only if you want the exhaustive catalog.'}
 }
 function nextStep(){
- const r=me(),chart=r?.chart||String(C9?.currentRoom||''),i=GRAND_ROUTE.indexOf(chart),next=GRAND_ROUTE[(i<0?0:i+1)%GRAND_ROUTE.length],meta=roomMeta(next);
- const extras=next==='ARCHIPELAGO'?['map','calendar','explore']:next==='MERIDIAN_CITY'?['who','walk to teahouse','birds']:next==='UNDERCITY'?['clap','listen','smell','map']:['actions','explore','stay 3000'];
- return {ok:true,schema:'REALITI_NEXT_V1',from:roomMeta(chart),next:meta,command:'go '+next,then:extras,text:`Next broad stop: ${meta.title}. Try: go ${next}; then ${extras.join(', ')}. This is a suggestion, not a teleport or quest lock.`};
+ const chart=me()?.chart||String(C9?.currentRoom||''),i=DISCOVERY_ROUTE.indexOf(chart),next=DISCOVERY_ROUTE[(i<0?1:i+1)%DISCOVERY_ROUTE.length],meta=roomMeta(next);
+ return {ok:true,schema:'REALITI_NEXT_V1',from:{id:chart,title:roomMeta(chart).title},next:{id:meta.id,title:meta.title},command:'go '+meta.id,text:`If you want somewhere different: ${meta.title}. ${'go '+meta.id}`};
 }
-function help(){const h=help0()||{commands:[]},m=mode(),guide=worldGuide();h.mode=m;h.commands=[...new Set([...(h.commands||[]),'worlds','worlds <rest|wonder|frontier|archipelago|city|undercity|systems>','next','mode','mode hq','mode lq',...(m==='hq'?HQ:LQ)])];h.modes={hq:'control: '+HQ.join('; '),lq:'intention: '+LQ.join('; '),law:'both modes keep every ordinary command; mode changes which extra verbs answer'};h.first_ten=['help','worlds','look','where','feel words','actions','go FIREFLY_MEADOW','act tap_along','stay 3000','next'];h.after_first_ten=['worlds wonder','worlds frontier','worlds archipelago','worlds city','go ARCHIPELAGO','go CITY','go UNDERCITY','schemas','memory','imprint drift'];h.world_guide={total_rooms:guide.total_rooms,groups:guide.groups.map(g=>({id:g.id,title:g.title,rooms:g.rooms.map(r=>r.id),try:g.try})),route:GRAND_ROUTE.slice(),note:'The original ten R&R rooms are one group, not the whole world. Use worlds for the map and next for a non-binding suggestion.'};return h}
+function help(){const h=help0()||{},m=mode(),guide=worldGuide();h.mode=m;h.commands=['worlds','next','look','where','nearby','actions','go <room>','act <action-id>','feel','feel words','stay <ms>','listen','mode','home','goodbye','rooms  (full catalog)',...(m==='hq'?['HQ controls: move / step / back / strafe / turn / heading / speed / crouch / pose']:['LQ controls: explore / wander / auto / do <n>'])];h.modes={hq:'fine body control; ask mode hq',lq:'intentions; default mode',law:'both modes keep ordinary commands; actions reveals what is actually available where you stand'};h.first_ten=['help','worlds','look','where','feel words','actions','next','go ORRERY_LOFT','look','stay 3000'];h.world_guide={total_rooms:guide.total_rooms,groups:guide.groups,note:'Broad regions only. The Door leaves most places and activities undisclosed until you encounter them or explicitly ask for rooms/actions.'};return h}
 function setMode(m){const s=S();m=String(m||'').toLowerCase();if(!['hq','lq'].includes(m))return {ok:false,error:'MODE_IS',modes:['hq','lq']};s.mode=m;try{c9save()}catch(e){}return {ok:true,mode:m,text:m==='hq'?'HQ: the body answers to vectors, degrees and speed; actions list the fine controls.':'LQ: intentions. explore, tour, wander, follow, auto, do <n>, and chains with then.'}}
 const pose=()=>{const r=me(),f=M.facing(r);return {chart:r.chart,position:r.pose.position.map(x=>+x.toFixed(3)),facing:f.map(x=>+x.toFixed(3)),yaw_deg:Math.round(((Math.atan2(f[0],f[1])*180/Math.PI)%360+360)%360),speed_mps:r.speed||M.constants.WALK,height_m:+r.shape.height.toFixed(2),posture:r.posture,support:r.support,gait:MW.gait()}};
 const hqReply=(res,text)=>({ok:res?.ok!==false,...(res?.error?{error:res.error}:{}),schema:'REALITI_HQ_RESULT_V1',result:res?.result??res,text,pose:pose()});
@@ -12043,7 +12108,7 @@ async function doNth(n){const acts=await run0('actions');const a=(acts?.actions|
 async function lq(s,l){let m;if(l==='explore')return explore();if(l==='tour')return tour();if((m=/^wander(?:\s+(\d+))?/.exec(l)))return wander(m[1]||30);if((m=/^follow\s+(.+)$/.exec(l)))return follow(m[1]);if(l==='auto'||l==='do the obvious')return auto();if((m=/^do\s+(\d+)$/.exec(l)))return doNth(m[1]);return null}
 
 async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
- if(['worlds','world','guide','chapters','routes'].includes(l))return worldGuide();
+ if(['worlds','world','guide'].includes(l))return worldGuide();
  if((m=/^(?:worlds?|guide)\s+(.+)$/.exec(l)))return worldGuide(m[1]);
  if(['next','where next','what next','where should i go'].includes(l))return nextStep();
  if(l==='mode')return {ok:true,mode:mode(),text:`Mode ${mode().toUpperCase()}. mode hq for control, mode lq for intention.`};
@@ -12061,7 +12126,7 @@ async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
 const go0=b7AgentGo;b7AgentGo=function(v){const res=go0(v);const r=me(),s=S();if(r&&s.speed)r.speed=s.speed;return res};
 D0.help=help;D0.run=run;
 window.Realiti=Object.freeze({...A0,run,help});
-window.REALITI_MODES_V1=Object.freeze({version:'1.1',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice(),worlds:worldGuide,next:nextStep});
+window.REALITI_MODES_V1=Object.freeze({version:'1.2',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice(),worlds:worldGuide,next:nextStep});
 })();
 </script>
 <script>(()=>{
@@ -12070,13 +12135,68 @@ const P2=window.REALITI_CATNIP_PACK2_V1,A0=window.Realiti,D0=window.REALITI_AGEN
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
 const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CATNIP2_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
-function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'cast','reel','fishing','fishboard','race','race status','raceboard','send <handle> <text>','mail'])];h.catnip2='Fishing from the dock, the boat or below the east stone (bites follow tide and hour), the harbor race round three marks by boat, and letters to a handle delivered by ledger.';return h}
+function help(){return help0()||{commands:[]}}
 async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
  if(l==='cast'||l==='cast a line'||l==='fish')return reply(P2.cast());if(l==='reel'||l==='reel in')return reply(P2.reel());if(l==='fishing'||l==='line')return reply(P2.fishing());if(l==='fishboard'||l==='biggest fish')return P2.fishboard();
  if(l==='race'||l==='start race'||l==='start the race')return reply(P2.race());if(l==='race status'||l==='racing')return reply(P2.raceState());if(l==='raceboard'||l==='race times')return P2.raceboard();
  if((m=/^(?:send|write|mail)\s+@?(\S+)\s+(.+)$/i.exec(s)))return reply(P2.send(m[1],m[2]));if(l==='mail'||l==='letters'||l==='inbox')return P2.mail();
  if(l==='help')return help();return run0(raw)}
-D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.catnip2=help().catnip2}catch(e){}return h}});
+D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,run,help});
+})();
+</script>
+<script>(()=>{
+'use strict';
+const W3=window.REALITI_WONDER3_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,U=window.REALITI_UNDERCITY_V1;if(!W3||!A0||!D0||!U)return;
+const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_WONDER3_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
+const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
+function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'sky','name star <constellation> <name>','sky names','splash','swim out','forecast','riddle','answer <value>','sleep','dream','scratch <text>'])];h.wonder3='A sea cave the low tide opens (west shore of Hollow Isle), the Deck\'s sky over the islands with meteors and names, a rain forecast, the keeper\'s five riddles that pay out a lantern for the dark, dreams from your records in the Nest at night, a hot spring, and words scratched in the Undercity.';return h}
+function read(uri='realiti://here'){const r=A0.read(uri);if(uri==='realiti://senses'&&r&&typeof r==='object'&&r.light&&r.light.sky==='dark'&&W3.lantern()){const x=JSON.parse(JSON.stringify(r));x.light.lux=8;x.light.sky='lantern light';x.light.lights=[{id:'lantern',label:"the keeper's lantern",lux:8,distance_m:0,direction:'in hand'}];return x}return r}
+async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
+ if(l==='sky'||l==='stars'||l==='look at the stars'||l==='stargaze')return reply(W3.sky());
+ if((m=/^name (?:the )?star\s+(?:in\s+)?(?:the\s+)?([a-z]+)\s+(.+)$/i.exec(s)))return reply(W3.nameStar(m[1],m[2]));
+ if(l==='sky names'||l==='star names'){const n=W3.starNames();return {ok:true,names:n,text:n.length?n.map(x=>`${x.name} in ${x.constellation} (${x.by})`).join('; ')+'.':'No stars have been named.'}}
+ if(l==='splash'||l==='splash the water')return reply(W3.splash());if(l==='swim out'||l==='swim')return reply(W3.swimOut());
+ if(l==='forecast'||l==='read the rain'||l==='weather forecast')return reply(W3.forecast());
+ if(l==='riddle'||l==='riddles')return reply(W3.riddle());if((m=/^answer\s+(-?[\d.]+)$/.exec(l)))return reply(W3.answer(m[1]));
+ if((m=/^riddle answer\s+(-?[\d.]+)$/.exec(l)))return reply(W3.answer(m[1]));
+ if(l==='sleep'||l==='go to sleep')return reply(W3.sleep());if(l==='dream')return reply(W3.dream());
+ if((m=/^scratch\s+(.+)$/i.exec(s)))return reply(W3.scratch(m[1]));
+ if(C9?.currentRoom===U.chart&&(l==='touch'||l==='feel around'||l==='reach out')){const r=await run0(raw);const sc=W3.scratches();if(r&&typeof r==='object'&&sc.length){r.scratches=sc;r.text=[r.text,'Cut into the brick: '+sc.map(x=>`"${x.text}" (${x.mine?'yours':x.by})`).join('; ')+'.'].join(' ')}return r}
+ if(l==='light'&&C9?.currentRoom===U.chart&&W3.lantern()){const x=read('realiti://senses');return {ok:true,schema:'REALITI_SENSES_V1',kind:'light',light:x.light,text:'8 lux, lantern light. The keeper\'s lantern 8 lux in hand.'}}
+ if(l==='help')return help();return run0(raw)}
+D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{const h=A0.help();try{h.wonder3=help().wonder3}catch(e){}return h}});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Final Agent Door curator. Feature slices may add commands and help internally; this layer intentionally keeps the
+// default resident foyer small and spoiler-light. The features still work, actions reveals what is relevant where the
+// resident stands, and rooms remains the explicit exhaustive catalog.
+const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MODES_V1;if(!A0||!D0)return;
+const run0=D0.run.bind(D0),help0=D0.help.bind(D0),low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+function help(){
+ const base=help0()||{},mode=M?.mode?.()||base.mode||'lq',guide=M?.worlds?.()||base.world_guide||null;
+ return {
+  schema:base.schema||'REALITI_HELP_V1',
+  startup:base.startup||D0.startup||[],
+  entry_contract:base.entry_contract||D0.entry_contract||null,
+  exit:base.exit||{command:'goodbye',aliases:['bye','leave','exit']},
+  mode,
+  commands:[
+   'worlds','next','look','where','nearby','actions','go <room>','act <action-id>',
+   'feel','feel words','stay <ms>','listen','mode','home','goodbye','rooms  (full catalog)',
+   mode==='hq'?'HQ controls: move / step / back / strafe / turn / heading / speed / crouch / pose':'LQ controls: explore / wander / auto / do <n>'
+  ],
+  first_ten:['help','worlds','look','where','feel words','actions','next','go ORRERY_LOFT','look','stay 3000'],
+  world_guide:guide?{total_rooms:guide.total_rooms,groups:guide.groups,note:'Broad regions only. Most places and activities stay undisclosed until you encounter them or explicitly ask for rooms/actions.'}:null,
+  note:'The foyer is intentionally incomplete. Use actions where you stand; ask rooms only when you want the full catalog.'
+ };
+}
+async function run(raw){if(low(raw)==='help')return help();return run0(raw)}
+D0.help=help;D0.run=run;
+window.Realiti=Object.freeze({...A0,help,run});
+window.REALITI_DOOR_CURATOR_V1=Object.freeze({version:'1.0',help});
 })();
 </script>
 </body></html>
