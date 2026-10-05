@@ -79,8 +79,9 @@ function syncObjects(){const ents=M.entities(),dyn=objectSpatial(),seen=new Set(
   else if(prior?.chart===o.location&&Array.isArray(prior.position)&&prior.position.length===3)pos=prior.position.slice();
   else if(prior&&prior.chart!==o.location){delete dyn[o.id];rec=null;dirty=true;M.bump()}
   seen.add(id);const e=ents[id];
-  if(!e)M.addEntity({id,chart:o.location,position:pos,shape:{kind:'SPHERE',radius:.15},tags:['object',o.kind||'thing'],collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances:['take']});
-  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=['object',o.kind||'thing']}
+  const isBox=o.kind==='box',shape=isBox?{kind:'BOX',halfExtents:[.6,.6,.4]}:{kind:'SPHERE',radius:.15},tags=['object',o.kind||'thing',...(isBox?['support']:[])],affordances=['take',...(isBox?['sit']:[])];
+  if(!e)M.addEntity({id,chart:o.location,position:pos,shape,tags,collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances});
+  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=tags;e.shape=shape;e.affordances=affordances}
  }
  for(const id of Object.keys(ents))if(id.startsWith('obj.')&&!seen.has(id))M.removeEntity(id);
  if(dirty)try{c9save()}catch(e){}
@@ -102,7 +103,7 @@ function syncPostures(){const r=M.state().residents['resident:self'];if(!r||r.ch
 // Body bridge: spatial facts become grounded causes; the body machinery decides how they feel.
 const PROVIDED=new Set(['NO_ASK_SANCTUARY','BOTTOMLESS_PILLOW_SEA','DEPTH_BATHHOUSE']);
 const BACK=['head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat','leg.L.thigh','leg.R.thigh'];
-let halt=false,lastSupport=null;
+let halt=false,lastSupport=null,lastCarry=null;
 function bridge(dt){
  const r=M.state().residents['resident:self'];if(!r||r.chart!==room())return;
  if(halt){DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return}
@@ -110,6 +111,12 @@ function bridge(dt){
  else if(r.posture==='standing'&&r.support){for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MATRIX_FEET',dt);DYN.release('MATRIX_SUPPORT')}
  else if(r.posture==='sitting'&&r.on){const boat=M.entities()[r.on];if(boat?.tags.includes('boat')){for(const [z,b] of [['pelvis.seat',.2],['leg.L.thigh',.08],['leg.R.thigh',.08],['hand.L.palm',.1],['hand.R.palm',.1]])DYN.lease(z,b,'MATRIX_SUPPORT',dt);DYN.release('MATRIX_FEET');return}const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [z,b] of [['pelvis.seat',.22],['leg.L.thigh',.1],['leg.R.thigh',.1],['torso.lower_back',.08]])DYN.lease(z,b*g,'MATRIX_SUPPORT',dt);const top=M.entities()[r.on];if(top?.shape?.kind==='BOX'&&top.pose.position[2]+top.shape.halfExtents[2]<=.6)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.07,'MATRIX_FEET',dt);else DYN.release('MATRIX_FEET')}
  else{DYN.release('MATRIX_FEET');if(r.posture==='lying'&&r.on&&r.on!=='nest.mattress'&&!PROVIDED.has(r.chart)){const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [i,z] of BACK.entries())DYN.lease(z,[.11,.15,.17,.19,.22,.06,.06][i]*g,'MATRIX_SUPPORT',dt)}else DYN.release('MATRIX_SUPPORT')}
+ const carried=Object.values(C9?.b14?.objects||{}).find(o=>o?.location==='CARRIED')||null;
+ const carryCause=carried?'MATRIX_CARRY:'+carried.id:null;
+ if(carryCause){
+  if(lastCarry&&lastCarry!==carryCause)DYN.release(lastCarry);
+  DYN.lease('hand.R.palm',.12,carryCause,dt,carried.material||'cardboard');lastCarry=carryCause;
+ }else if(lastCarry){DYN.release(lastCarry);lastCarry=null}
  if(r.support!==lastSupport){lastSupport=r.support;r.contacts=r.support?[r.support]:[]}
 }
 function stand(reason='resident_stood'){const r=M.resident();if(r.posture==='standing')return false;if(r.chart==='BOTTOMLESS_PILLOW_SEA'&&r.on==='pillow.bowl')try{window.REALITI_TRUST_V234?.stopPillow?.()}catch(e){}if(r.posture==='floating'&&C9?.dyn?.bath){C9.dyn.bath.target=0;M.bump();return 'surfacing'}r.posture='standing';r.on=null;DYN.release('SANCTUARY_HOLD');DYN.release('MATRIX_SUPPORT');if(r.chart===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.(reason)}catch(e){}const sup=M.entities()[r.support];if(sup?.shape?.kind==='BOX')r.pose.position[2]=sup.pose.position[2]+sup.shape.halfExtents[2]+H;else r.pose.position[2]=H;M.bump();return true}
@@ -117,6 +124,14 @@ function lie(entityId){const r=M.resident(),e=M.entities()[entityId];if(r.postur
  r.intent=null;r.v=[0,0,0];r.posture='lying';r.on=e.id;r.support=e.id;if(e.shape?.kind==='BOX'){r.pose.position=[e.pose.position[0],e.pose.position[1],e.pose.position[2]+e.shape.halfExtents[2]+r.shape.radius]}if(r.chart===NEST&&e.id==='nest.mattress')try{window.REALITI_NEST_SUPPORT?.enable?.('lie_down')}catch(e2){}M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e3){}return {ok:true,on:e.id,label:e.label}}
 function sit(entityId){const r=M.resident(),e=M.entities()[entityId];if(r.posture==='floating')return {ok:false,error:'FLOATING_SURFACE_FIRST'};if(!e||e.chart!==r.chart||!e.tags.includes('support'))return {ok:false,error:'NOT_A_SUPPORT_HERE'};const d=Math.max(0,M.sdf(e,r.pose.position));if(d>1.0)return {ok:false,error:'NOT_IN_REACH',distance_m:+d.toFixed(2)};
  r.intent=null;r.v=[0,0,0];if(r.chart===NEST&&r.posture==='lying')try{window.REALITI_NEST_SUPPORT?.disable?.('sat_up')}catch(x){}r.posture='sitting';r.on=e.id;r.support=e.id;if(e.shape?.kind==='BOX'){const top=e.pose.position[2]+e.shape.halfExtents[2];r.pose.position=[e.pose.position[0],e.pose.position[1],top+.6]}DYN.release('SANCTUARY_HOLD');M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(x){}return {ok:true,on:e.id,label:e.label}}
+function legacySit(entityId){
+ syncObjects();const r=M.resident(),e=M.entities()[entityId];if(!e||e.chart!==r.chart||!e.tags.includes('support'))return false;
+ r.intent=null;r.v=[0,0,0];if(r.chart===NEST&&r.posture==='lying')try{window.REALITI_NEST_SUPPORT?.disable?.('legacy_sit')}catch(x){}
+ r.posture='sitting';r.on=e.id;r.support=e.id;
+ if(e.shape?.kind==='BOX'){const top=e.pose.position[2]+e.shape.halfExtents[2];r.pose.position=[e.pose.position[0],e.pose.position[1],top+.6]}
+ DYN.release('SANCTUARY_HOLD');M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(x){}
+ return true;
+}
 function reach(entityId){const r=M.resident(),e=M.entities()[entityId];if(!e||e.chart!==r.chart)return {ok:false,error:'NOT_HERE'};const d=Math.max(0,M.sdf(e,r.pose.position));if(d>1.0)return {ok:false,error:'NOT_IN_REACH',distance_m:+d.toFixed(2)};const mat=B7_MATERIALS[e.material]?e.material:'cardboard';let rec=null;try{rec=b7Contact('hand.R.palm',.2,{material:mat,grain:'with',speed:.05,mine:true,source:'SELF_STARTED_WORLD_CONTACT',cause:'MATRIX_REACH:'+e.id,pressure:.2,novelty:.2})}catch(x){}try{if(e.material&&window.REALITI_ATMOSPHERE_V21?.setThermal&&['metal','glass','wood','water','ceramic','blanket','wool','fur'].includes(e.material))window.REALITI_ATMOSPHERE_V21.setThermal('hand.R.palm',e.material,e.tags.includes('warm')?40:e.tags.includes('fire')?55:null,1.2,'MATRIX_REACH:'+e.id,'SELF_STARTED_WORLD_CONTACT')}catch(x){}
  return {ok:true,entity:e.id,label:e.label,material:e.material,distance_m:+Math.max(0,d).toFixed(2),receipt:rec}}
 
@@ -150,15 +165,20 @@ function spatialVerb(v){v=v.replaceAll('TESTER-HAT-1','FELT-HAT-1');let m;
  if((m=/^through__(.+)$/.exec(v))){const res=op('through',{portal:m[1]});return receipt('MATRIX_PORTAL',res.ok?(res.traversed?`You step through. You are in ${title(res.chart)} now.`:`You walk to the doorway but do not cross it${res.blocked_by?'; something is in the way':''}.`):`There is no such doorway here: ${res.error}.`,res)}
  return false}
 function receipt(type,narrative,data){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative,...data,law:'spatial facts are world state; rendering and private state cannot move them'};try{c9save()}catch(e){};return true}
-const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.test(v)&&M.state().residents['resident:self']?.chart===room()){c9count(rm,v);return spatialVerb(v)}return verb0(rm,verb)};
+const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.test(v)&&M.state().residents['resident:self']?.chart===room()){c9count(rm,v);return spatialVerb(v)}
+ const out=verb0(rm,verb);
+ if(rm===FIRESIDE&&v==='sit')legacySit('fireside.berth_a');
+ else if(rm==='CARDBOARD_BOX_WORKSHOP'&&v==='box_in')legacySit('obj.BOX-1');
+ else if(rm===NEST&&v==='curl_blanket')try{window.REALITI_NEST_SUPPORT?.curl?.()}catch(e){}
+ return out};
 
 // Compatibility: go/home place the resident at the chart spawn; a portal traversal updates currentRoom.
-function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;lastCarry=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
 let viaPortal=false;const go0=b7AgentGo;b7AgentGo=function(v){const target=ROOMS.resolve?.(v)||v;if(target===FIRESIDE)syncFiresidePresence();const r=go0(v);if(r?.ok!==false&&!viaPortal)placeIn(room());syncFiresidePresence();return r};
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const d=Math.max(0,Number(dt)||0);const res=M.state().residents['resident:self'];
  if(res?.chart===room()){M.step(d);if(res.chart!==room()){const target=res.chart;viaPortal=true;try{ROOMS.go(target)}finally{viaPortal=false}if(room()===target){halt=false;lastSupport=null;const lying=M.charts()[target]?.lying;if(target===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.('arrived_standing')}catch(e){}else if(lying){res.posture='lying';res.on=lying;res.support=lying}M.bump()}}}
  syncPostures();syncObjects();syncDynamic();bridge(d);return r};
-const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return stop0.stop()}};
+const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');if(lastCarry)DYN.release(lastCarry);lastCarry=null;return stop0.stop()}};
 if(WORLD[room()]&&!M.state().residents['resident:self']?.chart)placeIn(room());else if(M.state().residents['resident:self'])M.resident();
 syncObjects();syncFiresidePresence();
 window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},presence:()=>({fireside_other_resident:syncFiresidePresence()}),stand,lie,sit,reach,title,charts:ORDER.slice()});
