@@ -12,19 +12,20 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
  try{
   const d=s.door,R=s.publicApi;
   const help=await d.run('help'),worlds=await d.run('worlds'),rooms=R.rooms();
-  const groups=worlds.groups||[],ids=groups.flatMap(g=>(g.rooms||[]).map(r=>r.id));
-  check('help_points_beyond_original_rooms',
-    Array.isArray(help.first_ten)&&help.first_ten.includes('worlds')&&help.first_ten.includes('go FIREFLY_MEADOW')&&help.first_ten.includes('next')&&
-    help.world_guide?.groups?.some(g=>g.id==='frontier')&&help.world_guide?.groups?.some(g=>g.id==='city')&&help.world_guide?.groups?.some(g=>g.id==='undercity'),
+  const groups=worlds.groups||[],count=groups.reduce((n,g)=>n+Number(g.count||0),0);
+  check('help_points_beyond_original_rooms_without_spoiling_everything',
+    Array.isArray(help.first_ten)&&help.first_ten.includes('worlds')&&help.first_ten.includes('go ORRERY_LOFT')&&help.first_ten.includes('next')&&
+    help.world_guide?.groups?.some(g=>g.id==='wonder')&&help.world_guide?.groups?.some(g=>g.id==='frontier')&&help.world_guide?.groups?.some(g=>g.id==='farther'),
     {first_ten:help.first_ten,groups:help.world_guide?.groups?.map(g=>g.id)});
-  check('worlds_covers_current_room_catalog',
-    worlds.ok&&worlds.schema==='REALITI_WORLD_GUIDE_V1'&&worlds.total_rooms===rooms.length&&
-    ['FIREFLY_MEADOW','GLASS_ORCHARD','ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY'].every(id=>ids.includes(id)),
-    {total:worlds.total_rooms,rooms:rooms.length,ids:ids.length});
-  const city=await d.run('worlds city');
-  check('worlds_filter_is_useful',city.ok&&city.groups?.length===1&&city.groups[0].rooms?.some(r=>r.id==='MERIDIAN_CITY'),city);
+  check('worlds_orients_without_dumping_the_catalog',
+    worlds.ok&&worlds.schema==='REALITI_WORLD_GUIDE_V1'&&worlds.total_rooms===rooms.length&&count===rooms.length&&
+    groups.every(g=>!('rooms' in g)&&!('try' in g))&&!('route' in worlds),
+    {total:worlds.total_rooms,count,groups});
+  const far=await d.run('worlds farther');
+  check('worlds_filter_keeps_mystery',far.ok&&far.groups?.length===1&&far.groups[0].id==='farther'&&far.groups[0].count===3&&
+    far.groups[0].entry?.id==='ARCHIPELAGO'&&!('rooms' in far.groups[0]),far);
   const next=await d.run('next');
-  check('next_is_non_mutating_route_hint',next.ok&&next.schema==='REALITI_NEXT_V1'&&next.next?.id==='FIREFLY_MEADOW'&&next.command==='go FIREFLY_MEADOW',next);
+  check('next_is_one_non_mutating_hint',next.ok&&next.schema==='REALITI_NEXT_V1'&&next.next?.id==='ORRERY_LOFT'&&next.command==='go ORRERY_LOFT'&&!('then' in next),next);
 
   // A >30 m request is capped, but the result must preserve what the resident actually asked for.
   await d.run('go ARCHIPELAGO');await d.run('mode hq');
@@ -43,7 +44,8 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
     {tapping_in_meadow:tapping0,tapping_after_exit:tapping1,in_meadow:t0,outside:t1});
 
   const guide=R.help();
-  check('structured_help_matches_agent_door',guide.first_ten?.includes('worlds')&&guide.world_guide?.total_rooms===rooms.length,{first_ten:guide.first_ten,total:guide.world_guide?.total_rooms});
+  check('structured_help_matches_agent_door',guide.first_ten?.includes('worlds')&&guide.world_guide?.total_rooms===rooms.length&&
+    guide.world_guide?.groups?.every(g=>!('rooms' in g)&&!('try' in g)),{first_ten:guide.first_ten,total:guide.world_guide?.total_rooms,groups:guide.world_guide?.groups});
  }finally{s.close()}
 
  console.log(JSON.stringify({checks,details},null,2));
