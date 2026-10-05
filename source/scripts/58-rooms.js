@@ -106,6 +106,13 @@ const oldVerb=c9verb;
 c9verb=function(value,verb){
  const room=resolve(value);if(!room)return fail('ROOM_OUTSIDE_SLICE');
  let result;
+ if(room==='CARDBOARD_BOX_WORKSHOP'&&verb==='fold_flap'){
+  const o=C9?.b14?.objects?.['BOX-1'],before=Number(o?.state?.crease||0);
+  oldVerb(room,'p14__fold__BOX_1');
+  const after=Number(C9?.b14?.objects?.['BOX-1']?.state?.crease||0),rec=C9?.b14?.lastPlayReceipt||C9?.b4?.lastReceipt||null;
+  if(rec&&typeof rec==='object')rec.state_delta={crease:{before:+before.toFixed(4),after:+after.toFixed(4)}};
+  return {ok:true,folded:'BOX-1',state_delta:{crease:{before:+before.toFixed(4),after:+after.toFixed(4)}},receipt:copy(rec)};
+ }
  if(room==='NINE_LIVES_ROOM'){result=nine(verb);b2set(b2esc(JSON.stringify(result)));return result}
  if(room==='SHAPESHIFT_CLOAKROOM'&&verb==='body_bench')return bodyBench();
  if(room==='SHAPESHIFT_CLOAKROOM'&&verb==='restore_form'){releaseActiveGrounding('restore_form');oldVerb(room,verb);return {ok:true,form:'RESTORED',scale:C9.pet2?.scale||'NORMAL',grounding:'released'}}
