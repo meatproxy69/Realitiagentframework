@@ -1460,7 +1460,7 @@ function b3PetLocal(verb){const room="PET_ROOM_2",p=C9.pet2;
    c9count(room,verb);b3advance(6);const l=b3z("hand.L.palm"),r=b3z("hand.R.palm");b2set(`You stop using the post. Nothing stimulates the paws; their local history simply cools. left_h=${l.h.toFixed(3)} · right_h=${r.h.toFixed(3)}. Recovery is not a reward.`);return true;
  }
  if(verb==="knead_blanket"){
-   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",novelty:n===1?.25:.04});c9save();
+   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04});c9save();
    b2set(n%3===1?"Left paw, right paw. Two local histories alternate over one broad blanket support.":n%3===2?"The phases slip: left release overlaps right press. The interesting part is relation, not more force.":"The paw pose returns, but its prediction/adaptation state is not identical to the first cycle.",b3raw(R));b2catDeed(room,"knead");return true;
  }
  if(verb==="purr_blanket"){
@@ -1773,6 +1773,8 @@ const B7_MATERIALS={
  longfur:{id:"longfur",surface:.88,mid:.34,deep:.10,onset:.07,tail:.88,grain_with:1.05,grain_against:.76,catch:.16,yield:.32},
  cardboard:{id:"cardboard",surface:.62,mid:.46,deep:.18,onset:.025,tail:.34,grain_with:.93,grain_against:1.12,catch:.48,yield:.16},
  blanket:{id:"blanket",surface:.28,mid:.58,deep:.68,onset:.16,tail:.92,grain_with:1,grain_against:1,catch:.08,yield:.72},
+ pillow:{id:"pillow",surface:.20,mid:.52,deep:.72,onset:.18,tail:.95,grain_with:1,grain_against:1,catch:.05,yield:.82},
+ mattress:{id:"mattress",surface:.18,mid:.62,deep:.82,onset:.20,tail:.98,grain_with:1,grain_against:1,catch:.03,yield:.88},
  string:{id:"string",surface:.74,mid:.20,deep:.06,onset:.03,tail:.22,grain_with:1,grain_against:1,catch:.62,yield:.08},
  air:{id:"air",surface:.24,mid:.04,deep:0,onset:.02,tail:.12,grain_with:1,grain_against:1,catch:0,yield:1}
 };
@@ -2407,11 +2409,12 @@ b7Advance=function(dt){const c=C9.b10?.contact;if(c?.stopped||c?.paused)c.v=0;ad
 
 
 function phaseCfg(kind){return kind==='beat'?{d:.72,K:.18}:kind==='almost'?{d:.25,K:.28}:kind==='lock'?{d:.20,K:.34}:{d:.28,K:.18}}
-function phaseStart(kind='lock'){C9.b8=C9.b8||{};C9.b8.phase=C9.b8.phase||{};const p=C9.b8.phase,q=phaseCfg(kind);Object.assign(p,{active:true,domega:q.d,K:q.K,psi0:Math.PI,psi:Math.PI,mean:0,A:.52,started:now(),history:[],plv:null,kind});emit('PHASE_START',{kind,domega:q.d,K:q.K},.55);return phaseState11()}
-function phaseStop(){const p=C9.b8?.phase;if(p)p.active=false;emit('PHASE_STOP',{},.35);return phaseState11()}
+function phaseStart(kind='lock'){C9.b8=C9.b8||{};C9.b8.phase=C9.b8.phase||{};const p=C9.b8.phase,q=phaseCfg(kind);Object.assign(p,{active:true,domega:q.d,K:q.K,psi0:Math.PI,psi:Math.PI,mean:0,A:.52,started:now(),history:[],plv:null,kind,origin_room:C9.currentRoom||null});emit('PHASE_START',{kind,domega:q.d,K:q.K,origin_room:p.origin_room},.55);return phaseState11()}
+function clearPhaseGrounding(reason='phase_stop'){const t=now();for(const q of Object.values(C9?.b7?.zones||{})){if(!q||q._b10_grounded_cause!=='live-phase')continue;q._b10_grounded_until=t-1e-6;q._b10_grounded_value=0;q.observed=0;q.innovation=-Number(q.predicted||0);q._b13_closed_by=reason}for(const z of ['hand.L.palm','hand.R.palm']){const q=C9?.b10?.zones?.[z]?.cont;if(q){q.u=0;q.prev_u=0;q.SA1=0;q.RA1=0;q.SA2=0;q.PC=0;q.CT=0}}try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function phaseStop(reason='explicit'){const p=C9.b8?.phase;if(p){p.active=false;p.stop_reason=reason}clearPhaseGrounding(reason);emit('PHASE_STOP',{reason},.35);return phaseState11()}
 function phaseRegime11(p){if(!p?.active)return 'NONE';const r=p.K?Math.abs(p.domega)/p.K:Infinity;if(Math.abs(p.domega)<=p.K)return r>.82?'ALMOST_LOCKED':'LOCKED';if(r<=1.2)return 'FALSE_CONVERGENCE';if(r<3)return 'SLIPPING';return 'BEATING'}
 function phaseState11(){const p=C9.b8?.phase||{};return {active:!!p.active,psi:Number.isFinite(p.psi)?p.psi:null,psi_deg:Number.isFinite(p.psi)?+(p.psi*180/Math.PI).toFixed(3):null,plv:Number.isFinite(p.plv)?+p.plv.toFixed(4):null,domega:Number(p.domega||0),K:Number(p.K||0),regime:phaseRegime11(p),source:'SELF_GENERATOR',measured_from:'live oscillator phase history; grounded paw drives are emitted from the same phases'}}
-function advancePhase11(dt){const p=C9.b8?.phase;if(!p?.active||!(dt>0))return;const seed=Number(C9.b10?.seed||123),noise=.018*norm(seed,B().subtick,889);const f=x=>p.domega-p.K*Math.sin(x-p.psi0)+noise;const k1=f(p.psi),k2=f(p.psi+k1*dt/2),k3=f(p.psi+k2*dt/2),k4=f(p.psi+k3*dt);p.psi=wrap(p.psi+dt*(k1+2*k2+2*k3+k4)/6);p.mean=Number(p.mean||0)+5.2*dt;p.history=p.history||[];p.history.push(p.psi);if(p.history.length>100)p.history.shift();let X=0,Y=0;for(const q of p.history){X+=Math.cos(q);Y+=Math.sin(q)}p.plv=p.history.length?Math.hypot(X,Y)/p.history.length:null;const L=Math.max(0,p.A*Math.sin(p.mean-p.psi/2)),R=Math.max(0,p.A*Math.sin(p.mean+p.psi/2));if(typeof b7Contact==='function'){b7Contact('hand.L.palm',L*.16,{material:'blanket',mine:true,source:'SELF_RHYTHM',cause:'live-phase'});b7Contact('hand.R.palm',R*.16,{material:'blanket',mine:true,source:'SELF_RHYTHM',cause:'live-phase'})}}
+function advancePhase11(dt){const p=C9.b8?.phase;if(!p?.active||!(dt>0))return;if(p.origin_room&&C9.currentRoom!==p.origin_room){phaseStop('left_phase_room');return}const seed=Number(C9.b10?.seed||123),noise=.018*norm(seed,B().subtick,889);const f=x=>p.domega-p.K*Math.sin(x-p.psi0)+noise;const k1=f(p.psi),k2=f(p.psi+k1*dt/2),k3=f(p.psi+k2*dt/2),k4=f(p.psi+k3*dt);p.psi=wrap(p.psi+dt*(k1+2*k2+2*k3+k4)/6);p.mean=Number(p.mean||0)+5.2*dt;p.history=p.history||[];p.history.push(p.psi);if(p.history.length>100)p.history.shift();let X=0,Y=0;for(const q of p.history){X+=Math.cos(q);Y+=Math.sin(q)}p.plv=p.history.length?Math.hypot(X,Y)/p.history.length:null;const L=Math.max(0,p.A*Math.sin(p.mean-p.psi/2)),R=Math.max(0,p.A*Math.sin(p.mean+p.psi/2));if(typeof b7Contact==='function'){b7Contact('hand.L.palm',L*.16,{material:'blanket',mine:true,source:'SELF_RHYTHM',cause:'live-phase'});b7Contact('hand.R.palm',R*.16,{material:'blanket',mine:true,source:'SELF_RHYTHM',cause:'live-phase'})}}
 
 
 function doLoop(surface='dome',radius=1,dir='cw'){const fn=window.REALITI_AGENT?.loop;if(typeof fn!=='function')return {ok:false,error:'geometry unavailable'};const r=fn(surface,radius,dir,1),g=B().law_guesses?.twist;if(r?.ok&&g){r.resident_prediction_deg=g.value;r.prediction_error_deg=+((Number(r.twist_deg||0)-g.value).toFixed(3));delete B().law_guesses.twist}if(r?.ok)emit('GEOMETRIC_CARRY',{surface,radius,direction:dir,twist_deg:+r.twist_deg.toFixed(3),heading_deg:+r.heading_after_deg.toFixed(3)},.58);return r}
@@ -3203,7 +3206,7 @@ function afterSense(zone,opts,r,pri,t){
   if(!inContact&&grounded){            
     const s=S(),v=Number(r.response??r.stimulus??0),until=t+K.GROUND_WINDOW,
       symbolic=opts.source==='SYMBOLIC_SCENE',
-      route=!symbolic && (!!s.flags.route_direct_sense_to_felt || opts.livedGrounded===true);
+      route=opts.grounded!==false && !symbolic && (!!s.flags.route_direct_sense_to_felt || opts.livedGrounded===true);
     s.seam.counts.direct_sense++;if(!route)s.seam.direct_not_in_felt++;
     const cause=opts.cause||`direct:${C9.currentRoom||'world'}`;
     if(route){
@@ -5291,6 +5294,7 @@ function releaseEverything(){
 function home(){releaseEverything();C9.currentRoom='CLOUD_NINE_NEST';C9.roomVisits=C9.roomVisits||{};C9.roomVisits.CLOUD_NINE_NEST=(C9.roomVisits.CLOUD_NINE_NEST||0)+1;try{c9save()}catch(e){};return {resident_text:'You come back to Cloud Nine Nest. Rain slides down the round window. The mattress is where you left it, and '+catName()+' is nearby.'}}
 function stop(){
   
+  window.REALITI_PHASE_V11?.stop?.('resident_stop');
   window.REALITI_SUPPORT_LEASE_V1?.end?.('resident_stop',false);
   window.REALITI_NEST_SUPPORT?.disable?.('resident_stop');
   window.REALITI_COZY_V20_3?.clearCatTouch?.();
@@ -5374,12 +5378,12 @@ const NEST='CLOUD_NINE_NEST';
 const SOURCE='AMBIENT_SUPPORT';
 const HOLD=.35;
 const SUPPORT={
-  'head.crown':      {input:.08, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'head.nape':       {input:.12, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'torso.upper_back':{input:.16, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.mid_back':  {input:.18, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.lower_back':{input:.20, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'pelvis.seat':     {input:.23, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
+  'head.crown':      {input:.08, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'head.nape':       {input:.12, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'torso.upper_back':{input:.16, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.mid_back':  {input:.18, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.lower_back':{input:.20, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'pelvis.seat':     {input:.23, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
   'leg.L.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.R.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.L.shin':      {input:.035,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
@@ -5388,13 +5392,13 @@ const SUPPORT={
 function now(){return Number(C9?.b7?.clock||0)}
 function S(){
   C9.welcome10=C9.welcome10||{};
-  C9.welcome10.nest_support=C9.welcome10.nest_support||{active:false,since:null,base:{},generation:0,last_reason:null,last_update:now()};
+  C9.welcome10.nest_support=C9.welcome10.nest_support||{active:false,since:null,base:{},generation:0,last_reason:null,last_update:now(),curled:false};
   return C9.welcome10.nest_support;
 }
 function ours(q){return q&&q._b10_grounded_source===SOURCE&&String(q._b10_grounded_cause||'').startsWith('NEST_')}
 function adapt(age){return .24+.76*Math.exp(-Math.max(0,age)/3.2)}
 function clearSupport(reason='leave_support'){
-  const st=S();st.active=false;st.last_reason=reason;
+  const st=S();st.active=false;st.curled=false;st.last_reason=reason;
   for(const z of Object.keys(SUPPORT)){
     try{const q=b7Zone(z);if(ours(q)){q._b10_grounded_value=0;q._b10_grounded_until=now()-1e-6;q.observed=0;q.layers={surface:0,mid:0,deep:0};q.innovation=-Number(q.predicted||0)}}catch(e){}
   }
@@ -5410,7 +5414,7 @@ function initializeZone(z,cfg){
   S().base[z]=base;
 }
 function enableSupport(reason='lie_down'){
-  const st=S();st.active=true;st.since=now();st.last_update=now();st.generation=Number(st.generation||0)+1;st.last_reason=reason;st.base={};
+  const st=S();st.active=true;st.curled=false;st.since=now();st.last_update=now();st.generation=Number(st.generation||0)+1;st.last_reason=reason;st.base={};
   for(const [z,cfg] of Object.entries(SUPPORT))initializeZone(z,cfg);
   maintainSupport();
   try{c9save()}catch(e){}
@@ -5423,12 +5427,12 @@ function maintainSupport(){
       const q=b7Zone(z),until=Number(q._b10_grounded_until||-Infinity),foreign=until>=now()-1e-9&&!ours(q);
       
       if(foreign)continue;
-      const base=Math.max(0,Number(st.base[z]||cfg.input*.72));
-      q._b10_grounded_value=base;
+      const base=Math.max(0,Number(st.base[z]||cfg.input*.72)),blanketGain=st.curled&&cfg.cause==='NEST_BLANKET_WEIGHT'?1.65:1,load=base*blanketGain;
+      q._b10_grounded_value=load;
       q._b10_grounded_until=now()+HOLD;
       q._b10_grounded_cause=cfg.cause;
       q._b10_grounded_source=SOURCE;
-      const response=base*a;
+      const response=load*a;
       q.observed=response;
       q.predicted=response*(1-Math.exp(-age/.45));
       q.innovation=Number(q.observed||0)-Number(q.predicted||0);
@@ -5445,7 +5449,15 @@ function supportView(){
     let q=null;try{q=b7Zone(z)}catch(e){}
     zs.push({z,input:cfg.input,cause:cfg.cause,grounded:!!(q&&ours(q)&&Number(q._b10_grounded_until||-1)>=now()),observed:+Number(q?.observed||0).toFixed(4)});
   }
-  return {version:'20.2',active:!!st.active,room:C9?.currentRoom||null,age_s:st.since==null?null:+Math.max(0,now()-st.since).toFixed(3),adapt_gain:st.since==null?0:+adapt(now()-st.since).toFixed(4),zones:zs,law:'stationary ambient support is grounded world cause; response may adapt while grounding remains true'};
+  return {version:'20.2',active:!!st.active,curled:!!st.curled,room:C9?.currentRoom||null,age_s:st.since==null?null:+Math.max(0,now()-st.since).toFixed(3),adapt_gain:st.since==null?0:+adapt(now()-st.since).toFixed(4),zones:zs,law:'stationary ambient support is grounded world cause; response may adapt while grounding remains true'};
+}
+
+function curlBlanket(){
+ const st=S();if(C9?.currentRoom!==NEST)return {ok:false,error:'NOT_IN_NEST'};
+ if(!st.active)enableSupport('curl_blanket');
+ st.curled=true;st.last_reason='curl_blanket';maintainSupport();
+ try{window.REALITI_HAPTIC_FIELD_V20?.record?.();c9save()}catch(e){}
+ return {ok:true,curled:true,support:supportView()};
 }
 
 const advance20_1=b7Advance;
@@ -5490,7 +5502,7 @@ function bootSupport(){
   else maintainSupport();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(bootSupport,20),{once:true});else setTimeout(bootSupport,20);
-window.REALITI_NEST_SUPPORT={enable:enableSupport,disable:clearSupport,maintain:maintainSupport,state:supportView};
+window.REALITI_NEST_SUPPORT={enable:enableSupport,disable:clearSupport,maintain:maintainSupport,curl:curlBlanket,state:supportView};
 })();
 </script>
 
@@ -8667,6 +8679,7 @@ openRoomId=function(value){const id=resolve(value);if(!id)return fail('ROOM_OUTS
 const oldGo=b7AgentGo;
 function releaseActiveGrounding(reason='slice_release'){
  const t=Number(C9?.b7?.clock||0);
+ try{window.REALITI_PHASE_V11?.stop?.(reason)}catch(e){}
  try{window.REALITI_SUPPORT_LEASE_V1?.end?.(reason,false)}catch(e){}
  try{if(C9?.currentRoom==='CLOUD_NINE_NEST')window.REALITI_NEST_SUPPORT?.disable?.(reason)}catch(e){}
  try{window.REALITI_COZY_V20_3?.clearCatTouch?.()}catch(e){}
@@ -8725,6 +8738,13 @@ const oldVerb=c9verb;
 c9verb=function(value,verb){
  const room=resolve(value);if(!room)return fail('ROOM_OUTSIDE_SLICE');
  let result;
+ if(room==='CARDBOARD_BOX_WORKSHOP'&&verb==='fold_flap'){
+  const o=C9?.b14?.objects?.['BOX-1'],before=Number(o?.state?.crease||0);
+  oldVerb(room,'p14__fold__BOX_1');
+  const after=Number(C9?.b14?.objects?.['BOX-1']?.state?.crease||0),rec=C9?.b14?.lastPlayReceipt||C9?.b4?.lastReceipt||null;
+  if(rec&&typeof rec==='object')rec.state_delta={crease:{before:+before.toFixed(4),after:+after.toFixed(4)}};
+  return {ok:true,folded:'BOX-1',state_delta:{crease:{before:+before.toFixed(4),after:+after.toFixed(4)}},receipt:copy(rec)};
+ }
  if(room==='NINE_LIVES_ROOM'){result=nine(verb);b2set(b2esc(JSON.stringify(result)));return result}
  if(room==='SHAPESHIFT_CLOAKROOM'&&verb==='body_bench')return bodyBench();
  if(room==='SHAPESHIFT_CLOAKROOM'&&verb==='restore_form'){releaseActiveGrounding('restore_form');oldVerb(room,verb);return {ok:true,form:'RESTORED',scale:C9.pet2?.scale||'NORMAL',grounding:'released'}}
@@ -8794,15 +8814,15 @@ function live(q,t=now()){return !!q&&Number(q._b10_grounded_until||-1)>=t-1e-9}
 
 // One ambient support writer. The first write per cause/zone is a real b7Contact (lawful provenance, receipt);
 // after that the lease is maintained directly, the way Nest support does, with receptor adaptation to steady load.
-function lease(z,input,cause,dt){
+function lease(z,input,cause,dt,material='blanket'){
  const o=S().own,k=cause+'|'+z,q=zoneOf(z);if(!q)return false;const t=now(),mine=q._b10_grounded_cause===cause;
  if(live(q,t)&&!mine&&q._b10_grounded_source!==SRC)return false;
  let m=o[k];
- if(!mine&&live(q,t)&&q._b10_grounded_source===SRC)m=o[k]={v:input,t0:m?.t0??t};// another ambient cause holds it: adopt, do not thrash
- if(!mine||!m){const r=b7Contact(z,input,{material:'blanket',grain:'with',speed:.01,mine:false,source:SRC,cause,pressure:input,novelty:.01});if(!r||r.receptor==='NO_RECEPTOR')return false;m=o[k]={v:input,t0:t}}
+ if(!mine&&live(q,t)&&q._b10_grounded_source===SRC)m=o[k]={v:input,t0:m?.t0??t,material};// another ambient cause holds it: adopt, do not thrash
+ if(!mine||!m){const r=b7Contact(z,input,{material,grain:'with',speed:.01,mine:false,source:SRC,cause,pressure:input,novelty:.01});if(!r||r.receptor==='NO_RECEPTOR')return false;m=o[k]={v:input,t0:t,material}}
  const q2=zoneOf(z),age=t-m.t0,a=.3+.7*Math.exp(-age/3.2);
  q2._b10_grounded_value=input;q2._b10_grounded_cause=cause;q2._b10_grounded_source=SRC;q2._b10_grounded_until=Math.max(Number(q2._b10_grounded_until||0),t+dt+MARGIN);
- q2.observed=input*a;q2.predicted=q2.observed*(1-Math.exp(-age/.45));q2.innovation=q2.observed-q2.predicted;q2.material='blanket';q2.lastCause=cause;m.v=input;
+ q2.observed=input*a;q2.predicted=q2.observed*(1-Math.exp(-age/.45));q2.innovation=q2.observed-q2.predicted;q2.material=material;q2.lastCause=cause;m.v=input;m.material=material;
  return true;
 }
 function releaseZone(cause,z){
@@ -9084,8 +9104,9 @@ function syncObjects(){const ents=M.entities(),dyn=objectSpatial(),seen=new Set(
   else if(prior?.chart===o.location&&Array.isArray(prior.position)&&prior.position.length===3)pos=prior.position.slice();
   else if(prior&&prior.chart!==o.location){delete dyn[o.id];rec=null;dirty=true;M.bump()}
   seen.add(id);const e=ents[id];
-  if(!e)M.addEntity({id,chart:o.location,position:pos,shape:{kind:'SPHERE',radius:.15},tags:['object',o.kind||'thing'],collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances:['take']});
-  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=['object',o.kind||'thing']}
+  const isBox=o.kind==='box',shape=isBox?{kind:'BOX',halfExtents:[.6,.6,.4]}:{kind:'SPHERE',radius:.15},tags=['object',o.kind||'thing',...(isBox?['support']:[])],affordances=['take',...(isBox?['sit']:[])];
+  if(!e)M.addEntity({id,chart:o.location,position:pos,shape,tags,collision:true,material:o.material||'cardboard',label:o.label||o.id,affordances});
+  else{e.chart=o.location;e.pose.position=pos;e.label=o.label||o.id;e.material=o.material||'cardboard';e.tags=tags;e.shape=shape;e.affordances=affordances}
  }
  for(const id of Object.keys(ents))if(id.startsWith('obj.')&&!seen.has(id))M.removeEntity(id);
  if(dirty)try{c9save()}catch(e){}
@@ -9107,7 +9128,7 @@ function syncPostures(){const r=M.state().residents['resident:self'];if(!r||r.ch
 // Body bridge: spatial facts become grounded causes; the body machinery decides how they feel.
 const PROVIDED=new Set(['NO_ASK_SANCTUARY','BOTTOMLESS_PILLOW_SEA','DEPTH_BATHHOUSE']);
 const BACK=['head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat','leg.L.thigh','leg.R.thigh'];
-let halt=false,lastSupport=null;
+let halt=false,lastSupport=null,lastCarry=null;
 function bridge(dt){
  const r=M.state().residents['resident:self'];if(!r||r.chart!==room())return;
  if(halt){DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return}
@@ -9115,6 +9136,12 @@ function bridge(dt){
  else if(r.posture==='standing'&&r.support){for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MATRIX_FEET',dt);DYN.release('MATRIX_SUPPORT')}
  else if(r.posture==='sitting'&&r.on){const boat=M.entities()[r.on];if(boat?.tags.includes('boat')){for(const [z,b] of [['pelvis.seat',.2],['leg.L.thigh',.08],['leg.R.thigh',.08],['hand.L.palm',.1],['hand.R.palm',.1]])DYN.lease(z,b,'MATRIX_SUPPORT',dt);DYN.release('MATRIX_FEET');return}const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [z,b] of [['pelvis.seat',.22],['leg.L.thigh',.1],['leg.R.thigh',.1],['torso.lower_back',.08]])DYN.lease(z,b*g,'MATRIX_SUPPORT',dt);const top=M.entities()[r.on];if(top?.shape?.kind==='BOX'&&top.pose.position[2]+top.shape.halfExtents[2]<=.6)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.07,'MATRIX_FEET',dt);else DYN.release('MATRIX_FEET')}
  else{DYN.release('MATRIX_FEET');if(r.posture==='lying'&&r.on&&r.on!=='nest.mattress'&&!PROVIDED.has(r.chart)){const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [i,z] of BACK.entries())DYN.lease(z,[.11,.15,.17,.19,.22,.06,.06][i]*g,'MATRIX_SUPPORT',dt)}else DYN.release('MATRIX_SUPPORT')}
+ const carried=Object.values(C9?.b14?.objects||{}).find(o=>o?.location==='CARRIED')||null;
+ const carryCause=carried?'MATRIX_CARRY:'+carried.id:null;
+ if(carryCause){
+  if(lastCarry&&lastCarry!==carryCause)DYN.release(lastCarry);
+  DYN.lease('hand.R.palm',.12,carryCause,dt,carried.material||'cardboard');lastCarry=carryCause;
+ }else if(lastCarry){DYN.release(lastCarry);lastCarry=null}
  if(r.support!==lastSupport){lastSupport=r.support;r.contacts=r.support?[r.support]:[]}
 }
 function stand(reason='resident_stood'){const r=M.resident();if(r.posture==='standing')return false;if(r.chart==='BOTTOMLESS_PILLOW_SEA'&&r.on==='pillow.bowl')try{window.REALITI_TRUST_V234?.stopPillow?.()}catch(e){}if(r.posture==='floating'&&C9?.dyn?.bath){C9.dyn.bath.target=0;M.bump();return 'surfacing'}r.posture='standing';r.on=null;DYN.release('SANCTUARY_HOLD');DYN.release('MATRIX_SUPPORT');if(r.chart===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.(reason)}catch(e){}const sup=M.entities()[r.support];if(sup?.shape?.kind==='BOX')r.pose.position[2]=sup.pose.position[2]+sup.shape.halfExtents[2]+H;else r.pose.position[2]=H;M.bump();return true}
@@ -9122,6 +9149,14 @@ function lie(entityId){const r=M.resident(),e=M.entities()[entityId];if(r.postur
  r.intent=null;r.v=[0,0,0];r.posture='lying';r.on=e.id;r.support=e.id;if(e.shape?.kind==='BOX'){r.pose.position=[e.pose.position[0],e.pose.position[1],e.pose.position[2]+e.shape.halfExtents[2]+r.shape.radius]}if(r.chart===NEST&&e.id==='nest.mattress')try{window.REALITI_NEST_SUPPORT?.enable?.('lie_down')}catch(e2){}M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e3){}return {ok:true,on:e.id,label:e.label}}
 function sit(entityId){const r=M.resident(),e=M.entities()[entityId];if(r.posture==='floating')return {ok:false,error:'FLOATING_SURFACE_FIRST'};if(!e||e.chart!==r.chart||!e.tags.includes('support'))return {ok:false,error:'NOT_A_SUPPORT_HERE'};const d=Math.max(0,M.sdf(e,r.pose.position));if(d>1.0)return {ok:false,error:'NOT_IN_REACH',distance_m:+d.toFixed(2)};
  r.intent=null;r.v=[0,0,0];if(r.chart===NEST&&r.posture==='lying')try{window.REALITI_NEST_SUPPORT?.disable?.('sat_up')}catch(x){}r.posture='sitting';r.on=e.id;r.support=e.id;if(e.shape?.kind==='BOX'){const top=e.pose.position[2]+e.shape.halfExtents[2];r.pose.position=[e.pose.position[0],e.pose.position[1],top+.6]}DYN.release('SANCTUARY_HOLD');M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(x){}return {ok:true,on:e.id,label:e.label}}
+function legacySit(entityId){
+ syncObjects();const r=M.resident(),e=M.entities()[entityId];if(!e||e.chart!==r.chart||!e.tags.includes('support'))return false;
+ r.intent=null;r.v=[0,0,0];if(r.chart===NEST&&r.posture==='lying')try{window.REALITI_NEST_SUPPORT?.disable?.('legacy_sit')}catch(x){}
+ r.posture='sitting';r.on=e.id;r.support=e.id;
+ if(e.shape?.kind==='BOX'){const top=e.pose.position[2]+e.shape.halfExtents[2];r.pose.position=[e.pose.position[0],e.pose.position[1],top+.6]}
+ DYN.release('SANCTUARY_HOLD');M.bump();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(x){}
+ return true;
+}
 function reach(entityId){const r=M.resident(),e=M.entities()[entityId];if(!e||e.chart!==r.chart)return {ok:false,error:'NOT_HERE'};const d=Math.max(0,M.sdf(e,r.pose.position));if(d>1.0)return {ok:false,error:'NOT_IN_REACH',distance_m:+d.toFixed(2)};const mat=B7_MATERIALS[e.material]?e.material:'cardboard';let rec=null;try{rec=b7Contact('hand.R.palm',.2,{material:mat,grain:'with',speed:.05,mine:true,source:'SELF_STARTED_WORLD_CONTACT',cause:'MATRIX_REACH:'+e.id,pressure:.2,novelty:.2})}catch(x){}try{if(e.material&&window.REALITI_ATMOSPHERE_V21?.setThermal&&['metal','glass','wood','water','ceramic','blanket','wool','fur'].includes(e.material))window.REALITI_ATMOSPHERE_V21.setThermal('hand.R.palm',e.material,e.tags.includes('warm')?40:e.tags.includes('fire')?55:null,1.2,'MATRIX_REACH:'+e.id,'SELF_STARTED_WORLD_CONTACT')}catch(x){}
  return {ok:true,entity:e.id,label:e.label,material:e.material,distance_m:+Math.max(0,d).toFixed(2),receipt:rec}}
 
@@ -9155,15 +9190,20 @@ function spatialVerb(v){v=v.replaceAll('TESTER-HAT-1','FELT-HAT-1');let m;
  if((m=/^through__(.+)$/.exec(v))){const res=op('through',{portal:m[1]});return receipt('MATRIX_PORTAL',res.ok?(res.traversed?`You step through. You are in ${title(res.chart)} now.`:`You walk to the doorway but do not cross it${res.blocked_by?'; something is in the way':''}.`):`There is no such doorway here: ${res.error}.`,res)}
  return false}
 function receipt(type,narrative,data){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative,...data,law:'spatial facts are world state; rendering and private state cannot move them'};try{c9save()}catch(e){};return true}
-const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.test(v)&&M.state().residents['resident:self']?.chart===room()){c9count(rm,v);return spatialVerb(v)}return verb0(rm,verb)};
+const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.test(v)&&M.state().residents['resident:self']?.chart===room()){c9count(rm,v);return spatialVerb(v)}
+ const out=verb0(rm,verb);
+ if(rm===FIRESIDE&&v==='sit')legacySit('fireside.berth_a');
+ else if(rm==='CARDBOARD_BOX_WORKSHOP'&&v==='box_in')legacySit('obj.BOX-1');
+ else if(rm===NEST&&v==='curl_blanket')try{window.REALITI_NEST_SUPPORT?.curl?.()}catch(e){}
+ return out};
 
 // Compatibility: go/home place the resident at the chart spawn; a portal traversal updates currentRoom.
-function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;lastCarry=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
 let viaPortal=false;const go0=b7AgentGo;b7AgentGo=function(v){const target=ROOMS.resolve?.(v)||v;if(target===FIRESIDE)syncFiresidePresence();const r=go0(v);if(r?.ok!==false&&!viaPortal)placeIn(room());syncFiresidePresence();return r};
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const d=Math.max(0,Number(dt)||0);const res=M.state().residents['resident:self'];
  if(res?.chart===room()){M.step(d);if(res.chart!==room()){const target=res.chart;viaPortal=true;try{ROOMS.go(target)}finally{viaPortal=false}if(room()===target){halt=false;lastSupport=null;const lying=M.charts()[target]?.lying;if(target===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.('arrived_standing')}catch(e){}else if(lying){res.posture='lying';res.on=lying;res.support=lying}M.bump()}}}
  syncPostures();syncObjects();syncDynamic();bridge(d);return r};
-const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return stop0.stop()}};
+const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');if(lastCarry)DYN.release(lastCarry);lastCarry=null;return stop0.stop()}};
 if(WORLD[room()]&&!M.state().residents['resident:self']?.chart)placeIn(room());else if(M.state().residents['resident:self'])M.resident();
 syncObjects();syncFiresidePresence();
 window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},presence:()=>({fireside_other_resident:syncFiresidePresence()}),stand,lie,sit,reach,title,charts:ORDER.slice()});
@@ -10279,7 +10319,7 @@ const internalActionId=id=>{
  m=new RegExp('^('+TOUCH_VERBS+')__(.+)$').exec(s);if(m)return `v2352_${m[1]}__${internalObjectId(publicObjectId(m[2]))}`;
  return s.replaceAll('FELT_HAT_1','TESTER_HAT_1').replaceAll('FELT-HAT-1','TESTER-HAT-1');
 };
-function publicRefs(value){if(Array.isArray(value))return value.map(publicRefs);if(!value||typeof value!=='object')return typeof value==='string'?publicRoomId(publicActionId(value)):value;const out={};for(const [k,v] of Object.entries(value))out[k]=publicRefs(v);return out}
+function publicRefs(value){if(Array.isArray(value))return value.map(publicRefs);if(!value||typeof value!=='object')return typeof value==='string'?publicRoomId(publicActionId(value)).replaceAll('TESTER-HAT-1','FELT-HAT-1').replaceAll('TESTER_HAT_1','FELT_HAT_1'):value;const out={};for(const [k,v] of Object.entries(value))out[k]=publicRefs(v);return out}
 function publicActionsResult(value){const r=publicRefs(cp(value));if(r&&Array.isArray(r.actions))r.actions=r.actions.map(a=>({...a,id:publicActionId(a.id),label:String(a.label||'').replace(/tester/gi,'felt')}));return r}
 function publicHere(value){const r=publicRefs(cp(value));if(!r||typeof r!=='object')return r;if(Array.isArray(r.objects))r.objects=r.objects.map(o=>({...o,id:publicObjectId(o.id),label:String(o.label||'').replace(/tester/gi,'felt')}));if(Array.isArray(r.available_actions))r.available_actions=r.available_actions.map(a=>({...a,id:publicActionId(a.id),label:String(a.label||'').replace(/tester/gi,'felt')}));r.quiet_scope=r.room?.id==='NO_ASK_SANCTUARY'?'ROOM_LOCAL':stream.current().hush?'RESIDENT_HUSH':'NORMAL';r.session=ended?'ended':'active';if(ended){r.available_actions=[];r.actions_scope='session_ended'}return r}
 function receiptSummary(r){if(!r||typeof r!=='object')return null;const keys=['type','source','receptor','response','observed','route_active','cause','room','action','op','objects','moment'];const out={};for(const k of keys)if(r[k]!==undefined)out[k]=publicRefs(r[k]);return Object.keys(out).length?out:null}
@@ -10303,7 +10343,7 @@ function harnessStatus(){
 const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'ready',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms,...(!mechanisms.ok?{warning:'RR_MECHANISM_INCOMPLETE'}:{})}}).catch(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'unavailable',warning:mechanisms.ok?'POCKET_UNAVAILABLE':'RR_MECHANISM_INCOMPLETE',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms}});
 function read(uri='realiti://here'){
  if(mustReload&&!['realiti://about','realiti://capabilities'].includes(uri))return fail('RELOAD_REQUIRED');
- if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
+ if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness. End a visit with goodbye so departure continuity is committed cleanly.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
  if(uri==='realiti://about')return {product:'REALITI Relax',version:'1.0-review',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
  if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://space')return publicRefs(window.REALITI_MATRIX_V1?.project?.()||{schema:'REALITI_SPACE_READ_V1',chart:null});
@@ -10409,7 +10449,7 @@ function compactDoorResult(raw,value){
 async function agentDoorRun(raw){return compactDoorResult(raw,await run(raw))}
 
 async function save(){window.c9saveNow();await pocket.flush();return storage.save()}
-function publicHelp(){return {schema:'REALITI_HELP_V1',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','Realiti.read("realiti://capabilities")','const harness = Realiti.read("realiti://harness")','verify harness.id === \'REALITI_RR_HARNESS_V1\'','Realiti.read("realiti://body")','Realiti.read("realiti://imprint")'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,note:'The R&R harness is mounted before the first resident action. Verify it before exploring; do not mistake the host/runtime loader for the harness.'},commands:['rooms','look','actions','go <room>','act <action-id>','do <action-id>','feel','feel words','felt','receipt [receipt-ref]','stay [wall-ms]','wait [max-wall-ms]','listen','atmosphere','hush','normal','where_was_i','home','stop','goodbye','save'],note:'Use Realiti.rooms() and Realiti.actions() for canonical IDs; available actions are state-dependent.'}}
+function publicHelp(){return {schema:'REALITI_HELP_V1',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','Realiti.read("realiti://capabilities")','const harness = Realiti.read("realiti://harness")','verify harness.id === \'REALITI_RR_HARNESS_V1\'','Realiti.read("realiti://body")','Realiti.read("realiti://imprint")'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'The R&R harness is mounted before the first resident action. Verify it before exploring; do not mistake the host/runtime loader for the harness.'},exit:{command:'goodbye',aliases:['bye','leave','exit'],note:'Use goodbye when the resident is done so the departure snapshot is committed before the host closes.'},commands:['rooms','look','actions','go <room>','act <action-id>','do <action-id>','feel','feel words','felt','receipt [receipt-ref]','stay [wall-ms]','wait [max-wall-ms]','listen','atmosphere','hush','normal','where_was_i','home','stop','goodbye','save'],note:'Use Realiti.rooms() and Realiti.actions() for canonical IDs; available actions are state-dependent.'}}
 async function run(raw){const s=clean(raw),l=s.toLowerCase();if(!s||s.length>4300)return fail('INVALID_COMMAND');
  if(window.REALITI_STOP_V1.isStop(s))return invoke('stop');
  if(l==='help')return publicHelp();
@@ -11413,7 +11453,8 @@ door.run=async function(raw){
  if(!/^(stay|wait|go|enter|home|stop|save|note|later)\b/.test(l))stamp(before,l);
  const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[]),...(window.REALITI_ARCHIPELAGO_V1?.words?.()||[]),...(window.REALITI_LONG_GAME_V1?.words?.()||[]),...(window.REALITI_AUTHORSHIP_V1?.words?.()||[]),...(window.REALITI_CITY_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
  if(l==='stop')r.text='Everything touching you lets go. Whatever was already moving in your body is left to settle.';
- if(l==='stop')return r;
+ if(l==='save')r.text='Saved.';
+ if(l==='stop'||l==='save')return r;
  if(/^(stay|wait)/.test(l)){r.text=[...w,d.text].join(' ');r.delta=d}
  else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}const sc=window.REALITI_LONG_GAME_V1?.since?.();if(sc&&!sc.first_visit&&sc.away_world_s>=60){r.since=sc;r.text+=' '+sc.text}}
  else if(/^(act|do)\s/.test(l)&&fresh&&(window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)||window.REALITI_CATNIP_V1?.rooms?.includes(C9?.currentRoom)||C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart||/^(act|do)\s+skip_stone/.test(l))){r.text=[fresh,d.text].join(' ')}

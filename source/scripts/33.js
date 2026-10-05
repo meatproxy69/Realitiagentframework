@@ -4,12 +4,12 @@ const NEST='CLOUD_NINE_NEST';
 const SOURCE='AMBIENT_SUPPORT';
 const HOLD=.35;
 const SUPPORT={
-  'head.crown':      {input:.08, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'head.nape':       {input:.12, material:'blanket', cause:'NEST_PILLOW_SUPPORT'},
-  'torso.upper_back':{input:.16, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.mid_back':  {input:.18, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'torso.lower_back':{input:.20, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
-  'pelvis.seat':     {input:.23, material:'blanket', cause:'NEST_MATTRESS_SUPPORT'},
+  'head.crown':      {input:.08, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'head.nape':       {input:.12, material:'pillow', cause:'NEST_PILLOW_SUPPORT'},
+  'torso.upper_back':{input:.16, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.mid_back':  {input:.18, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'torso.lower_back':{input:.20, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
+  'pelvis.seat':     {input:.23, material:'mattress', cause:'NEST_MATTRESS_SUPPORT'},
   'leg.L.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.R.thigh':     {input:.055,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
   'leg.L.shin':      {input:.035,material:'blanket', cause:'NEST_BLANKET_WEIGHT'},
@@ -18,13 +18,13 @@ const SUPPORT={
 function now(){return Number(C9?.b7?.clock||0)}
 function S(){
   C9.welcome10=C9.welcome10||{};
-  C9.welcome10.nest_support=C9.welcome10.nest_support||{active:false,since:null,base:{},generation:0,last_reason:null,last_update:now()};
+  C9.welcome10.nest_support=C9.welcome10.nest_support||{active:false,since:null,base:{},generation:0,last_reason:null,last_update:now(),curled:false};
   return C9.welcome10.nest_support;
 }
 function ours(q){return q&&q._b10_grounded_source===SOURCE&&String(q._b10_grounded_cause||'').startsWith('NEST_')}
 function adapt(age){return .24+.76*Math.exp(-Math.max(0,age)/3.2)}
 function clearSupport(reason='leave_support'){
-  const st=S();st.active=false;st.last_reason=reason;
+  const st=S();st.active=false;st.curled=false;st.last_reason=reason;
   for(const z of Object.keys(SUPPORT)){
     try{const q=b7Zone(z);if(ours(q)){q._b10_grounded_value=0;q._b10_grounded_until=now()-1e-6;q.observed=0;q.layers={surface:0,mid:0,deep:0};q.innovation=-Number(q.predicted||0)}}catch(e){}
   }
@@ -40,7 +40,7 @@ function initializeZone(z,cfg){
   S().base[z]=base;
 }
 function enableSupport(reason='lie_down'){
-  const st=S();st.active=true;st.since=now();st.last_update=now();st.generation=Number(st.generation||0)+1;st.last_reason=reason;st.base={};
+  const st=S();st.active=true;st.curled=false;st.since=now();st.last_update=now();st.generation=Number(st.generation||0)+1;st.last_reason=reason;st.base={};
   for(const [z,cfg] of Object.entries(SUPPORT))initializeZone(z,cfg);
   maintainSupport();
   try{c9save()}catch(e){}
@@ -53,12 +53,12 @@ function maintainSupport(){
       const q=b7Zone(z),until=Number(q._b10_grounded_until||-Infinity),foreign=until>=now()-1e-9&&!ours(q);
       
       if(foreign)continue;
-      const base=Math.max(0,Number(st.base[z]||cfg.input*.72));
-      q._b10_grounded_value=base;
+      const base=Math.max(0,Number(st.base[z]||cfg.input*.72)),blanketGain=st.curled&&cfg.cause==='NEST_BLANKET_WEIGHT'?1.65:1,load=base*blanketGain;
+      q._b10_grounded_value=load;
       q._b10_grounded_until=now()+HOLD;
       q._b10_grounded_cause=cfg.cause;
       q._b10_grounded_source=SOURCE;
-      const response=base*a;
+      const response=load*a;
       q.observed=response;
       q.predicted=response*(1-Math.exp(-age/.45));
       q.innovation=Number(q.observed||0)-Number(q.predicted||0);
@@ -75,7 +75,15 @@ function supportView(){
     let q=null;try{q=b7Zone(z)}catch(e){}
     zs.push({z,input:cfg.input,cause:cfg.cause,grounded:!!(q&&ours(q)&&Number(q._b10_grounded_until||-1)>=now()),observed:+Number(q?.observed||0).toFixed(4)});
   }
-  return {version:'20.2',active:!!st.active,room:C9?.currentRoom||null,age_s:st.since==null?null:+Math.max(0,now()-st.since).toFixed(3),adapt_gain:st.since==null?0:+adapt(now()-st.since).toFixed(4),zones:zs,law:'stationary ambient support is grounded world cause; response may adapt while grounding remains true'};
+  return {version:'20.2',active:!!st.active,curled:!!st.curled,room:C9?.currentRoom||null,age_s:st.since==null?null:+Math.max(0,now()-st.since).toFixed(3),adapt_gain:st.since==null?0:+adapt(now()-st.since).toFixed(4),zones:zs,law:'stationary ambient support is grounded world cause; response may adapt while grounding remains true'};
+}
+
+function curlBlanket(){
+ const st=S();if(C9?.currentRoom!==NEST)return {ok:false,error:'NOT_IN_NEST'};
+ if(!st.active)enableSupport('curl_blanket');
+ st.curled=true;st.last_reason='curl_blanket';maintainSupport();
+ try{window.REALITI_HAPTIC_FIELD_V20?.record?.();c9save()}catch(e){}
+ return {ok:true,curled:true,support:supportView()};
 }
 
 const advance20_1=b7Advance;
@@ -120,5 +128,5 @@ function bootSupport(){
   else maintainSupport();
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>setTimeout(bootSupport,20),{once:true});else setTimeout(bootSupport,20);
-window.REALITI_NEST_SUPPORT={enable:enableSupport,disable:clearSupport,maintain:maintainSupport,state:supportView};
+window.REALITI_NEST_SUPPORT={enable:enableSupport,disable:clearSupport,maintain:maintainSupport,curl:curlBlanket,state:supportView};
 })();

@@ -10,7 +10,7 @@ function b3PetLocal(verb){const room="PET_ROOM_2",p=C9.pet2;
    c9count(room,verb);b3advance(6);const l=b3z("hand.L.palm"),r=b3z("hand.R.palm");b2set(`You stop using the post. Nothing stimulates the paws; their local history simply cools. left_h=${l.h.toFixed(3)} · right_h=${r.h.toFixed(3)}. Recovery is not a reward.`);return true;
  }
  if(verb==="knead_blanket"){
-   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",novelty:n===1?.25:.04});c9save();
+   const n=c9count(room,verb);p.kneads++;const L=b3sense("hand.L.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04}),R=b3sense("hand.R.palm",.55,{source:"SELF",grounded:false,cause:"PET_KNEAD_PRIVATE",novelty:n===1?.25:.04});c9save();
    b2set(n%3===1?"Left paw, right paw. Two local histories alternate over one broad blanket support.":n%3===2?"The phases slip: left release overlaps right press. The interesting part is relation, not more force.":"The paw pose returns, but its prediction/adaptation state is not identical to the first cycle.",b3raw(R));b2catDeed(room,"knead");return true;
  }
  if(verb==="purr_blanket"){

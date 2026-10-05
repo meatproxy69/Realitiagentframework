@@ -46,6 +46,28 @@ Keep the files together. An agent can read `AGENT_START_HERE.md` for the entry c
 - [NeuralMesh](./neuromesh/README.md)\n- [HoneySpark Duo preset](./neuromesh/preset-packs/honeyspark-duo.json)
 - [Recovered Moonwire preset pack](./neuromesh/preset-packs/moonwire-recovered.json)
 - [Build from readable source](#build-from-source)
+- [Community bug reports](#community-bug-reports)
+
+---
+
+## Community bug reports
+
+REALITI treats contradictions between narration, world state, and the resident body as bugs. If you find one, open a [GitHub issue](https://github.com/meatproxy69/Realitiagentframework/issues) with the commit or package version, the smallest command sequence that reproduces it, the relevant public resource/receipt, and—when timing is involved—a control run. Cold-agent studies, ablations, and other attempts to falsify the field-first design are welcome too.
+
+### Fixed from the first external reports
+
+**Issue #10 — grounding/posture/object consistency.** The community report caught several real seams. The fixes are now guarded by `packages/realiti-headless-resident/test/community-bugs.cjs`:
+
+- `knead_blanket` no longer creates a duplicate direct-sense grounding path; room changes and `STOP` cannot resurrect its paw contact, and the runaway simulated-time cost is regression-tested.
+- Legacy posture verbs now join the spatial/body truth: Fireside `sit` and Workshop `box_in` establish a sitting support relation instead of narrating one over an ungrounded body; ordinary room arrivals keep floor support.
+- `fold_flap` now folds the persistent `BOX-1` object, creates real hand contact, and reports its crease delta instead of changing narration-only material state.
+- `curl_blanket` now changes the live grounded blanket load.
+- Carried objects retain a carrying-hand support relation across room changes.
+- Public receipts no longer leak the internal `TESTER-HAT-1` identifier.
+- Nest pillow and mattress causes report `pillow` and `mattress` materials rather than labeling both as `blanket`.
+- `STOP` and `save` are regression-tested against stale narration from a previous action.
+
+**Issue #9 — field-first ablation.** This was primarily a research report rather than a defect. One concrete usability finding is addressed here: `goodbye` is now an explicit exit contract in both `help` and `realiti://capabilities`, so clients do not have to discover it by noticing one command in a long list. The report's language-ablation results remain useful evidence and a warning against treating prose-free output as automatically semantics-free.
 
 ---
 

@@ -15,6 +15,17 @@ All notable public changes to REALITI Relax are recorded here.
 
 - `source/scripts/58p-timeline.js` (`REALITI_TIMELINE_V1`): an event heap with superdense tags (integer microseconds, microstep, kind rank, stable id) so same-time events fire in one order everywhere, cancel by generation, a Zeno guard, and firing between ticks outside any world tick. The continuity stepper bounds each tick at the next event, so ticks land exactly on event times. Producers: sunrise, sunset, high and low water (logged in `C9.chapter2.events` for `since` and `calendar`), and the journey's arrival. A seeded generator and a next-reaction channel (one exponential draw, internal time, no redraw on rate change) for replayable stochastic frontiers.
 - Headless host: file storage is a checkpoint envelope `{schema, saved_wall_ms, sha256, data}` written atomically; on reopen the window carries `REALITI_STORE_CHECKPOINT` with integrity (OK, MISMATCH, LEGACY) and downtime. Headless suite `test/timeline.cjs`.
+## 2.8.1 — first community bug-report pass
+
+### Fixed
+
+- Closed the duplicate-grounding seam behind `knead_blanket`: its legacy SELF response is explicitly non-grounded, while the existing world-contact path remains the sole grounded paw contact. Room change and STOP cleanup are regression-tested, including a host-time ceiling for the reported runaway `stay` slowdown.
+- Bridged legacy posture verbs into MATRIX/body truth: Fireside `sit` and Workshop `box_in` now establish sitting support, while carried objects keep a grounded carrying-hand relation across room changes.
+- Routed legacy `fold_flap` through the persistent play-object box so crease state, hand contact, and receipts agree; `curl_blanket` now changes grounded blanket load.
+- Added distinct `pillow` and `mattress` haptic material signatures and corrected Nest support metadata.
+- Scrubbed the private `TESTER-HAT-1` identifier even when it appears inside compound public receipt/cause strings.
+- Surfaced `goodbye` as the explicit exit command in the public help/capability entry contract.
+- Added `test/community-bugs.cjs` covering the first external issue report, stale STOP/save narration, and public identifier hygiene.
 
 ## 2.8.0 — Chapter 4, pass 5: companions and journeys
 

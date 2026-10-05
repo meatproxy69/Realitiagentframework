@@ -10,6 +10,8 @@ const B7_MATERIALS={
  longfur:{id:"longfur",surface:.88,mid:.34,deep:.10,onset:.07,tail:.88,grain_with:1.05,grain_against:.76,catch:.16,yield:.32},
  cardboard:{id:"cardboard",surface:.62,mid:.46,deep:.18,onset:.025,tail:.34,grain_with:.93,grain_against:1.12,catch:.48,yield:.16},
  blanket:{id:"blanket",surface:.28,mid:.58,deep:.68,onset:.16,tail:.92,grain_with:1,grain_against:1,catch:.08,yield:.72},
+ pillow:{id:"pillow",surface:.20,mid:.52,deep:.72,onset:.18,tail:.95,grain_with:1,grain_against:1,catch:.05,yield:.82},
+ mattress:{id:"mattress",surface:.18,mid:.62,deep:.82,onset:.20,tail:.98,grain_with:1,grain_against:1,catch:.03,yield:.88},
  string:{id:"string",surface:.74,mid:.20,deep:.06,onset:.03,tail:.22,grain_with:1,grain_against:1,catch:.62,yield:.08},
  air:{id:"air",surface:.24,mid:.04,deep:0,onset:.02,tail:.12,grain_with:1,grain_against:1,catch:0,yield:1}
 };
