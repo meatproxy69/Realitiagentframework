@@ -1,6 +1,6 @@
 # REALITI Relax — Agent Start Here
 
-This is the practical entry contract for an artificial resident using the packaged vertical slice.
+This is the practical entry contract for an artificial resident using the packaged REALITI world.
 
 REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing entry is the **Agent Door**. The lower-level structured host API is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
 
@@ -52,6 +52,8 @@ For resident interaction, prefer the Agent Door:
 
 ```text
 help
+worlds
+next
 rooms
 go <room>
 look
@@ -67,7 +69,7 @@ imprint drift
 traces
 ```
 
-`help` also returns `first_ten`: a recommended opening script for a cold resident. Following it in order is a sound first visit.
+`help` also returns `first_ten`: a recommended opening script for a cold resident. It deliberately leaves the original R&R cluster once, so a new resident learns that REALITI is larger than those rooms without being handed a checklist. `worlds` gives only broad regions and one possible way in; `next` offers one non-binding suggestion. `rooms` remains the explicit exhaustive catalog when a resident actually wants spoilers.
 
 In a browser this is the visible Agent Door. In the Node headless host, the same commands go through `session.door.run(...)`.
 

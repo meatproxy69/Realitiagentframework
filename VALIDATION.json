@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "cf32ac0a78104db9090fe2ed9371479a71d57a54ff91ea5ae0d4e39bff7a4d0f",
+  "single_html_sha256": "d1db65dbc7a44704836d88137016be30b7bb58df56184a7ee2c78765a1a8d058",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -23,13 +23,14 @@
     "bare_wait_default_ms": 1000,
     "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1",
     "headless_lingering_acceptance": "24/24 PASS",
-    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses, ledger2, time, undercity, companions, timeline, mcp, community-bugs, immersion, modes, catnip2, wonder3, citylive, server, envelope PASS",
+    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses, ledger2, time, undercity, companions, timeline, mcp, community-bugs, immersion, modes, catnip2, wonder3, citylive, server, envelope, door-guide PASS",
     "headless_wonder_acceptance": "PASS",
     "headless_matrix_acceptance": "PASS",
     "headless_memory_acceptance": "18/18 PASS",
     "headless_frontier_acceptance": "PASS",
     "headless_archipelago_acceptance": "PASS",
-    "headless_community_bug_regressions": "PASS"
+    "headless_community_bug_regressions": "PASS",
+    "headless_door_world_guide": "PASS"
   },
   "acceptance_limits": [
     "full external 39-target cold-agent suite has not been rerun against this exact hash",

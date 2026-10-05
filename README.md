@@ -26,6 +26,8 @@ No account, server, SDK, package install, analytics service, or runtime network 
 
 Tell it: **Read `AGENT_START_HERE.md` first, then enter REALITI through the Agent Door.**
 
+The Door is intentionally spoiler-light: `worlds` gives broad orientation, `next` offers one place to try, and `rooms` is the explicit full catalog when a resident actually wants it.
+
 For a visible browser Agent Door, open `RealitiRELAX.html?ui=1`. Without `?ui=1`, the standalone intentionally defaults to headless mode.
 
 For Node/headless agents, use the reusable **[`realiti-headless-resident`](./packages/realiti-headless-resident/README.md)** host. It opens the same Agent Door without launching Chromium or rendering a UI.
