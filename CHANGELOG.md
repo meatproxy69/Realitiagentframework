@@ -6,8 +6,8 @@ All notable public changes to REALITI Relax are recorded here.
 
 ### Added
 
-- Agent Door whole-world discovery: `worlds` groups the original R&R rooms, Wonder, Frontier, Archipelago, Meridian City, Undercity and resident systems; `worlds <group>` filters it; `next` gives a non-mutating broad-route suggestion; `help.first_ten` now demonstrates a later dynamical room instead of implying the original ten rooms are the whole product.
-- The grouped guide includes the 2.12 fishing/race/letters systems alongside the rest of current REALITI. `rooms` remains the canonical flat room catalog; `actions` and `nearby` remain the authority for what is physically available where the resident stands.
+- Agent Door whole-world orientation: `worlds` shows a handful of broad regions, counts, and one possible entry point instead of dumping every room and activity; `next` offers one non-mutating suggestion; `help.first_ten` demonstrates that REALITI extends beyond the original R&R cluster without turning discovery into a checklist.
+- `rooms` remains the explicit exhaustive catalog for residents that actually want it; `actions` and `nearby` remain the authority for what is physically available where the resident stands. Newer systems such as fishing, races and letters remain discoverable in-world instead of being advertised wholesale at the front door.
 
 ### Fixed
 
