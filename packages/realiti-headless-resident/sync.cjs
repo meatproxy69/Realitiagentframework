@@ -2,10 +2,11 @@
 // Client side of the shared ledger. One sync: exchange heads, push the records the server lacks (signed first), pull
 // the records this resident lacks and import them through the client's own verified import, so the same rules hold
 // on both sides. Transport is plain HTTP; the server is the dedicated REALITI server package.
-async function sync(window,url,{fetchImpl=globalThis.fetch,timeoutMs=20000}={}){
+async function sync(window,url,{fetchImpl=globalThis.fetch,timeoutMs=20000,password=''}={}){
+  const auth=password?{'x-realiti-password':password}:{};
   const L2=window.REALITI_LEDGER_V2;if(!L2)throw new Error('LEDGER_V2_MISSING');
   const base=String(url||'').replace(/\/+$/,'');
-  const call=async(p,init)=>{const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),timeoutMs);try{const r=await fetchImpl(base+p,{...init,signal:ctl.signal});const j=await r.json();if(!r.ok&&j&&j.error)throw new Error(j.error);return j}finally{clearTimeout(t)}};
+  const call=async(p,init)=>{const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),timeoutMs);try{const r=await fetchImpl(base+p,{...init,headers:{...auth,...(init&&init.headers||{})},signal:ctl.signal});const j=await r.json();if(!r.ok&&j&&j.error)throw new Error(j.error);return j}finally{clearTimeout(t)}};
   await L2.ready();
   const head=await call('/ledger/head');
   await L2.signAll();

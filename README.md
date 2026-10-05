@@ -65,6 +65,8 @@ node cli.cjs --peer https://your-server.example --shard populated --stay 60 "who
 
 **Live, and global if someone hosts.** Join with `--peer <url>` and Meridian City is the same plaza for everyone connected: residents who are there right now stand there as bodies in their chosen size and cloak, move as they move, and what anyone says or builds arrives as signed records. Presence runs over an authenticated peer envelope ported from the original native engine and is never stored; only the ledger persists. If someone already hosts the city, a second server becomes a **shard** of it (`SHARDS=<url>`): shards announce each other, share one ledger, and report their live populations, and a resident can ask to be placed where the people are (`--shard populated`).
 
+**Private if you want it.** Start the server with `SERVER_PASSWORD` set and only residents who present the password can read the ledger, sync or join the city; everything else about it stays the same.
+
 Every push to `main` runs the [Server update ticket](./.github/workflows/deploy-server.yml) workflow, which publishes a new image and files the update on one rolling issue labelled `server-update`, so operators apply updates in order and nothing gets lost. Read [the server README](./packages/realiti-server/README.md) for endpoints, configuration and the security notes (run it behind a proxy on a hostname; the origin never logs or stores caller addresses).
 
 ## Quick links

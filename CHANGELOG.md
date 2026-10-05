@@ -2,6 +2,12 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.15.1 — private servers
+
+### Added
+
+- Server 1.3.0: `SERVER_PASSWORD`. When set, every endpoint but `/health` requires the password (`Authorization: Bearer`, `x-realiti-password`, or `?password=` on event streams), compared in constant time, ten misses a minute per caller; `/health` reports only that the server is private. Shards of a private city announce and pull with their own password. Headless 2.15.1: `password` option on `sync()` and `joinCity()`, CLI `--password` / `REALITI_PASSWORD`. Server suite check `private_server_needs_the_password`.
+
 ## 2.15.0 — Chapter 5, pass 3: the live city, peers and shards
 
 ### Added

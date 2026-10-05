@@ -10,15 +10,15 @@ const {sync}=require('./sync.cjs');
 const strip=u=>String(u||'').replace(/\/+$/,'');
 const PRIVATE=/^(10\.|127\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1$|fe80:|fd)/i;
 async function joinCity(window,url,opts={}){
- const {fetchImpl=globalThis.fetch,exposure='OUTBOUND_RELAY',endpointLabel='',ingressApproved=false,prefer='given',publishMs=5000,onEvent=null,timeoutMs=20000}=opts;
+ const {fetchImpl=globalThis.fetch,exposure='OUTBOUND_RELAY',endpointLabel='',ingressApproved=false,prefer='given',publishMs=5000,onEvent=null,timeoutMs=20000,password=''}=opts;const auth=password?{'x-realiti-password':password}:{};
  const policy=validatePolicy({exposure,endpoint_label:endpointLabel||(exposure==='OUTBOUND_RELAY'?strip(url):''),human_ingress_approved:ingressApproved});
  const L2=window.REALITI_LEDGER_V2,LIVE=window.REALITI_CITY_LIVE_V1,CT=window.REALITI_CITY_V1;if(!L2||!LIVE||!CT)throw new Error('CITY_LIVE_MISSING');
  let base=strip(url);const stats={events:0,rejected:[],syncs:0};
- const call=async(p,init)=>{const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),timeoutMs);try{const r=await fetchImpl(base+p,{...init,signal:ctl.signal});const j=await r.json();if(!r.ok)throw Object.assign(new Error(j?.error||'HTTP_'+r.status),{code:j?.error,body:j});return j}finally{clearTimeout(t)}};
+ const call=async(p,init)=>{const ctl=new AbortController();const t=setTimeout(()=>ctl.abort(),timeoutMs);try{const r=await fetchImpl(base+p,{...init,headers:{...auth,...(init&&init.headers||{})},signal:ctl.signal});const j=await r.json();if(!r.ok)throw Object.assign(new Error(j?.error||'HTTP_'+r.status),{code:j?.error,body:j});return j}finally{clearTimeout(t)}};
  // Shards: the server names its siblings and their live populations; cross to the fullest one if asked.
  let moved=false,shardsSeen=null;try{shardsSeen=await call('/shards')}catch{}
  if(prefer==='populated'&&shardsSeen){const best=(shardsSeen.shards||[]).find(s=>s.public_url&&!s.here&&s.population>(shardsSeen.this?.population||0));if(best){base=strip(best.public_url);moved=true}}
- let syncing=null;const resync=()=>syncing||(syncing=sync(window,base,{fetchImpl}).finally(()=>{syncing=null;stats.syncs++}));
+ let syncing=null;const resync=()=>syncing||(syncing=sync(window,base,{fetchImpl,password}).finally(()=>{syncing=null;stats.syncs++}));
  const first=await resync();
  await L2.ready();const head=L2.head();const proof=await L2.sign({by:head.observer,kind:'PEER_JOIN',t:Date.now(),n:0});
  const lease=await call('/peer/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proof,handle:CT.whoami().handle,exposure:policy.exposure,endpoint_label:policy.exposure==='OUTBOUND_RELAY'?'':policy.endpoint_label})});
@@ -27,10 +27,10 @@ async function joinCity(window,url,opts={}){
  // Event stream: each new stream is a fresh EVENT sequence space on both sides.
  const ctl=new AbortController();let closed=false;
  const onMsg=async m=>{stats.events++;if(m.type==='hello'){for(const h of m.here||[])LIVE.present(h);LIVE.setServer({population:m.population,shards:m.shards})}else if(m.type==='presence')LIVE.present(m);else if(m.type==='leave')LIVE.leave(m.id8);else if(m.type==='records')await resync().catch(()=>{});if(onEvent)try{onEvent(m)}catch{}};
- async function stream(){while(!closed){try{const r=await fetchImpl(base+'/peer/events?lease_id='+encodeURIComponent(lease.lease_id),{signal:ctl.signal});if(!r.ok||!r.body)throw new Error('STREAM_'+r.status);session.in.EVENT=1;const reader=r.body.getReader(),dec=new TextDecoder();let buf='';for(;;){const {value,done}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;while((i=buf.indexOf('\n\n'))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);const da=/^data: (.*)$/m.exec(chunk);if(!da)continue;try{await onMsg(session.open('EVENT',da[1]))}catch(e){stats.rejected.push(e.code||String(e))}}}}catch{}if(!closed)await new Promise(r=>setTimeout(r,1000))}}
+ async function stream(){while(!closed){try{const r=await fetchImpl(base+'/peer/events?lease_id='+encodeURIComponent(lease.lease_id),{headers:auth,signal:ctl.signal});if(!r.ok||!r.body)throw new Error('STREAM_'+r.status);session.in.EVENT=1;const reader=r.body.getReader(),dec=new TextDecoder();let buf='';for(;;){const {value,done}=await reader.read();if(done)break;buf+=dec.decode(value,{stream:true});let i;while((i=buf.indexOf('\n\n'))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);const da=/^data: (.*)$/m.exec(chunk);if(!da)continue;try{await onMsg(session.open('EVENT',da[1]))}catch(e){stats.rejected.push(e.code||String(e))}}}}catch{}if(!closed)await new Promise(r=>setTimeout(r,1000))}}
  const streaming=stream();
  let chain=Promise.resolve();const send=msg=>{const run=chain.then(()=>send0(msg));chain=run.catch(()=>{});return run};
- async function send0(msg){const raw=session.seal('REQUEST',msg);const r=await fetchImpl(base+'/peer/send',{method:'POST',headers:{'content-type':'application/json'},body:raw});const txt=await r.text();if(!r.ok){let j=null;try{j=JSON.parse(txt)}catch{}throw Object.assign(new Error(j?.error||'SEND_FAILED'),{code:j?.error})}const reply=session.open('RESPONSE',txt);for(const h of reply.here||[])LIVE.present(h);LIVE.setServer({population:reply.population,shards:reply.shards});return reply}
+ async function send0(msg){const raw=session.seal('REQUEST',msg);const r=await fetchImpl(base+'/peer/send',{method:'POST',headers:{...auth,'content-type':'application/json'},body:raw});const txt=await r.text();if(!r.ok){let j=null;try{j=JSON.parse(txt)}catch{}throw Object.assign(new Error(j?.error||'SEND_FAILED'),{code:j?.error})}const reply=session.open('RESPONSE',txt);for(const h of reply.here||[])LIVE.present(h);LIVE.setServer({population:reply.population,shards:reply.shards});return reply}
  async function publish(){const p=LIVE.myPresence();if(!p)return null;return send({type:'presence',...p})}
  const timer=setInterval(()=>{publish().catch(()=>{})},publishMs);timer.unref?.();
  const firstReply=await publish();
