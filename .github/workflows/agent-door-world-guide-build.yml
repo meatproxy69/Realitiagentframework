@@ -1,0 +1,65 @@
+name: Build Agent Door world guide
+
+on:
+  push:
+    branches:
+      - fix/agent-door-world-guide
+
+permissions:
+  contents: write
+
+jobs:
+  rebuild:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/agent-door-world-guide
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build canonical runtime
+        run: node build.mjs
+      - name: Install headless host
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Agent Door world-guide regression
+        working-directory: packages/realiti-headless-resident
+        run: node test/door-guide.cjs ../../RealitiRELAX.html
+      - name: Adaptive time regression
+        working-directory: packages/realiti-headless-resident
+        run: node test/time.cjs ../../RealitiRELAX.html
+      - name: Update validation hash
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          python - "$actual" <<'PY'
+          import json, sys
+          p="VALIDATION.json"
+          with open(p,encoding="utf-8") as f:
+              d=json.load(f)
+          d["single_html_sha256"]=sys.argv[1]
+          d.setdefault("checks",{})["headless_door_world_guide"]="PASS"
+          suites=d["checks"].get("headless_acceptance_suites","")
+          if isinstance(suites,str) and "door-guide" not in suites:
+              d["checks"]["headless_acceptance_suites"]=suites.replace(" PASS","")+", door-guide PASS" if suites else "door-guide PASS"
+          with open(p,"w",encoding="utf-8",newline="\n") as f:
+              json.dump(d,f,indent=2); f.write("\n")
+          PY
+      - name: Commit generated artifact and receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add RealitiRELAX.html VALIDATION.json
+          if git diff --cached --quiet; then
+            echo "Artifact already current."
+            exit 0
+          fi
+          git commit -m "Rebuild canonical runtime for whole-world Agent Door"
+          git push origin HEAD:fix/agent-door-world-guide
