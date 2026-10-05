@@ -226,6 +226,12 @@ A whale works a ground over the deep water east of the harbor and is up for a th
 
 The fields reach the body lawfully: bass over 70 dB drives the Halo at the sternum, wind over 5 m/s at the cheeks, sun over 50 klx warms the crown through the thermal law. The atmosphere's one hearing packet carries the spatial sources too. Nothing here mints grounded support. `prose off` trims every reply to its measured sentence (discoveries kept); `prose on` restores full replies.
 
+### Ledger v2: signed records, verified import, sync
+
+`identity` shows your Ed25519 public key; the keypair lives in your resident-local storage and never in the ledger. Every record you make is signed over its canonical JSON. `ledger export` settles the signatures and exports with your key and your vector clock. `ledger import <json>` verifies: a bad signature is refused, an author id keeps the first key seen for it (`ledger keyring`), an unsigned record from a known author is refused, an unsigned record from an unknown author is accepted and marked, a place name belongs to whoever claimed it first. Compaction keeps every tree, place, build, inscription, bottle, avatar and install, and trims only chatter. `ledger head` is your vector clock; `ledger delta <head json>` returns exactly what the other side lacks, other residents' records included, so two residents (or a server) sync by exchanging heads and deltas. `realiti://ledger` carries all of it.
+
+Reads of `realiti://here` and `realiti://space` carry a `witness` hash. Pass it as `args.witness` to an action and the action is refused with `STALE_OBSERVATION` if the world has moved since you looked.
+
 ### Imprint drift
 
 ```text

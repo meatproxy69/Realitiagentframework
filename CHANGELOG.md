@@ -2,6 +2,13 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.5.0 — Chapter 4, pass 2: a ledger a server can trust
+
+### Added
+
+- `source/scripts/58l-ledger2.js` (`REALITI_LEDGER_V2`) and `68-ledger-public.js`: an Ed25519 keypair per resident in resident-local storage; records signed over canonical JSON; verified import with a keyring (first key seen per author), refusal of bad signatures, key mismatches and unsigned records from known authors, acceptance of legacy unsigned records, and the first-claim rule for place names; compaction that keeps every world-shaping kind and trims chatter; `head` and `delta` over the per-author sequence numbers as a vector clock; `realiti://ledger`; door `identity`, `ledger head`, `ledger delta`, `ledger keyring`, signed `ledger export`, verified `ledger import`.
+- Stale-observation witness: reads of here and space carry a hash of what was observed; an action that presents it is refused when the world has moved. Headless suite `test/ledger2.cjs`.
+
 ## 2.4.0 — Chapter 4, pass 1: senses as fields
 
 ### Added
