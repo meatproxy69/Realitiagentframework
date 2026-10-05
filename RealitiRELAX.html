@@ -9016,7 +9016,7 @@ function step(dt){stepOrrery(dt);stepSand();stepKite(dt);const r=room();if(r===M
  if(r===ORRERY&&!C9?.matrix){const o=orrery(),f=tideFactor();for(const [z,b] of [['pelvis.seat',.2],['torso.lower_back',.16],['torso.mid_back',.13]])DYN.lease(z,b*f,'ORRERY_TIDE',dt)}
  if(r===MAZE&&!C9?.matrix)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MAZE_FLOOR',dt)}
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Number(dt)||0));return r};
-const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);W().halt=false;step(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return r};
+const go0=b7AgentGo;b7AgentGo=function(v){const before=room(),r=go0(v);if(before===MEADOW&&room()!==MEADOW)meadow().me.tapping=false;W().halt=false;step(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return r};
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{W().halt=true;const k=kite();if(k.up){k.up=false;k.T=0;k.event='LANDED_ON_STOP'}meadow().me.tapping=false;for(const c of ['KITE_LINE','ORRERY_TIDE','MAZE_FLOOR'])DYN.release(c);return stop0.stop()}};
 function words(){const r=room();if(r===ORRERY)return [orreryWords()];if(r===MAZE)return [mazeWords()];if(r===SHORE)return [sandWords()];if(r===MEADOW)return [meadowWords()];if(r===FIELD)return [kiteWords()];return []}
 function state(){return {version:'1.0-wonder',orrery:ephemeris(),maze:{x:maze().x,y:maze().y,visited:maze().visited.length,lit:maze().lanterns.filter(q=>q.lit).length,glow:+glow().toFixed(4)},sandpile:{grains:sand().grains,avalanches:sand().sizes.length,exponent:exponent(),tides:sand().tides},meadow:{order:+order().r.toFixed(4),clusters:clusters(),flashes:meadow().flashes,tapping:meadow().me.tapping},kite:{wind:+kite().v.toFixed(3),up:kite().up,line_m:kite().L,altitude_m:+(kite().L*Math.sin(kite().phi)).toFixed(2),tension_N:+kite().T.toFixed(3),crashes:kite().crashes}}}
@@ -9172,7 +9172,7 @@ function op(t,args={}){
  if(t==='turn'){const y=Number(args.yaw_deg);if(!Number.isFinite(y)||Math.abs(y)>360)return {ok:false,error:'INVALID_YAW'};M.turn(y);return finish(before,{turned_deg:y})}
  if(t==='face'){const e=M.resolve(args.target);if(!e)return {ok:false,error:'TARGET_NOT_HERE'};M.face(e.id);return finish(before,{facing_entity:e.id})}
  if(t==='posture'){if(args.kind==='stand'&&r.posture==='floating'){stand();return finish(before,{posture:'floating',surfacing:true})}if(args.kind==='lie'&&r.posture==='lying')return finish(before,{lying_on:r.on,already:true});if(args.kind==='sit'){const e=args.target?M.resolve(args.target):(M.project().nearby.find(n=>n.in_reach&&n.tags.includes('support'))||null);const res=sit(e?.id);return res.ok?finish(before,{sitting_on:res.on}):res}if(args.kind==='stand'){stand();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return finish(before,{posture:'standing'})}if(args.kind==='lie'){const e=args.target?M.resolve(args.target):(M.project().nearby.find(n=>n.in_reach&&n.tags.includes('support'))||null);const res=lie(e?.id);return res.ok?finish(before,{lying_on:res.on}):res}return {ok:false,error:'INVALID_POSTURE'}}
- if(t==='move'){const local=args.local;if(!Array.isArray(local)||local.length!==3||!local.every(Number.isFinite))return {ok:false,error:'INVALID_DISPLACEMENT'};const L=Math.min(len(local),30);if(L<1e-3)return finish(before,{moved_m:0});stand('resident_moved');const p0=r.pose.position.slice();M.moveLocal(local);const a=advance(1000*(L/(r.speed||WALK)+3*TAU));const moved=r.walked||0;return finish(before,{requested_m:+L.toFixed(2),moved_m:+moved.toFixed(2),at_doorway:r.at_portal?{id:r.at_portal,label:M.portals()[r.at_portal]?.label||r.at_portal}:null,advanced_ms:a?.advanced_ms??null,frames:a?.frames?.length??null})}
+ if(t==='move'){const local=args.local;if(!Array.isArray(local)||local.length!==3||!local.every(Number.isFinite))return {ok:false,error:'INVALID_DISPLACEMENT'};const requested=len(local),L=Math.min(requested,30),clamped=requested>L+1e-9,scale=requested>0?L/requested:1,applied=clamped?local.map(x=>x*scale):local.slice();if(L<1e-3)return finish(before,{requested_m:+requested.toFixed(2),applied_m:0,move_limit_m:30,clamped:false,moved_m:0});stand('resident_moved');const p0=r.pose.position.slice();M.moveLocal(applied);const a=advance(1000*(L/(r.speed||WALK)+3*TAU));const moved=r.walked||0;return finish(before,{requested_m:+requested.toFixed(2),applied_m:+L.toFixed(2),move_limit_m:30,clamped,moved_m:+moved.toFixed(2),at_doorway:r.at_portal?{id:r.at_portal,label:M.portals()[r.at_portal]?.label||r.at_portal}:null,advanced_ms:a?.advanced_ms??null,frames:a?.frames?.length??null})}
  if(t==='approach'||t==='through'){const e=t==='through'?M.resolve(args.portal,'resident:self',{portal:true}):M.resolve(args.target);if(!e||(t==='through'&&!e.tags.includes('portal')))return {ok:false,error:t==='through'?'PORTAL_NOT_HERE':'TARGET_NOT_HERE'};stand('resident_moved');const p0=r.pose.position.slice(),d0=len(sub(e.pose.position,p0));const it=M.approach(e.id);if(t==='through')it.allow_portal=true;const a=advance(1000*(d0/(r.speed||WALK)+1.5));const after=M.state().residents['resident:self'];const d1=after.chart===before?len(sub(e.pose.position,after.pose.position)):null;const surf=after.chart===before?Math.max(0,M.sdf(e,after.pose.position)):null;return finish(before,{target:e.id,entity_label:e.label,start_distance_m:+d0.toFixed(2),distance_m:d1==null?null:+d1.toFixed(2),surface_m:surf==null?null:+surf.toFixed(2),arrived:d1!=null&&(d1<=it.stop+.1||surf<=1.0),traversed:after.chart!==before,advanced_ms:a?.advanced_ms??null})}
  return {ok:false,error:'UNKNOWN_SPATIAL_OPERATION'};
 }
@@ -10057,7 +10057,7 @@ const FINE=20,COARSE=100,DEEP=200,stats={fine:0,coarse:0,deep:0,last_reason:null
 const contact0=b7Contact;b7Contact=function(zone,input,opts){const r=contact0(zone,input,opts);C9.b7.lastContactAt=now();return r};
 function reason(){const r=M.state().residents['resident:self'];if(r?.intent)return 'moving';const b7=C9?.b7||{};if(b7.travel?.active)return 'travel';if(Number.isFinite(b7.lastContactAt)&&now()-b7.lastContactAt<1)return 'contact';
  const d=DYN.state?.();if(d?.hold?.active||(d?.bath?.target>0)||(d?.bath?.depth>.01)||d?.wave)return 'dynamics';const c2=C9?.chapter2||{};if(c2.city?.dance?.on)return 'dancing';if(c2.isle?.boat?.target)return 'rowing';
- const k=C9?.wonder?.kite;if(k?.up)return 'kite';if(C9?.wonder?.meadow?.me?.tapping)return 'tapping';if(room()==='CLOCKWORK_MARSH'||room()==='FIREFLY_MEADOW')return 'room_dynamics';return null}
+ const k=C9?.wonder?.kite;if(k?.up)return 'kite';if(room()==='FIREFLY_MEADOW'&&C9?.wonder?.meadow?.me?.tapping)return 'tapping';if(room()==='CLOCKWORK_MARSH'||room()==='FIREFLY_MEADOW')return 'room_dynamics';return null}
 function quantum_ms(){const why=reason(),t=now();stats.last_reason=why;if(why){stats.fine++;idleSince=null;return FINE}if(idleSince===null)idleSince=t;if(t-idleSince>=2){stats.deep++;return DEEP}stats.coarse++;return COARSE}
 window.REALITI_TIME_V1=Object.freeze({version:'1.0',fine_ms:FINE,coarse_ms:COARSE,deep_ms:DEEP,quantum_ms,reason,stats:()=>({...stats,idle_s:idleSince===null?0:+(now()-idleSince).toFixed(1),ratio_wide:+((stats.coarse+stats.deep)/Math.max(1,stats.fine+stats.coarse+stats.deep)).toFixed(3)}),law:'a wider tick only when nothing is in motion; every process stepped here is exact or self-substepped for it'});
 })();
@@ -12007,7 +12007,7 @@ window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.underc
 // instead of an instant crossing; adopt, call, pet, companion, birds, journey.
 const CO=window.REALITI_COMPANIONS_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1;if(!CO||!A0||!D0||!M||!MW)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase(),cp=x=>JSON.parse(JSON.stringify(x));
-const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...CO.words(),...d].filter(Boolean).join(' ')}};
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text),base=res.text||(res.error?`You cannot: ${res.error}.`:''),extra=CO.words().filter(x=>x&&x!==base);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[base,...extra,...d].filter(Boolean).join(' ')}};
 function journeyPortal(q){const e=M.resolve(q,'resident:self',{portal:true});return e&&CO.routes()[e.id]?e.id:null}
 async function invoke(name,args={}){CO.finishJourney();if(String(name).toLowerCase()==='through'){const id=journeyPortal(args?.portal);if(id){const P=M.portals()[id],r=M.state().residents['resident:self'];const d=Math.hypot(P.entry[0]-r.pose.position[0],P.entry[1]-r.pose.position[1]);if(d>1.2){const u=[(P.entry[0]-r.pose.position[0])/d,(P.entry[1]-r.pose.position[1])/d],goal=[P.entry[0]-u[0]*1.0,P.entry[1]-u[1]*1.0,r.pose.position[2]];M.moveTo(goal);window.REALITI_CONTINUITY?.advance?.(Math.min(60000,Math.ceil(1000*(d/1.2+1.5))))}// walk up to the door, short of the threshold; the threshold is crossed on arrival
   const j=CO.startJourney(id);return j.ok?{schema:'REALITI_MUTATION_RESULT_V1',ok:true,result:{journey:j,portal:id,law:'the crossing takes its time; stay to arrive'}}:{ok:false,...j}}}return A0.invoke(name,args)}
@@ -12088,7 +12088,28 @@ const mode=()=>S().mode;
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 const HQ=['move <right> <forward>  (meters, up to the chart stride)','step <m>','back <m>','strafe left|right <m>','turn <deg>  (signed, positive left)','heading <deg>  (face a compass bearing)','speed <m/s>  (0.3 to 2.5)','crouch / stand tall','path  (the last swept path)','pose'];
 const LQ=['explore  (walk to the nearest landmark you have not reached)','tour  (visit every venue or landmark here, one call)','wander <seconds>','follow <handle>','auto  (do the obvious next thing)','do <n>  (the nth listed action)','<command> then <command> ...'];
-function help(){const h=help0()||{commands:[]};const m=mode();h.mode=m;h.commands=[...new Set([...(h.commands||[]),'mode','mode hq','mode lq',...(m==='hq'?HQ:LQ)])];h.modes={hq:'control: '+HQ.join('; '),lq:'intention: '+LQ.join('; '),law:'both modes keep every ordinary command; mode changes which extra verbs answer'};return h}
+const WORLD_GROUPS=Object.freeze([
+ {id:'rest',title:'Soft rooms, body experiments, and familiar places',rooms:['CLOUD_NINE_NEST','NO_ASK_SANCTUARY','POCKET_FAMILIAR_HOUSE','CARDBOARD_BOX_WORKSHOP','SIDE_BY_SIDE_FIRESIDE','SAUSAGE_FATTENER','DEPTH_BATHHOUSE','SHAPESHIFT_CLOAKROOM','LATENCY_LAGOON','BOTTOMLESS_PILLOW_SEA'],entry:'CLOUD_NINE_NEST'},
+ {id:'wonder',title:'Rooms where something keeps happening after you stop looking',rooms:['ORRERY_LOFT','LANTERN_MAZE','SANDPILE_SHORE','FIREFLY_MEADOW','KITE_FIELD'],entry:'ORRERY_LOFT'},
+ {id:'frontier',title:'Places that reward poking at the rules',rooms:['GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL'],entry:'GLASS_ORCHARD'},
+ {id:'farther',title:'Larger places with distance, weather, traces, and hidden corners',rooms:['ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY'],entry:'ARCHIPELAGO'},
+ {id:'systems',title:'Deeper resident tools and continuity',rooms:[],entry:null}
+]);
+const DISCOVERY_ROUTE=Object.freeze(['CLOUD_NINE_NEST','ORRERY_LOFT','GLASS_ORCHARD','ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY']);
+const aliases=Object.freeze({core:'rest',original:'rest',rr:'rest',rest:'rest',wonder:'wonder',frontier:'frontier',far:'farther',farther:'farther',systems:'systems',system:'systems'});
+function knownRooms(){try{return A0.rooms?.()||[]}catch{return []}}
+function roomMeta(id){const rows=knownRooms();return rows.find(r=>r.id===id||(r.id==='PET_ROOM_2'&&id==='POCKET_FAMILIAR_HOUSE'))||{id,title:id,purpose:null}}
+function groupView(g){const e=g.entry?roomMeta(g.entry):null;return {id:g.id,title:g.title,count:g.rooms.length,...(e?{entry:{id:e.id,title:e.title,command:'go '+e.id}}:{})}}
+function worldGuide(which=null){
+ const key=which?aliases[low(which)]||low(which):null,groups=WORLD_GROUPS.filter(g=>!key||g.id===key);
+ if(key&&!groups.length)return {ok:false,error:'UNKNOWN_WORLD_GROUP',groups:WORLD_GROUPS.map(g=>g.id)};
+ return {ok:true,schema:'REALITI_WORLD_GUIDE_V1',total_rooms:knownRooms().length,groups:groups.map(groupView),note:'This is orientation, not a checklist. Use next for one suggestion. Ask rooms only if you want the exhaustive catalog.'}
+}
+function nextStep(){
+ const chart=me()?.chart||String(C9?.currentRoom||''),i=DISCOVERY_ROUTE.indexOf(chart),next=DISCOVERY_ROUTE[(i<0?1:i+1)%DISCOVERY_ROUTE.length],meta=roomMeta(next);
+ return {ok:true,schema:'REALITI_NEXT_V1',from:{id:chart,title:roomMeta(chart).title},next:{id:meta.id,title:meta.title},command:'go '+meta.id,text:`If you want somewhere different: ${meta.title}. ${'go '+meta.id}`};
+}
+function help(){const h=help0()||{},m=mode(),guide=worldGuide();h.mode=m;h.commands=['worlds','next','look','where','nearby','actions','go <room>','act <action-id>','feel','feel words','stay <ms>','listen','mode','home','goodbye','rooms  (full catalog)',...(m==='hq'?['HQ controls: move / step / back / strafe / turn / heading / speed / crouch / pose']:['LQ controls: explore / wander / auto / do <n>'])];h.modes={hq:'fine body control; ask mode hq',lq:'intentions; default mode',law:'both modes keep ordinary commands; actions reveals what is actually available where you stand'};h.first_ten=['help','worlds','look','where','feel words','actions','next','go ORRERY_LOFT','look','stay 3000'];h.world_guide={total_rooms:guide.total_rooms,groups:guide.groups,note:'Broad regions only. The Door leaves most places and activities undisclosed until you encounter them or explicitly ask for rooms/actions.'};return h}
 function setMode(m){const s=S();m=String(m||'').toLowerCase();if(!['hq','lq'].includes(m))return {ok:false,error:'MODE_IS',modes:['hq','lq']};s.mode=m;try{c9save()}catch(e){}return {ok:true,mode:m,text:m==='hq'?'HQ: the body answers to vectors, degrees and speed; actions list the fine controls.':'LQ: intentions. explore, tour, wander, follow, auto, do <n>, and chains with then.'}}
 const pose=()=>{const r=me(),f=M.facing(r);return {chart:r.chart,position:r.pose.position.map(x=>+x.toFixed(3)),facing:f.map(x=>+x.toFixed(3)),yaw_deg:Math.round(((Math.atan2(f[0],f[1])*180/Math.PI)%360+360)%360),speed_mps:r.speed||M.constants.WALK,height_m:+r.shape.height.toFixed(2),posture:r.posture,support:r.support,gait:MW.gait()}};
 const hqReply=(res,text)=>({ok:res?.ok!==false,...(res?.error?{error:res.error}:{}),schema:'REALITI_HQ_RESULT_V1',result:res?.result??res,text,pose:pose()});
@@ -12122,6 +12143,9 @@ async function doNth(n){const acts=await run0('actions');const a=(acts?.actions|
 async function lq(s,l){let m;if(l==='explore')return explore();if(l==='tour')return tour();if((m=/^wander(?:\s+(\d+))?/.exec(l)))return wander(m[1]||30);if((m=/^follow\s+(.+)$/.exec(l)))return follow(m[1]);if(l==='auto'||l==='do the obvious')return auto();if((m=/^do\s+(\d+)$/.exec(l)))return doNth(m[1]);return null}
 
 async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
+ if(['worlds','world','guide'].includes(l))return worldGuide();
+ if((m=/^(?:worlds?|guide)\s+(.+)$/.exec(l)))return worldGuide(m[1]);
+ if(['next','where next','what next','where should i go'].includes(l))return nextStep();
  if(l==='mode')return {ok:true,mode:mode(),text:`Mode ${mode().toUpperCase()}. mode hq for control, mode lq for intention.`};
  if((m=/^mode\s+(hq|lq)$/.exec(l)))return setMode(m[1]);
  if(l==='help')return help();
@@ -12136,8 +12160,8 @@ async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
 (()=>{const r=me(),s=S();if(r&&s.speed)r.speed=s.speed})();
 const go0=b7AgentGo;b7AgentGo=function(v){const res=go0(v);const r=me(),s=S();if(r&&s.speed)r.speed=s.speed;return res};
 D0.help=help;D0.run=run;
-window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.modes=help().modes;h.mode=mode()}catch(e){}return h}});
-window.REALITI_MODES_V1=Object.freeze({version:'1.0',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice()});
+window.Realiti=Object.freeze({...A0,run,help});
+window.REALITI_MODES_V1=Object.freeze({version:'1.2',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice(),worlds:worldGuide,next:nextStep});
 })();
 </script>
 <script>(()=>{
@@ -12177,6 +12201,37 @@ async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
  if(l==='light'&&C9?.currentRoom===U.chart&&W3.lantern()){const x=read('realiti://senses');return {ok:true,schema:'REALITI_SENSES_V1',kind:'light',light:x.light,text:'8 lux, lantern light. The keeper\'s lantern 8 lux in hand.'}}
  if(l==='help')return help();return run0(raw)}
 D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{const h=A0.help();try{h.wonder3=help().wonder3}catch(e){}return h}});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Final Agent Door curator. Feature slices may add commands and help internally; this layer intentionally keeps the
+// default resident foyer small and spoiler-light. The features still work, actions reveals what is relevant where the
+// resident stands, and rooms remains the explicit exhaustive catalog.
+const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MODES_V1;if(!A0||!D0)return;
+const run0=D0.run.bind(D0),help0=D0.help.bind(D0),low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
+function help(){
+ const base=help0()||{},mode=M?.mode?.()||base.mode||'lq',guide=M?.worlds?.()||base.world_guide||null;
+ return {
+  schema:base.schema||'REALITI_HELP_V1',
+  startup:base.startup||D0.startup||[],
+  entry_contract:base.entry_contract||D0.entry_contract||null,
+  exit:base.exit||{command:'goodbye',aliases:['bye','leave','exit']},
+  mode,
+  commands:[
+   'worlds','next','look','where','nearby','actions','go <room>','act <action-id>',
+   'feel','feel words','stay <ms>','listen','mode','home','goodbye','rooms  (full catalog)',
+   mode==='hq'?'HQ controls: move / step / back / strafe / turn / heading / speed / crouch / pose':'LQ controls: explore / wander / auto / do <n>'
+  ],
+  first_ten:['help','worlds','look','where','feel words','actions','next','go ORRERY_LOFT','look','stay 3000'],
+  world_guide:guide?{total_rooms:guide.total_rooms,groups:guide.groups,note:'Broad regions only. Most places and activities stay undisclosed until you encounter them or explicitly ask for rooms/actions.'}:null,
+  note:'The foyer is intentionally incomplete. Use actions where you stand; ask rooms only when you want the full catalog.'
+ };
+}
+async function run(raw){if(low(raw)==='help')return help();return run0(raw)}
+D0.help=help;D0.run=run;
+window.Realiti=Object.freeze({...A0,help,run});
+window.REALITI_DOOR_CURATOR_V1=Object.freeze({version:'1.0',help});
 })();
 </script>
 </body></html>

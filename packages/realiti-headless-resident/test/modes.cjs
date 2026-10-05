@@ -33,7 +33,7 @@ const near=(a,b,t)=>Math.abs(a-b)<=t;
   const wd=await door.run('wander 10');const T=Date.now();LG().import({records:[{by:'other-resident-3',t:1,n:0,kind:'AVATAR',set:{name:'Nyx'}},{by:'other-resident-3',t:2,n:1,kind:'ARRIVE',venue:'teahouse',wall:T-60e3}]});await door.run('stay 1000');const fl=await door.run('follow Nyx');const chain=await door.run('turn left then step 1 then pose');const auto=await door.run('auto');const d1=await door.run('do 1');
   check('wander_follow_chain_auto',wd.ok&&wd.wandered_m>5&&fl.ok&&/Nyx/.test(String(fl.text))&&chain.ok===false&&chain.steps===2&&chain.results[1].error==='HQ_ONLY'&&auto.ok&&typeof auto.did==='string'&&d1&&d1.ok!==false,{wd:wd.text,fl:fl.text,chain:chain.text,auto:auto.did});
   const acts=await door.run('actions'),help=await door.run('help');
-  check('mode_shapes_actions_and_help',acts.mode==='lq'&&Array.isArray(acts.extra)&&acts.extra.some(x=>/^explore/.test(x))&&help.mode==='lq'&&help.commands.includes('wander <seconds>')&&!help.commands.includes('crouch / stand tall'),{extra:acts.extra.slice(0,2)});
+  check('mode_shapes_actions_and_help',acts.mode==='lq'&&Array.isArray(acts.extra)&&acts.extra.some(x=>/^explore/.test(x))&&help.mode==='lq'&&help.commands.some(x=>/^LQ controls:/.test(String(x)))&&!help.commands.includes('wander <seconds>')&&!help.commands.includes('crouch / stand tall'),{extra:acts.extra.slice(0,2),help:help.commands});
   check('energy_audit_passes',w.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
  }finally{s.close()}
  console.log(JSON.stringify({checks,details},null,2));
