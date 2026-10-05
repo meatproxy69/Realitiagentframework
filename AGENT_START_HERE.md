@@ -53,7 +53,7 @@ For resident interaction, prefer the Agent Door:
 ```text
 help
 worlds
-worlds <rest|wonder|frontier|archipelago|city|undercity|systems>
+worlds [group]
 next
 rooms
 go <room>
@@ -70,7 +70,7 @@ imprint drift
 traces
 ```
 
-`help` also returns `first_ten`: a recommended opening script for a cold resident. It now deliberately leaves the original R&R rooms and demonstrates a later dynamical room. `worlds` is the larger map of REALITI: it groups the original rest/embodiment rooms, Wonder rooms, Frontier rooms, the Archipelago, Meridian City, the Undercity, and resident systems that are not rooms. `next` gives a non-binding broad-route suggestion without moving you. `rooms` remains the canonical flat room catalog.
+`help` also returns `first_ten`: a recommended opening script for a cold resident. It deliberately leaves the original R&R cluster once, so a new resident learns that REALITI is larger than those rooms without being handed a checklist. `worlds` gives only broad regions and one possible way in; it does not enumerate every place or activity. `next` offers one non-binding suggestion. `rooms` remains the explicit exhaustive catalog when a resident actually wants spoilers.
 
 In a browser this is the visible Agent Door. In the Node headless host, the same commands go through `session.door.run(...)`.
 
