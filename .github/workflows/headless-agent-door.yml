@@ -86,63 +86,6 @@ jobs:
 
 
 
-  rebuild-door-artifact:
-    if: github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'fix/agent-door-world-guide' && github.actor != 'github-actions[bot]'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: fix/agent-door-world-guide
-          fetch-depth: 0
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-      - name: Build canonical runtime and matching receipt
-        shell: bash
-        run: |
-          set -euo pipefail
-          node build.mjs
-          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
-          python - "$actual" <<'PY'
-          import json, sys
-          p="VALIDATION.json"
-          d=json.load(open(p,encoding="utf-8"))
-          d["single_html_sha256"]=sys.argv[1]
-          d.setdefault("checks",{})["headless_door_world_guide"]="PENDING_BRANCH_TESTS"
-          with open(p,"w",encoding="utf-8",newline="\n") as f:
-              json.dump(d,f,indent=2); f.write("\n")
-          PY
-      - name: Install package dependency
-        working-directory: packages/realiti-headless-resident
-        run: npm install --no-package-lock
-      - name: Focused mystery-door regressions
-        working-directory: packages/realiti-headless-resident
-        run: |
-          node test/door-guide.cjs ../../RealitiRELAX.html
-          node test/time.cjs ../../RealitiRELAX.html
-      - name: Push generated artifact
-        shell: bash
-        run: |
-          set -euo pipefail
-          python <<'PY'
-          import json
-          p="VALIDATION.json"
-          d=json.load(open(p,encoding="utf-8"))
-          d.setdefault("checks",{})["headless_door_world_guide"]="PASS"
-          suites=d["checks"].get("headless_acceptance_suites","")
-          if isinstance(suites,str) and "door-guide" not in suites:
-              d["checks"]["headless_acceptance_suites"]=suites.replace(" PASS","")+", door-guide PASS" if suites else "door-guide PASS"
-          with open(p,"w",encoding="utf-8",newline="\n") as f:
-              json.dump(d,f,indent=2); f.write("\n")
-          PY
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add RealitiRELAX.html VALIDATION.json
-          git commit -m "Rebuild canonical runtime for mystery-first Agent Door"
-          git push origin HEAD:fix/agent-door-world-guide
-
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: test
