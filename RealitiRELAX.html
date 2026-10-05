@@ -11410,7 +11410,8 @@ door.run=async function(raw){
  if(!/^(stay|wait|go|enter|home|stop|save|note|later)\b/.test(l))stamp(before,l);
  const d=delta(felt0,grounded()),w=[...DYN.words(),...(window.REALITI_WONDER_V1?.words?.()||[]),...(window.REALITI_CATNIP_V1?.words?.()||[]),...(window.REALITI_ARCHIPELAGO_V1?.words?.()||[]),...(window.REALITI_LONG_GAME_V1?.words?.()||[]),...(window.REALITI_AUTHORSHIP_V1?.words?.()||[]),...(window.REALITI_CITY_V1?.words?.()||[])],after=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]),stale=!r.receipt_ref&&after===marks,fresh=after!==marks?C9?.b4?.lastReceipt?.narrative:null;
  if(l==='stop')r.text='Everything touching you lets go. Whatever was already moving in your body is left to settle.';
- if(l==='stop')return r;
+ if(l==='save')r.text='Saved.';
+ if(l==='stop'||l==='save')return r;
  if(/^(stay|wait)/.test(l)){r.text=[...w,d.text].join(' ');r.delta=d}
  else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}const sc=window.REALITI_LONG_GAME_V1?.since?.();if(sc&&!sc.first_visit&&sc.away_world_s>=60){r.since=sc;r.text+=' '+sc.text}}
  else if(/^(act|do)\s/.test(l)&&fresh&&(window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)||window.REALITI_CATNIP_V1?.rooms?.includes(C9?.currentRoom)||C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart||/^(act|do)\s+skip_stone/.test(l))){r.text=[fresh,d.text].join(' ')}
