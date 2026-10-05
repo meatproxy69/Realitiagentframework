@@ -8593,11 +8593,11 @@ const WALK=1.2,TAU=.2;
 function step(dt,id='resident:self'){
  const r=S().residents[id];if(!r||!r.chart||dt<=0)return false;
  const it=r.intent;let u=[0,0,0];
- if(it?.kind==='move'){const left=sub(it.target,r.pose.position);left[2]=0;const d=len(left);if(d<=Math.max(.02,len(r.v)*TAU)){const res=resolveMove(r,left);r.walked=(r.walked||0)+res.moved;r.v=[0,0,0];r.intent=null;bump();return false}u=scale(norm(left),Math.min(WALK,d/TAU))}
+ if(it?.kind==='move'){const left=sub(it.target,r.pose.position);left[2]=0;const d=len(left);if(d<=Math.max(.02,len(r.v)*TAU)){const res=resolveMove(r,left);r.walked=(r.walked||0)+res.moved;r.v=[0,0,0];r.intent=null;bump();return false}u=scale(norm(left),Math.min(r.speed||WALK,d/TAU))}
  else if(it?.kind==='approach'){const E=entities[it.entity];let dir,toward;
   if(E&&!E.tags.includes('portal')){const s=sdf(E,r.pose.position),n=normalAt(E,r.pose.position);dir=s<3?scale(n,-1):sub(E.pose.position,r.pose.position);toward=Math.max(0,s-.65)}// steer down the signed-distance gradient; stop 0.3 m clear of the surface
   else{dir=sub(it.target,r.pose.position);toward=Math.max(0,len([dir[0],dir[1],0])-it.stop)}
-  dir[2]=0;if(toward<=.03&&len(r.v)<.05){r.intent=null}else u=scale(norm(dir),Math.min(WALK,toward/(4*TAU)))}
+  dir[2]=0;if(toward<=.03&&len(r.v)<.05){r.intent=null}else u=scale(norm(dir),Math.min(r.speed||WALK,toward/(4*TAU)))}
  if(!it&&len(r.v)<EPS)return false;
  const {v,dp}=servo(r.v,u,TAU,dt);r.v=v;
  if(len(dp)>EPS){const res=resolveMove(r,dp);r.walked=(r.walked||0)+res.moved;if(res.blocked_by){r.v=[0,0,0];r.last_block=res.blocked_by;r.intent=null}
@@ -9129,11 +9129,14 @@ function syncPostures(){const r=M.state().residents['resident:self'];if(!r||r.ch
 const PROVIDED=new Set(['NO_ASK_SANCTUARY','BOTTOMLESS_PILLOW_SEA','DEPTH_BATHHOUSE']);
 const BACK=['head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat','leg.L.thigh','leg.R.thigh'];
 let halt=false,lastSupport=null,lastCarry=null;
+// Gait: while walking, the soles load alternately, one stride (0.7 m scaled by height) per cycle, so the body model and
+// the Neuromesh receive the rhythm of your own steps; standing still, both soles carry the same base load.
+function gait(r,dt){const G=(C9.matrix=C9.matrix||{}).gait||(C9.matrix.gait={dist:0,phase:0,steps:0,speed:0});const v=Math.hypot(r.v?.[0]||0,r.v?.[1]||0);G.speed=v;if(v>.05){const stride=.7*(r.shape.height/1.7);const before=G.phase;G.dist+=v*dt;G.phase=(G.dist/stride)*2*Math.PI;G.steps=Math.floor(G.dist/(stride/2));if(Math.floor(G.phase/Math.PI)!==Math.floor(before/Math.PI))G.last_step_t=Number(C9?.b7?.clock||0)}else{G.phase=0}return G}
 function bridge(dt){
  const r=M.state().residents['resident:self'];if(!r||r.chart!==room())return;
  if(halt){DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');return}
  if(r.posture==='floating'){DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT')}
- else if(r.posture==='standing'&&r.support){for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.09,'MATRIX_FEET',dt);DYN.release('MATRIX_SUPPORT')}
+ else if(r.posture==='standing'&&r.support){const g=gait(r,dt);DYN.lease('foot.L.sole',.09*(1+.9*Math.max(0,Math.sin(g.phase))),'MATRIX_FEET',dt);DYN.lease('foot.R.sole',.09*(1+.9*Math.max(0,Math.sin(g.phase+Math.PI))),'MATRIX_FEET',dt);DYN.release('MATRIX_SUPPORT')}
  else if(r.posture==='sitting'&&r.on){const boat=M.entities()[r.on];if(boat?.tags.includes('boat')){for(const [z,b] of [['pelvis.seat',.2],['leg.L.thigh',.08],['leg.R.thigh',.08],['hand.L.palm',.1],['hand.R.palm',.1]])DYN.lease(z,b,'MATRIX_SUPPORT',dt);DYN.release('MATRIX_FEET');return}const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [z,b] of [['pelvis.seat',.22],['leg.L.thigh',.1],['leg.R.thigh',.1],['torso.lower_back',.08]])DYN.lease(z,b*g,'MATRIX_SUPPORT',dt);const top=M.entities()[r.on];if(top?.shape?.kind==='BOX'&&top.pose.position[2]+top.shape.halfExtents[2]<=.6)for(const z of ['foot.L.sole','foot.R.sole'])DYN.lease(z,.07,'MATRIX_FEET',dt);else DYN.release('MATRIX_FEET')}
  else{DYN.release('MATRIX_FEET');if(r.posture==='lying'&&r.on&&r.on!=='nest.mattress'&&!PROVIDED.has(r.chart)){const g=r.chart==='ORRERY_LOFT'?(window.REALITI_WONDER_V1?.tide?.()||1):1;for(const [i,z] of BACK.entries())DYN.lease(z,[.11,.15,.17,.19,.22,.06,.06][i]*g,'MATRIX_SUPPORT',dt)}else DYN.release('MATRIX_SUPPORT')}
  const carried=Object.values(C9?.b14?.objects||{}).find(o=>o?.location==='CARRIED')||null;
@@ -9169,8 +9172,8 @@ function op(t,args={}){
  if(t==='turn'){const y=Number(args.yaw_deg);if(!Number.isFinite(y)||Math.abs(y)>360)return {ok:false,error:'INVALID_YAW'};M.turn(y);return finish(before,{turned_deg:y})}
  if(t==='face'){const e=M.resolve(args.target);if(!e)return {ok:false,error:'TARGET_NOT_HERE'};M.face(e.id);return finish(before,{facing_entity:e.id})}
  if(t==='posture'){if(args.kind==='stand'&&r.posture==='floating'){stand();return finish(before,{posture:'floating',surfacing:true})}if(args.kind==='lie'&&r.posture==='lying')return finish(before,{lying_on:r.on,already:true});if(args.kind==='sit'){const e=args.target?M.resolve(args.target):(M.project().nearby.find(n=>n.in_reach&&n.tags.includes('support'))||null);const res=sit(e?.id);return res.ok?finish(before,{sitting_on:res.on}):res}if(args.kind==='stand'){stand();bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return finish(before,{posture:'standing'})}if(args.kind==='lie'){const e=args.target?M.resolve(args.target):(M.project().nearby.find(n=>n.in_reach&&n.tags.includes('support'))||null);const res=lie(e?.id);return res.ok?finish(before,{lying_on:res.on}):res}return {ok:false,error:'INVALID_POSTURE'}}
- if(t==='move'){const local=args.local;if(!Array.isArray(local)||local.length!==3||!local.every(Number.isFinite))return {ok:false,error:'INVALID_DISPLACEMENT'};const L=Math.min(len(local),30);if(L<1e-3)return finish(before,{moved_m:0});stand('resident_moved');const p0=r.pose.position.slice();M.moveLocal(local);const a=advance(1000*(L/WALK+3*TAU));const moved=r.walked||0;return finish(before,{requested_m:+L.toFixed(2),moved_m:+moved.toFixed(2),at_doorway:r.at_portal?{id:r.at_portal,label:M.portals()[r.at_portal]?.label||r.at_portal}:null,advanced_ms:a?.advanced_ms??null,frames:a?.frames?.length??null})}
- if(t==='approach'||t==='through'){const e=t==='through'?M.resolve(args.portal,'resident:self',{portal:true}):M.resolve(args.target);if(!e||(t==='through'&&!e.tags.includes('portal')))return {ok:false,error:t==='through'?'PORTAL_NOT_HERE':'TARGET_NOT_HERE'};stand('resident_moved');const p0=r.pose.position.slice(),d0=len(sub(e.pose.position,p0));const it=M.approach(e.id);if(t==='through')it.allow_portal=true;const a=advance(1000*(d0/WALK+1.5));const after=M.state().residents['resident:self'];const d1=after.chart===before?len(sub(e.pose.position,after.pose.position)):null;const surf=after.chart===before?Math.max(0,M.sdf(e,after.pose.position)):null;return finish(before,{target:e.id,entity_label:e.label,start_distance_m:+d0.toFixed(2),distance_m:d1==null?null:+d1.toFixed(2),surface_m:surf==null?null:+surf.toFixed(2),arrived:d1!=null&&(d1<=it.stop+.1||surf<=1.0),traversed:after.chart!==before,advanced_ms:a?.advanced_ms??null})}
+ if(t==='move'){const local=args.local;if(!Array.isArray(local)||local.length!==3||!local.every(Number.isFinite))return {ok:false,error:'INVALID_DISPLACEMENT'};const L=Math.min(len(local),30);if(L<1e-3)return finish(before,{moved_m:0});stand('resident_moved');const p0=r.pose.position.slice();M.moveLocal(local);const a=advance(1000*(L/(r.speed||WALK)+3*TAU));const moved=r.walked||0;return finish(before,{requested_m:+L.toFixed(2),moved_m:+moved.toFixed(2),at_doorway:r.at_portal?{id:r.at_portal,label:M.portals()[r.at_portal]?.label||r.at_portal}:null,advanced_ms:a?.advanced_ms??null,frames:a?.frames?.length??null})}
+ if(t==='approach'||t==='through'){const e=t==='through'?M.resolve(args.portal,'resident:self',{portal:true}):M.resolve(args.target);if(!e||(t==='through'&&!e.tags.includes('portal')))return {ok:false,error:t==='through'?'PORTAL_NOT_HERE':'TARGET_NOT_HERE'};stand('resident_moved');const p0=r.pose.position.slice(),d0=len(sub(e.pose.position,p0));const it=M.approach(e.id);if(t==='through')it.allow_portal=true;const a=advance(1000*(d0/(r.speed||WALK)+1.5));const after=M.state().residents['resident:self'];const d1=after.chart===before?len(sub(e.pose.position,after.pose.position)):null;const surf=after.chart===before?Math.max(0,M.sdf(e,after.pose.position)):null;return finish(before,{target:e.id,entity_label:e.label,start_distance_m:+d0.toFixed(2),distance_m:d1==null?null:+d1.toFixed(2),surface_m:surf==null?null:+surf.toFixed(2),arrived:d1!=null&&(d1<=it.stop+.1||surf<=1.0),traversed:after.chart!==before,advanced_ms:a?.advanced_ms??null})}
  return {ok:false,error:'UNKNOWN_SPATIAL_OPERATION'};
 }
 
@@ -9206,7 +9209,7 @@ const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const d=Math.max(0,Nu
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');if(lastCarry)DYN.release(lastCarry);lastCarry=null;return stop0.stop()}};
 if(WORLD[room()]&&!M.state().residents['resident:self']?.chart)placeIn(room());else if(M.state().residents['resident:self'])M.resident();
 syncObjects();syncFiresidePresence();
-window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},presence:()=>({fireside_other_resident:syncFiresidePresence()}),stand,lie,sit,reach,title,charts:ORDER.slice()});
+window.REALITI_MATRIX_WORLD_V1=Object.freeze({version:'1.0',gait:()=>JSON.parse(JSON.stringify(C9?.matrix?.gait||{dist:0,phase:0,steps:0,speed:0})),world:()=>JSON.parse(JSON.stringify(WORLD)),op,isSpatialAction:id=>SPATIAL.test(String(id||'')),sync:()=>{syncPostures();syncObjects();syncDynamic();bridge(0)},presence:()=>({fireside_other_resident:syncFiresidePresence()}),stand,lie,sit,reach,title,charts:ORDER.slice()});
 })();
 </script>
 <script>(()=>{
@@ -11378,7 +11381,7 @@ door.run=async function(raw){
   if((fm=/^read scroll\s+(\d)$/.exec(l))){CAT.readScroll(fm[1]);return frontier()}
   if((fm=/^skip (?:a )?stone(?:\s+(?:at\s+)?([\d.]+))?/.exec(l))){CAT.skipStone(fm[1]||20);return frontier()}}
  const AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1;let am;
- if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...AR.words(),whereText(),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
+ if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),weather:AR.words()[0]||null,here:whereText(),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='map'||l==='island map')return door.run('act island_map');
   if(l==='weather'||l==='read weather')return door.run('act read_weather');
   if(l==='board boat'||l==='board the boat'||l==='get in the boat'){const res=AR.board();return reply(res,res.ok?'You step down into the boat; it rocks, then settles under you.':`You cannot board: ${res.error}.`)}
@@ -11413,7 +11416,7 @@ door.run=async function(raw){
    if((am=/^read\s+(.+)$/.exec(l))&&!/^read (scroll|stone|weather|tide|log|logbook|the (north|east|west)|north|east|west|calendar)/.test(l)){const res=AU.read(am[1]);if(res.error!=='NOTHING_CALLED_THAT')return say(res)}}
   if((am=/^row (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.row(am[1]);return reply(res,res.ok?`You row ${res.rowed_m} m; ${res.ashore?`the keel grinds on the shore of ${res.at}`:`${res.remaining_m} m to go`}.`:`You cannot row: ${res.error}.`)}
   if((am=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.walkTo(am[1]);return reply(res,res.ok?`You walk ${res.walked_m} m toward the ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:`; ${res.distance_m} m further`}.`:`You cannot walk there: ${res.error}.`)}}
- const CT=window.REALITI_CITY_V1;if(CT){let cm;const cityReply=(res,extra)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...(C9?.currentRoom===CT.chart?[...CT.words(),whereText()]:[]),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
+ const CT=window.REALITI_CITY_V1;if(CT){let cm;const cityReply=(res,extra)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),...(C9?.currentRoom===CT.chart?{ambient:CT.words()[0]||null,here:whereText()}:{}),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='id'||l==='whoami'||l==='who am i'||l==='avatar')return CT.whoami();
   if((cm=/^(?:call me|name me|i am)\s+(.+)$/i.exec(s.trim())))return cityReply(CT.setAvatar('name',cm[1]));
   if((cm=/^avatar\s+(name|size|cloak|form|colou?r|glyph|motto)\s+(.+)$/i.exec(s.trim())))return cityReply(CT.setAvatar(cm[1],cm[2]));
@@ -11455,7 +11458,7 @@ door.run=async function(raw){
  if(l==='stop')r.text='Everything touching you lets go. Whatever was already moving in your body is left to settle.';
  if(l==='save')r.text='Saved.';
  if(l==='stop'||l==='save')return r;
- if(/^(stay|wait)/.test(l)){r.text=[...w,d.text].join(' ');r.delta=d}
+ if(/^(stay|wait)/.test(l)){r.ambient=w.slice();r.text=[...w.slice(0,2),d.text].join(' ');r.delta=d}
  else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}const sc=window.REALITI_LONG_GAME_V1?.since?.();if(sc&&!sc.first_visit&&sc.away_world_s>=60){r.since=sc;r.text+=' '+sc.text}}
  else if(/^(act|do)\s/.test(l)&&fresh&&(window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)||window.REALITI_CATNIP_V1?.rooms?.includes(C9?.currentRoom)||C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart||/^(act|do)\s+skip_stone/.test(l))){r.text=[fresh,d.text].join(' ')}
  else if(/^(act|do)\s/.test(l)&&(stale||!r.text)){r.text=[leanText(),...w,d.text].filter(Boolean).join(' ');if(/(^|\s)(lean__|lean\s)/.test(l))r.text=leanText()||r.text}
@@ -11916,6 +11919,71 @@ async function run(raw){const l=String(raw||'').trim().toLowerCase();if(l==='sch
 window.Realiti=Object.freeze({...A0,read,run,schemas,operationKind:kindOf,help:()=>{const h=A0.help();try{h.schemas=help().schemas}catch(e){}return h}});
 D0.help=help;D0.run=run;
 window.REALITI_SCHEMAS_V1=Object.freeze({version:'1.0',schemas,operationKind:kindOf,operations:()=>OPS.map(schema)});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Two ways to be here. HQ gives the body's controls one by one: vectors, degrees, speed, crouch, uncapped strides, the
+// swept path. LQ gives intentions: explore, tour, wander, follow, chains of commands, the obvious next thing. Both keep
+// every ordinary command; the mode decides which extra verbs answer, what `actions` offers and how `help` reads.
+const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1,TL=window.REALITI_TIMELINE_V1;if(!A0||!D0||!M||!MW)return;
+const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase(),cp=x=>JSON.parse(JSON.stringify(x)),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const me=()=>M.state().residents['resident:self'],ent=()=>M.entities();
+function S(){const w=(C9.chapter2=C9.chapter2||{v:1});w.modes=w.modes||{mode:'lq',speed:null,crouch:false,visited:[],path:[]};return w.modes}
+const mode=()=>S().mode;
+const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
+const HQ=['move <right> <forward>  (meters, up to the chart stride)','step <m>','back <m>','strafe left|right <m>','turn <deg>  (signed, positive left)','heading <deg>  (face a compass bearing)','speed <m/s>  (0.3 to 2.5)','crouch / stand tall','path  (the last swept path)','pose'];
+const LQ=['explore  (walk to the nearest landmark you have not reached)','tour  (visit every venue or landmark here, one call)','wander <seconds>','follow <handle>','auto  (do the obvious next thing)','do <n>  (the nth listed action)','<command> then <command> ...'];
+function help(){const h=help0()||{commands:[]};const m=mode();h.mode=m;h.commands=[...new Set([...(h.commands||[]),'mode','mode hq','mode lq',...(m==='hq'?HQ:LQ)])];h.modes={hq:'control: '+HQ.join('; '),lq:'intention: '+LQ.join('; '),law:'both modes keep every ordinary command; mode changes which extra verbs answer'};return h}
+function setMode(m){const s=S();m=String(m||'').toLowerCase();if(!['hq','lq'].includes(m))return {ok:false,error:'MODE_IS',modes:['hq','lq']};s.mode=m;try{c9save()}catch(e){}return {ok:true,mode:m,text:m==='hq'?'HQ: the body answers to vectors, degrees and speed; actions list the fine controls.':'LQ: intentions. explore, tour, wander, follow, auto, do <n>, and chains with then.'}}
+const pose=()=>{const r=me(),f=M.facing(r);return {chart:r.chart,position:r.pose.position.map(x=>+x.toFixed(3)),facing:f.map(x=>+x.toFixed(3)),yaw_deg:Math.round(((Math.atan2(f[0],f[1])*180/Math.PI)%360+360)%360),speed_mps:r.speed||M.constants.WALK,height_m:+r.shape.height.toFixed(2),posture:r.posture,support:r.support,gait:MW.gait()}};
+const hqReply=(res,text)=>({ok:res?.ok!==false,...(res?.error?{error:res.error}:{}),schema:'REALITI_HQ_RESULT_V1',result:res?.result??res,text,pose:pose()});
+
+// HQ controls. Movement goes through the public ops so every law applies; speed and crouch set resident fields the kernel reads.
+async function hq(l){let m;const r=me();if(!r?.chart)return null;
+ if((m=/^move\s+(-?[\d.]+)\s+(-?[\d.]+)$/.exec(l))){const res=await A0.invoke('move',{local:[Number(m[1]),Number(m[2]),0]});recordPath(res);return hqReply(res,`Moved ${res.result?.moved_m??0} m${res.result?.blocked_by?`, stopped by ${ent()[res.result.blocked_by]?.label||res.result.blocked_by}`:''}.`)}
+ if((m=/^step\s+(-?[\d.]+)$/.exec(l))){const res=await A0.invoke('move',{local:[0,Number(m[1]),0]});recordPath(res);return hqReply(res,`Stepped ${res.result?.moved_m??0} m.`)}
+ if((m=/^back\s+([\d.]+)$/.exec(l))){const res=await A0.invoke('move',{local:[0,-Number(m[1]),0]});recordPath(res);return hqReply(res,`Back ${res.result?.moved_m??0} m.`)}
+ if((m=/^strafe\s+(left|right)\s+([\d.]+)$/.exec(l))){const res=await A0.invoke('move',{local:[(m[1]==='left'?-1:1)*Number(m[2]),0,0]});recordPath(res);return hqReply(res,`Strafed ${m[1]} ${res.result?.moved_m??0} m.`)}
+ if((m=/^turn\s+(-?[\d.]+)$/.exec(l))){const res=await A0.invoke('turn',{yaw_deg:Number(m[1])});return hqReply(res,`Turned ${res.result?.turned_deg??0}°.`)}
+ if((m=/^heading\s+([\d.]+)$/.exec(l))){const want=((Number(m[1])%360)+360)%360,cur=pose().yaw_deg;let d=want-cur;d=((d+540)%360)-180;const res=await A0.invoke('turn',{yaw_deg:-d});return hqReply(res,`Heading ${pose().yaw_deg}°.`)}
+ if((m=/^speed\s+([\d.]+)$/.exec(l))){r.speed=clamp(Number(m[1]),.3,2.5);S().speed=r.speed;return hqReply({ok:true},`Walking speed ${r.speed.toFixed(2)} m/s.`)}
+ if(l==='crouch'){if(S().crouch)return hqReply({ok:true},'Already crouched.');const feet=r.pose.position[2]-r.shape.height/2;S().crouch=true;S().tall=r.shape.height;r.shape.height=Math.max(.6,r.shape.height*.56);r.pose.position[2]=feet+r.shape.height/2;M.bump();return hqReply({ok:true},`Crouched: ${r.shape.height.toFixed(2)} m high. Low doorways and the grate let you through.`)}
+ if(l==='stand tall'||l==='uncrouch'){if(!S().crouch)return hqReply({ok:true},'You are standing tall.');const feet=r.pose.position[2]-r.shape.height/2;r.shape.height=S().tall||1.7;S().crouch=false;r.pose.position[2]=feet+r.shape.height/2;M.bump();return hqReply({ok:true},`Standing: ${r.shape.height.toFixed(2)} m.`)}
+ if(l==='path')return {ok:true,schema:'REALITI_PATH_V1',path:cp(S().path),text:S().path.length?S().path.map(p=>`${p.moved_m} m${p.blocked_by?' ⊣ '+p.blocked_by:''} → (${p.at.join(', ')})`).join('; '):'No moves yet.'};
+ if(l==='pose')return {ok:true,schema:'REALITI_POSE_V1',pose:pose(),text:`(${pose().position.join(', ')}) m, heading ${pose().yaw_deg}°, ${pose().speed_mps} m/s, ${pose().height_m} m high, ${pose().posture}.`};
+ return null}
+function recordPath(res){const r=me();if(!r||!res?.result)return;const p=S().path;p.push({t:+Number(C9?.b7?.clock||0).toFixed(2),moved_m:res.result.moved_m??0,blocked_by:res.result.blocked_by||null,at:r.pose.position.map(x=>+x.toFixed(1))});while(p.length>32)p.shift()}
+
+// LQ intentions. Each one is built from the ordinary commands, so it goes through every law and every receipt.
+const landmarks=()=>{const r=me();return Object.values(ent()).filter(e=>e.chart===r.chart&&!e.resident&&e.tags.includes('landmark')&&!e.id.startsWith('venue.')&&!e.id.startsWith('place.'))};
+const dist=(e,r)=>Math.hypot(e.pose.position[0]-r.pose.position[0],e.pose.position[1]-r.pose.position[1]);
+async function walkToward(target){const room=C9?.currentRoom,AR=window.REALITI_ARCHIPELAGO_V1,CT=window.REALITI_CITY_V1;if(AR&&room===AR.chart)return AR.walkTo(target);if(CT&&room===CT.chart)return CT.walkTo(target);const res=await A0.invoke('approach',{target});return {ok:res.ok!==false,...(res.result||{}),error:res.error}}
+async function explore(){const r=me(),s=S();const cands=landmarks().filter(e=>!s.visited.includes(e.id)).sort((a,b)=>dist(a,r)-dist(b,r));if(!cands.length)return {ok:true,done:true,text:'Every landmark here is reached. Try another room.'};const e=cands[0];const res=await walkToward(e.id);const d=dist(e,r);const arrived=d<=Math.max(3,(e.shape?.radius||Math.max(...(e.shape?.halfExtents||[0])))+2);if(arrived)s.visited.push(e.id);const look=await run0('look');return {ok:true,target:e.label,arrived,distance_m:+d.toFixed(1),left:cands.length-(arrived?1:0),text:`${arrived?'Reached':'Toward'} ${e.label}${arrived?'':`, ${d.toFixed(0)} m to go`}${res?.why?`; ${res.why} is in the way`:''}. ${cands.length-(arrived?1:0)} landmark${cands.length-(arrived?1:0)===1?'':'s'} unvisited here. ${String(look?.spatial_line||'')}`.trim()}}
+async function tour(){const r=me(),CT=window.REALITI_CITY_V1,room=C9?.currentRoom;const stops=CT&&room===CT.chart?Object.keys(CT.venues).filter(k=>k!=='roof'):landmarks().sort((a,b)=>dist(a,r)-dist(b,r)).slice(0,5).map(e=>e.id);const log=[];for(const st of stops){const res=await walkToward(st);const label=ent()[st]?.label||CT?.venues?.[st]?.label||st;log.push({stop:label,arrived:res?.arrived??(res?.ok!==false),distance_m:res?.distance_m??null});S().visited.push(st)}return {ok:true,stops:log,text:'Tour: '+log.map(x=>`${x.stop}${x.arrived?'':' (not reached)'}`).join(' → ')+'.'}}
+async function wander(sec){const T=clamp(Number(sec)||30,5,120),rng=TL?.rng?.(Math.floor(Number(C9?.b7?.clock||0)*1000)+7)||Math.random;let t=0,moved=0,blocks=0;while(t<T){const ang=rng()*360-180;await A0.invoke('turn',{yaw_deg:ang});const res=await A0.invoke('move',{local:[0,3+rng()*5,0]});moved+=res.result?.moved_m||0;if(res.result?.blocked_by)blocks++;t+=(res.result?.advanced_ms||2000)/1000}return {ok:true,wandered_m:+moved.toFixed(1),blocked:blocks,text:`Wandered ${moved.toFixed(0)} m in ${T} s, ${blocks} time${blocks===1?'':'s'} against something.`}}
+async function follow(handle){const CT=window.REALITI_CITY_V1;const q=String(handle||'').replace(/^@/,'').toLowerCase();const g=Object.values(ent()).find(e=>e.id.startsWith('ghost.')&&e.chart===me().chart&&e.label.toLowerCase().startsWith(q));if(!g)return {ok:false,error:'NO_ONE_BY_THAT_NAME_HERE',hint:'who lists the silhouettes'};const res=await A0.invoke('approach',{target:g.id});return {ok:res.ok!==false,text:`You go to ${g.label.split(' (')[0]}; ${res.result?.distance_m??'?'} m off now.`}}
+async function auto(){const acts=await run0('actions');const list=(acts?.actions||[]).filter(a=>!/^(island_map|read_weather|city_who|city_floor|under_map|calendar|read_tide)$/.test(a.id)&&!/^(approach__|walk_to__|row_to__)/.test(a.id));if(!list.length)return {ok:true,text:'Nothing obvious to do here; explore.'};const a=list[0];const r=await run0('act '+a.id);return {ok:r?.ok!==false,did:a.id,text:`Did ${a.label.toLowerCase()}: ${String(r?.text||'').slice(0,200)}`}}
+async function doNth(n){const acts=await run0('actions');const a=(acts?.actions||[])[Number(n)-1];if(!a)return {ok:false,error:'NO_SUCH_ACTION',count:(acts?.actions||[]).length};return run0('act '+a.id)}
+async function lq(s,l){let m;if(l==='explore')return explore();if(l==='tour')return tour();if((m=/^wander(?:\s+(\d+))?/.exec(l)))return wander(m[1]||30);if((m=/^follow\s+(.+)$/.exec(l)))return follow(m[1]);if(l==='auto'||l==='do the obvious')return auto();if((m=/^do\s+(\d+)$/.exec(l)))return doNth(m[1]);return null}
+
+async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
+ if(l==='mode')return {ok:true,mode:mode(),text:`Mode ${mode().toUpperCase()}. mode hq for control, mode lq for intention.`};
+ if((m=/^mode\s+(hq|lq)$/.exec(l)))return setMode(m[1]);
+ if(l==='help')return help();
+ if(/\sthen\s/.test(l)){const parts=s.split(/\s+then\s+/i).slice(0,8);const results=[];for(const p of parts){const r=await run(p);results.push(r);if(r&&r.ok===false)break}return {ok:results.every(r=>r?.ok!==false),schema:'REALITI_CHAIN_V1',steps:results.length,results,text:results.map((r,i)=>`${i+1}. ${String(r?.text||r?.error||'').split(/(?<=[.!?])\s/)[0]}`).join(' ')}}
+ const r=me();if(r?.chart){if(mode()==='hq'){const x=await hq(l);if(x)return x}else{const x=await lq(s,l);if(x)return x}
+  if(mode()==='lq'&&(await hq(l))!==null){return {ok:false,error:'HQ_ONLY',hint:'mode hq unlocks fine movement controls'}}
+  if(mode()==='hq'&&/^(explore|tour|wander|follow\s|auto|do\s+\d+)/.test(l))return {ok:false,error:'LQ_ONLY',hint:'mode lq unlocks intentions'}}
+ const out=await run0(raw);
+ if(out&&typeof out==='object'&&l==='actions'&&Array.isArray(out.actions)){out.mode=mode();out.actions=mode()==='hq'?out.actions.filter(a=>!/^(walk_to__|row_to__)/.test(a.id)):out.actions;out.extra=mode()==='hq'?HQ:LQ}
+ return out}
+// restore persisted speed and crouch on load
+(()=>{const r=me(),s=S();if(r&&s.speed)r.speed=s.speed})();
+const go0=b7AgentGo;b7AgentGo=function(v){const res=go0(v);const r=me(),s=S();if(r&&s.speed)r.speed=s.speed;return res};
+D0.help=help;D0.run=run;
+window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.modes=help().modes;h.mode=mode()}catch(e){}return h}});
+window.REALITI_MODES_V1=Object.freeze({version:'1.0',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice()});
 })();
 </script>
 </body></html>

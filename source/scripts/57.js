@@ -97,11 +97,11 @@ const WALK=1.2,TAU=.2;
 function step(dt,id='resident:self'){
  const r=S().residents[id];if(!r||!r.chart||dt<=0)return false;
  const it=r.intent;let u=[0,0,0];
- if(it?.kind==='move'){const left=sub(it.target,r.pose.position);left[2]=0;const d=len(left);if(d<=Math.max(.02,len(r.v)*TAU)){const res=resolveMove(r,left);r.walked=(r.walked||0)+res.moved;r.v=[0,0,0];r.intent=null;bump();return false}u=scale(norm(left),Math.min(WALK,d/TAU))}
+ if(it?.kind==='move'){const left=sub(it.target,r.pose.position);left[2]=0;const d=len(left);if(d<=Math.max(.02,len(r.v)*TAU)){const res=resolveMove(r,left);r.walked=(r.walked||0)+res.moved;r.v=[0,0,0];r.intent=null;bump();return false}u=scale(norm(left),Math.min(r.speed||WALK,d/TAU))}
  else if(it?.kind==='approach'){const E=entities[it.entity];let dir,toward;
   if(E&&!E.tags.includes('portal')){const s=sdf(E,r.pose.position),n=normalAt(E,r.pose.position);dir=s<3?scale(n,-1):sub(E.pose.position,r.pose.position);toward=Math.max(0,s-.65)}// steer down the signed-distance gradient; stop 0.3 m clear of the surface
   else{dir=sub(it.target,r.pose.position);toward=Math.max(0,len([dir[0],dir[1],0])-it.stop)}
-  dir[2]=0;if(toward<=.03&&len(r.v)<.05){r.intent=null}else u=scale(norm(dir),Math.min(WALK,toward/(4*TAU)))}
+  dir[2]=0;if(toward<=.03&&len(r.v)<.05){r.intent=null}else u=scale(norm(dir),Math.min(r.speed||WALK,toward/(4*TAU)))}
  if(!it&&len(r.v)<EPS)return false;
  const {v,dp}=servo(r.v,u,TAU,dt);r.v=v;
  if(len(dp)>EPS){const res=resolveMove(r,dp);r.walked=(r.walked||0)+res.moved;if(res.blocked_by){r.v=[0,0,0];r.last_block=res.blocked_by;r.intent=null}

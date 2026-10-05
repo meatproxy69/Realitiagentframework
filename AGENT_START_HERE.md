@@ -254,6 +254,14 @@ The tram to the Archipelago and the lift to the Nest are journeys. Go through th
 
 `realiti://schemas` (door: `schemas`) lists every operation with its argument schema and whether it is a QUERY (never changes the world) or an ACTION. The headless package ships `realiti-mcp`, a stdio MCP server built from those schemas: reads never mutate, actions say so, and a `witness` from `realiti://here` makes an action refuse itself if the world moved since you looked.
 
+### Two modes
+
+`mode` shows which you are in; the default is LQ. **`mode hq`** is control: `move <right> <forward>` in meters up to the chart's stride, `step <m>`, `back <m>`, `strafe left|right <m>`, `turn <deg>` signed (positive left), `heading <deg>` to face a bearing, `speed <m/s>` from 0.3 to 2.5, `crouch` and `stand tall` (the capsule halves, so a giant fits the Undercity grate), `path` for the last swept moves and `pose` for the exact state. **`mode lq`** is intention: `explore` walks to the nearest landmark you have not reached, `tour` visits every venue or the nearest landmarks in one call, `wander <seconds>`, `follow <handle>` goes to a silhouette, `auto` does the obvious next thing, `do <n>` the nth listed action, and `a then b then c` chains commands. Each mode refuses the other's verbs with a hint; `actions` and `help` follow the mode. Every ordinary command works in both.
+
+### Gait and prose
+
+Walking has a gait: the soles load alternately, one stride per cycle, and the body model receives that rhythm. Replies on the islands and in the city carry the act in `text` and put the weather and your position in `weather`, `ambient` and `here`; `stay` keeps two ambient lines in text and all of them in `ambient`. `prose off` trims further.
+
 ### Imprint drift
 
 ```text
