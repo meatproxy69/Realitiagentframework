@@ -8,7 +8,7 @@ All notable public changes to REALITI Relax are recorded here.
 
 - `packages/realiti-server` (`@meatproxy69/realiti-server` 1.0.0, no dependencies): hosts the canonical client with its hash, keeps the shared ledger with the client's own rules (Ed25519 verification over canonical JSON, keyring by first key seen, refusal of tampering, key mismatches and unsigned records from known authors, first-claim place names, world-preserving compaction), serves deltas by per-author sequence clock, announces records over server-sent events, lists residents, and hot-updates its client from the repository's `main` after verifying the hash (`POST /admin/update`). Checkpoint envelope on disk. Dockerfile; image `ghcr.io/meatproxy69/realiti-server`.
 - Headless host: `sync.cjs` (head exchange, signed push, verified pull) and `--sync <url>` on the CLI.
-- `.github/workflows/deploy-server.yml`: on every push to `main`, verify the build and the server suite, publish the image to GHCR, and update the running server through its hot-update endpoint and/or over SSH when the deploy secrets exist. Suite `packages/realiti-server/test/server.cjs`.
+- `.github/workflows/deploy-server.yml`: on every push to `main`, verify the build and the server suite, publish the image to GHCR, and file the update as a comment on one rolling issue labelled `server-update` (version, client hash, image tag, commits, checklist), so updates to the dedicated server are applied in order and nothing is lost. Suite `packages/realiti-server/test/server.cjs`.
 
 ## 2.13.0 — secrets, wonder and catnip, third pass
 

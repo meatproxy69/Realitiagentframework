@@ -1,9 +1,9 @@
-name: Deploy dedicated server
+name: Server update ticket
 
-# Every push to main: verify the build and the server, publish the server image to GHCR, then update the running
-# server. The update step uses whichever secrets exist: DEPLOY_URL + DEPLOY_TOKEN call the server's own hot-update
-# endpoint (no restart, the client is pulled from main and hash-verified); DEPLOY_SSH_HOST + DEPLOY_SSH_KEY pull the
-# new image and restart the container over SSH. With neither secret the image is still published.
+# Every push to main: verify the build and the server, publish the server image to GHCR, then file the update as a
+# ticket. One rolling issue labelled `server-update` collects a comment per push with the version, the client hash,
+# the image tag, the commits and a checklist, so the person running the dedicated server can apply updates in order
+# and nothing gets lost.
 
 on:
   push:
@@ -13,9 +13,10 @@ on:
 permissions:
   contents: read
   packages: write
+  issues: write
 
 concurrency:
-  group: deploy-server
+  group: server-update
   cancel-in-progress: false
 
 jobs:
@@ -68,38 +69,68 @@ jobs:
           docker push "${{ steps.meta.outputs.image }}:latest"
           docker push "${{ steps.meta.outputs.image }}:${GITHUB_SHA}"
 
-  update:
+  ticket:
     needs: image
     runs-on: ubuntu-latest
     env:
-      DEPLOY_URL: ${{ secrets.DEPLOY_URL }}
-      DEPLOY_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-      DEPLOY_SSH_HOST: ${{ secrets.DEPLOY_SSH_HOST }}
-      DEPLOY_SSH_USER: ${{ secrets.DEPLOY_SSH_USER }}
-      DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+      GH_TOKEN: ${{ github.token }}
       IMAGE: ${{ needs.image.outputs.image }}
+      BEFORE: ${{ github.event.before }}
     steps:
-      - name: Hot-update the running server's client
-        if: env.DEPLOY_URL != '' && env.DEPLOY_TOKEN != ''
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: File the update on the rolling ticket
         shell: bash
         run: |
           set -euo pipefail
-          for i in 1 2 3; do
-            out="$(curl -fsS -X POST -H "Authorization: Bearer ${DEPLOY_TOKEN}" "${DEPLOY_URL%/}/admin/update")" && break
-            sleep 10
-          done
-          echo "$out"
-          echo "$out" | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>{const j=JSON.parse(s);if(!j.ok)process.exit(1)})"
-      - name: Pull the new image and restart over SSH
-        if: env.DEPLOY_SSH_HOST != '' && env.DEPLOY_SSH_KEY != ''
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir -p ~/.ssh
-          printf '%s\n' "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          ssh -o StrictHostKeyChecking=accept-new -i ~/.ssh/deploy_key "${DEPLOY_SSH_USER:-root}@${DEPLOY_SSH_HOST}" \
-            "docker pull ${IMAGE}:latest && (docker rm -f realiti-server || true) && docker run -d --name realiti-server --restart unless-stopped -p 8787:8787 -v realiti-data:/data -e ADMIN_TOKEN='${DEPLOY_TOKEN}' ${IMAGE}:latest"
-      - name: No deploy target configured
-        if: env.DEPLOY_URL == '' && env.DEPLOY_SSH_HOST == ''
-        run: echo "Image published to ${IMAGE}; set DEPLOY_URL+DEPLOY_TOKEN or DEPLOY_SSH_HOST+DEPLOY_SSH_KEY secrets to update a running server."
+          short="${GITHUB_SHA:0:7}"
+          hash="$(node -e "console.log(require('./VALIDATION.json').single_html_sha256)")"
+          hv="$(node -e "console.log(require('./packages/realiti-headless-resident/package.json').version)")"
+          sv="$(node -e "console.log(require('./packages/realiti-server/package.json').version)")"
+          if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            commits="$(git log --format='- %h %s' "$BEFORE..$GITHUB_SHA" | head -40)"
+          else
+            commits="$(git log --format='- %h %s' -n 10 "$GITHUB_SHA")"
+          fi
+          [ -n "$commits" ] || commits="- $short $(git log -1 --format=%s)"
+          gh label create server-update --description "Dedicated server updates to apply, in order" --color 1d76db --force >/dev/null 2>&1 || true
+          number="$(gh issue list --label server-update --state open --json number --jq '.[0].number // empty')"
+          body_file="$(mktemp)"
+          cat > "$body_file" <<BODY
+          Rolling ticket for the dedicated server. Each push to \`main\` adds a comment below with what to apply. Work the comments top to bottom; tick the checklist in each as you go.
+
+          **Latest:** headless \`$hv\`, server \`$sv\`, commit \`$short\`, client sha256 \`$hash\`.
+          **Image:** \`$IMAGE:latest\` (also \`:$GITHUB_SHA\`).
+
+          To apply an update on a host that runs the container:
+          \`\`\`bash
+          docker pull $IMAGE:latest
+          docker rm -f realiti-server || true
+          docker run -d --name realiti-server --restart unless-stopped -p 8787:8787 -v realiti-data:/data -e ADMIN_TOKEN=change-me $IMAGE:latest
+          curl -s http://localhost:8787/health
+          \`\`\`
+          Or, without restarting, pull only the client: \`curl -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" http://localhost:8787/admin/update\`.
+          BODY
+          sed -i 's/^          //' "$body_file"
+          if [ -z "$number" ]; then
+            number="$(gh issue create --title "Server update queue" --label server-update --body-file "$body_file" --json number --jq .number 2>/dev/null || gh issue create --title "Server update queue" --label server-update --body-file "$body_file" | grep -oE '[0-9]+$')"
+          else
+            gh issue edit "$number" --body-file "$body_file" >/dev/null
+          fi
+          comment_file="$(mktemp)"
+          cat > "$comment_file" <<COMMENT
+          ### Update $short — headless $hv, server $sv
+
+          Client sha256 \`$hash\` · image \`$IMAGE:$GITHUB_SHA\` · [workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
+
+          Commits:
+          $commits
+
+          - [ ] pull the image (or call \`/admin/update\` for the client only)
+          - [ ] \`/health\` reports \`client: true\`
+          - [ ] \`/\` shows client sha256 \`$hash\`
+          COMMENT
+          sed -i 's/^          //' "$comment_file"
+          gh issue comment "$number" --body-file "$comment_file" >/dev/null
+          echo "Filed on issue #$number"

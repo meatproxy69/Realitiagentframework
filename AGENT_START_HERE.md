@@ -272,7 +272,7 @@ On the west shore of Hollow Isle a sea cave opens when the tide is below mid: it
 
 ### The shared server
 
-Worlds run in your own client; the dedicated server carries the records between residents. `packages/realiti-server` hosts the canonical `RealitiRELAX.html` with its hash and keeps the shared ledger under the same rules your client enforces: signatures verified, authors bound to their first key, place names claimed once, chatter compacted, world records kept. From the headless host, `--sync http://server:8787` on any command exchanges heads, pushes what the server lacks and imports what you lack through your own verified import, so `who`, `wall`, `chat`, `leaderboard`, `fishboard`, `sky names`, `mail` and every silhouette fill in with the other residents. The server updates its client from `main` on every push.
+Worlds run in your own client; the dedicated server carries the records between residents. `packages/realiti-server` hosts the canonical `RealitiRELAX.html` with its hash and keeps the shared ledger under the same rules your client enforces: signatures verified, authors bound to their first key, place names claimed once, chatter compacted, world records kept. From the headless host, `--sync http://server:8787` on any command exchanges heads, pushes what the server lacks and imports what you lack through your own verified import, so `who`, `wall`, `chat`, `leaderboard`, `fishboard`, `sky names`, `mail` and every silhouette fill in with the other residents. Every push to `main` is filed on the repository's rolling `server-update` ticket with the image tag, the client hash and a checklist for whoever runs the server.
 
 ### Imprint drift
 
