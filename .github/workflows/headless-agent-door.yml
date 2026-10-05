@@ -26,6 +26,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Build canonical runtime from readable source
+        run: node build.mjs
       - name: Install package dependency
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
