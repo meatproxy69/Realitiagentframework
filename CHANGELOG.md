@@ -2,7 +2,7 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
-## 2.7.1 — first community bug-report pass
+## 2.8.1 — first community bug-report pass
 
 ### Fixed
 
@@ -13,6 +13,12 @@ All notable public changes to REALITI Relax are recorded here.
 - Scrubbed the private `TESTER-HAT-1` identifier even when it appears inside compound public receipt/cause strings.
 - Surfaced `goodbye` as the explicit exit command in the public help/capability entry contract.
 - Added `test/community-bugs.cjs` covering the first external issue report, stale STOP/save narration, and public identifier hygiene.
+
+## 2.8.0 — Chapter 4, pass 5: companions and journeys
+
+### Added
+
+- `source/scripts/58o-companions.js` (`REALITI_COMPANIONS_V1`, door slice `70-companions-public.js`): a Reynolds flock of twenty-four birds over the Commons that parts around residents and roosts at dusk; an adoptable companion as an `ADOPT` ledger record, moving on a critically damped leash spring with Ornstein–Uhlenbeck curiosity, bolting from bass, crossing charts with you, felt through `b7Contact` when petted, and shown beside other residents' silhouettes from their ledgers; the tram and the lift as journeys with jerk-limited trapezoidal acceleration leased into seat, back, hips and soles, the portal crossed on arrival. Eight discoveries; seventy-eight in all. Headless suite `test/companions.cjs`.
 
 ## 2.7.0 — Chapter 4, pass 4: the Undercity
 
