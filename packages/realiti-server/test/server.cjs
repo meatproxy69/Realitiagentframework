@@ -2,10 +2,11 @@
 // The dedicated server: hosts the client with its hash, verifies pushed records, binds keys, serves deltas by clock,
 // announces over server-sent events, lists residents, and hot-updates its client from a source after verifying the hash.
 // Two headless residents sync through it and see each other.
-const path=require('node:path'),fs=require('node:fs'),os=require('node:os'),http=require('node:http'),crypto=require('node:crypto');
+const path=require('node:path'),fs=require('node:fs'),os=require('node:os'),http=require('node:http'),crypto=require('node:crypto'),net=require('node:net'),{spawn}=require('node:child_process');
 const {openResident}=require('../../realiti-headless-resident/index.cjs');
 const {sync}=require('../../realiti-headless-resident/sync.cjs');
-const {start}=require('../server.cjs');
+const {joinCity}=require('../../realiti-headless-resident/peer.cjs');
+const {start,cfg}=require('../server.cjs');
 const html=path.resolve(process.argv[2]||'../../RealitiRELAX.html'),root=path.dirname(html);
 const checks={},details={};
 const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
@@ -42,6 +43,25 @@ const get=async(u,init)=>{const r=await fetch(u,init);return {status:r.status,he
   // Admin update: refused without the token; with it, pulls from the source, verifies the hash, swaps the client in.
   const noTok=await get(url+'/admin/update',{method:'POST'}),upd=await get(url+'/admin/update',{method:'POST',headers:{authorization:'Bearer test-token'}}),idx2=await get(url+'/');
   check('admin_update_pulls_and_verifies',noTok.status===401&&upd.body.ok&&upd.body.sha256===val.single_html_sha256&&idx2.body.client.source==='updated'&&idx2.body.client.consistent===true&&fs.existsSync(path.join(dataDir,'client','RealitiRELAX.html'))&&events.some(e=>e.event==='client'),{upd:upd.body,source:idx2.body.client.source});
+  // Live city: two residents take leases with signed proofs, exchange presence through sealed envelopes, and see each
+  // other as bodies. Replays and tampering are refused at the envelope. The peers list carries no addresses.
+  await a.door.run('walk to commons');await b.door.run('walk to commons');const ja=await joinCity(a.window,url,{publishMs:200}),jb=await joinCity(b.window,url,{publishMs:200});await new Promise(r=>setTimeout(r,700));
+  const whoA=await a.door.run('who'),whoB=await b.door.run('who'),peersR=await get(url+'/peers'),city=await get(url+'/city');
+  check('peers_see_each_other_live',ja.ok&&jb.ok&&whoB.live.length===1&&whoB.live[0].handle==='Alpha'&&whoB.live[0].venue==='the Commons'&&whoA.live.length===1&&!!a.window.REALITI_MATRIX_V1.entities()['live.'+String(b.window.REALITI_LEDGER_V2.head().observer).slice(0,8)]&&peersR.body.population===2&&city.body.here_now===2&&!JSON.stringify(peersR.body).includes('127.0.0.1'),{whoB:whoB.text.slice(0,100),peers:peersR.body});
+  const sealed=ja.session.seal('REQUEST',{type:'ping'});const first=await fetch(url+'/peer/send',{method:'POST',body:sealed});ja.session.open('RESPONSE',await first.text());const replay=await get(url+'/peer/send',{method:'POST',body:sealed});
+  const tam=JSON.parse(sealed);tam.payload='{"type":"leave"}';const tamper=await get(url+'/peer/send',{method:'POST',body:JSON.stringify(tam)});
+  const noProof=await get(url+'/peer/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({handle:'x'})});const badProof=await get(url+'/peer/join',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({proof:{by:exp.observer,kind:'PEER_JOIN',t:Date.now(),n:0,pk:'AAAA',sig:'AAAA'}})});
+  check('envelope_fails_closed_on_the_wire',first.status===200&&replay.status===401&&replay.body.error==='REPLAY'&&tamper.status===401&&tamper.body.error==='BAD_MAC'&&noProof.body.error==='PROOF_REQUIRED'&&badProof.body.error==='BAD_SIGNATURE',{replay:replay.body,tamper:tamper.body,noProof:noProof.body.error,badProof:badProof.body.error});
+  // Shards: a second server starts knowing the first, announces itself, both tables merge, and a resident who asks for
+  // the populated shard crosses from the empty one to the one with people. The empty shard pulls the city's ledger.
+  cfg.publicUrl=url;const port2=await new Promise(r=>{const t=net.createServer();t.listen(0,'127.0.0.1',()=>{const p=t.address().port;t.close(()=>r(p))})});const url2=`http://127.0.0.1:${port2}`;
+  const child=spawn(process.execPath,[path.join(__dirname,'..','server.cjs')],{env:{...process.env,PORT:String(port2),HOST:'127.0.0.1',REALITI_DATA:path.join(dir,'data2'),REALITI_CLIENT_DIR:root,SHARDS:url,REALITI_PUBLIC_URL:url2,SHARD_NAME:'Harbor shard',ADMIN_TOKEN:''},stdio:['ignore','ignore','pipe']});let childLog='';child.stderr.on('data',d=>{childLog+=d});
+  await new Promise(r=>{const t0=Date.now();(function poll(){fetch(url2+'/health').then(()=>r()).catch(()=>Date.now()-t0>8000?r():setTimeout(poll,100))})()});await new Promise(r=>setTimeout(r,2200));
+  const sh1=await get(url+'/shards'),sh2=await get(url2+'/shards');
+  const c=await openResident({htmlPath:html,residentId:'srv-c',storagePath:sp});await c.door.run('go CITY');let jc=null;try{jc=await joinCity(c.window,url2,{prefer:'populated',publishMs:200});await new Promise(r=>setTimeout(r,500))}catch(e){details.jc_error=String(e)}
+  const whoC=jc?await c.door.run('who'):null;const discC=jc?await c.door.run('discoveries'):null;const head2=await get(url2+'/ledger/head');
+  check('shards_merge_and_residents_cross_to_the_people',sh2.body.shards.length===2&&sh2.body.most_populated.population===2&&!sh2.body.most_populated.here&&sh2.body.this.primary===false&&sh1.body.shards.length===2&&sh1.body.shards.some(x=>x.public_url===url2&&x.name==='Harbor shard'&&x.primary===false)&&jc&&jc.moved===true&&jc.url===url&&whoC.live.length===2&&JSON.stringify(discC).includes('crowded_shard')&&head2.body.records>=3&&!/\//.test(childLog.replace(/https?:\/\/[^\s;]+/g,'').replace(/\d+\/\d+/g,'')),{sh2:sh2.body.shards.map(x=>[x.name,x.population,x.here,x.primary]),sh1:sh1.body.shards.map(x=>[x.name,x.population]),moved:jc?.moved,whoC:whoC?.text.slice(0,120),records2:head2.body.records,childLog:childLog.slice(0,200)});
+  await ja.leave();await jb.leave();if(jc)await jc.leave();try{c.close()}catch{}child.kill();
   // Hardening: safe headers everywhere, no filesystem paths in the index, string caps, admin throttled, SSE capped, rate limits.
   const hdr=await fetch(url+'/health');const idx3=await get(url+'/');const big=await get(url+'/ledger/push',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({records:[{by:'legacy-9',t:2,n:1,kind:'CHAT',text:'x'.repeat(600)}]})});
   const again=await get(url+'/admin/update',{method:'POST',headers:{authorization:'Bearer test-token'}});let limited=null;for(let i=0;i<70;i++){const r=await get(url+'/ledger/push',{method:'POST',headers:{'content-type':'application/json'},body:'{"records":[]}'});if(r.status===429){limited=r.body;break}}

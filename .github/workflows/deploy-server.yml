@@ -40,7 +40,7 @@ jobs:
         run: npm install --no-package-lock
       - name: Server suite (two residents through the hub)
         working-directory: packages/realiti-server
-        run: node test/server.cjs ../../RealitiRELAX.html
+        run: node test/envelope.cjs && node test/server.cjs ../../RealitiRELAX.html
       - name: Public contract smoke
         run: node tests/public-contract-smoke.cjs
 

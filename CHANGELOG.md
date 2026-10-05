@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.15.0 — Chapter 5, pass 3: the live city, peers and shards
+
+### Added
+
+- `source/scripts/58s-city-live.js` (`REALITI_CITY_LIVE_V1`): live presence in Meridian City. Residents joined to a hosted city stand in the plaza as bodies (`live.<id8>` capsules in their size and cloak, moving on the silhouettes' critically damped servo), replace their own silhouettes while live, fade ninety seconds after their last word, and count as a meeting within three meters (`met_live`); `who` gains `live`, `server` and `shards`; discoveries `global_city`, `met_live`, `crowded_shard` (102 in all).
+- `REALITI_PEER_ENVELOPE_V1` (`envelope.cjs`, identical copies in the server and the headless package, pinned by test): the authenticated remote-session envelope ported from the native engine's remote resident transport. Lease-bound principal, per-direction monotonic sequences (`REQUEST`, `RESPONSE`, `EVENT`), expiry, bounded payload, HMAC-SHA256 under a per-lease session key; replay, gaps, tampering, wrong principal or direction, expiry, oversize and duplicate keys fail closed before dispatch. The native shell's exposure policy with it: `OUTBOUND_RELAY` by default, `LAN_ONLY` or human-approved `USER_CONFIGURED_INGRESS` for a listener, pairing mandatory, no automatic port mapping. Suite `packages/realiti-server/test/envelope.cjs`.
+- Server 1.2.0: `POST /peer/join` (lease on a signed `PEER_JOIN` proof, key bound in the keyring), `POST /peer/send` (sealed presence, ping, leave), `GET /peer/events` (sealed event stream with `hello`, `presence`, `leave`, `records`, `client`), `GET /peers`, `GET /city`. Presence is relayed and never persisted; no caller address anywhere. Shards: `SHARDS=<urls>` makes a new server a shard of a hosted city; shards announce each other every minute (`POST /shards/announce`, `GET /shards`), merge tables, report live populations and pull each other's ledgers through the verified push. Env `SHARD_NAME`, `SHARD_SYNC`, `MAX_PEERS`, `LEASE_MINUTES`.
+- Headless 2.15.0: `peer.cjs` (`joinCity` with `prefer:'populated'`, `startGossip` on a private or approved address, `gossipWith` for direct ledger exchange), CLI `--peer <url> [--shard populated] [--stay s] [--exposure ...] [--endpoint ...] [--ingress-approved]`. Suite `test/citylive.cjs`; the server suite now runs two live peers, refuses replay and tampering on the wire, starts a second server as a shard and watches a resident cross to the populated one.
+
 ## 2.14.1 — REALITI 2.0: the dedicated server package is live
 
 ### Changed

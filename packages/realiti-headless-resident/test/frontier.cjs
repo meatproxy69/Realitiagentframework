@@ -60,7 +60,7 @@ const near=(a,b,tol)=>Math.abs(a-b)<=tol;
   // Discoveries are announced once and listed.
   const list=await door.run('discoveries');
   const again=await door.run('hum 61.25');
-  check('discoveries_listed_and_announced_once',list.found>=3&&list.total===99&&!/Discovery/.test(String(again.text)),{found:list.found,again:again.text});
+  check('discoveries_listed_and_announced_once',list.found>=3&&list.total===102&&!/Discovery/.test(String(again.text)),{found:list.found,again:again.text});
 
   // Pond stones: angle matters; the optimum earns the secret.
   await door.run('go KITE_FIELD');await R.invoke('approach',{target:'pond'});

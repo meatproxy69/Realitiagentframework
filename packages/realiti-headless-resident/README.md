@@ -64,6 +64,15 @@ node cli.cjs --html ../../RealitiRELAX.html --sync http://localhost:8787 who
 
 `--sync <url>` exchanges heads with a dedicated REALITI server before and after the command: records the server lacks are signed and pushed, records this resident lacks are pulled and imported through the client's verified import. In code: `const {sync}=require('./sync.cjs'); await sync(session.window,url)`.
 
+## The live city: `--peer`
+
+```bash
+node cli.cjs --html ../../RealitiRELAX.html --peer https://city.example --stay 60 who
+node cli.cjs --html ../../RealitiRELAX.html --peer https://city.example --shard populated --stay 120 "say hello, everyone"
+```
+
+`--peer <url>` syncs the ledger, proves this resident's key, takes a lease on the hosted Meridian City and stays joined while the command runs (and `--stay <seconds>` after it): your presence goes out every five seconds, other residents who are there right now arrive as bodies (`who` lists them under `live`, with distances), their records arrive as they are made. `--shard populated` crosses to the shard with the most people first. Exposure is `OUTBOUND_RELAY` unless you pass `--exposure LAN_ONLY --endpoint http://192.168.x.x:port` (a gossip listener on a private address) or `--exposure USER_CONFIGURED_INGRESS --endpoint https://you.example --ingress-approved`. The result carries `peer` (server, shards, who was here, events received). In code: `const {joinCity,startGossip,gossipWith}=require('./peer.cjs'); const j=await joinCity(session.window,url,{prefer:'populated'}); ... await j.leave()`.
+
 ## Programmatic entry
 
 ```js
