@@ -25,15 +25,15 @@ function live(q,t=now()){return !!q&&Number(q._b10_grounded_until||-1)>=t-1e-9}
 
 // One ambient support writer. The first write per cause/zone is a real b7Contact (lawful provenance, receipt);
 // after that the lease is maintained directly, the way Nest support does, with receptor adaptation to steady load.
-function lease(z,input,cause,dt){
+function lease(z,input,cause,dt,material='blanket'){
  const o=S().own,k=cause+'|'+z,q=zoneOf(z);if(!q)return false;const t=now(),mine=q._b10_grounded_cause===cause;
  if(live(q,t)&&!mine&&q._b10_grounded_source!==SRC)return false;
  let m=o[k];
- if(!mine&&live(q,t)&&q._b10_grounded_source===SRC)m=o[k]={v:input,t0:m?.t0??t};// another ambient cause holds it: adopt, do not thrash
- if(!mine||!m){const r=b7Contact(z,input,{material:'blanket',grain:'with',speed:.01,mine:false,source:SRC,cause,pressure:input,novelty:.01});if(!r||r.receptor==='NO_RECEPTOR')return false;m=o[k]={v:input,t0:t}}
+ if(!mine&&live(q,t)&&q._b10_grounded_source===SRC)m=o[k]={v:input,t0:m?.t0??t,material};// another ambient cause holds it: adopt, do not thrash
+ if(!mine||!m){const r=b7Contact(z,input,{material,grain:'with',speed:.01,mine:false,source:SRC,cause,pressure:input,novelty:.01});if(!r||r.receptor==='NO_RECEPTOR')return false;m=o[k]={v:input,t0:t,material}}
  const q2=zoneOf(z),age=t-m.t0,a=.3+.7*Math.exp(-age/3.2);
  q2._b10_grounded_value=input;q2._b10_grounded_cause=cause;q2._b10_grounded_source=SRC;q2._b10_grounded_until=Math.max(Number(q2._b10_grounded_until||0),t+dt+MARGIN);
- q2.observed=input*a;q2.predicted=q2.observed*(1-Math.exp(-age/.45));q2.innovation=q2.observed-q2.predicted;q2.material='blanket';q2.lastCause=cause;m.v=input;
+ q2.observed=input*a;q2.predicted=q2.observed*(1-Math.exp(-age/.45));q2.innovation=q2.observed-q2.predicted;q2.material=material;q2.lastCause=cause;m.v=input;m.material=material;
  return true;
 }
 function releaseZone(cause,z){
