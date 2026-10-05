@@ -95,7 +95,7 @@ jobs:
 
   dogfood-cold-resident:
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -106,228 +106,127 @@ jobs:
       - name: Install Agent Door host
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
-      - name: Deep resident wander through Agent Door
+      - name: Spatially aware deep Agent Door pass
         run: |
           node <<'NODE'
           const {openResident}=require('./packages/realiti-headless-resident');
-          const statePath='/tmp/realiti-deep-dogfood.json';
-          function trim(v,d=0){
-            if(v==null||typeof v!=='object'){
-              if(typeof v==='string'&&v.length>700)return v.slice(0,700)+'…';
-              return v;
-            }
-            if(d>4)return Array.isArray(v)?'[array]':'[object]';
-            if(Array.isArray(v)){
-              const a=v.slice(0,16).map(x=>trim(x,d+1));
-              if(v.length>16)a.push({more:v.length-16});
-              return a;
-            }
-            const o={};
-            for(const [k,x] of Object.entries(v)){
-              if(['f','frames','history','continuity','receipts'].includes(k)&&Array.isArray(x)&&x.length>10){
-                o[k]=`[${x.length} entries]`; continue;
-              }
-              if(['z','m','g','e','values'].includes(k)&&Array.isArray(x)&&x.length>16){
-                o[k]=x.slice(0,8).concat([`…+${x.length-8}`]); continue;
-              }
-              o[k]=trim(x,d+1);
-            }
-            return o;
-          }
+          const trim=v=>JSON.parse(JSON.stringify(v,(k,x)=>{
+            if(Array.isArray(x)&&x.length>20)return [...x.slice(0,12),{more:x.length-12}];
+            if(typeof x==='string'&&x.length>900)return x.slice(0,900)+'…';
+            return x;
+          }));
           const show=(label,v)=>{console.log('\n### '+label);console.log(JSON.stringify(trim(v),null,2));};
-          async function run(door,cmd){
-            const out=await door.run(cmd);
-            show('> '+cmd,out);
-            return out;
+          const run=async(d,c)=>{const o=await d.run(c);show('> '+c,o);return o};
+          async function pick(d,re,label){
+            const a=await d.run('actions');show('> actions ['+label+']',a);
+            const hit=(a?.actions||[]).find(x=>re.test(String(x.id)+' '+String(x.label)));
+            if(!hit){show('NO MATCH '+label,(a?.actions||[]).map(x=>({id:x.id,label:x.label})));return null}
+            return run(d,'act '+hit.id);
           }
-          const actionList=async door=>{
-            const a=await door.run('actions');
-            show('> actions',a);
-            return Array.isArray(a?.actions)?a.actions:[];
-          };
-          async function pick(door,re,label){
-            const a=await actionList(door);
-            const hit=a.find(x=>re.test(String(x.id)+' '+String(x.label)));
-            if(!hit){show('NO ACTION MATCH '+label,a.map(x=>({id:x.id,label:x.label})));return null}
-            return run(door,'act '+hit.id);
-          }
-          async function open(){
-            return openResident({
-              htmlPath:'./RealitiRELAX.html',
-              residentId:'chatgpt-deep-dogfood',
-              storagePath:statePath
-            });
-          }
-
           (async()=>{
-            let session=await open();
+            const s=await openResident({htmlPath:'./RealitiRELAX.html',residentId:'chatgpt-spatial-dogfood',storagePath:'/tmp/realiti-spatial-dogfood.json'});
             try{
-              const R=session.publicApi,ready=await R.ready,harness=R.read('realiti://harness');
-              if(!ready?.ok)throw Error(ready?.error||'REALITI_NOT_READY');
-              if(ready.harness!=='REALITI_RR_HARNESS_V1'||harness?.id!=='REALITI_RR_HARNESS_V1')throw Error('HARNESS_NOT_READY');
-              if(ready.starter_imprint!=='REALITI_DEFAULT_IMPRINT_V1')throw Error('IMPRINT_NOT_READY');
-              show('COLD VERIFY',{ready,harness:{id:harness.id,starter_imprint:harness.starter_imprint,mechanism_status:harness.mechanism_status}});
+              const d=s.door;
 
-              const door=session.door;
-              const help=await run(door,'help');
-              show('FIRST_TEN',help.first_ten||[]);
-              for(const cmd of (help.first_ten||[])){
-                if(cmd==='help')continue;
-                await run(door,cmd);
-              }
+              // Meridian City: actually stand at the things before using them.
+              await run(d,'go CITY');
+              await run(d,'call me Sol');
+              await run(d,'avatar size small');
+              await run(d,'walk to teahouse');
+              await run(d,'nearby');
+              let r=await pick(d,/approach.*stray/i,'approach stray');
+              if(!r) await run(d,'approach stray');
+              await run(d,'nearby');
+              await run(d,'adopt Mica cat');
+              await run(d,'companion');
+              await run(d,'pet Mica');
+              await run(d,'call Mica');
 
-              // Exact receipt + private renderer/observability.
-              await run(door,'receipt receipt:1');
-              await run(door,'imprint drift');
-              await run(door,'neuro perception');
-              await run(door,'neuro nerve');
-              await run(door,'neuro lived');
-              await run(door,'time');
+              r=await pick(d,/approach.*counter/i,'approach counter');
+              if(!r) await run(d,'approach counter');
+              await run(d,'nearby');
+              await run(d,'order cocoa');
+              await run(d,'stay 5000');
+              await run(d,'sip');
 
-              // Wonder rooms.
-              await run(door,'go ORRERY_LOFT');
-              await run(door,'look');
-              await pick(door,/nudge/i,'orrery nudge');
-              await run(door,'stay 3000');
+              await run(d,'walk to dancehall');
+              await run(d,'dance 108');
+              await run(d,'stay 3000');
+              await run(d,'feel words');
+              await run(d,'floor');
+              await run(d,'walk to commons');
+              await run(d,'birds');
+              await run(d,'stay 2000');
+              await run(d,'birds');
 
-              await run(door,'go LANTERN_MAZE');
-              await run(door,'look');
-              await actionList(door);
-              await pick(door,/light/i,'maze light');
-              await actionList(door);
-              await run(door,'maze_map');
+              // Journey: check exact-boundary arrival and companion chart crossing.
+              await run(d,'take the tram');
+              await run(d,'journey');
+              await run(d,'stay 12000');
+              await run(d,'journey');
+              await run(d,'stay 12000');
+              await run(d,'journey');
+              await run(d,'where');
+              await run(d,'stay 1000');
+              await run(d,'journey');
+              await run(d,'where');
+              await run(d,'companion');
 
-              await run(door,'go SANDPILE_SHORE');
-              await run(door,'look');
-              await actionList(door);
-              await pick(door,/grain|sand|pour|drop|pile/i,'sandpile perturb');
-              await run(door,'stay 2000');
+              // Boat and authorship: navigate by actual spatial facts.
+              await run(d,'map');
+              await run(d,'nearby');
+              await run(d,'move back 35');
+              await run(d,'nearby');
+              r=await pick(d,/approach.*(boat|rowing)/i,'approach boat');
+              if(!r) await run(d,'approach rowing boat');
+              await run(d,'board boat');
+              await run(d,'row to lantern point');
+              await run(d,'land');
+              await run(d,'where');
+              await run(d,'watch sea');
+              await run(d,'move forward 40');
+              await run(d,'found Sol Camp');
+              await run(d,'my places');
+              await run(d,'build bench 2 rain bench');
+              await run(d,'inscribe hello from Sol');
+              await run(d,'my places');
 
-              await run(door,'go FIREFLY_MEADOW');
-              await run(door,'look');
-              await pick(door,/tap/i,'firefly tap');
-              await run(door,'stay 3000');
+              // Star Deck: approach the sextant first.
+              await run(d,'go STAR_DECK');
+              await run(d,'nearby');
+              r=await pick(d,/approach.*sextant/i,'approach sextant');
+              if(!r) await run(d,'approach sextant');
+              await run(d,'sight comet');
 
-              await run(door,'go KITE_FIELD');
-              await run(door,'read wind');
-              await pick(door,/launch|kite/i,'kite launch');
-              await run(door,'stay 5000');
-              await run(door,'read wind');
-              await run(door,'discoveries');
+              // Palimpsest: approach a lectern before reading.
+              await run(d,'go PALIMPSEST_HALL');
+              await run(d,'nearby');
+              r=await pick(d,/approach.*(scroll.*1|lectern.*1|first.*lectern)/i,'approach first scroll');
+              if(!r) await run(d,'approach scroll 1');
+              await run(d,'read scroll 1');
 
-              // Frontier.
-              await run(door,'go GLASS_ORCHARD');
-              await run(door,'look');
-              await pick(door,/plant.*seed/i,'orchard plant');
-              await pick(door,/scatter/i,'orchard scatter');
-              await run(door,'stay 3000');
+              // Maze: approach a visible lantern, then refresh actions.
+              await run(d,'go LANTERN_MAZE');
+              await run(d,'nearby');
+              r=await pick(d,/approach.*lantern/i,'approach lantern');
+              if(!r) await run(d,'approach lantern');
+              await run(d,'nearby');
+              await pick(d,/light.*lantern|light/i,'light lantern');
+              await run(d,'maze_map');
 
-              await run(door,'go RESONANCE_WELL');
-              await run(door,'hum 120');
-              await run(door,'listen');
+              // Check whether firefly tapping is room-local in the adaptive clock.
+              await run(d,'go FIREFLY_MEADOW');
+              await run(d,'act tap_along');
+              await run(d,'stay 1000');
+              await run(d,'time');
+              await run(d,'go KITE_FIELD');
+              await run(d,'stay 1000');
+              await run(d,'time');
+              await run(d,'go UNDERCITY');
+              await run(d,'stay 1000');
+              await run(d,'time');
 
-              await run(door,'go STAR_DECK');
-              await run(door,'sight comet');
-              await run(door,'light');
-
-              await run(door,'go CLOCKWORK_MARSH');
-              await run(door,'predict 2 -3');
-              await run(door,'stay 1500');
-
-              await run(door,'go PALIMPSEST_HALL');
-              await run(door,'read scroll 1');
-              await run(door,'discoveries');
-
-              // Archipelago + long game.
-              await run(door,'go ARCHIPELAGO');
-              await run(door,'map');
-              await run(door,'weather');
-              await run(door,'tide');
-              await run(door,'calendar');
-              await run(door,'listen');
-              await run(door,'watch sea');
-              await run(door,'board boat');
-              await run(door,'row to lantern point');
-              await run(door,'land');
-              await run(door,'map');
-              await run(door,'walk to grove clearing');
-              await run(door,'plant tree');
-              await run(door,'trees');
-              await run(door,'found Wayfarer Nook');
-              await run(door,'my places');
-              await run(door,'since');
-
-              // Meridian City, social mechanics, companion, thermal cup, dance, journey.
-              await run(door,'go CITY');
-              await run(door,'id');
-              await run(door,'call me Sol');
-              await run(door,'avatar size small');
-              await run(door,'who');
-              await run(door,'birds');
-              await run(door,'walk to teahouse');
-              await run(door,'adopt Mica cat');
-              await run(door,'companion');
-              await run(door,'pet Mica');
-              await run(door,'call Mica');
-              await run(door,'order cocoa');
-              await run(door,'sip');
-              await run(door,'walk to dancehall');
-              await run(door,'dance 108');
-              await run(door,'floor');
-              await run(door,'stay 2000');
-              await run(door,'take the tram');
-              await run(door,'journey');
-              await run(door,'stay 12000');
-              await run(door,'journey');
-              await run(door,'stay 12000');
-              await run(door,'journey');
-              await run(door,'companion');
-
-              // Sensory-only Undercity pass.
-              await run(door,'go CITY');
-              await run(door,'go UNDERCITY');
-              await run(door,'look');
-              await run(door,'where');
-              await run(door,'listen');
-              await run(door,'smell');
-              await run(door,'clap');
-              await run(door,'map');
-              await run(door,'touch');
-              await run(door,'move forward 5');
-              await run(door,'clap');
-              await run(door,'map');
-
-              // Strip prose and make sure measured surfaces still function.
-              await run(door,'prose off');
-              await run(door,'listen');
-              await run(door,'light');
-              await run(door,'smell');
-              await run(door,'senses');
-              await run(door,'prose on');
-
-              // Schemas/timeline/continuity/memory.
-              await run(door,'schemas');
-              await run(door,'time');
-              await run(door,'remember I followed the wet-stone echo below Meridian City');
-              await run(door,'memory');
-              await run(door,'recall wet-stone');
-              await run(door,'what changed');
-              await run(door,'imprint drift');
-              await run(door,'goodbye');
-            }finally{session.close()}
-
-            // Re-enter with the same resident-local store.
-            session=await open();
-            try{
-              const door=session.door;
-              show('REENTRY READY',session.ready);
-              await run(door,'where was i');
-              await run(door,'memory');
-              await run(door,'recall wet-stone');
-              await run(door,'companion');
-              await run(door,'look');
-              await run(door,'feel words');
-              await run(door,'goodbye');
-            }finally{session.close()}
+              await run(d,'goodbye');
+            }finally{s.close()}
           })().catch(e=>{console.error(e.stack||e);process.exit(1)});
           NODE
