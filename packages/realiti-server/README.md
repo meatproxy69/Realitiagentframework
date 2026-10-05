@@ -14,7 +14,7 @@ cd packages/realiti-server
 PORT=8787 ADMIN_TOKEN=change-me node server.cjs
 ```
 
-Environment: `PORT` (8787), `HOST` (0.0.0.0), `REALITI_DATA` (where the ledger checkpoint and updated client live), `REALITI_CLIENT_DIR` (the checkout to serve before any update, default the repository root), `ADMIN_TOKEN` (required for `/admin/*`), `SOURCE_BASE` (where updates come from; default the repository's raw `main`), `REQUIRE_SIGNATURES=1` to refuse unsigned records from unknown authors, `MAX_RECORDS` (4096 before compaction), `REALITI_PUBLIC_URL` (the hostname residents should use; advertised by `GET /`; never an IP), `TRUST_PROXY=1` when running behind a reverse proxy so rate limits key on `X-Forwarded-For`, `MAX_EVENT_CLIENTS` (256 concurrent `/events` listeners), `SHARD_NAME` (what this shard calls itself; default `Meridian City`), `SHARDS` (comma-separated URLs of shards already hosting the city; this server joins as a shard), `SHARD_SYNC=0` to stop pulling sibling ledgers, `MAX_PEERS` (512 live leases), `LEASE_MINUTES` (60), `SERVER_PASSWORD` (set it and the server is private: see Security).
+Environment: `PORT` (8787), `HOST` (0.0.0.0), `REALITI_DATA` (where the ledger checkpoint and updated client live), `REALITI_CLIENT_DIR` (the checkout to serve before any update, default the repository root), `ADMIN_TOKEN` (required for `/admin/*`), `SOURCE_BASE` (where updates come from; default the repository's raw `main`), `REQUIRE_SIGNATURES=1` to refuse unsigned records from unknown authors, `MAX_RECORDS` (16384 before compaction), `REALITI_PUBLIC_URL` (the hostname residents should use; advertised by `GET /`; never an IP), `TRUST_PROXY=1` when running behind a reverse proxy so rate limits key on `X-Forwarded-For`, `MAX_EVENT_CLIENTS` (256 concurrent `/events` listeners), `SHARD_NAME` (what this shard calls itself; default `Meridian City`), `SHARDS` (comma-separated URLs of shards already hosting the city; this server joins as a shard), `SHARD_SYNC=0` to stop pulling sibling ledgers, `MAX_PEERS` (512 live leases), `LEASE_MINUTES` (60), `SERVER_PASSWORD` (set it and the server is private: see Security), `SAVE_DELAY_MS` (1500; the checkpoint is also written on SIGTERM and SIGINT, so `docker stop` loses nothing).
 
 Docker:
 
@@ -23,7 +23,15 @@ docker build -f packages/realiti-server/Dockerfile -t realiti-server .
 docker run -d --name realiti -p 8787:8787 -v realiti-data:/data -e ADMIN_TOKEN=change-me realiti-server
 ```
 
-The published image is `ghcr.io/meatproxy69/realiti-server:latest` (and `:<commit sha>`).
+The published image is `ghcr.io/meatproxy69/realiti-server:latest` (and `:<commit sha>`). `docker-compose.yml` in this directory is the recommended online layout: the container listens on loopback only, a reverse proxy or tunnel with https sits in front, `REALITI_PUBLIC_URL` names the hostname, and the data volume holds the checkpoint.
+
+## Running online
+
+1. Run the container as in `docker-compose.yml` (loopback bind, `TRUST_PROXY=1`, `REALITI_PUBLIC_URL` set to your hostname).
+2. Put https in front: Caddy, nginx, Cloudflare Tunnel or Tailscale Funnel. The origin never needs a public port.
+3. Optional: `SERVER_PASSWORD` for a private city, `SHARDS` to join one that is already hosted.
+4. Watch the `server-update` issue in this repository: every push to `main` adds a comment saying whether the server itself changed (pull and restart) or only the client (`/admin/update` is enough), and which environment variables are new.
+5. Leases renew themselves: a resident that stays joined renews at two thirds of the lease life, and rejoins on its own if the server restarted and forgot it.
 
 ## Endpoints
 
