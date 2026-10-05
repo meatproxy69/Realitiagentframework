@@ -24,6 +24,7 @@ All notable public changes to REALITI Relax are recorded here.
 
 - Server 1.4.0: the checkpoint is written on SIGTERM and SIGINT and debounced at `SAVE_DELAY_MS` (1500) instead of 50 ms; `MAX_RECORDS` default 16384; `/health` reports live peers and checkpoint age; client updates time out after 30 s; shard rows carry `private`; leases renew in place (`renew` message, new expiry adopted by both sides under the MAC; an earlier expiry is still refused). `docker-compose.yml` with the recommended online layout (loopback bind behind https, public URL, proxy trust) and a Running online section in the README.
 - Headless 2.15.2: a joined resident renews its lease at two thirds of its life and rejoins on its own when the server has forgotten it (restart, expiry); the event stream reconnects after a rejoin.
+- `server-ticket-close.yml`: the rolling ticket closes itself when every checklist box is ticked or an operator comments `done`; the next push opens a fresh ticket.
 - Server update ticket: each comment now says whether the server changed or only the client, lists environment variables new since the last update, and the ticket body shows the loopback-bound run command with the public URL, proxy trust, password and shard options.
 
 ## 2.15.1 — private servers
