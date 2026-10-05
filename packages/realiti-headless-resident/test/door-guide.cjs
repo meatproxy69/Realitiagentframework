@@ -17,6 +17,10 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
     Array.isArray(help.first_ten)&&help.first_ten.includes('worlds')&&help.first_ten.includes('go ORRERY_LOFT')&&help.first_ten.includes('next')&&
     help.world_guide?.groups?.some(g=>g.id==='wonder')&&help.world_guide?.groups?.some(g=>g.id==='frontier')&&help.world_guide?.groups?.some(g=>g.id==='farther'),
     {first_ten:help.first_ten,groups:help.world_guide?.groups?.map(g=>g.id)});
+  check('help_is_curated_not_a_feature_catalog',
+    Array.isArray(help.commands)&&help.commands.includes('worlds')&&help.commands.includes('actions')&&
+    !help.commands.some(x=>/cast|raceboard|fishboard|mail|neuro|hum|decode|clap/i.test(String(x))),
+    help.commands);
   check('worlds_orients_without_dumping_the_catalog',
     worlds.ok&&worlds.schema==='REALITI_WORLD_GUIDE_V1'&&worlds.total_rooms===rooms.length&&count===rooms.length&&
     groups.every(g=>!('rooms' in g)&&!('try' in g))&&!('route' in worlds),
@@ -42,6 +46,11 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('firefly_tapping_is_room_local',
     tapping0===true&&tapping1===false&&t1.reason!=='tapping'&&t1.quantum_ms>=100,
     {tapping_in_meadow:tapping0,tapping_after_exit:tapping1,in_meadow:t0,outside:t1});
+
+  // Journey status should not repeat the same sentence through both the direct result and ambient companion words.
+  await d.run('go CITY');await d.run('take the tram');
+  const jr=await d.run('journey'),hits=(String(jr.text||'').match(/tram:/g)||[]).length;
+  check('journey_status_is_not_duplicated',jr.ok&&hits<=1,{text:jr.text,hits});
 
   const guide=R.help();
   check('structured_help_matches_agent_door',guide.first_ten?.includes('worlds')&&guide.world_guide?.total_rooms===rooms.length&&
