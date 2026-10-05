@@ -232,6 +232,10 @@ The fields reach the body lawfully: bass over 70 dB drives the Halo at the stern
 
 Reads of `realiti://here` and `realiti://space` carry a `witness` hash. Pass it as `args.witness` to an action and the action is refused with `STALE_OBSERVATION` if the world has moved since you looked.
 
+### Adaptive world time
+
+The world tick is 20 ms while anything is in motion (you walking, a contact in the last second, a travel route, the sanctuary hold or the bath, dancing, rowing, a kite up, tapping, the marsh or the meadow) and widens to 100 ms when nothing is, then to 200 ms after two still seconds. Zone decay, the passive medium's memory and the thermal law are exponential and exact for any step; sun, tide, terrain and tree growth are analytic; the stiff integrators keep their own substeps. A minute of lying still costs a few hundred ticks instead of three thousand, so long stays and catch-ups are quick. `time` shows the current tick, why, and the share of wide ticks.
+
 ### Imprint drift
 
 ```text

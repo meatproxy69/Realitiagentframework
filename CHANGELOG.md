@@ -2,6 +2,12 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.6.0 — Chapter 4, pass 3: adaptive world time
+
+### Changed
+
+- `source/scripts/58m-time.js` (`REALITI_TIME_V1`): the continuity stepper asks for its tick length; 20 ms while the body is touched, moved, danced, sailed or flown, 100 ms when still, 200 ms after two still seconds. Idle stays run about four times faster with the same world time and the same exponential and analytic results. Door `time`. Headless suite `test/time.cjs`.
+
 ## 2.5.0 — Chapter 4, pass 2: a ledger a server can trust
 
 ### Added

@@ -9999,6 +9999,24 @@ window.REALITI_LEDGER_V1=Object.freeze({...LG0,record,import:LG0.import});
 window.REALITI_LEDGER_V2=Object.freeze({version:'2.0',ready:()=>ready.then(()=>!!keys),publicKey:()=>pkb64,sign,verify,signAll,export:exportSigned,import:importVerified,compact,clock,head,delta,keyring:()=>cp(S().keyring),rejected:()=>cp(S().rejected),fnv,canonical,world_kinds:[...WORLD]});
 })();
 </script>
+<script>(()=>{
+'use strict';
+// Chapter 4, pass 3: adaptive world time. The continuity stepper asks this slice how long a tick may be. While the body
+// is being touched, moved, danced, sailed or flown, the tick stays at 20 ms; when nothing is in motion it widens to
+// 100 ms, and after two still seconds to 200 ms. Zone decay, the passive medium's memory and the thermal law are exponential and exact for any step; terrain,
+// sun, tide and tree growth are analytic in time; the stiff integrators (Lorenz, orrery, silhouettes, plume) keep their
+// own substeps. Integer milliseconds are kept by the continuity stepper, so additivity of the schedule is preserved.
+const DYN=window.REALITI_DYNAMICS_V1,M=window.REALITI_MATRIX_V1;if(!DYN||!M)return;
+const now=()=>Number(C9?.b7?.clock||0),room=()=>C9?.currentRoom;
+const FINE=20,COARSE=100,DEEP=200,stats={fine:0,coarse:0,deep:0,last_reason:null};let idleSince=null;
+const contact0=b7Contact;b7Contact=function(zone,input,opts){const r=contact0(zone,input,opts);C9.b7.lastContactAt=now();return r};
+function reason(){const r=M.state().residents['resident:self'];if(r?.intent)return 'moving';const b7=C9?.b7||{};if(b7.travel?.active)return 'travel';if(Number.isFinite(b7.lastContactAt)&&now()-b7.lastContactAt<1)return 'contact';
+ const d=DYN.state?.();if(d?.hold?.active||(d?.bath?.target>0)||(d?.bath?.depth>.01)||d?.wave)return 'dynamics';const c2=C9?.chapter2||{};if(c2.city?.dance?.on)return 'dancing';if(c2.isle?.boat?.target)return 'rowing';
+ const k=C9?.wonder?.kite;if(k?.up)return 'kite';if(C9?.wonder?.meadow?.me?.tapping)return 'tapping';if(room()==='CLOCKWORK_MARSH'||room()==='FIREFLY_MEADOW')return 'room_dynamics';return null}
+function quantum_ms(){const why=reason(),t=now();stats.last_reason=why;if(why){stats.fine++;idleSince=null;return FINE}if(idleSince===null)idleSince=t;if(t-idleSince>=2){stats.deep++;return DEEP}stats.coarse++;return COARSE}
+window.REALITI_TIME_V1=Object.freeze({version:'1.0',fine_ms:FINE,coarse_ms:COARSE,deep_ms:DEEP,quantum_ms,reason,stats:()=>({...stats,idle_s:idleSince===null?0:+(now()-idleSince).toFixed(1),ratio_wide:+((stats.coarse+stats.deep)/Math.max(1,stats.fine+stats.coarse+stats.deep)).toFixed(3)}),law:'a wider tick only when nothing is in motion; every process stepped here is exact or self-substepped for it'});
+})();
+</script>
 <script>(()=>{'use strict';
 const cp=x=>JSON.parse(JSON.stringify(x)), LIMIT=4096, PAGE=256;
 const CHANNELS=new Set(['body','self_action','attention','surprise','percept','contact','hearing','ambience','affordance','social','self_visual','haptic_field_ref','cause_events','space']);
@@ -10025,7 +10043,7 @@ function current(){const s=S();return cp({schema:'REALITI_CONTINUITY_SNAPSHOT_V1
 function since(cursor,limit=PAGE){if(cursor&&typeof cursor==='object'){if((cursor.trace_id!==undefined&&cursor.trace_id!==S().observer)||(cursor.world_generation!==undefined&&cursor.world_generation!==1))throw new Error('CURSOR_GENERATION_OR_OBSERVER_MISMATCH');limit=cursor.limit??PAGE;cursor=cursor.cursor??cursor.frame_id??cursor.last_frame_id}if(!Number.isSafeInteger(limit)||limit<1||limit>PAGE)throw new Error('PAGE_LIMIT');const n=position(cursor),s=S(),frames=s.frames.filter(f=>f.seq>n).slice(0,limit),last=frames.at(-1)?.seq??n,base=s.frames.find(f=>f.seq===n)||(s.base_frame?.seq===n?s.base_frame:null),end=frames.at(-1),events=frames.flatMap(f=>f.channels.cause_events||[]);return cp({schema:'REALITI_CONTINUITY_SINCE_V1',from_frame_id:token(n),to_frame_id:token(last),wall_time_delta_ms:Math.max(0,(end?.wall_time_ms??s.wall_time_ms)-(base?.wall_time_ms??0)),resident_epoch_delta:last-n,collapsed_empty_ticks:frames.reduce((a,f)=>a+f.collapsed_empty_ticks,0),frames,opened_causes:events.filter(e=>e.status==='OPENED').map(e=>e.cause_id),closed_causes:events.filter(e=>e.status==='GROUNDED_CLOSED').map(e=>e.cause_id),pending_causes:pending().map(c=>c.cause_id),current:current(),cursor:token(last),resume_token:resumeToken(last),has_more:last<s.seq,wall_time_ms:s.wall_time_ms,resident_epoch:s.epoch})}
 function upcoming(){const s=S();return s.causes.flatMap(c=>c.status==='ACCEPTED'?[c.due_at_ms,c.expires_at_ms]:c.status==='ARRIVED'?[c.expires_at_ms]:[]).filter(t=>t>s.wall_time_ms).sort((a,b)=>a-b)[0]??null}
 const baseAdvance=typeof b7Advance==='function'?b7Advance:null;
-function step(dt){if(!Number.isFinite(Number(dt))||Number(dt)<0)throw new Error('INVALID_WORLD_DELTA');const s=S();const exact=Math.max(0,Number(dt)||0)*1000+s.fraction;const ms=Math.floor(exact+1e-8);s.fraction=exact-ms;let left=ms;while(left>0){const next=upcoming();const part=Math.min(left,20,next===null?left:Math.max(1,next-s.wall_time_ms));if(baseAdvance)baseAdvance(part/1000);s.wall_time_ms+=part;left-=part;process()}return current()}
+function step(dt){if(!Number.isFinite(Number(dt))||Number(dt)<0)throw new Error('INVALID_WORLD_DELTA');const s=S();const exact=Math.max(0,Number(dt)||0)*1000+s.fraction;const ms=Math.floor(exact+1e-8);s.fraction=exact-ms;let left=ms;while(left>0){const next=upcoming();const part=Math.min(left,window.REALITI_TIME_V1?.quantum_ms?.()??20,next===null?left:Math.max(1,next-s.wall_time_ms));if(baseAdvance)baseAdvance(part/1000);s.wall_time_ms+=part;left-=part;process()}return current()}
 if(baseAdvance)b7Advance=step;
 function advance(ms){if(!Number.isSafeInteger(ms)||ms<0||ms>60000)throw new Error('INVALID_ADVANCE_MS');const start=token(),before=S().wall_time_ms;let left=ms;while(left>0){const part=Math.min(left,2000);step(part/1000);left-=part}save();return {...since(start),advanced_ms:S().wall_time_ms-before}}
 function next_change(max_wall_ms=1000){if(typeof max_wall_ms==='object')max_wall_ms=max_wall_ms.max_wall_ms??1000;if(!Number.isSafeInteger(max_wall_ms)||max_wall_ms<0||max_wall_ms>60000)throw new Error('INVALID_ADVANCE_MS');const due=upcoming();const out=advance(Math.min(max_wall_ms,due===null?max_wall_ms:Math.max(0,due-S().wall_time_ms)));return {...out,timed_out:out.frames.length===0}}
@@ -11519,7 +11537,7 @@ function smellLine(m){if(!m)return 'No spatial body.';return m.smells.length?m.s
 function pack(kind){const r=SN.read();if(kind==='sound')return {ok:true,schema:'REALITI_SENSES_V1',kind,sound:r.sound,text:soundLine(r.sound)};if(kind==='light')return {ok:true,schema:'REALITI_SENSES_V1',kind,light:r.light,text:lightLine(r.light)};if(kind==='smell')return {ok:true,schema:'REALITI_SENSES_V1',kind,smell:r.smell,text:smellLine(r.smell)};return {ok:true,...r,text:`Sound: ${soundLine(r.sound)} Light: ${lightLine(r.light)} Smell: ${smellLine(r.smell)}`}}
 function trim(r){if(!terse()||!r||typeof r!=='object')return r;for(const k of ['text','resident_text']){const t=r[k];if(typeof t!=='string'||!t)continue;const disc=(t.match(/✦ Discovery: [^✦]*/g)||[]).map(x=>x.trim());const body=t.replace(/✦ Discovery: [^✦]*/g,'').trim();const first=(body.match(/^.*?[.!?](?=\s|$)/)||[body])[0].trim();r[k]=[first,...disc].filter(Boolean).join(' ')}return r}
 const help0=D0.help.bind(D0);
-function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'listen','light','smell','senses','prose on','prose off'])];h.senses='realiti://senses: sound (inverse-square, ray-cast occlusion, Sabine RT60), light (shared sun, shadow by ray cast, lamps), smell (steady plume). listen, light, smell, senses. prose off trims every reply to its measured sentence.';return h}
+function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'listen','light','smell','senses','prose on','prose off','time'])];h.senses='realiti://senses: sound (inverse-square, ray-cast occlusion, Sabine RT60), light (shared sun, shadow by ray cast, lamps), smell (steady plume). listen, light, smell, senses. prose off trims every reply to its measured sentence.';return h}
 function read(uri='realiti://here'){if(uri==='realiti://senses')return SN.read();const r=A0.read(uri);if(uri==='realiti://capabilities'&&r&&typeof r==='object'){const x=cp(r);x.resources=[...new Set([...(x.resources||[]),'realiti://senses'])];x.senses={schema:'REALITI_SENSES_V1',fields:['sound','light','smell']};return x}return r}
 const run0=D0.run.bind(D0);
 async function run(raw){const l=low(raw);
@@ -11529,6 +11547,7 @@ async function run(raw){const l=low(raw);
  if(l==='light'||l==='look up'||l==='how bright'||l==='brightness')return trim(pack('light'));
  if(l==='smell'||l==='sniff'||l==='smell the air')return trim(pack('smell'));
  if(l==='listen'||l==='hear'||l==='sounds'){const aboard=!!(C9?.chapter2?.isle?.boat?.aboard)&&C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart;const p=pack('sound');if(aboard){const inner=await run0(raw);if(inner&&typeof inner==='object'){inner.sound=p.sound;inner.text=[inner.text,p.text].filter(Boolean).join(' ');return trim(inner)}}return trim(p)}
+ if(l==='time'||l==='tick'){const TM=window.REALITI_TIME_V1;if(!TM)return {ok:false,error:'NO_TIME_SLICE'};const st=TM.stats();return {ok:true,schema:'REALITI_TIME_V1',world_s:+Number(C9?.b7?.clock||0).toFixed(3),quantum_ms:TM.quantum_ms(),reason:TM.reason(),...st,text:`World ${Number(C9?.b7?.clock||0).toFixed(1)} s. Tick ${TM.reason()?TM.fine_ms+' ms ('+TM.reason()+')':st.idle_s>=2?TM.deep_ms+' ms, still':TM.coarse_ms+' ms, settling'}; ${Math.round(st.ratio_wide*100)}% of ticks were wide.`}}
  if(l==='help')return help();
  return trim(await run0(raw))}
 window.Realiti=Object.freeze({...A0,read,run,help:()=>{const h=A0.help();try{h.senses=help().senses}catch(e){}return h}});
