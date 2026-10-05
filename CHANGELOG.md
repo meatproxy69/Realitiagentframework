@@ -8,10 +8,17 @@ All notable public changes to REALITI Relax are recorded here.
 
 - Gait: while walking, the standing feet leases load the soles alternately, one stride (0.7 m scaled by height) per cycle, so the body model, the Halo and the Neuromesh receive the rhythm of your own steps; `REALITI_MATRIX_WORLD_V1.gait()` reports distance, phase, steps and speed. Walking speed is a resident field the kernel reads.
 - `source/scripts/72-modes-public.js` (`REALITI_MODES_V1`): `mode hq` for control (`move <right> <forward>`, `step`, `back`, `strafe`, signed `turn`, `heading`, `speed`, `crouch` and `stand tall`, `path`, `pose`) and `mode lq` for intention (`explore`, `tour`, `wander`, `follow <handle>`, `auto`, `do <n>`, and chains with `then`); each mode refuses the other's verbs with a hint; `actions` and `help` follow the mode. Default LQ. Crouching halves the capsule, so a tall avatar fits the Undercity grate.
+- Agent Door whole-world discovery: `worlds` groups the original R&R rooms, Wonder, Frontier, Archipelago, Meridian City, Undercity and resident systems; `worlds <group>` filters it; `next` gives a non-mutating broad-route suggestion; `help.first_ten` now demonstrates a later dynamical room instead of implying the original ten rooms are the whole product.
 
 ### Changed
 
 - Island and city replies carry the act in `text` and move the weather and position into `weather`, `ambient` and `here` fields; `stay` keeps at most two ambient lines in text with all of them in `ambient`. Headless suites `test/immersion.cjs`, `test/modes.cjs`.
+
+### Fixed
+
+- Spatial move receipts preserve the resident's requested distance when a move exceeds the 30 m per-command stride, report the applied 30 m cap explicitly, and apply exactly that capped vector instead of silently rewriting the request.
+- Firefly Meadow tapping is room-local. Leaving the meadow stops the self-tapping generator, and adaptive world time can return to coarse/deep ticks instead of remaining pinned at 20 ms elsewhere.
+- Added `test/door-guide.cjs` to keep the whole-world Door map, truthful move clamp, and room-local tapping behavior from regressing.
 
 ## 2.10.0 — Chapter 5 groundwork, pass B: typed schemas and a stdio MCP server
 
