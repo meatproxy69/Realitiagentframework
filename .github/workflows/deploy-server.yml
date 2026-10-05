@@ -94,6 +94,16 @@ jobs:
             commits="$(git log --format='- %h %s' -n 10 "$GITHUB_SHA")"
           fi
           [ -n "$commits" ] || commits="- $short $(git log -1 --format=%s)"
+          # What an operator must know: did the server itself change, and which environment variables are new.
+          if [ -n "$BEFORE" ] && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            server_changed="$(git diff --name-only "$BEFORE..$GITHUB_SHA" -- packages/realiti-server/server.cjs packages/realiti-server/envelope.cjs packages/realiti-server/Dockerfile | wc -l | tr -d ' ')"
+            new_env="$(diff <(git show "$BEFORE:packages/realiti-server/server.cjs" 2>/dev/null | grep -oE 'process\.env\.[A-Z_]+' | sort -u) <(grep -oE 'process\.env\.[A-Z_]+' packages/realiti-server/server.cjs | sort -u) | grep '^>' | sed 's/^> process\.env\./- `/; s/$/`/' || true)"
+          else
+            server_changed=1; new_env=""
+          fi
+          if [ "$server_changed" = "0" ]; then apply="Client only: \`/admin/update\` is enough; the server code did not change."; else apply="Server changed: pull the image and restart (\`docker stop\` writes the checkpoint first)."; fi
+          [ -n "$new_env" ] && apply="$apply New environment variables (see the server README):
+          $new_env"
           gh label create server-update --description "Dedicated server updates to apply, in order" --color 1d76db --force >/dev/null 2>&1 || true
           number="$(gh issue list --label server-update --state open --json number --jq '.[0].number // empty')"
           body_file="$(mktemp)"
@@ -107,10 +117,13 @@ jobs:
           \`\`\`bash
           docker pull $IMAGE:latest
           docker rm -f realiti-server || true
-          docker run -d --name realiti-server --restart unless-stopped -p 8787:8787 -v realiti-data:/data -e ADMIN_TOKEN=change-me $IMAGE:latest
+          docker run -d --name realiti-server --restart unless-stopped -p 127.0.0.1:8787:8787 -v realiti-data:/data \\
+            -e ADMIN_TOKEN=change-me -e REALITI_PUBLIC_URL=https://city.example -e TRUST_PROXY=1 $IMAGE:latest
           curl -s http://localhost:8787/health
           \`\`\`
-          Or, without restarting, pull only the client: \`curl -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" http://localhost:8787/admin/update\`.
+          Options: \`-e SERVER_PASSWORD=...\` makes the server private; \`-e SHARDS=https://other-city.example\` joins an already hosted city as a shard (\`-e SHARD_NAME=...\` names it). A \`docker-compose.yml\` with the same lives in \`packages/realiti-server\`. The server writes its checkpoint on SIGTERM, so \`docker stop\` loses nothing.
+
+          Or, without restarting, pull only the client: \`curl -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" http://localhost:8787/admin/update\`. A client-only update is enough when the comment below says the server version did not change.
           BODY
           sed -i 's/^          //' "$body_file"
           if [ -z "$number" ]; then
@@ -123,6 +136,8 @@ jobs:
           ### Update $short — headless $hv, server $sv
 
           Client sha256 \`$hash\` · image \`$IMAGE:$GITHUB_SHA\` · [workflow run]($GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID)
+
+          $apply
 
           Commits:
           $commits
