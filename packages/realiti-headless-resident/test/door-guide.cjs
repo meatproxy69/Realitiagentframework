@@ -35,12 +35,12 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
 
   // Tapping is local to Firefly Meadow. It can force fine ticks there, but not after a room transition.
   await d.run('mode lq');await d.run('go FIREFLY_MEADOW');await d.run('act tap_along');await d.run('stay 1000');
-  const t0=await d.run('time');
+  const tapping0=s.window.REALITI_WONDER_V1.state().meadow.tapping,t0=await d.run('time');
   await d.run('go KITE_FIELD');await d.run('stay 3000');
-  const t1=await d.run('time');
+  const tapping1=s.window.REALITI_WONDER_V1.state().meadow.tapping,t1=await d.run('time');
   check('firefly_tapping_is_room_local',
-    t0.reason==='tapping'&&t1.reason!=='tapping'&&t1.quantum_ms>=100,
-    {in_meadow:t0,outside:t1});
+    tapping0===true&&tapping1===false&&t1.reason!=='tapping'&&t1.quantum_ms>=100,
+    {tapping_in_meadow:tapping0,tapping_after_exit:tapping1,in_meadow:t0,outside:t1});
 
   const guide=R.help();
   check('structured_help_matches_agent_door',guide.first_ten?.includes('worlds')&&guide.world_guide?.total_rooms===rooms.length,{first_ten:guide.first_ten,total:guide.world_guide?.total_rooms});
