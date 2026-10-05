@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "fc138e6e613f38c3c59a4949b49dd431bf4cebd31c639d7d81a1a798669b7652",
+  "single_html_sha256": "6f69e5f0c42ac7939802c9710bef2161a17ae0de50e3087fa39d4b3373e02bdb",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -23,7 +23,7 @@
     "bare_wait_default_ms": 1000,
     "stop_mutation_schema": "REALITI_MUTATION_RESULT_V1",
     "headless_lingering_acceptance": "24/24 PASS",
-    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city PASS",
+    "headless_acceptance_suites": "smoke, claude-acceptance, aura-halo, neuro-restoration, lingering, wonder, matrix, memory, frontier, archipelago, longgame, authorship, catnip, city, senses PASS",
     "headless_wonder_acceptance": "PASS",
     "headless_matrix_acceptance": "PASS",
     "headless_memory_acceptance": "18/18 PASS",

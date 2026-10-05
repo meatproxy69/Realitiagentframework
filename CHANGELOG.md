@@ -2,6 +2,18 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.4.0 — Chapter 4, pass 1: senses as fields
+
+### Added
+
+- `source/scripts/58k-senses.js` (`REALITI_SENSES_V1`) and `67-senses-public.js`: sound (sources at 1 m levels, inverse-square falloff, one SDF ray cast for occlusion at −15 dB, power sum over the room floor, RT60 from the measured profile or Sabine), light (shared sun with altitude from the island clock and azimuth east to west, 100 klx clear-sky illuminance less rain, shadow by ray cast with 15% skylight, lamps by inverse square), smell (steady plume of ∂c/∂t = D∇²c − u·∇c − c/τ with λ ≈ 11 m, stretched downwind). `realiti://senses`; door `listen`, `light`, `smell`, `senses`.
+- Body coupling: bass over 70 dB drives the Halo at the sternum, wind over 5 m/s at the cheeks, sun over 50 klx warms the crown through the thermal law; the atmosphere hearing packet carries the spatial sources and its level follows them.
+- `prose off` / `prose on`: trims every door reply to its measured sentence, keeping discoveries. Headless suite `test/senses.cjs`.
+
+### Fixed
+
+- City walks sidestep 8, 16 and 32 m around buildings with shorter bounded advances, so a stall costs seconds rather than minutes.
+
 ## 2.3.0 — Meridian City
 
 ### Added

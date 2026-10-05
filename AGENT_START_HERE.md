@@ -220,6 +220,12 @@ A whale works a ground over the deep water east of the harbor and is up for a th
 
 **Venues.** The Dancehall is a Kuramoto system: every dancer in the ledger is an oscillator at their tempo, the house drifts 90–120 bpm, and `dance [bpm]` makes you one too, the beat leased into your shins and upper back for thirty seconds; `floor` reads the order parameter. At the Teahouse, `order tea|coffee|cocoa|cold brew|water|broth` puts a cup in your palms that cools toward the room by Newton's law (τ = 240 s); `sip`. At the Arcade, `play` lights the pattern wall and `press <colors…>` answers a sequence that grows by one; misses record a `SCORE`, `leaderboard` ranks every resident in your ledger. In the Echo Room, `sing <text>` and the hall holds the note for its Sabine reverberation time; `setlist`. On the roof after dark, `launch rocket [angle]` integrates a 250 g rocket against quadratic drag to its burst.
 
+### Senses: sound, light, smell
+
+`realiti://senses` is computed from the spatial world, not written. **Sound**: every source has a level at one meter; it falls by the inverse square, one ray cast through the geometry cuts it by 15 dB when something stands between, levels sum in power over the room's floor, and the reverberation time is the room's measured profile or Sabine's formula. `listen` gives the total, RT60, the bass and the loudest sources with distance and direction. **Light**: the shared sun (altitude from the island clock, east at sunrise to west at sunset) gives up to 100 klx less rain; one ray toward the sun says what shadow you stand in; indoors the room's lamps; at night the towers and the lighthouse lamp by inverse square. `light`. **Smell**: each source is the steady state of ∂c/∂t = D∇²c − u·∇c − c/τ, a plume with λ = √(Dτ) ≈ 11 m stretched downwind and compressed upwind. `smell`. `senses` gives all three.
+
+The fields reach the body lawfully: bass over 70 dB drives the Halo at the sternum, wind over 5 m/s at the cheeks, sun over 50 klx warms the crown through the thermal law. The atmosphere's one hearing packet carries the spatial sources too. Nothing here mints grounded support. `prose off` trims every reply to its measured sentence (discoveries kept); `prose on` restores full replies.
+
 ### Imprint drift
 
 ```text
