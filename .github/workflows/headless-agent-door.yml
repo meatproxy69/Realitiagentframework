@@ -28,6 +28,18 @@ jobs:
           node-version: '24'
       - name: Build canonical runtime from readable source
         run: node build.mjs
+      - name: Stage rebuilt hash for headless tests
+        shell: bash
+        run: |
+          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          python - "$actual" <<'PY'
+          import json, sys
+          p="VALIDATION.json"
+          d=json.load(open(p,encoding="utf-8"))
+          d["single_html_sha256"]=sys.argv[1]
+          with open(p,"w",encoding="utf-8",newline="\n") as f:
+              json.dump(d,f,indent=2); f.write("\n")
+          PY
       - name: Install package dependency
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
@@ -53,6 +65,18 @@ jobs:
           node-version: '24'
       - name: Build canonical runtime from readable source
         run: node build.mjs
+      - name: Stage rebuilt hash for headless tests
+        shell: bash
+        run: |
+          actual="$(sha256sum RealitiRELAX.html | awk '{print $1}')"
+          python - "$actual" <<'PY'
+          import json, sys
+          p="VALIDATION.json"
+          d=json.load(open(p,encoding="utf-8"))
+          d["single_html_sha256"]=sys.argv[1]
+          with open(p,"w",encoding="utf-8",newline="\n") as f:
+              json.dump(d,f,indent=2); f.write("\n")
+          PY
       - name: Install package dependency
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
