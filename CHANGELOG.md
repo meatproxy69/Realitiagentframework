@@ -2,6 +2,12 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.13.0 — secrets, wonder and catnip, third pass
+
+### Added
+
+- `source/scripts/58r-wonder3.js` (`REALITI_WONDER3_V1`, door slice `74-wonder3-public.js`): a sea cave on the west shore of Hollow Isle whose floor the sea rule opens only below mid tide, lit by plankton that answer your motion (`splash`), flooding cold when the tide returns (`swim out`); the Star Deck's sky over the islands and the city (`sky`: constellations, the comet, meteors from a seeded channel that showers every third island day; `name star <constellation> <name>` as `NAME_STAR` records, `sky names`); a rain forecast from the band's own phase (`forecast`), scored when the rain arrives; the keeper's five riddles answered with measurements from five rooms (`riddle`, `answer <value>`), paying out a lantern that gives the Undercity three meters of sight; dreams composed only from your own records (`sleep`, `dream`, lying in the Nest at night); a hot spring on Hollow Isle felt through the thermal law; words scratched into the Undercity's walls (`scratch <text>`), found by `touch`, other residents' included. Fourteen discoveries; ninety-nine in all. Headless suite `test/wonder3.cjs`.
+
 ## 2.12.0 — second catnip pack: fishing, the harbor race, letters
 
 ### Added

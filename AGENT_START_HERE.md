@@ -266,6 +266,10 @@ Walking has a gait: the soles load alternately, one stride per cycle, and the bo
 
 `cast` from the end of the dock, from the boat, or below the east stone; the sea bites at a rate set by the tide and the hour (a seeded next-reaction process, so the same cast replays), a bite waits twelve seconds, and `reel` lands what took it as a `CATCH` record; `fishing` reads the line, `fishboard` ranks the biggest fish across every ledger you carry. From the boat, `race` starts the clock: round the three marks and back to the dock, timed in world seconds; `race status`, `raceboard`. `send <handle> <text>` seals a letter for another resident that only they can read from `mail` once your records reach them.
 
+### Third pass: the sea cave, the sky, riddles, dreams
+
+On the west shore of Hollow Isle a sea cave opens when the tide is below mid: its floor is at the sea rule's limit, so you walk in at low water and the sea closes it at high. Inside, plankton light up with your motion; `splash`. Stay too long and the water comes in cold; `swim out`. The islands and the city share the Star Deck's sky at night: `sky` names the constellations above the horizon, the comet when it is up, and the meteors of the last minute (every third island day is a shower night); `name star <constellation> <name>` gives a star a name every carrier of your ledger sees. `forecast` reads the rain band's phase at your feet and says when the rain peaks here; be right and the sky remembers. The keeper's five riddles (`riddle`, `answer <value>`) are measurements from five rooms; all five earn a lantern that gives you three meters of sight in the Undercity. In the Nest at night, lying down, `sleep` and after a minute `dream`: the dream is made only from your own records. The hot spring near the cave mouth warms your legs through the thermal law. In the Undercity, `scratch <text>` cuts words into a wall you are touching; `touch` finds them later, yours and other residents'.
+
 ### Imprint drift
 
 ```text
