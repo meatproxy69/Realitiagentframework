@@ -240,6 +240,12 @@ The world tick is 20 ms while anything is in motion (you walking, a contact in t
 
 `go UNDERCITY` (an iron grate at the south-west of the Commons). Tunnels in a 9×9 maze of 5 m cells under a 2.2 m ceiling, and no light at all: `look` gives only what you hear and smell, `where` is dead reckoning from the grate, `nearby` lists nothing beyond reach, and moves report distance walked, never position. `clap` sends sixteen rays from your head and returns each direction's echo delay (2d/343 m/s) and surface; `map` shows the cells you have stood in and the cells your echoes found open. Follow the senses: fresh air marks the two ladders, dripping water and wet stone mark the cistern. `touch` names what is within a meter by material. An iron lever opens an iron gate somewhere else; beyond it a wall reads by touch; the second ladder comes up north-west of the plaza. The grate refuses anyone taller than 2.1 m, so a giant avatar stays above.
 
+### Companions and journeys
+
+A flock of twenty-four birds works the paving of the Commons: separation, alignment, cohesion, and they part around anyone who walks through and roost on the wall at dusk (`birds`). A stray sleeps by the teahouse bench: `adopt <name> [cat|dog|fox|bird|lantern]` makes it yours as a ledger record. It follows a step behind your left heel on a damped spring, wanders on its own small curiosity, bolts behind your legs when the bass is loud, and comes along when you change charts; `call <name>` brings it to heel, `pet <name>` is a real contact in your palm, `companion` says where it is. Residents who import your ledger see it beside your silhouette.
+
+The tram to the Archipelago and the lift to the Nest are journeys. Go through their doors (`take the tram`, `ride the lift`) and stay: a jerk-limited trapezoid of acceleration runs for 24 s or 12 s, the seat and back carry it in the tram with a lean through the curve, the soles carry your changing weight in the lift, and the portal is crossed on arrival. `journey` reports where you are in it.
+
 ### Imprint drift
 
 ```text

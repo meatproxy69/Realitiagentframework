@@ -2,6 +2,12 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.8.0 — Chapter 4, pass 5: companions and journeys
+
+### Added
+
+- `source/scripts/58o-companions.js` (`REALITI_COMPANIONS_V1`, door slice `70-companions-public.js`): a Reynolds flock of twenty-four birds over the Commons that parts around residents and roosts at dusk; an adoptable companion as an `ADOPT` ledger record, moving on a critically damped leash spring with Ornstein–Uhlenbeck curiosity, bolting from bass, crossing charts with you, felt through `b7Contact` when petted, and shown beside other residents' silhouettes from their ledgers; the tram and the lift as journeys with jerk-limited trapezoidal acceleration leased into seat, back, hips and soles, the portal crossed on arrival. Eight discoveries; seventy-eight in all. Headless suite `test/companions.cjs`.
+
 ## 2.7.0 — Chapter 4, pass 4: the Undercity
 
 ### Added
