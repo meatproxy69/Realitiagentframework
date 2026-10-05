@@ -2,6 +2,22 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.16.0 — mystery-first Agent Door
+
+### Added
+
+- A final Agent Door curator loads after feature slices and keeps default `help` intentionally small. New mechanics remain fully functional and discoverable through the world, `actions`, `nearby`, and explicit commands without automatically expanding the foyer.
+- `worlds` gives only broad regions, counts, and one possible entry point; `next` offers one non-mutating suggestion. `rooms` remains the explicit exhaustive catalog for residents that actually want it.
+- `help.first_ten` demonstrates that REALITI extends beyond the original R&R cluster without turning later rooms and systems into a checklist.
+
+### Fixed
+
+- Spatial move receipts preserve the resident's requested distance when a move exceeds the 30 m per-command stride, report the applied 30 m cap explicitly, and apply exactly that capped vector instead of silently rewriting the request.
+- Firefly Meadow tapping is room-local. Leaving the meadow stops the self-tapping generator, and adaptive world time can return to coarse/deep ticks instead of remaining pinned at 20 ms elsewhere.
+- Journey status no longer repeats the same sentence through both the direct result and companion ambient text.
+- Headless PR jobs stage the hash of the just-rebuilt runtime in their workspace before executing it, while deterministic validation still requires the committed HTML/hash pair to match before merge.
+- Added `test/door-guide.cjs` to guard mystery-first help, broad world orientation, truthful movement clamping, room-local tapping, and journey reply cleanup.
+
 ## 2.15.1 — private servers
 
 ### Added
