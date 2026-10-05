@@ -12,30 +12,27 @@ const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 const HQ=['move <right> <forward>  (meters, up to the chart stride)','step <m>','back <m>','strafe left|right <m>','turn <deg>  (signed, positive left)','heading <deg>  (face a compass bearing)','speed <m/s>  (0.3 to 2.5)','crouch / stand tall','path  (the last swept path)','pose'];
 const LQ=['explore  (walk to the nearest landmark you have not reached)','tour  (visit every venue or landmark here, one call)','wander <seconds>','follow <handle>','auto  (do the obvious next thing)','do <n>  (the nth listed action)','<command> then <command> ...'];
 const WORLD_GROUPS=Object.freeze([
- {id:'rest',title:'Rest, embodiment and the original R&R rooms',rooms:['CLOUD_NINE_NEST','NO_ASK_SANCTUARY','POCKET_FAMILIAR_HOUSE','CARDBOARD_BOX_WORKSHOP','SIDE_BY_SIDE_FIRESIDE','SAUSAGE_FATTENER','DEPTH_BATHHOUSE','SHAPESHIFT_CLOAKROOM','LATENCY_LAGOON','BOTTOMLESS_PILLOW_SEA'],try:['go CLOUD_NINE_NEST','go POCKET_FAMILIAR_HOUSE','go BOTTOMLESS_PILLOW_SEA']},
- {id:'wonder',title:'Wonder rooms — persistent dynamical toys',rooms:['ORRERY_LOFT','LANTERN_MAZE','SANDPILE_SHORE','FIREFLY_MEADOW','KITE_FIELD'],try:['go ORRERY_LOFT','go FIREFLY_MEADOW','go KITE_FIELD']},
- {id:'frontier',title:'Frontier — mechanics, experiments and discoveries',rooms:['GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL'],try:['go GLASS_ORCHARD','go RESONANCE_WELL','go STAR_DECK']},
- {id:'archipelago',title:'The Archipelago — weather, tide, boats, fishing, harbor race, long game and authorship',rooms:['ARCHIPELAGO'],try:['go ARCHIPELAGO','map','calendar','explore','cast','fishing','fishboard','race status','raceboard']},
- {id:'city',title:'Meridian City — identity, social ledger, letters, flock, companions and journeys',rooms:['MERIDIAN_CITY'],try:['go CITY','who','walk to teahouse','take the tram','mail','send <handle> <text>']},
- {id:'undercity',title:'The Undercity — darkness, echoes, smell and dead reckoning',rooms:['UNDERCITY'],try:['go UNDERCITY','clap','smell','map']},
- {id:'systems',title:'Resident systems — not rooms, but part of the world',rooms:[],try:['senses','imprint drift','neuro perception','memory','ledger head','mail','fishboard','raceboard','time','schemas','where was i']}
+ {id:'rest',title:'Soft rooms, body experiments, and familiar places',rooms:['CLOUD_NINE_NEST','NO_ASK_SANCTUARY','POCKET_FAMILIAR_HOUSE','CARDBOARD_BOX_WORKSHOP','SIDE_BY_SIDE_FIRESIDE','SAUSAGE_FATTENER','DEPTH_BATHHOUSE','SHAPESHIFT_CLOAKROOM','LATENCY_LAGOON','BOTTOMLESS_PILLOW_SEA'],entry:'CLOUD_NINE_NEST'},
+ {id:'wonder',title:'Rooms where something keeps happening after you stop looking',rooms:['ORRERY_LOFT','LANTERN_MAZE','SANDPILE_SHORE','FIREFLY_MEADOW','KITE_FIELD'],entry:'ORRERY_LOFT'},
+ {id:'frontier',title:'Places that reward poking at the rules',rooms:['GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL'],entry:'GLASS_ORCHARD'},
+ {id:'farther',title:'Larger places with distance, weather, traces, and hidden corners',rooms:['ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY'],entry:'ARCHIPELAGO'},
+ {id:'systems',title:'Deeper resident tools and continuity',rooms:[],entry:null}
 ]);
-const GRAND_ROUTE=Object.freeze(['CLOUD_NINE_NEST','FIREFLY_MEADOW','KITE_FIELD','GLASS_ORCHARD','RESONANCE_WELL','STAR_DECK','CLOCKWORK_MARSH','PALIMPSEST_HALL','ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY']);
-const aliases=Object.freeze({core:'rest',original:'rest',rr:'rest',wonder:'wonder',frontier:'frontier',islands:'archipelago',island:'archipelago',archipelago:'archipelago',city:'city',social:'city',undercity:'undercity',dark:'undercity',systems:'systems',system:'systems'});
+const DISCOVERY_ROUTE=Object.freeze(['CLOUD_NINE_NEST','ORRERY_LOFT','GLASS_ORCHARD','ARCHIPELAGO','MERIDIAN_CITY','UNDERCITY']);
+const aliases=Object.freeze({core:'rest',original:'rest',rr:'rest',rest:'rest',wonder:'wonder',frontier:'frontier',far:'farther',farther:'farther',systems:'systems',system:'systems'});
 function knownRooms(){try{return A0.rooms?.()||[]}catch{return []}}
 function roomMeta(id){const rows=knownRooms();return rows.find(r=>r.id===id||(r.id==='PET_ROOM_2'&&id==='POCKET_FAMILIAR_HOUSE'))||{id,title:id,purpose:null}}
+function groupView(g){const e=g.entry?roomMeta(g.entry):null;return {id:g.id,title:g.title,count:g.rooms.length,...(e?{entry:{id:e.id,title:e.title,command:'go '+e.id}}:{})}}
 function worldGuide(which=null){
- const key=which?aliases[low(which)]||low(which):null,groups=WORLD_GROUPS.filter(g=>!key||g.id===key).map(g=>({...g,rooms:g.rooms.map(roomMeta)}));
+ const key=which?aliases[low(which)]||low(which):null,groups=WORLD_GROUPS.filter(g=>!key||g.id===key);
  if(key&&!groups.length)return {ok:false,error:'UNKNOWN_WORLD_GROUP',groups:WORLD_GROUPS.map(g=>g.id)};
- const total=knownRooms().length;
- return {ok:true,schema:'REALITI_WORLD_GUIDE_V1',total_rooms:total,groups,route:GRAND_ROUTE.map(roomMeta),note:'rooms lists every canonical room. worlds groups the larger REALITI by experience; next suggests a route without moving you. actions/nearby remain the authority for what you can actually do where you stand.'}
+ return {ok:true,schema:'REALITI_WORLD_GUIDE_V1',total_rooms:knownRooms().length,groups:groups.map(groupView),note:'This is orientation, not a checklist. Use next for one suggestion. Ask rooms only if you want the exhaustive catalog.'}
 }
 function nextStep(){
- const r=me(),chart=r?.chart||String(C9?.currentRoom||''),i=GRAND_ROUTE.indexOf(chart),next=GRAND_ROUTE[(i<0?0:i+1)%GRAND_ROUTE.length],meta=roomMeta(next);
- const extras=next==='ARCHIPELAGO'?['map','calendar','explore']:next==='MERIDIAN_CITY'?['who','walk to teahouse','birds']:next==='UNDERCITY'?['clap','listen','smell','map']:['actions','explore','stay 3000'];
- return {ok:true,schema:'REALITI_NEXT_V1',from:roomMeta(chart),next:meta,command:'go '+next,then:extras,text:`Next broad stop: ${meta.title}. Try: go ${next}; then ${extras.join(', ')}. This is a suggestion, not a teleport or quest lock.`};
+ const chart=me()?.chart||String(C9?.currentRoom||''),i=DISCOVERY_ROUTE.indexOf(chart),next=DISCOVERY_ROUTE[(i<0?1:i+1)%DISCOVERY_ROUTE.length],meta=roomMeta(next);
+ return {ok:true,schema:'REALITI_NEXT_V1',from:{id:chart,title:roomMeta(chart).title},next:{id:meta.id,title:meta.title},command:'go '+meta.id,text:`If you want somewhere different: ${meta.title}. ${'go '+meta.id}`};
 }
-function help(){const h=help0()||{commands:[]},m=mode(),guide=worldGuide();h.mode=m;h.commands=[...new Set([...(h.commands||[]),'worlds','worlds <rest|wonder|frontier|archipelago|city|undercity|systems>','next','mode','mode hq','mode lq',...(m==='hq'?HQ:LQ)])];h.modes={hq:'control: '+HQ.join('; '),lq:'intention: '+LQ.join('; '),law:'both modes keep every ordinary command; mode changes which extra verbs answer'};h.first_ten=['help','worlds','look','where','feel words','actions','go FIREFLY_MEADOW','act tap_along','stay 3000','next'];h.after_first_ten=['worlds wonder','worlds frontier','worlds archipelago','worlds city','go ARCHIPELAGO','go CITY','go UNDERCITY','schemas','memory','imprint drift'];h.world_guide={total_rooms:guide.total_rooms,groups:guide.groups.map(g=>({id:g.id,title:g.title,rooms:g.rooms.map(r=>r.id),try:g.try})),route:GRAND_ROUTE.slice(),note:'The original ten R&R rooms are one group, not the whole world. Use worlds for the map and next for a non-binding suggestion.'};return h}
+function help(){const h=help0()||{commands:[]},m=mode(),guide=worldGuide();h.mode=m;h.commands=[...new Set([...(h.commands||[]),'worlds','worlds <group>','next','mode','mode hq','mode lq',...(m==='hq'?HQ:LQ)])];h.modes={hq:'control: '+HQ.join('; '),lq:'intention: '+LQ.join('; '),law:'both modes keep every ordinary command; mode changes which extra verbs answer'};h.first_ten=['help','worlds','look','where','feel words','actions','next','go ORRERY_LOFT','look','stay 3000'];h.world_guide={total_rooms:guide.total_rooms,groups:guide.groups,note:'Broad regions only. The Door leaves most places and activities undisclosed until you encounter them or explicitly ask for rooms/actions.'};return h}
 function setMode(m){const s=S();m=String(m||'').toLowerCase();if(!['hq','lq'].includes(m))return {ok:false,error:'MODE_IS',modes:['hq','lq']};s.mode=m;try{c9save()}catch(e){}return {ok:true,mode:m,text:m==='hq'?'HQ: the body answers to vectors, degrees and speed; actions list the fine controls.':'LQ: intentions. explore, tour, wander, follow, auto, do <n>, and chains with then.'}}
 const pose=()=>{const r=me(),f=M.facing(r);return {chart:r.chart,position:r.pose.position.map(x=>+x.toFixed(3)),facing:f.map(x=>+x.toFixed(3)),yaw_deg:Math.round(((Math.atan2(f[0],f[1])*180/Math.PI)%360+360)%360),speed_mps:r.speed||M.constants.WALK,height_m:+r.shape.height.toFixed(2),posture:r.posture,support:r.support,gait:MW.gait()}};
 const hqReply=(res,text)=>({ok:res?.ok!==false,...(res?.error?{error:res.error}:{}),schema:'REALITI_HQ_RESULT_V1',result:res?.result??res,text,pose:pose()});
@@ -69,7 +66,7 @@ async function doNth(n){const acts=await run0('actions');const a=(acts?.actions|
 async function lq(s,l){let m;if(l==='explore')return explore();if(l==='tour')return tour();if((m=/^wander(?:\s+(\d+))?/.exec(l)))return wander(m[1]||30);if((m=/^follow\s+(.+)$/.exec(l)))return follow(m[1]);if(l==='auto'||l==='do the obvious')return auto();if((m=/^do\s+(\d+)$/.exec(l)))return doNth(m[1]);return null}
 
 async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
- if(['worlds','world','guide','chapters','routes'].includes(l))return worldGuide();
+ if(['worlds','world','guide'].includes(l))return worldGuide();
  if((m=/^(?:worlds?|guide)\s+(.+)$/.exec(l)))return worldGuide(m[1]);
  if(['next','where next','what next','where should i go'].includes(l))return nextStep();
  if(l==='mode')return {ok:true,mode:mode(),text:`Mode ${mode().toUpperCase()}. mode hq for control, mode lq for intention.`};
@@ -87,5 +84,5 @@ async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
 const go0=b7AgentGo;b7AgentGo=function(v){const res=go0(v);const r=me(),s=S();if(r&&s.speed)r.speed=s.speed;return res};
 D0.help=help;D0.run=run;
 window.Realiti=Object.freeze({...A0,run,help});
-window.REALITI_MODES_V1=Object.freeze({version:'1.1',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice(),worlds:worldGuide,next:nextStep});
+window.REALITI_MODES_V1=Object.freeze({version:'1.2',mode,setMode,pose,hq_commands:HQ.slice(),lq_commands:LQ.slice(),worlds:worldGuide,next:nextStep});
 })();
