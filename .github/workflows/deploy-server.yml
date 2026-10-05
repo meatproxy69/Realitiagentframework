@@ -108,7 +108,7 @@ jobs:
           number="$(gh issue list --label server-update --state open --json number --jq '.[0].number // empty')"
           body_file="$(mktemp)"
           cat > "$body_file" <<BODY
-          Rolling ticket for the dedicated server. Each push to \`main\` adds a comment below with what to apply. Work the comments top to bottom; tick the checklist in each as you go.
+          Rolling ticket for the dedicated server. Each push to \`main\` adds a comment below with what to apply. Work the comments top to bottom; tick the checklist in each as you go. When every box is ticked (or you comment \`done\`) the ticket closes itself and the next push opens a fresh one.
 
           **Latest:** headless \`$hv\`, server \`$sv\`, commit \`$short\`, client sha256 \`$hash\`.
           **Image:** \`$IMAGE:latest\` (also \`:$GITHUB_SHA\`).
