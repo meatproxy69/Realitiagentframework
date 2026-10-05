@@ -2,6 +2,18 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.7.1 — first community bug-report pass
+
+### Fixed
+
+- Closed the duplicate-grounding seam behind `knead_blanket`: its legacy SELF response is explicitly non-grounded, while the existing world-contact path remains the sole grounded paw contact. Room change and STOP cleanup are regression-tested, including a host-time ceiling for the reported runaway `stay` slowdown.
+- Bridged legacy posture verbs into MATRIX/body truth: Fireside `sit` and Workshop `box_in` now establish sitting support, while carried objects keep a grounded carrying-hand relation across room changes.
+- Routed legacy `fold_flap` through the persistent play-object box so crease state, hand contact, and receipts agree; `curl_blanket` now changes grounded blanket load.
+- Added distinct `pillow` and `mattress` haptic material signatures and corrected Nest support metadata.
+- Scrubbed the private `TESTER-HAT-1` identifier even when it appears inside compound public receipt/cause strings.
+- Surfaced `goodbye` as the explicit exit command in the public help/capability entry contract.
+- Added `test/community-bugs.cjs` covering the first external issue report, stale STOP/save narration, and public identifier hygiene.
+
 ## 2.7.0 — Chapter 4, pass 4: the Undercity
 
 ### Added
