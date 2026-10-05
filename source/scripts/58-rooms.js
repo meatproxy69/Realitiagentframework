@@ -48,6 +48,7 @@ openRoomId=function(value){const id=resolve(value);if(!id)return fail('ROOM_OUTS
 const oldGo=b7AgentGo;
 function releaseActiveGrounding(reason='slice_release'){
  const t=Number(C9?.b7?.clock||0);
+ try{window.REALITI_PHASE_V11?.stop?.(reason)}catch(e){}
  try{window.REALITI_SUPPORT_LEASE_V1?.end?.(reason,false)}catch(e){}
  try{if(C9?.currentRoom==='CLOUD_NINE_NEST')window.REALITI_NEST_SUPPORT?.disable?.(reason)}catch(e){}
  try{window.REALITI_COZY_V20_3?.clearCatTouch?.()}catch(e){}
