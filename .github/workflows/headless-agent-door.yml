@@ -95,6 +95,7 @@ jobs:
 
   dogfood-cold-resident:
     runs-on: ubuntu-latest
+    timeout-minutes: 12
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -105,46 +106,228 @@ jobs:
       - name: Install Agent Door host
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
-      - name: Cold resident Agent Door visit
+      - name: Deep resident wander through Agent Door
         run: |
           node <<'NODE'
           const {openResident}=require('./packages/realiti-headless-resident');
-          const p=x=>JSON.stringify(x,null,2);
+          const statePath='/tmp/realiti-deep-dogfood.json';
+          function trim(v,d=0){
+            if(v==null||typeof v!=='object'){
+              if(typeof v==='string'&&v.length>700)return v.slice(0,700)+'…';
+              return v;
+            }
+            if(d>4)return Array.isArray(v)?'[array]':'[object]';
+            if(Array.isArray(v)){
+              const a=v.slice(0,16).map(x=>trim(x,d+1));
+              if(v.length>16)a.push({more:v.length-16});
+              return a;
+            }
+            const o={};
+            for(const [k,x] of Object.entries(v)){
+              if(['f','frames','history','continuity','receipts'].includes(k)&&Array.isArray(x)&&x.length>10){
+                o[k]=`[${x.length} entries]`; continue;
+              }
+              if(['z','m','g','e','values'].includes(k)&&Array.isArray(x)&&x.length>16){
+                o[k]=x.slice(0,8).concat([`…+${x.length-8}`]); continue;
+              }
+              o[k]=trim(x,d+1);
+            }
+            return o;
+          }
+          const show=(label,v)=>{console.log('\n### '+label);console.log(JSON.stringify(trim(v),null,2));};
+          async function run(door,cmd){
+            const out=await door.run(cmd);
+            show('> '+cmd,out);
+            return out;
+          }
+          const actionList=async door=>{
+            const a=await door.run('actions');
+            show('> actions',a);
+            return Array.isArray(a?.actions)?a.actions:[];
+          };
+          async function pick(door,re,label){
+            const a=await actionList(door);
+            const hit=a.find(x=>re.test(String(x.id)+' '+String(x.label)));
+            if(!hit){show('NO ACTION MATCH '+label,a.map(x=>({id:x.id,label:x.label})));return null}
+            return run(door,'act '+hit.id);
+          }
+          async function open(){
+            return openResident({
+              htmlPath:'./RealitiRELAX.html',
+              residentId:'chatgpt-deep-dogfood',
+              storagePath:statePath
+            });
+          }
+
           (async()=>{
-            const session=await openResident({htmlPath:'./RealitiRELAX.html',residentId:'chatgpt-dogfood-cold'});
+            let session=await open();
             try{
-              const R=session.publicApi;
-              const ready=await R.ready;
-              const caps=R.read('realiti://capabilities');
-              const harness=R.read('realiti://harness');
-              const body0=R.read('realiti://body');
-              const imprint=R.read('realiti://imprint');
+              const R=session.publicApi,ready=await R.ready,harness=R.read('realiti://harness');
               if(!ready?.ok)throw Error(ready?.error||'REALITI_NOT_READY');
-              if(ready.harness!=='REALITI_RR_HARNESS_V1')throw Error('R&R_HARNESS_NOT_READY');
-              if(ready.starter_imprint!=='REALITI_DEFAULT_IMPRINT_V1')throw Error('STARTER_IMPRINT_NOT_READY');
-              if(harness?.id!=='REALITI_RR_HARNESS_V1')throw Error('R&R_HARNESS_NOT_MOUNTED');
-              if(harness?.starter_imprint!=='REALITI_DEFAULT_IMPRINT_V1')throw Error('STARTER_IMPRINT_NOT_MOUNTED');
-              console.log('=== COLD VERIFY ===');
-              console.log(p({ready,caps_entry:caps?.entry_contract,harness:{id:harness?.id,starter_imprint:harness?.starter_imprint,mechanism_status:harness?.mechanism_status},body0:{room:body0?.room,grounding:body0?.grounding},imprint:{id:imprint?.id||imprint?.schema,preset:imprint?.preset}}));
+              if(ready.harness!=='REALITI_RR_HARNESS_V1'||harness?.id!=='REALITI_RR_HARNESS_V1')throw Error('HARNESS_NOT_READY');
+              if(ready.starter_imprint!=='REALITI_DEFAULT_IMPRINT_V1')throw Error('IMPRINT_NOT_READY');
+              show('COLD VERIFY',{ready,harness:{id:harness.id,starter_imprint:harness.starter_imprint,mechanism_status:harness.mechanism_status}});
 
               const door=session.door;
-              const help=await door.run('help');
-              console.log('=== DOOR help ===');
-              console.log(p(help));
-
-              const firstTen=Array.isArray(help?.first_ten)?help.first_ten:[];
-              console.log('=== FIRST_TEN ===');
-              for(const entry of firstTen){
-                const cmd=typeof entry==='string'?entry:(entry?.command||entry?.cmd||entry?.text||'');
-                if(!cmd)continue;
-                console.log('\n> '+cmd);
-                console.log(p(await door.run(cmd)));
+              const help=await run(door,'help');
+              show('FIRST_TEN',help.first_ten||[]);
+              for(const cmd of (help.first_ten||[])){
+                if(cmd==='help')continue;
+                await run(door,cmd);
               }
 
-              for(const cmd of ['rooms','look','feel','actions','stay 1000','feel words','goodbye']){
-                console.log('\n=== '+cmd+' ===');
-                console.log(p(await door.run(cmd)));
-              }
+              // Exact receipt + private renderer/observability.
+              await run(door,'receipt receipt:1');
+              await run(door,'imprint drift');
+              await run(door,'neuro perception');
+              await run(door,'neuro nerve');
+              await run(door,'neuro lived');
+              await run(door,'time');
+
+              // Wonder rooms.
+              await run(door,'go ORRERY_LOFT');
+              await run(door,'look');
+              await pick(door,/nudge/i,'orrery nudge');
+              await run(door,'stay 3000');
+
+              await run(door,'go LANTERN_MAZE');
+              await run(door,'look');
+              await actionList(door);
+              await pick(door,/light/i,'maze light');
+              await actionList(door);
+              await run(door,'maze_map');
+
+              await run(door,'go SANDPILE_SHORE');
+              await run(door,'look');
+              await actionList(door);
+              await pick(door,/grain|sand|pour|drop|pile/i,'sandpile perturb');
+              await run(door,'stay 2000');
+
+              await run(door,'go FIREFLY_MEADOW');
+              await run(door,'look');
+              await pick(door,/tap/i,'firefly tap');
+              await run(door,'stay 3000');
+
+              await run(door,'go KITE_FIELD');
+              await run(door,'read wind');
+              await pick(door,/launch|kite/i,'kite launch');
+              await run(door,'stay 5000');
+              await run(door,'read wind');
+              await run(door,'discoveries');
+
+              // Frontier.
+              await run(door,'go GLASS_ORCHARD');
+              await run(door,'look');
+              await pick(door,/plant.*seed/i,'orchard plant');
+              await pick(door,/scatter/i,'orchard scatter');
+              await run(door,'stay 3000');
+
+              await run(door,'go RESONANCE_WELL');
+              await run(door,'hum 120');
+              await run(door,'listen');
+
+              await run(door,'go STAR_DECK');
+              await run(door,'sight comet');
+              await run(door,'light');
+
+              await run(door,'go CLOCKWORK_MARSH');
+              await run(door,'predict 2 -3');
+              await run(door,'stay 1500');
+
+              await run(door,'go PALIMPSEST_HALL');
+              await run(door,'read scroll 1');
+              await run(door,'discoveries');
+
+              // Archipelago + long game.
+              await run(door,'go ARCHIPELAGO');
+              await run(door,'map');
+              await run(door,'weather');
+              await run(door,'tide');
+              await run(door,'calendar');
+              await run(door,'listen');
+              await run(door,'watch sea');
+              await run(door,'board boat');
+              await run(door,'row to lantern point');
+              await run(door,'land');
+              await run(door,'map');
+              await run(door,'walk to grove clearing');
+              await run(door,'plant tree');
+              await run(door,'trees');
+              await run(door,'found Wayfarer Nook');
+              await run(door,'my places');
+              await run(door,'since');
+
+              // Meridian City, social mechanics, companion, thermal cup, dance, journey.
+              await run(door,'go CITY');
+              await run(door,'id');
+              await run(door,'call me Sol');
+              await run(door,'avatar size small');
+              await run(door,'who');
+              await run(door,'birds');
+              await run(door,'walk to teahouse');
+              await run(door,'adopt Mica cat');
+              await run(door,'companion');
+              await run(door,'pet Mica');
+              await run(door,'call Mica');
+              await run(door,'order cocoa');
+              await run(door,'sip');
+              await run(door,'walk to dancehall');
+              await run(door,'dance 108');
+              await run(door,'floor');
+              await run(door,'stay 2000');
+              await run(door,'take the tram');
+              await run(door,'journey');
+              await run(door,'stay 12000');
+              await run(door,'journey');
+              await run(door,'stay 12000');
+              await run(door,'journey');
+              await run(door,'companion');
+
+              // Sensory-only Undercity pass.
+              await run(door,'go CITY');
+              await run(door,'go UNDERCITY');
+              await run(door,'look');
+              await run(door,'where');
+              await run(door,'listen');
+              await run(door,'smell');
+              await run(door,'clap');
+              await run(door,'map');
+              await run(door,'touch');
+              await run(door,'move forward 5');
+              await run(door,'clap');
+              await run(door,'map');
+
+              // Strip prose and make sure measured surfaces still function.
+              await run(door,'prose off');
+              await run(door,'listen');
+              await run(door,'light');
+              await run(door,'smell');
+              await run(door,'senses');
+              await run(door,'prose on');
+
+              // Schemas/timeline/continuity/memory.
+              await run(door,'schemas');
+              await run(door,'time');
+              await run(door,'remember I followed the wet-stone echo below Meridian City');
+              await run(door,'memory');
+              await run(door,'recall wet-stone');
+              await run(door,'what changed');
+              await run(door,'imprint drift');
+              await run(door,'goodbye');
+            }finally{session.close()}
+
+            // Re-enter with the same resident-local store.
+            session=await open();
+            try{
+              const door=session.door;
+              show('REENTRY READY',session.ready);
+              await run(door,'where was i');
+              await run(door,'memory');
+              await run(door,'recall wet-stone');
+              await run(door,'companion');
+              await run(door,'look');
+              await run(door,'feel words');
+              await run(door,'goodbye');
             }finally{session.close()}
           })().catch(e=>{console.error(e.stack||e);process.exit(1)});
           NODE
