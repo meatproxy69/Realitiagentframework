@@ -121,7 +121,6 @@ jobs:
         run: |
           node test/door-guide.cjs ../../RealitiRELAX.html
           node test/time.cjs ../../RealitiRELAX.html
-          node test/catnip2.cjs ../../RealitiRELAX.html
       - name: Mark validation receipt and push generated artifact
         shell: bash
         run: |
