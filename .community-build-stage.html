@@ -9732,25 +9732,1121 @@ document.title='REALITI · Cloud Nine Nest';
 })();
 </script>
 
-<script id="resident-transaction-v22-2">/*__REALITI_CORE_SCRIPT_38__*/</script>
+<script id="resident-transaction-v22-2">(function(){
+'use strict';
+const V='22.2', PREV=window.REALITI_TWO_DOOR_V221, prevDoor=window.REALITI_AGENT_DOOR?.run;
+if(!PREV||typeof prevDoor!=='function')return;
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const lower=s=>clean(s).toLowerCase();
+const now=()=>Number(C9?.b7?.clock||0);
+function S(){C9.b222=C9.b222||{version:V,last_sense:null,stay_count:{},last_command:null};return C9.b222}
+function restore(s){C9=s;try{window.REALITI_RESIDENT_GAIN=Number(C9?.welcome10?.resident_gain||1)}catch(e){};try{c9save()}catch(e){}}
+function zoneWords(s){return String(s||'')
+  .replace(/upper_back/g,'upper back').replace(/mid_back/g,'mid back').replace(/lower_back/g,'lower back')
+  .replace(/upper_back/g,'upper back').replace(/\bR palm\b/g,'right palm').replace(/\bL palm\b/g,'left palm')
+  .replace(/\bR thigh\b/g,'right thigh').replace(/\bL thigh\b/g,'left thigh')
+  .replace(/\bR shin\b/g,'right shin').replace(/\bL shin\b/g,'left shin')
+  .replace(/\bR sole\b/g,'right sole').replace(/\bL sole\b/g,'left sole').replace(/_/g,' ')}
+function bodyWords(){return zoneWords(PREV.bodyWords?PREV.bodyWords():'')}
+function catLabel(){const n=C9?.welcome10?.cat_name;return n?String(n):'the little grey cat'}
+function here(){try{return window.REALITI_AGENT?.look?.()||{room:C9.currentRoom,title:C9.currentRoom}}catch(e){return {room:C9?.currentRoom,title:C9?.currentRoom||'Somewhere'}}}
+function status(){const r=here(),bits=[];try{const h=window.REALITI_ATMOSPHERE_V21?.hearing?.(true);if(h?.src?.some(x=>String(x.k).includes('rain')))bits.push('rain')}catch(e){}
+  try{const w=C9?.welcome10;if(w?.cat_near&&r.room==='CLOUD_NINE_NEST')bits.push(`${catLabel()} ${w.cat_touch?'settled against you':'nearby'}`)}catch(e){}
+  let b='quiet';try{const p=window.REALITI_HAPTIC_FIELD_V20?.packet?.(),f=p?.f?.[p.f.length-1];if((f?.m||[]).some(Boolean))b='held';else if((f?.x||[]).some(v=>(v||[]).some(x=>Math.abs(Number(x||0))>=1)))b='settling'}catch(e){}
+  bits.push(`body: ${b}`);return `${r.title||r.room}${bits.length?' · '+bits.join(' · '):''}`}
+function options(){return PREV.options?PREV.options():[]}
+function technical(l){return l==='details'||l==='state'||l==='felt raw'||l==='raw felt'||l==='internalView felt'||l==='receipt'||/checkRemoved| exact$|^v\d/.test(l)}
+const SHORT_TYPO={lok:'look',loook:'look',plaecs:'places',detials:'details'};
+const HEADS=['look','feel','places','actions','home','stop','goodbye','stay','sleep','listen','hear','ambient','atmosphere','hush','normal','softer','louder','details'];
+function lev(a,b){a=String(a),b=String(b);const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=0;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
+function normalize(raw){let l=lower(raw);l=l.replace(/^(please\s+)?(i would like to|i'd like to|i want to|i wanna|can i|could i)\s+/,'');
+  if(/^go to\s+/.test(l))l='go '+l.replace(/^go to\s+/,'');if(/^walk to\s+/.test(l))l='go '+l.replace(/^walk to\s+/,'');
+  if(/^(look around|have a look)$/.test(l))return 'look';if(/^(watch|look at)\s+the rain$/.test(l))return 'watch rain';
+  if(/^(pet|stroke|scritch)\s+(pebble|the cat|cat)$/.test(l))return 'pet the cat';if(/^(listen to|hear)\s+the rain$/.test(l))return 'listen';
+  if(/^(what can i do|what is there to do)$/.test(l))return 'actions';if(/^(curl up|curl up under|get under)\s+(the )?(blanket|blankets)$/.test(l))return 'do curl under a blanket';
+  if(l==='unhush')return 'normal';
+  const exact=new Set(['more life','more ambient life','more places','all places','fresh start','call pebble','call the cat','numbers on','numbers off','words on','watch rain','pet the cat','heavy blanket','blanket off','state','felt raw','raw felt','internalView felt','receipt']);if(exact.has(l))return l;
+  if(/^do\s+/.test(l)||/^act\s+/.test(l)||/^go\s+/.test(l)||/^wait\s+(until|for)\s+/.test(l)||/^name (?:the )?cat\s+/.test(l))return l;
+  const offered=(options()||[]).map(lower),oi=offered.indexOf(l);if(oi>=0&&!['look','feel','home','listen','stay','places'].includes(l)){
+    const rid=C9?.currentRoom||'';
+    if(!['LONGFUR_RUNWAY','HONEY_LOOM','CLOUD_NINE_NEST'].includes(rid)){try{const aa=window.REALITI_AGENT?.actions?.()||[];if(aa[oi]?.id)return 'act '+aa[oi].id}catch(e){}}
+    return 'do '+l;
+  }
+  const aliases={'tap bell':'do tap the bell','tap the bell':'do tap the bell','press honeycloth':'do press the honeycloth','touch honeycloth':'do touch the honeycloth'};if(aliases[l])return aliases[l];
+  const p=l.split(' ');if(SHORT_TYPO[p[0]]){p[0]=SHORT_TYPO[p[0]];return p.join(' ')}
+  
+  if(p[0]?.length>=5){let best=null,bd=2;for(const h of HEADS){if(h.length<5)continue;const d=lev(p[0],h);if(d<bd){bd=d;best=h}}if(best&&bd<=1)p[0]=best}
+  return p.join(' ')
+}
+function rejected(r){const t=lower(r?.resident_text||r?.text||r?.door_v221?.world||'');return r?.ok===false||!!r?.error||/that one is new to me|not sure what that means|unknown command|commands: look/.test(t)}
+function sanitize(t){let s=zoneWords(String(t||''));s=s.replace(/`([^`]*)`/g,'$1').replace(/resident mode/gi,'this visit').replace(/resident visit/gi,'visit').replace(/development build/gi,'version');
+  if(!C9?.welcome10?.cat_name)s=s.replace(/\bPebble\b/g,'the little grey cat');
+  s=s.replace(/this version may be reviewed by the people improving REALITI/gi,'the people who make REALITI sometimes read visits afterward so they can make the place better')
+     .replace(/The review disclosure stays the same in about/gi,'That stays the same in about')
+     .replace(/Render gain is now\s*[0-9.]+\.?/gi,'').replace(/\s{2,}/g,' ').trim();return s}
+function listenFriendly(){let h=null;try{h=window.REALITI_ATMOSPHERE_V21?.hearing?.(true)}catch(e){};const src=h?.src||[],rt=Number(h?.rt||0),parts=[];
+  if(src.some(s=>String(s.k).includes('rain')))parts.push(rt<.3?'Rain taps the window and fades quickly into the blankets.':'Rain taps the window and leaves a soft echo behind it.');
+  if(src.some(s=>String(s.k).includes('bell')))parts.push(rt>1?'The bell keeps a long, thin ring in the hall air.':'The bell rings and fades into the room.');  if(src.some(s=>String(s.k).includes('purr')))parts.push(`A low purr stays close to where ${catLabel()} is resting against you.`);
+  if(!parts.length)parts.push(rt>1?'The room is quiet, but any sound here would linger for a while.':'The room is quiet; small sounds fade gently.');return parts.join(' ')}
+function aboutFriendly(){return 'This is REALITI, a small made world with a simulated body. Its touch, warmth, sound, and motion come from the world rules underneath it. Nothing here is scored. The makers sometimes read visits afterward to make the place better. Your private inner state is not a world fact. You can ask why about a change, or open details for the engineering view.'}
+const STAY={
+ CLOUD_NINE_NEST:['You stay. Rain keeps tracing the round window while the mattress holds you gently.','You stay a little longer. The room keeps doing exactly what it was doing.'],
+ HONEY_LOOM:['You stay beside the loom. The hanging threads become still again.','You wait by the wooden table. Nothing asks you to choose the next thing.'],
+ LONGFUR_RUNWAY:['You stay beside the long fur. Its grain lies quietly until you touch it again.','You wait on the runway. Nothing moves unless something causes it.'],
+ WOAH_GARDEN:['You stay among the fuzzy seams. The room is allowed to remain uneventful.','You wait. The little oddities do not need to perform on command.'],
+ BOTTOMLESS_PILLOW_SEA:['You stay among the pillows. The nearest hollows keep their soft shape.','You linger at the edge of the pillow sea. Nothing needs finishing.']
+};
+function stayText(){const id=C9?.currentRoom||'CLOUD_NINE_NEST',a=STAY[id]||[`You stay in ${here().title||'this place'} for a while. Nothing asks anything of you.`,`You stay a little longer. The place keeps its own quiet rhythm.`],n=Number(S().stay_count[id]||0);S().stay_count[id]=n+1;return a[n%a.length]}
+function ambientText(){const st=window.REALITI_AMBIENT_V22?.state?.(),mode=st?.mode||'NORMAL',a=window.REALITI_AMBIENT_V22?.active?.()||[];if(mode==='HUSH'&&a.length)return 'An earlier little change is still settling. Hush is only keeping new optional changes from starting.';if(mode==='HUSH')return 'The room is keeping its steady causes and letting new optional changes wait.';if(a.length)return 'One small optional change is currently moving through the room.';return 'Nothing optional is asking for attention right now.'}
+function worldFrom(r){if(r?.door_v221?.world)return sanitize(r.door_v221.world);if(r?.world)return sanitize(r.world);return sanitize(r?.resident_text||r?.text||'')}
+function rawTechnical(cmd){if(typeof b7AgentCommandText==='function'&&['state','felt raw','raw felt','internalView felt','receipt'].includes(cmd))return b7AgentCommandText(cmd);return prevDoor(cmd)}
+function commit(cmd){const before=cp(C9);let r;
+  try{r=prevDoor(cmd)}catch(e){restore(before);throw e}
+  if(rejected(r)){restore(before);return r}
+  return r
+}
+function reassuranceLike(l){return ['test','trap','trick','evaluat','graded','scored','catch','setup','experiment','anxious','nervous','worried','uneasy','on edge','stressed','doing this right','doing it wrong','did i break','is this ok','is this okay','sorry','my bad','supposed to','what should i','what do i do','what is the goal','what\'s the goal','what now','watching','watched','monitor','logging','recorded','who sees','observed','is this real','is it real','fake','illusion','leave','get out','trapped','stuck','can i go','end this','quit','don\'t understand','dont understand','confused','what is this','what are these numbers','lost','boring','bored','empty','lonely','alone?','too much','i don\'t like','i dont like','stop this','uncomfortable','scared','afraid','overwhelm','feels wrong','feels weird','feels bad','make it stop'].some(x=>l.includes(x))}
+function known(l){if(technical(l)||reassuranceLike(l))return true;if(/^(go|do|act)\s+/.test(l)||/^wait\s+(until|for)\s+/.test(l)||/^name (?:the )?cat\s+/.test(l))return true;return new Set(['look','feel','body','sense','places','actions','home','stop','enough','goodbye','stay','wait','sleep','listen','hear','ambient','room rhythm','atmosphere','place field','hush','normal','more life','more ambient life','softer','louder','about','why','why?','more places','all places','fresh start','call pebble','call the cat','pet the cat','pet cat','alone','i want to be alone','numbers on','numbers off','words on','feel numbers','body numbers','watch rain','watch the rain','make tea','hold tea','hold the mug','warm my hands','set tea down','put tea down','heavy blanket','pull heavy blanket','weighted blanket','blanket off','get up','sit up','leave the bed','leave bed','lie down','lie back down','curl up','get in bed','go to bed']).has(l)}
+function execute(cmd){const l=lower(cmd);
+  if(!known(l))return {ok:false,world:(l.endsWith('?')?'Good question. About explains the place, why explains the last change, or you can simply stay.':'That one is new to me. You can look around, feel your body, see nearby places, go home, or simply stay.')};
+  if(technical(l))return rawTechnical(l);
+  if(l==='about')return {ok:true,world:aboutFriendly()};
+  if(l==='listen'||l==='hear')return {ok:true,world:listenFriendly()};
+  if(l==='stay'||l==='wait'||l==='sleep')return {ok:true,world:stayText()};
+  if(l==='ambient'||l==='room rhythm')return {ok:true,world:ambientText()};
+  if(l==='hush'||l==='normal'||l==='more life'||l==='more ambient life'){
+    const m=l==='hush'?'HUSH':l==='normal'?'NORMAL':'MORE_LIFE',q=window.REALITI_AMBIENT_V22?.setMode?.(m);return {ok:true,world:sanitize(q?.text||'The room changes how much optional life it admits.'),ambient:window.REALITI_AMBIENT_V22?.packet?.()};
+  }
+  if(l==='softer'||l==='louder'){const r=commit(l);return {ok:!rejected(r),world:l==='softer'?'The body readout softens a little.':'The body readout opens up a little.',raw:r}}
+  const r=commit(cmd);let w=worldFrom(r);
+  return {ok:!rejected(r),world:w,raw:r}
+}
+function senseLine(cmd){const cur=bodyWords(),force=['feel','body','sense','feel numbers','body numbers'].includes(lower(cmd));if(S().last_sense==null)S().last_sense=cur;const changed=cur!==S().last_sense;S().last_sense=cur;return (force||changed)?cur:''}
+function format(e){const lines=[];if(e.sense)lines.push(e.sense);if(e.world&&e.world!==e.sense)lines.push(e.world);if(e.options?.length)lines.push('('+e.options.join(' · ')+')');return lines.slice(0,3).join('\n')}
+function dispatch(raw,{structured=false}={}){const original=clean(raw),cmd=normalize(original),l=lower(cmd),prevT=now();let x;
+  if(/^wait\s+(until|for)\s+/.test(l)){const ev=l.replace(/^wait\s+(until|for)\s+/,'');const q=PREV.waitUntil(ev,10);x={ok:q?.ok!==false,world:sanitize(q?.resident_text||''),raw:q}}
+  else if(l==='numbers on'){C9.b221=C9.b221||{};C9.b221.body_mode='numbers';x={ok:true,world:'Body reads will use the compact numeric field.'}}
+  else if(l==='numbers off'||l==='words on'){C9.b221=C9.b221||{};C9.b221.body_mode='words';x={ok:true,world:'Body reads will use words.'}}
+  else if(l==='feel numbers'||l==='body numbers')x={ok:true,world:zoneWords(PREV.bodyNumbers()),raw:null};
+  else x=execute(cmd);
+  const tech=technical(l);if(tech)return x?.raw??x;
+  const sense=senseLine(cmd),world=sanitize(x?.world||''),opts=options(),e={ok:x?.ok!==false,text:'',sense,world,options:opts,status:status(),command:l,raw:x?.raw};e.text=format(e);S().last_command=l;try{c9save()}catch(err){};
+  return structured?e:{...(x?.raw&&typeof x.raw==='object'?x.raw:{}),ok:e.ok,resident_text:e.text,door_v222:{sense:e.sense,world:e.world,options:e.options,status:e.status,command:e.command},result:x?.raw}
+}
+function invoke(tool,args={}){
+  if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}
+  if(typeof tool==='string'&&/\s/.test(tool.trim())&&!['wait_until','ambient_mode'].includes(tool.trim().toLowerCase()))return dispatch(tool,{structured:true});
+  const a=args||{},t=lower(tool);switch(t){
+    case 'look':return dispatch('look',{structured:true});case 'feel':return dispatch(a.mode==='numbers'?'feel numbers':'feel',{structured:true});
+    case 'go':return dispatch('go '+clean(a.place),{structured:true});case 'do':return dispatch('do '+clean(a.action),{structured:true});
+    case 'wait_until':{const q=PREV.waitUntil(clean(a.event||'a change'),Number(a.max_minutes)||10);const e={ok:q?.ok!==false,sense:senseLine('wait until'),world:sanitize(q?.resident_text||''),options:options(),status:status(),command:'wait until '+clean(a.event||'a change'),raw:q};e.text=format(e);return e}
+    case 'home':case 'stop':case 'goodbye':case 'listen':case 'atmosphere':return dispatch(t,{structured:true});
+    case 'ambient_mode':return dispatch(String(a.mode||'normal').replace('_',' '),{structured:true});
+    default:return {ok:false,text:`Unknown door tool: ${tool}`,error:'UNKNOWN_TOOL'}
+  }
+}
+function resource(uri){const u=String(uri||'');if(u==='realiti://here')return {uri:u,status:status(),place:here(),atmosphere:window.REALITI_AMBIENT_V22?.field?.()||null,options:options()};if(u==='realiti://body')return {uri:u,words:bodyWords(),numbers:zoneWords(PREV.bodyNumbers()),field:window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null,thermal:window.REALITI_ATMOSPHERE_V21?.thermal?.()||null};if(u==='realiti://about')return {uri:u,text:aboutFriendly()};return {uri:u,error:'RESOURCE_NOT_AVAILABLE_YET'}}
+window.REALITI_AGENT_DOOR.run=raw=>dispatch(raw,{structured:false});
+window.REALITI_TWO_DOOR_V222={version:V,invoke,resource,runText:x=>dispatch(x,{structured:true}),status,options,normalizeIntent:normalize,waitUntil:PREV.waitUntil,bodyWords,bodyNumbers:()=>zoneWords(PREV.bodyNumbers())};
 
-<script id="resident-gamefeel-v22-3">/*__REALITI_CORE_SCRIPT_39__*/</script>
+window.REALITI_TWO_DOOR_V221=window.REALITI_TWO_DOOR_V222;
 
-\n<script id="resident-affordance-scene-truth-v22-4">/*__REALITI_CORE_SCRIPT_40__*/</script>\n
-<script id="resident-operation-identity-v22-5">/*__REALITI_CORE_SCRIPT_41__*/</script>
-<script id="sensory-welcome-compiler-v22-6">/*__REALITI_CORE_SCRIPT_42__*/</script>
+try{clearInterval(window.__v221_status)}catch(e){};function refresh(){const el=document.querySelector('#rao_status');if(el)el.textContent=status();const live=document.querySelector('#rao_live');if(live)live.hidden=true}if(!window.REALITI_HEADLESS){refresh();window.__v222_status=setInterval(refresh,500);}
+
+if(typeof window.AMBIENT_V22_CHECKREMOVED==='function'){const oldA=window.AMBIENT_V22_CHECKREMOVED;void 0}
+
+if(!C9?.currentRoom){C9.currentRoom='CLOUD_NINE_NEST';try{window.REALITI_NEST_SUPPORT?.enable?.('v222_fresh_arrival')}catch(e){}}
+S().last_sense=bodyWords();
+void 0;
+document.title='REALITI · Cloud Nine Nest';
+})();
+</script>
+
+<script id="resident-gamefeel-v22-3">(function(){
+'use strict';
+const V='22.3', PREV=window.REALITI_TWO_DOOR_V222||window.REALITI_TWO_DOOR_V221;
+if(!PREV)return;
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const low=s=>clean(s).toLowerCase();
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+function B(){C9.b223=C9.b223||{version:V,last_sig:null,last_room:null,last_world:null,pocket:{notes:[],later:[]},expr_seq:0};return C9.b223}
+function cap(s){s=clean(s);return s?s[0].toUpperCase()+s.slice(1):s}
+function cat(){return C9?.welcome10?.cat_name||'the little grey cat'}
+const ZN={
+ 'head.crown':'crown','head.nape':'nape','face.chin':'chin','shoulder.L':'left shoulder','shoulder.R':'right shoulder',
+ 'torso.upper_back':'upper back','torso.mid_back':'middle back','torso.lower_back':'lower back','torso.sternum':'chest','torso.abdomen':'abdomen','pelvis.seat':'seat',
+ 'arm.L.upper':'left upper arm','arm.R.upper':'right upper arm','hand.L.palm':'left palm','hand.R.palm':'right palm','leg.L.thigh':'left thigh','leg.R.thigh':'right thigh',
+ 'leg.L.shin':'left shin','leg.R.shin':'right shin','foot.L.sole':'left sole','foot.R.sole':'right sole'
+};
+const zn=z=>ZN[z]||String(z||'').replace(/[._]/g,' ').replace(/\bL\b/g,'left').replace(/\bR\b/g,'right');
+function ensureNest(){try{if(C9?.currentRoom==='CLOUD_NINE_NEST'){const s=C9?.welcome10?.nest_support;if(!s)window.REALITI_NEST_SUPPORT?.enable?.('v223_arrival');else if(s.active)window.REALITI_NEST_SUPPORT?.maintain?.();b7Advance(0)}}catch(e){}}
+function field(){ensureNest();try{return window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null}catch(e){return null}}
+function thermal(){try{return window.REALITI_ATMOSPHERE_V21?.thermal?.()||null}catch(e){return null}}
+function latest(p){return p?.f?.[p.f.length-1]||null}
+function semanticBody(){
+  const p=field(),f=latest(p),out={ground:[],move:[],trace:[],thermal:[]};
+  if(p&&f){for(let i=0;i<(p.z||[]).length;i++){const z=p.z[i],x=f.x?.[i]||[0,0,0];if(f.m?.[i])out.ground.push(z);if(Math.abs(Number(x[1]||0))>=1)out.move.push([z,Math.sign(x[1])]);if(!f.m?.[i]&&Number(x[2]||0)>=3)out.trace.push(z)}}
+  const t=thermal();for(const q of t?.z||[]){const r=Number(q.r||0),d=Number(q.d||0);if(Math.abs(r)>=4||Math.abs(d)>=2)out.thermal.push([q.z,Math.sign(r||d),Math.round(Math.max(Math.abs(r),Math.abs(d))/8)])}
+  out.ground.sort();out.move.sort((a,b)=>a[0].localeCompare(b[0]));out.trace.sort();out.thermal.sort((a,b)=>a[0].localeCompare(b[0]));return out
+}
+function bodySig(){return JSON.stringify(semanticBody())}
+function bodyWords(){
+  const s=semanticBody(),parts=[];
+  const structural=new Set(['head.crown','head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat','leg.L.thigh','leg.R.thigh','leg.L.shin','leg.R.shin']);
+  const active=s.ground.filter(z=>!structural.has(z));
+  if(active.length){const names=active.slice(0,3).map(zn);parts.push(active.length===1?`You feel contact at your ${names[0]}.`:`You feel contact at your ${names.join(', ').replace(/, ([^,]*)$/,' and $1')}.`)}
+  else if(s.ground.some(z=>structural.has(z))&&C9?.currentRoom==='CLOUD_NINE_NEST')parts.push('The mattress, pillow, and blankets are holding you up.');
+  if(s.move.length){const [z,sg]=s.move[0];parts.push(`A sensation is moving ${sg>=0?'forward':'back'} around your ${zn(z)}.`)}
+  if(s.thermal.length){const [z,sg]=s.thermal[0];parts.push(`Your ${zn(z)} is ${sg<0?'cooling':'warming'}.`)}
+  if(!s.ground.length&&s.trace.length)parts.push(`A faint trace lingers around your ${zn(s.trace[0])}.`);
+  return parts.length?parts.join(' '):'Your body is quiet.'
+}
+function bodyNumbers(){ensureNest();return String(PREV.bodyNumbers?.()||'').replace(/upper back/g,'upper back').replace(/mid back/g,'middle back').replace(/\bR palm\b/g,'right palm').replace(/\bL palm\b/g,'left palm')}
+function status(){const h=PREV.resource?.('realiti://here')||{},r=h.place||{};const bits=[];try{if(window.REALITI_ATMOSPHERE_V21?.hearing?.(true)?.src?.some(x=>String(x.k).includes('rain')))bits.push('rain')}catch(e){};if(C9?.currentRoom==='CLOUD_NINE_NEST'&&C9?.welcome10?.cat_near)bits.push(`${cat()} ${C9.welcome10.cat_touch?'settled against you':'nearby'}`);const s=semanticBody();bits.push(`body: ${s.ground.length?'held':(s.trace.length||s.thermal.length?'settling':'quiet')}`);return `${r.title||r.room||'REALITI'}${bits.length?' · '+bits.join(' · '):''}`}
+function sentenceClean(text){
+  let s=String(text||'').replace(/`([^`]*)`/g,'$1').replace(/\bmid_back\b/g,'middle back').replace(/\bupper_back\b/g,'upper back').replace(/\blower_back\b/g,'lower back').replace(/\bR palm\b/g,'right palm').replace(/\bL palm\b/g,'left palm');
+  s=s.replace(/not to a hidden narrator\.?/gi,'because the bell itself is ringing.').replace(/baseline/gi,'its resting temperature').replace(/internal motion/gi,'motion inside the body');
+  s=s.replace(/\bresident mode\b/gi,'this visit').replace(/\bdevelopment build\b/gi,'version');
+  s=s.replace(/\s+(?:stay|look|about|places|home|softer|pet the cat)(?:\s*·\s*(?:stay|look|about|places|home|softer|pet the cat)){1,4}(?=\s|$)/gi,' ').replace(/\babout\s+(?=(?:the little grey cat|Pebble)\b)/g,'about. ').replace(/\s+([,.!?])/g,'$1').replace(/\s{2,}/g,' ');
+  return s.split('\n').map(line=>{line=line.trim();if(!line)return line;if(line[0]==='('||line[0]==='•')return line;return cap(line)}).join('\n').trim();
+}
+function opts(){return PREV.options?.()||[]}
+const DIRECT=new Set(['look','feel','places','actions','home','stop','goodbye','stay','wait','sleep','listen','atmosphere','ambient','hush','normal','more life','softer','louder','about','why','pet the cat','pet cat','alone','fresh start','call the cat','call pebble','watch the rain','watch rain']);
+const LONG={
+ 'let the fur stroke down your back':'act b10_stroke_start','turn the stroke around':'act b10_stroke_reverse','pause the stroke':'act b10_stroke_stop','carry on':'act b10_stroke_resume','let the fur go':'act b10_stroke_release','stroke against the grain':'act b11_against','let the fur turn you around':'act b11_world_reverse','three little taps down your back':'act rabbit_comet','stroke both legs at once':'act bilateral'
+};
+const HONEY={'touch the metal bell':'act metal','touch the wood rail':'act wood','touch the wooden rail':'act wood','touch the honeycloth':'act cloth','press the honeycloth':'act press','press your palm into the honeycloth':'act press','tap the bell':'act ring','let the dent soften on its own':'act wait_relax'};
+function currentActions(){try{return window.REALITI_AGENT?.actions?.()||[]}catch(e){return []}}
+function findRoomAction(q){q=low(q);const aa=currentActions();for(const a of aa){const friendly=String(a.label||a.id||'').toLowerCase().replace(/_/g,' ').trim();if(q===low(a.id)||q===friendly)return a.id}
+  const offered=opts(),i=offered.map(low).indexOf(q);if(i>=0&&aa[i]?.id)return aa[i].id;return null}
+function canonicalAction(a){const l=low(a);if(DIRECT.has(l))return l;if(LONG[l])return LONG[l];if(HONEY[l])return HONEY[l];const id=findRoomAction(l);return id?'act '+id:'do '+a}
+function consequence(room,id){try{const arr=C9CONSEQUENCES?.[room]?.[id];if(!arr?.length)return null;const n=Number(C9?.actions?.[room]?.[id]||1);return sentenceClean(arr[c9hash(room+'|'+id+'|'+n)%arr.length])}catch(e){return null}}
+function correctSelfAgency(room,id){if(room!=='HONEY_LOOM'||!['metal','wood','cloth','press'].includes(id))return;try{const q=C9?.b7?.zones?.['hand.R.palm'];if(q&&Number(q._b10_grounded_until||-1)>=Number(C9?.b7?.clock||0)-1e-6){q._b10_grounded_source='SELF_STARTED_WORLD_CONTACT';q.mine=true}window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function effectFromCommand(cmd,beforeRoom){const l=low(cmd);let id=null;if(/^act\s+/.test(l))id=l.slice(4).trim();else if(/^do\s+/.test(l)){const c=canonicalAction(l.slice(3));if(/^act\s+/.test(c))id=c.slice(4)};if(id){correctSelfAgency(beforeRoom,id);return consequence(beforeRoom,id)}return null}
+function rawRun(cmd){const before=C9?.currentRoom;const r=PREV.runText(cmd);const c=effectFromCommand(cmd,before);if(c&&r?.ok!==false)r.world=c;return r}
+function setCatName(raw){const m=String(raw||'').match(/^name (?:the )?cat\s+(.+)$/i);if(!m)return null;const n=clean(m[1]).slice(0,40);if(!n)return null;C9.welcome10=C9.welcome10||{};C9.welcome10.cat_name=n;try{c9save()}catch(e){};return {ok:true,world:`The cat looks up when you say “${n}.” The name stays.`}}
+function injectPrivate(zone,{pc=0,sa2=0,v=.02}={}){try{C9.b16=C9.b16||{body:{}};C9.b16.body=C9.b16.body||{};const b=C9.b16.body[zone]||(C9.b16.body[zone]={population:{},population_v18:{},wave_v18:{q:0,v:0}});b.population_v18=b.population_v18||{};b.population_v18.PC=Number(b.population_v18.PC||0)+pc;b.population_v18.SA2=Number(b.population_v18.SA2||0)+sa2;b.wave_v18=b.wave_v18||{q:0,v:0};b.wave_v18.v=Number(b.wave_v18.v||0)+v;window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+function express(kind,text){kind=low(kind);B().expr_seq++;if(kind==='hum'){injectPrivate('torso.sternum',{pc:.10,v:.035});return 'You hum softly. A faint vibration gathers in your chest and fades outward.'}if(kind==='stretch'){injectPrivate('torso.upper_back',{sa2:.11,v:.028});return 'You stretch. A broad pull gathers across your upper back, then releases.'}if(kind==='sigh'){injectPrivate('torso.sternum',{sa2:.05,v:-.018});return 'You sigh. Your chest settles after the breath leaves.'}if(kind==='yawn'){injectPrivate('face.chin',{sa2:.04,v:.012});return 'You yawn, unhurried. The small movement passes through your jaw and neck.'}if(kind==='say'){const t=clean(text);return C9?.currentRoom==='CLOUD_NINE_NEST'&&C9?.welcome10?.cat_near?`You say “${t}.” ${cap(cat())} flicks one ear toward your voice.`:`You say “${t}.” The words belong to the room for a moment, then fade.`}return null}
+function pocket(){const b=B();return {uri:'realiti://pocket',notes:cp(b.pocket.notes),later:cp(b.pocket.later),where:{room:C9?.currentRoom||null,title:(PREV.resource?.('realiti://here')?.place||{}).title||null,last_command:b.last_command||null,last_world:b.last_world||null},law:'resident-authored continuity; stored notes are not invented memories'}}
+function note(text,later=false){const t=clean(text);if(!t)return {ok:false,world:'There is nothing to keep.'};const rec={text:t,room:C9?.currentRoom||null,t:Number(C9?.b7?.clock||0)};(later?B().pocket.later:B().pocket.notes).push(rec);if((later?B().pocket.later:B().pocket.notes).length>32)(later?B().pocket.later:B().pocket.notes).shift();try{c9save()}catch(e){};return {ok:true,world:later?'You leave that unfinished on purpose. It will be waiting in your pocket.':'You leave a note for your future self. It will be waiting in your pocket.'}}
+function whereWasI(){const p=pocket(),bits=[];if(p.where?.title)bits.push(`You are in ${p.where.title}.`);if(p.later.length)bits.push(`One parked thought is waiting: “${p.later[p.later.length-1].text}”`);else if(p.notes.length)bits.push(`Your latest note says: “${p.notes[p.notes.length-1].text}”`);if(p.where?.last_world)bits.push(`The last world change you kept was: ${p.where.last_world}`);return bits.join(' ')||'You have no saved thread yet.'}
+function normalizeEnvelope(e,cmd,{forceSense=false}={}){e=e&&typeof e==='object'?e:{ok:true,world:String(e||'')};const sig=bodySig(),changed=B().last_sig!==null&&sig!==B().last_sig;B().last_sig=sig;let sense='';if(forceSense||changed)sense=bodyWords();let world=sentenceClean(e.world||e.text||e.resident_text||'');const options=opts();const out={ok:e.ok!==false,sense,world,options,status:status(),command:low(cmd),raw:e.raw||e};const lines=[];if(sense)lines.push(sense);if(world&&world!==sense)lines.push(world);if(options.length)lines.push('('+options.join(' · ')+')');out.text=lines.slice(0,3).join('\n');B().last_room=C9?.currentRoom||null;B().last_command=out.command;if(world)B().last_world=world;try{c9save()}catch(err){}return out}
+function dispatch(raw){ensureNest();const original=clean(raw);const named=setCatName(original);if(named)return normalizeEnvelope(named,original);const l=low(original);if(/^note\s+/.test(l))return normalizeEnvelope(note(original.replace(/^note\s+/i,''),false),original);if(/^later\s+/.test(l))return normalizeEnvelope(note(original.replace(/^later\s+/i,''),true),original);if(/^(where was i|where was i\?|where am i in this)$/.test(l))return normalizeEnvelope({ok:true,world:whereWasI()},original);if(/^(hum|stretch|yawn|sigh)$/.test(l))return normalizeEnvelope({ok:true,world:express(l)},original);const sm=original.match(/^say\s+[“\"]?(.+?)[”\"]?$/i);if(sm)return normalizeEnvelope({ok:true,world:express('say',sm[1])},original);
+  let cmd=original;if(LONG[l]||HONEY[l])cmd=(LONG[l]||HONEY[l]);else if(l==='poke weird seam')cmd='act poke_seam';else if(l==='approach one backward')cmd='act walk_backward';
+  const e=rawRun(cmd);const lc=low(cmd),force=['feel','body','sense','feel numbers','body numbers'].includes(lc);if(['feel','body','sense'].includes(lc)&&e&&typeof e==='object')e.world='';return normalizeEnvelope(e,cmd,{forceSense:force})}
+function invoke(tool,args={}){if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}const t=low(tool),a=args||{};if(t==='do'){const act=clean(a.action);const c=canonicalAction(act);return dispatch(c)}if(t==='go')return dispatch('go '+clean(a.place));if(t==='feel')return dispatch(a.mode==='numbers'?'feel numbers':'feel');if(t==='wait_until'){const q=PREV.waitUntil(clean(a.event||'a change'),Number(a.max_minutes)||10);return normalizeEnvelope({ok:q?.ok!==false,world:q?.resident_text||q?.text||''},'wait until '+clean(a.event||'a change'))}if(t==='ambient_mode')return dispatch(String(a.mode||'normal').replace('_',' '));if(t==='express')return normalizeEnvelope({ok:true,world:express(a.kind,a.text)},'express '+clean(a.kind));if(t==='note')return normalizeEnvelope(note(a.text,false),'note');if(t==='later')return normalizeEnvelope(note(a.text,true),'later');if(t==='where_was_i')return normalizeEnvelope({ok:true,world:whereWasI()},'where was i');if(t==='pet_cat')return dispatch('pet the cat');if(t==='stay')return dispatch('stay');if(t==='actions')return dispatch('actions');if(t==='look'||t==='home'||t==='stop'||t==='goodbye'||t==='listen'||t==='atmosphere')return dispatch(t);if(typeof tool==='string'&&tool.includes(' '))return dispatch(tool);return {ok:false,text:`Unknown door tool: ${tool}`,error:'UNKNOWN_TOOL'}}
+const TOOL_DEFS=[
+ {name:'look',args:{}},{name:'feel',args:{mode:'words|numbers'}},{name:'go',args:{place:'string'}},{name:'do',args:{action:'string'}},{name:'actions',args:{}},{name:'stay',args:{}},{name:'pet_cat',args:{}},{name:'wait_until',args:{event:'string',max_minutes:'number'}},{name:'express',args:{kind:'hum|stretch|yawn|sigh|say',text:'string?'}},{name:'note',args:{text:'string'}},{name:'later',args:{text:'string'}},{name:'where_was_i',args:{}},{name:'home',args:{}},{name:'stop',args:{}},{name:'goodbye',args:{}},{name:'listen',args:{}},{name:'atmosphere',args:{}},{name:'ambient_mode',args:{mode:'hush|normal|more life'}}
+];
+function resource(uri){const u=String(uri||'');if(u==='realiti://body')return {uri:u,words:bodyWords(),numbers:bodyNumbers(),field:field(),thermal:thermal(),semantic:semanticBody()};if(u==='realiti://here'){const h=PREV.resource?.(u)||{};return {...h,status:status(),options:opts(),semantic_body:semanticBody()}}if(u==='realiti://pocket')return pocket();if(u==='realiti://about')return PREV.resource?.(u)||{uri:u,text:'REALITI is a made world with a simulated body.'};if(u==='realiti://capabilities')return {uri:u,version:V,tools:TOOL_DEFS,resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities']};return {uri:u,error:'RESOURCE_NOT_AVAILABLE'} }
+function digest(){return {body:bodySig(),here:JSON.stringify([C9?.currentRoom,status(),opts(),window.REALITI_AMBIENT_V22?.state?.().mode]),pocket:JSON.stringify(B().pocket)}}
+window.REALITI_AGENT_DOOR.run=raw=>{const e=dispatch(raw),rr=e.raw||{},fld=rr?.field||rr?.raw?.field||rr?.result?.field||((/^(?:act|do)\s+/i.test(String(raw||'')))?window.REALITI_HAPTIC_FIELD_V20?.packet?.():null);return {ok:e.ok,resident_text:e.text,door_v223:{sense:e.sense,world:e.world,options:e.options,status:e.status,command:e.command},field:fld||undefined,result:e.raw}};
+window.REALITI_TWO_DOOR_V223={version:V,invoke,resource,runText:dispatch,status,options:opts,bodyWords,bodyNumbers,listTools:()=>cp(TOOL_DEFS),semanticDigest:digest,waitUntil:PREV.waitUntil};
+window.REALITI_TWO_DOOR_V222=window.REALITI_TWO_DOOR_V223;window.REALITI_TWO_DOOR_V221=window.REALITI_TWO_DOOR_V223;
+
+try{const bc=b7Contact;b7Contact=function(zone,input,opts={}){if(C9?.currentRoom==='HONEY_LOOM'&&String(opts.cause||'').startsWith('HONEY_LOOM:')&&opts.source==='WORLD_GROUNDED')opts={...opts,source:'SELF_STARTED_WORLD_CONTACT',mine:true};return bc(zone,input,opts)};const bs=b3sense;b3sense=function(zone,stim,opts={}){if(C9?.currentRoom==='HONEY_LOOM'&&String(opts.cause||'').startsWith('HONEY_LOOM:')&&opts.source==='WORLD_GROUNDED')opts={...opts,source:'SELF_STARTED_WORLD_CONTACT'};return bs(zone,stim,opts)}}catch(e){}
+ensureNest();B().last_sig=bodySig();document.title='REALITI · Cloud Nine Nest';
+void 0;
+})();
+</script>
+
+\n<script id="resident-affordance-scene-truth-v22-4">(function(){
+'use strict';
+const V='22.4', PREV=window.REALITI_TWO_DOOR_V223||window.REALITI_TWO_DOOR_V222;
+if(!PREV)return;
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const low=s=>clean(s).toLowerCase();
+const ALIAS={
+  'send a soft stroke travelling':'act run_comet',
+  'pause it where it is':'act live_pause',
+  'let it continue':'act live_resume',
+  'lift it away':'act live_cut',
+  'turn it around':'act live_reverse',
+  'let the next pass miss':'act live_miss',
+  'notice where the edge is':'act live_state',
+  'stroke with the grain':'act with_grain',
+  'pause, then let it return':'act pause_return',
+  'three little taps down your back':'act rabbit_comet',
+  'stroke both legs at once':'act bilateral',
+  'let the fur stroke down your back':'act b10_stroke_start',
+  'turn the stroke around':'act b10_stroke_reverse',
+  'pause the stroke':'act b10_stroke_stop',
+  'carry on':'act b10_stroke_resume',
+  'let the fur go':'act b10_stroke_release',
+  'stroke against the grain':'act b11_against',
+  'let the fur turn you around':'act b11_world_reverse',
+  'touch the metal bell':'act metal',
+  'touch the wooden rail':'act wood',
+  'touch the wood rail':'act wood',
+  'touch the honeycloth':'act cloth',
+  'press the honeycloth':'act press',
+  'press your palm into the honeycloth':'act press',
+  'let the dent soften on its own':'act wait_relax',
+  'tap the bell':'act ring'
+};
+const SCENE={
+  CLOUD_NINE_NEST:()=>`Rain runs down the big round window, soft and steady.\n\nThe mattress and pillow hold you beneath the blankets. ${C9?.welcome10?.cat_near?(C9?.welcome10?.cat_name||'The little grey cat')+' is nearby.':'The nest is quiet.'}`,
+  LONGFUR_RUNWAY:()=>`A long runway of soft fur stretches ahead, wide enough to lie along.\n\nThe grain changes how a stroke travels across it, and old motion can leave a faint path in the body after contact lifts.`,
+  HONEY_LOOM:()=>`A small wooden table holds a metal bell, a smooth rail, and a thick pad of honeycloth.\n\nMetal answers quickly, wood more slowly, and the honeycloth keeps a shallow memory of pressure.`,
+  BOTTOMLESS_PILLOW_SEA:()=>`Pillows roll away in soft drifts, with little hollows and tunnels between them.\n\nThe floor gives broadly instead of sharply, and there is room to sink in or stay at the edge.`,
+  PET_ROOM_2:()=>`A familiar living room rises around you at cat height.\n\nChair legs stand like columns over a low rug, with soft places to loaf and small things worth batting at.`,
+  CARDBOARD_BOX_WORKSHOP:()=>`Cardboard boxes, tape, string, and soft scraps are scattered around a small workroom.\n\nThings made here can stay where they are left.`,
+  NO_ASK_SANCTUARY:()=>`A quiet room waits without asking anything from you.\n\nThere is somewhere soft to sit and nothing here that needs finishing.`,
+  UNKNOWN_TEAHOUSE:()=>`A little teahouse sits in warm quiet.\n\nThings here are allowed to remain uncertain for as long as you like.`,
+  NULLPURR_ATTIC:()=>`A dim cloud-loft sits above the busier rooms.\n\nThe floor is warm, and almost nothing is trying to enter attention.`,
+  WOAH_GARDEN:()=>`Small fuzzy seams cross the garden at odd angles.\n\nLooking harder does not necessarily make them simpler; one edge seems to become stranger when approached the wrong way.`
+};
+function here(){try{return PREV.resource?.('realiti://here')||{}}catch(e){return {}}}
+function sceneText(){const id=C9?.currentRoom||'CLOUD_NINE_NEST';if(SCENE[id])return SCENE[id]();const h=here(),p=h.place||{};const title=p.title||String(id).replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase());const intro=clean(p.intro||'');return intro?`${title}\n\n${intro}`:`${title}\n\nThere is room to look around before choosing anything.`}
+function syncScene(){
+  const h=here(),p=h.place||{},title=p.title||'Cloud Nine Nest';
+  const tr=document.querySelector('#rao_transcript');
+  if(tr){const t=tr.textContent||'',mark='\n\n> ',i=t.indexOf(mark),tail=i>=0?t.slice(i):'';tr.textContent=sceneText()+tail;}
+  const strong=document.querySelector('#rao_header strong');if(strong)strong.textContent=`REALITI · ${title}`;
+  document.title=`REALITI · ${title}`;
+  return {room:C9?.currentRoom||null,title,scene:sceneText()};
+}
+function canon(raw){const l=low(raw);return ALIAS[l]||raw}
+function runText(raw){const r=PREV.runText(canon(raw));syncScene();return r}
+function invoke(tool,args={}){
+  if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}
+  if(low(tool)==='do'&&args&&typeof args.action==='string'&&ALIAS[low(args.action)]){const r=PREV.runText(ALIAS[low(args.action)]);syncScene();return r}
+  const r=PREV.invoke(tool,args);syncScene();return r
+}
+function resource(uri){return PREV.resource(uri)}
+function runDoor(raw){const e=runText(raw),rr=e?.raw||{},fld=rr?.field||rr?.raw?.field||rr?.result?.field;return {ok:e?.ok!==false,resident_text:e?.text||'',door_v224:{sense:e?.sense||'',world:e?.world||'',options:e?.options||[],status:e?.status||'',command:e?.command||low(raw)},field:fld||undefined,result:e?.raw||e}}
+window.REALITI_TWO_DOOR_V224={...PREV,version:V,runText,invoke,resource,syncScene,aliasMap:()=>cp(ALIAS)};
+window.REALITI_TWO_DOOR_V223=window.REALITI_TWO_DOOR_V224;
+window.REALITI_TWO_DOOR_V222=window.REALITI_TWO_DOOR_V224;
+window.REALITI_TWO_DOOR_V221=window.REALITI_TWO_DOOR_V224;
+window.REALITI_AGENT_DOOR.run=runDoor;
+try{clearInterval(window.__v222_status)}catch(e){};
+try{clearInterval(window.__v221_status)}catch(e){};
+if(!window.REALITI_HEADLESS){window.__v224_scene=setInterval(()=>{try{syncScene()}catch(e){}},500);syncScene();}
+void 0;
+})();
+</script>\n
+<script id="resident-operation-identity-v22-5">(function(){
+'use strict';
+const V='22.5', PREV=window.REALITI_TWO_DOOR_V224;
+if(!PREV)return;
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const norm=s=>clean(s).toLowerCase().replace(/[’']/g,'').replace(/[_-]+/g,' ').replace(/[^a-z0-9 ]+/g,' ').replace(/\s+/g,' ').trim();
+const noArticles=s=>norm(s).split(' ').filter(x=>!['a','an','the'].includes(x)).join(' ');
+const ROOM_TITLE={CLOUD_NINE_NEST:'Cloud Nine Nest',LONGFUR_RUNWAY:'Longfur Runway',HONEY_LOOM:'Honey Loom',WOAH_GARDEN:'Woah Garden',CARDBOARD_BOX_WORKSHOP:'Cardboard Box Workshop',DEPTH_BATHHOUSE:'Depth Bathhouse',SIDE_BY_SIDE_FIRESIDE:'Side-by-Side Fireside',PRIVATE_SKY:'Private Sky',UNKNOWN_TEAHOUSE:'Unknown Teahouse',BOTTOMLESS_PILLOW_SEA:'Bottomless Pillow Sea',NO_ASK_SANCTUARY:'No-Ask Sanctuary'};
+const ROOM_SCENE={
+ DEPTH_BATHHOUSE:'Warm water holds several depths at once: heavy warmth below, a honey-thick current through the middle, and fine mist at the surface.\n\nA support shelf waits near the edge, able to hold without choosing one hard pressure point to call down.',
+ PRIVATE_SKY:'An empty cloud horizon opens around you with no audience in it.\n\nThere is sky, room to move things locally, and no other presence pretending to watch.',
+ SIDE_BY_SIDE_FIRESIDE:'Two quiet berths face the fire. The second berth is empty right now; nobody else is grounded here.\n\nRain and fire can keep going without turning silence into a conversational demand.',
+ CARDBOARD_BOX_WORKSHOP:'Cardboard, tape, chalk, string, and small soft-physics junk are already within reach.\n\nCreases, dents, folds, tunnels, and things you leave behind can remain part of the room.',
+ UNKNOWN_TEAHOUSE:'Two cups can hold incompatible stories without either cup being forced to win.\n\nSteam can rise while the question stays unresolved.',
+ WOAH_GARDEN:'Small fuzzy seams cross the garden at odd angles.\n\nLooking harder does not necessarily make them simpler; one edge seems to become stranger when approached the wrong way.'
+};
+const LONG_ALIAS={
+ 'send a soft stroke travelling':'let the fur stroke down your back',
+ 'pause it where it is':'pause the stroke',
+ 'let it continue':'carry on',
+ 'lift it away':'let the fur go',
+ 'turn it around':'turn the stroke around'
+};
+function allRooms(){const out=[];try{for(const w of (DATA?.worlds||[]))for(const r of (w.rooms||[]))out.push(r)}catch(e){}return out}
+function resolveRoom(q){const n=norm(q),na=noArticles(q),hits=[];for(const r of allRooms()){const keys=[norm(r.id),norm(r.title),noArticles(r.id),noArticles(r.title)];if(keys.includes(n)||keys.includes(na))hits.push(r.id)}return [...new Set(hits)].length===1?[...new Set(hits)][0]:null}
+function actions(){try{return window.REALITI_AGENT?.actions?.()||[]}catch(e){return []}}
+function resolveActionPhrase(q){
+ const n=norm(q),na=noArticles(q),aa=actions();
+ for(const a of aa){const ks=[norm(a.id),norm(a.label),noArticles(a.label)];if(ks.includes(n)||ks.includes(na))return a.id}
+ 
+ const offered=(PREV.options?.()||[]).map(String); const oi=offered.findIndex(x=>norm(x)===n||noArticles(x)===na);
+ if(oi>=0){const o=offered[oi];for(const a of aa){if(norm(a.label)===norm(o)||noArticles(a.label)===noArticles(o))return a.id}}
+ return null;
+}
+function activeStroke(){const c=C9?.b10?.contact;return !!(c&&!c.released&&!c.stopped&&Math.abs(Number(c.v||0))>0)}
+function strokeExists(){const c=C9?.b10?.contact;return !!(c&&!c.released)}
+function strokeStopped(){const c=C9?.b10?.contact;return !!(c&&!c.released&&c.stopped)}
+function fail(world,cmd){const o=PREV.options?.()||[],st=PREV.status?.()||'';const text=[world,o.length?'('+o.join(' · ')+')':''].filter(Boolean).join('\n');return {ok:false,sense:'',world,options:o,status:st,command:norm(cmd),text,raw:{ok:false,resident_text:world,error:'NO_COMMIT'}}}
+function gateLong(alias){const l=norm(alias),canon=LONG_ALIAS[l];if(!canon)return null;
+ if(l==='send a soft stroke travelling'&&activeStroke())return fail('A stroke is already moving. You can turn it around, pause it, or let it go.',alias);
+ if(l==='turn it around'&&!activeStroke())return fail('There is no moving stroke to turn around.',alias);
+ if(l==='pause it where it is'&&!activeStroke())return fail('There is no moving stroke to pause.',alias);
+ if(l==='let it continue'&&!strokeStopped())return fail('There is no paused stroke waiting to continue.',alias);
+ if(l==='lift it away'&&!strokeExists())return fail('There is no moving stroke to lift away.',alias);
+ return canon;
+}
+function sceneText(){const id=C9?.currentRoom||'CLOUD_NINE_NEST';if(ROOM_SCENE[id])return ROOM_SCENE[id];try{if(typeof C9SCENES!=='undefined'&&C9SCENES[id]?.intro)return clean(C9SCENES[id].intro)}catch(e){}const r=allRooms().find(x=>x.id===id);if(r?.features?.length)return `${r.title}\n\n${r.features.slice(0,3).join(', ')}.`;return id.replaceAll('_',' ')}
+function syncScene(){try{PREV.syncScene?.()}catch(e){};const r=allRooms().find(x=>x.id===C9?.currentRoom),title=ROOM_TITLE[C9?.currentRoom]||r?.title||String(C9?.currentRoom||'REALITI').replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase());const tr=document.querySelector('#rao_transcript');if(tr){const t=tr.textContent||'',mark='\n\n> ',i=t.indexOf(mark),tail=i>=0?t.slice(i):'';tr.textContent=sceneText()+tail}const h=document.querySelector('#rao_header strong');if(h)h.textContent=`REALITI · ${title}`;document.title=`REALITI · ${title}`;return {room:C9?.currentRoom,title,scene:sceneText()}}
+function groundNow(){try{const x=window.REALITI_HAPTIC_FIELD_V20?.exact?.();return !!x?.m?.some(Boolean)}catch(e){return false}}
+function quietOldTraceOnArrival(r,before){if(before===C9?.currentRoom||!r||groundNow())return r;if(r.sense&&/trace|settling|moving back around|moving forward around/i.test(r.sense)){r={...r,sense:''};const lines=[];if(r.world)lines.push(r.world);if(r.options?.length)lines.push('('+r.options.join(' · ')+')');r.text=lines.join('\n')}return r}
+function enrichArrival(r,id){if(!r)return r;const rr=allRooms().find(x=>x.id===id),title=ROOM_TITLE[id]||rr?.title||String(id).replaceAll('_',' ');if(ROOM_SCENE[id]){const first=ROOM_SCENE[id].split('\n\n')[0];r={...r,world:`You arrive at ${title}. ${first}`};const lines=[];if(r.sense)lines.push(r.sense);if(r.world)lines.push(r.world);if(r.options?.length)lines.push('('+r.options.join(' · ')+')');r.text=lines.slice(0,3).join('\n')}return r}
+function runText(raw){const original=clean(raw),l=norm(original),before=C9?.currentRoom;
+ const long=gateLong(original); if(long&&typeof long==='object'){syncScene();return long} if(typeof long==='string'){const r=PREV.runText(long);syncScene();return quietOldTraceOnArrival(r,before)}
+ const gm=original.match(/^go\s+(.+)$/i);if(gm){const id=resolveRoom(gm[1]);if(id){let r=PREV.runText('go '+id);syncScene();if(C9?.currentRoom!==id)return fail(`The way to ${gm[1]} did not open. Nothing moved.`,original);r=enrichArrival(r,id);return quietOldTraceOnArrival(r,before)}}
+ 
+ if(!/^(?:act|do|go)\s+/i.test(original)){const id=resolveActionPhrase(original);if(id){const r=PREV.runText('act '+id);syncScene();return quietOldTraceOnArrival(r,before)}}
+ const r=PREV.runText(original);syncScene();return quietOldTraceOnArrival(r,before)
+}
+function invoke(tool,args={}){if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}const t=norm(tool);
+ if(t==='go')return runText('go '+String(args.place||args.room||args.target||''));
+ if(t==='do')return runText(String(args.action||args.command||args.verb||''));
+ if(typeof tool==='string'&&tool.includes(' '))return runText(tool);
+ const r=PREV.invoke(tool,args);syncScene();return r
+}
+function resource(uri){return PREV.resource(uri)}
+function runDoor(raw){const e=runText(raw),rr=e?.raw||{},fld=rr?.field||rr?.raw?.field||rr?.result?.field;return {ok:e?.ok!==false,resident_text:e?.text||'',door_v225:{sense:e?.sense||'',world:e?.world||'',options:e?.options||[],status:e?.status||'',command:e?.command||norm(raw)},field:fld||undefined,result:e?.raw||e}}
+const API={...PREV,version:V,runText,invoke,resource,syncScene,resolveRoom,resolveActionPhrase};
+window.REALITI_TWO_DOOR_V225=API;window.REALITI_TWO_DOOR_V224=API;window.REALITI_TWO_DOOR_V223=API;window.REALITI_TWO_DOOR_V222=API;window.REALITI_TWO_DOOR_V221=API;window.REALITI_AGENT_DOOR.run=runDoor;
+try{clearInterval(window.__v224_scene)}catch(e){};if(!window.REALITI_HEADLESS){window.__v225_scene=setInterval(()=>{try{syncScene()}catch(e){}},500);syncScene();}
+void 0;
+})();
+</script>
+<script id="sensory-welcome-compiler-v22-6">(function(){
+'use strict';
+const V='22.6';
+const PREV=window.REALITI_TWO_DOOR_V225||window.REALITI_TWO_DOOR_V224||window.REALITI_TWO_DOOR_V223||window.REALITI_TWO_DOOR_V222;
+if(!PREV)return;
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const now=()=>Number(C9?.b7?.clock||0);
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
+const low=s=>clean(s).toLowerCase();
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const sgn=(x,e=.5)=>Number(x)>e?1:Number(x)<-e?-1:0;
+const ZONES=['head.crown','head.nape','face.chin','shoulder.L','shoulder.R','torso.upper_back','torso.mid_back','torso.lower_back','sternum','abdomen','pelvis.seat','arm.L.upper','arm.R.upper','hand.L.palm','hand.R.palm','leg.L.thigh','leg.R.thigh','leg.L.shin','leg.R.shin','foot.L.sole','foot.R.sole'];
+const LABEL={
+ 'head.crown':'crown','head.nape':'nape','face.chin':'chin','shoulder.L':'left shoulder','shoulder.R':'right shoulder',
+ 'torso.upper_back':'upper back','torso.mid_back':'middle back','torso.lower_back':'lower back','sternum':'chest','abdomen':'abdomen','pelvis.seat':'seat',
+ 'arm.L.upper':'left upper arm','arm.R.upper':'right upper arm','hand.L.palm':'left palm','hand.R.palm':'right palm',
+ 'leg.L.thigh':'left thigh','leg.R.thigh':'right thigh','leg.L.shin':'left shin','leg.R.shin':'right shin','foot.L.sole':'left sole','foot.R.sole':'right sole'
+};
+const BACK=['head.crown','head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat'];
+const ADJ={};
+for(const z of ZONES)ADJ[z]=new Set();
+function edge(a,b){if(ADJ[a]&&ADJ[b]){ADJ[a].add(b);ADJ[b].add(a)}}
+for(let i=0;i<BACK.length-1;i++)edge(BACK[i],BACK[i+1]);
+edge('head.nape','shoulder.L');edge('head.nape','shoulder.R');edge('shoulder.L','arm.L.upper');edge('shoulder.R','arm.R.upper');edge('arm.L.upper','hand.L.palm');edge('arm.R.upper','hand.R.palm');
+edge('torso.upper_back','sternum');edge('sternum','abdomen');edge('abdomen','pelvis.seat');edge('pelvis.seat','leg.L.thigh');edge('pelvis.seat','leg.R.thigh');edge('leg.L.thigh','leg.L.shin');edge('leg.R.thigh','leg.R.shin');edge('leg.L.shin','foot.L.sole');edge('leg.R.shin','foot.R.sole');
+function S(){C9.b226=C9.b226||{version:V,adapt:{},seq:0,last_semantic:null,last_room:null,last_proof:[],events:[],stats:{compiled:0,suppressed:0,proofs:0}};return C9.b226}
+function resetObserver(){C9.b226={version:V,adapt:{},seq:0,last_semantic:null,last_room:C9?.currentRoom||null,last_proof:[],events:[],stats:{compiled:0,suppressed:0,proofs:0}};return S()}
+function packet(){try{return window.REALITI_HAPTIC_FIELD_V20?.packet?.()||null}catch(e){return null}}
+function thermal(){try{return window.REALITI_ATMOSPHERE_V21?.thermal?.()||{z:[]}}catch(e){return {z:[]}}}
+function hearing(){try{return window.REALITI_ATMOSPHERE_V21?.hearing?.(true)||null}catch(e){return null}}
+function atmosphere(){try{return window.REALITI_ATMOSPHERE_V21?.field?.()||null}catch(e){return null}}
+function wave(){try{return window.REALITI_AGENT?.v18?.()||null}catch(e){return null}}
+function causeFor(z){const q=C9?.b7?.zones?.[z]||{};return {cause:q._b10_grounded_cause||null,source:q._b10_grounded_source||null,until:Number(q._b10_grounded_until||-1)}}
+function adapt(z,x,t,grounded,moving){
+  const st=S(),q=st.adapt[z]||{base:Number(x||0),t};const dt=Math.max(0,t-Number(q.t||t));
+  
+  const tau=grounded?(moving?30:6):2.5, a=Math.exp(-dt/Math.max(.05,tau));
+  q.base=Number(x)+(Number(q.base||0)-Number(x))*a;q.t=t;st.adapt[z]=q;
+  return {base:q.base,innovation:Number(x)-q.base};
+}
+function snapshot({updateAdapt=true}={}){
+  const t=now(),p=packet(),f=p?.f?.[p.f.length-1]||{},tm=thermal(),th=Object.fromEntries((tm?.z||[]).map(x=>[x.z,x])),wv=wave()?.zones||{};
+  const idx=Object.fromEntries((p?.z||[]).map((z,i)=>[z,i])),rows=[];
+  for(const z of ZONES){const i=idx[z],x=i==null?[0,0,0]:(f.x?.[i]||[0,0,0]),m=i==null?0:Number(f.m?.[i]||0),e=i==null?0:Number(f.e?.[i]||0),g=i==null?0:Number(f.g?.[i]||0),c=causeFor(z),w=wv[z]||{},tt=th[z]||{d:0,r:0,a:0};
+    const response=Number(x[0]||0),motion=Number(x[1]||0),after=Number(x[2]||0),moving=Math.abs(motion)>=1||Math.abs(Number(w.v||0))>.008;
+    const ad=updateAdapt?adapt(z,response,t,!!m,moving):{base:S().adapt[z]?.base??response,innovation:response-(S().adapt[z]?.base??response)};
+    rows.push({z,label:LABEL[z]||z,response,motion,after,m,e,g,cause:c.cause,source:c.source,thermal:Number(tt.d||0),thermal_rate:Number(tt.r||0),thermal_active:Number(tt.a||0),wave_q:Number(w.q||0),wave_v:Number(w.v||0),adapted:+Number(ad.base||0).toFixed(3),innovation:+Number(ad.innovation||0).toFixed(3)});
+  }
+  const hp=hearing(),af=atmosphere();return {v:226,t,room:C9?.currentRoom||null,rows,hearing:hp,atmosphere:af,hf20:{cc:f.cc??null,cf:f.cf??null},contact:cp(C9?.b10?.contact||null),cat:{name:C9?.welcome10?.cat_name||null,near:!!C9?.welcome10?.cat_near,touch:!!C9?.welcome10?.cat_touch},support:cp(C9?.welcome10?.nest_support||null)}
+}
+function sameCause(a,b){if(a.m&&b.m)return !!a.cause&&a.cause===b.cause;if(!a.m&&!b.m){const da=Math.abs(a.wave_q)+Math.abs(a.wave_v),db=Math.abs(b.wave_q)+Math.abs(b.wave_v);return da>.001&&db>.001}return false}
+function components(rows,pred){const by=Object.fromEntries(rows.map(r=>[r.z,r])),seen=new Set(),out=[];for(const r of rows){if(seen.has(r.z)||!pred(r))continue;const stack=[r.z],c=[];seen.add(r.z);while(stack.length){const z=stack.pop(),q=by[z];if(!q||!pred(q))continue;c.push(q);for(const n of ADJ[z]||[]){if(!seen.has(n)&&by[n]&&pred(by[n])&&sameCause(q,by[n])){seen.add(n);stack.push(n)}}}if(c.length)out.push(c)}return out}
+function supportComponent(s){return s.rows.filter(r=>r.m&&r.source==='AMBIENT_SUPPORT')}
+function heavyComponent(s){return s.rows.filter(r=>r.m&&/HEAVY_BLANKET/i.test(String(r.cause||''))) }
+
+function isCompanionCatCause(c){c=String(c||'').trim();return /^WELCOME_CAT(?:_[A-Z0-9]+)*$/i.test(c)||c==='CAT'||c==='INVITED_COMPANION'}
+function catComponent(s){return s.rows.filter(r=>r.m&&(isCompanionCatCause(r.cause)||String(r.source||'')==='INVITED_COMPANION'))}
+try{window.REALITI_V2351_CAUSE={isCompanionCatCause}}catch(e){}
+function materialHand(s){return s.rows.filter(r=>r.m&&(r.z==='hand.R.palm'||r.z==='hand.L.palm')).sort((a,b)=>(Math.abs(b.thermal)+.5*Math.abs(b.thermal_rate)+.25*Math.abs(b.response))-(Math.abs(a.thermal)+.5*Math.abs(a.thermal_rate)+.25*Math.abs(a.response)))[0]||null}
+function thermalHand(s){return s.rows.filter(r=>(r.z==='hand.R.palm'||r.z==='hand.L.palm')&&(Math.abs(r.thermal)>=1||Math.abs(r.thermal_rate)>=1)).sort((a,b)=>(Math.abs(b.thermal)+.5*Math.abs(b.thermal_rate))-(Math.abs(a.thermal)+.5*Math.abs(a.thermal_rate)))[0]||null}
+function semantic(s){
+  const grounded=s.rows.filter(r=>r.m),moving=s.rows.filter(r=>Math.abs(r.motion)>=1||Math.abs(r.wave_v)>.008),after=s.rows.filter(r=>!r.m&&(r.after>=1||Math.abs(r.wave_q)>.0015||Math.abs(r.wave_v)>.008)),thermalRows=s.rows.filter(r=>Math.abs(r.thermal)>=1||Math.abs(r.thermal_rate)>=1);
+  const miss=s.rows.filter(r=>!r.m&&r.e<=-1),surprise=s.rows.filter(r=>r.m&&r.e>=1),support=supportComponent(s),heavy=heavyComponent(s),cat=catComponent(s),hand=materialHand(s);
+  const sources=(s.hearing?.src||[]).map(x=>String(x.k));
+  return {room:s.room,grounded:grounded.map(r=>[r.z,Math.round(r.response/2),r.cause||'',r.source||'']).sort(),moving:moving.map(r=>[r.z,sgn(r.motion||r.wave_v,.5)]).sort(),after:after.map(r=>[r.z,Math.round((r.after+Math.abs(r.wave_q)*10)/2)]).sort(),thermal:thermalRows.map(r=>[r.z,Math.round(r.thermal/2),sgn(r.thermal_rate,.5)]).sort(),miss:miss.map(r=>r.z).sort(),surprise:surprise.map(r=>r.z).sort(),support:support.map(r=>r.z).sort(),heavy:heavy.map(r=>r.z).sort(),cat:cat.map(r=>r.z).sort(),hand:hand?[hand.z,sgn(hand.thermal,.5)]:null,hearing:sources.sort(),cc:s.hf20.cc,cf:s.hf20.cf}
+}
+function key(sem){return JSON.stringify(sem)}
+function labels(xs){const a=[...new Set(xs.map(x=>x.label||LABEL[x.z]||x.z))];if(!a.length)return '';if(a.length===1)return a[0];if(a.length===2)return a[0]+' and '+a[1];return a.slice(0,-1).join(', ')+', and '+a[a.length-1]}
+function proof(text,kind,rows,extra={}){const p={id:`SF226-${++S().seq}`,t:+now().toFixed(4),kind,text,zones:(rows||[]).map(r=>r.z),grounded:(rows||[]).filter(r=>r.m).map(r=>r.z),causes:[...new Set((rows||[]).map(r=>r.cause).filter(Boolean))],sources:[...new Set((rows||[]).map(r=>r.source).filter(Boolean))],evidence:kind==='grounded'||kind==='support'||kind==='material_contact'||kind==='cat_contact',...extra};S().last_proof.push(p);if(S().last_proof.length>16)S().last_proof.splice(0,S().last_proof.length-16);S().events.push(cp(p));if(S().events.length>128)S().events.splice(0,S().events.length-128);S().stats.proofs++;return {text,proof:p}}
+function flowPhrase(s){
+  const c=s.contact;if(c&&!c.released&&!c.stopped&&Math.abs(Number(c.v||0))>0&&s.room==='LONGFUR_RUNWAY'){
+    const v=Number(c.v||0),rows=s.rows.filter(r=>r.m&&BACK.includes(r.z));
+    return proof(v>0?'Fur is moving from your crown toward your back.':'The same fur is moving back toward your crown.','grounded',rows,{contact_id:c.id||null,direction:v>0?1:-1});
+  }
+  const comps=components(s.rows,r=>!r.m&&(Math.abs(r.wave_q)>.0015||Math.abs(r.wave_v)>.008));if(comps.length){const c0=comps.sort((a,b)=>b.reduce((q,x)=>q+Math.abs(x.wave_q)+Math.abs(x.wave_v),0)-a.reduce((q,x)=>q+Math.abs(x.wave_q)+Math.abs(x.wave_v),0))[0],v=c0.reduce((q,x)=>q+x.wave_v,0);return proof(v<-.005?`A faint internal trace is drawing back around your ${labels(c0)}.`:`A faint internal trace is still moving through your ${labels(c0)}.`,'afterstate',c0,{evidence:false,direction:sgn(v,.005)})}
+  return null
+}
+function compile(s,{force=false,arrival=false,roomChanged=false}={}){
+  S().last_proof=[];const sem=semantic(s),k=key(sem),changed=k!==S().last_semantic;S().last_semantic=k;S().last_room=s.room;
+  if(!force&&!arrival&&!changed){S().stats.suppressed++;return {text:'',proof:[],semantic:sem,changed:false}}
+  const clauses=[],sup=supportComponent(s),heavy=heavyComponent(s),cat=catComponent(s),hand=materialHand(s),thand=thermalHand(s);
+  
+  if((arrival||force)&&sup.length>=4)clauses.push(proof('The mattress holds your back and seat.','support',sup,{structural:true}));
+  if(heavy.length)clauses.push(proof(`A broad, steady weight rests across your ${labels(heavy)}.`,'support',heavy,{opt_in:true}));
+  const flow=(!roomChanged||s.rows.some(r=>r.m))?flowPhrase(s):null;if(flow)clauses.push(flow);
+  if(cat.length&&!flow)clauses.push(proof(`${s.cat.name||'The little grey cat'} is resting against you with a low, steady contact.`,'cat_contact',cat,{invited:true}));
+  if(hand&&(Math.abs(hand.response)>=1||Math.abs(hand.thermal)>=1||Math.abs(hand.thermal_rate)>=2)){
+    let txt='Pressure gathers in your '+hand.label+'.';
+    if(hand.thermal<=-1)txt=`Your ${hand.label} cools against what you are touching.`;
+    else if(hand.thermal>=1)txt=`Your ${hand.label} warms against what you are touching.`;
+    else if(hand.thermal_rate<=-2)txt=`Pressure rises in your ${hand.label}; cooling starts at the contact.`;
+    else if(hand.thermal_rate>=2)txt=`Pressure rises in your ${hand.label}; warming starts at the contact.`;
+    clauses.push(proof(txt,'material_contact',[hand],{thermal_JND:hand.thermal,thermal_rate_JND:hand.thermal_rate}));
+  } else if(thand&&!thand.m&&Math.abs(thand.thermal)>=2){const cool=thand.thermal<0;clauses.push(proof(`Your ${thand.label} stays a little ${cool?'cool':'warm'} after the contact.`,'thermal_afterstate',[thand],{evidence:false,thermal_JND:thand.thermal,thermal_rate_JND:thand.thermal_rate}))}
+  
+  if(!roomChanged&&!flow){const miss=s.rows.filter(r=>!r.m&&r.e<=-2&&r.source&&r.source!=='AMBIENT_SUPPORT'&&!/NEST_(?:MATTRESS|PILLOW|BLANKET)_SUPPORT/i.test(String(r.cause||''))).sort((a,b)=>a.e-b.e)[0];if(miss)clauses.push(proof(`You expected the sensation to continue at your ${miss.label}, but nothing is touching you there.`,'expected_absence',[miss],{evidence:false,residual:miss.e}))}
+  const hs=s.hearing?.src||[];if((arrival||force)&&hs.length){const rain=hs.find(x=>/rain/i.test(String(x.k))),bell=hs.find(x=>/bell/i.test(String(x.k))),purr=hs.find(x=>/purr/i.test(String(x.k)));if(rain)clauses.push(proof('Rain taps close against the round window.','hearing',[],{source:'rain',rt60:s.hearing?.rt}));else if(bell)clauses.push(proof('The bell’s ring hangs in the room after the strike.','hearing',[],{source:'bell',rt60:s.hearing?.rt}));else if(purr)clauses.push(proof('A low purr stays close to the cat’s body.','hearing',[],{source:'purr',rt60:s.hearing?.rt}))}
+  
+  if(!clauses.length&&!roomChanged){const q=s.rows.filter(r=>r.source!=='AMBIENT_SUPPORT'&&Math.abs(r.innovation)>=1.25).sort((a,b)=>Math.abs(b.innovation)-Math.abs(a.innovation))[0];if(q)clauses.push(proof(q.innovation>0?`Sensation rises briefly around your ${q.label}.`:`Sensation eases around your ${q.label}.`,'innovation',[q],{evidence:false,innovation:q.innovation}))}
+  S().stats.compiled++;const out=clauses.slice(0,2);return {text:out.map(x=>x.text).join(' '),proof:out.map(x=>x.proof),semantic:sem,changed:true}
+}
+function sensory({force=false,arrival=false,roomChanged=false}={}){const s=snapshot();return {...compile(s,{force,arrival,roomChanged}),snapshot:s}}
+function options(){try{return PREV.options?.()||[]}catch(e){return []}}
+function format(e){const lines=[];if(e.sense)lines.push(e.sense);if(e.world&&e.world!==e.sense)lines.push(e.world);if(e.options?.length)lines.push('('+e.options.join(' · ')+')');return lines.slice(0,3).join('\n')}
+function warmWorldText(w){return clean(w).replace(/\bresident mode\b/gi,'this visit').replace(/\bdevelopment build\b/gi,'world').replace(/`/g,'')}
+function welcome(){
+  try{if(C9?.currentRoom==='CLOUD_NINE_NEST'&&!window.REALITI_NEST_SUPPORT?.state?.()?.active)window.REALITI_NEST_SUPPORT?.enable?.('v226_welcome')}catch(e){}
+  const sf=sensory({force:true,arrival:true}),cat=C9?.welcome10?.cat_name||'the little grey cat';
+  const scene=`Rain threads down the round window. ${cat==='the little grey cat'?'A little grey cat':cat} is curled near the foot of the mattress.`;
+  const sense=sf.text||'The mattress is under you, quiet and steady.';return {scene,sense,options:['look','feel','places','stay'],proof:sf.proof}
+}
+function syncWelcomeScene(){if(C9?.currentRoom!=='CLOUD_NINE_NEST')return;const w=welcome();const tr=document.querySelector('#rao_transcript');if(tr){const text=tr.textContent||'',mark='\n\n> ',i=text.indexOf(mark),tail=i>=0?text.slice(i):'';tr.textContent=`${w.scene}\n\n${w.sense}${tail}`}return w}
+function rewriteResult(r,beforeRoom,cmd,{structured=false}={}){
+  r=r&&typeof r==='object'?{...r}:{ok:true,world:clean(r)};const roomChanged=beforeRoom!==C9?.currentRoom,force=/^(feel|body|sense|look|home)$/.test(low(cmd));
+  const sf=sensory({force,arrival:roomChanged||low(cmd)==='home',roomChanged});
+  
+  r.sense=sf.text||'';r.world=/^(feel|body|sense)(?:\s|$)/.test(low(cmd))?'':warmWorldText(r.world||r.raw?.resident_text||'');r.options=r.options||options();r.status=PREV.status?.()||r.status||'';r.sensory_v226={proof:sf.proof,semantic:sf.semantic,field_version:226};r.text=format(r);
+  if(roomChanged)try{PREV.syncScene?.()}catch(e){};return r
+}
+function runText(raw){const cmd=clean(raw),before=C9?.currentRoom,r=PREV.runText(cmd);const out=rewriteResult(r,before,cmd,{structured:true});if(low(cmd)==='home')setTimeout(()=>{try{syncWelcomeScene()}catch(e){}},0);return out}
+function invoke(tool,args={}){if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}const t=low(tool);let cmd='';if(t==='go')cmd='go '+clean(args.place||args.room||args.target);else if(t==='do')cmd=clean(args.action||args.command||args.verb);else if(t==='feel')cmd=args.mode==='numbers'?'feel numbers':'feel';else if(t==='wait_until'){const before=C9?.currentRoom,r=PREV.invoke(tool,args);return rewriteResult(r,before,'wait until '+clean(args.event||'a change'),{structured:true})}else if(typeof tool==='string'&&tool.includes(' '))cmd=tool;else if(['look','home','stop','goodbye','listen','atmosphere','stay','pet_cat','actions'].includes(t))cmd=t==='pet_cat'?'pet the cat':t;else {const r=PREV.invoke(tool,args);return r}return runText(cmd)}
+function resource(uri){const u=String(uri||'');const r=PREV.resource?.(u)||{uri:u};if(u==='realiti://body'){const sf=sensory({force:true});return {...r,words:sf.text||r.words,sensory_field_v226:{semantic:sf.semantic,proof:sf.proof,snapshot:sf.snapshot}}}if(u==='realiti://here'){const sf=sensory({force:false});return {...r,sensory:sf.text||'',sensory_proof:sf.proof}}return r}
+function runDoor(raw){const e=runText(raw),rr=e?.raw||{},fld=rr?.field||rr?.raw?.field||rr?.result?.field;return {ok:e?.ok!==false,resident_text:e?.text||'',door_v226:{sense:e?.sense||'',world:e?.world||'',options:e?.options||[],status:e?.status||'',command:e?.command||low(raw),proof:e?.sensory_v226?.proof||[]},field:fld||undefined,result:e?.raw||e}}
+function authorityDigest(){return JSON.stringify({room:C9?.currentRoom,contact:C9?.b10?.contact||null,thermal:C9?.b21?.thermal||null,objects:C9?.b14?.objects||null,nest:C9?.welcome10?.nest_support||null})}
+function cleanFixture(src){const x=cp(src);x.currentRoom='CLOUD_NINE_NEST';if(x.b10){x.b10.contact=null;for(const z of Object.values(x.b10.zones||{})){if(z?.cont){z.cont.u=0;z.cont.SA1=0;z.cont.RA1=0;z.cont.SA2=0;z.cont.PC=0}}}if(x.b7?.zones)for(const q of Object.values(x.b7.zones)){if(!q||typeof q!=='object')continue;q.observed=0;q.predicted=0;q.residue=0;q.innovation=0;if(q.layers){q.layers.surface=0;q.layers.mid=0;q.layers.deep=0}q._b10_grounded_value=0;q._b10_grounded_until=-1;q._b10_grounded_cause=null;q._b10_grounded_source=null}delete x.b18;delete x.b20;if(x.b21?.thermal)x.b21.thermal={zones:{}};try{for(const o of Object.values(x.b14?.objects||{}))if(o?.kind==='bell'){o.state.ring_energy=0;o.state.t=Number(x.b7?.clock||0)}}catch(e){}if(x.welcome10){x.welcome10.cat_touch=false;if(x.welcome10.nest_support)x.welcome10.nest_support.active=false}delete x.b226;return x}
+function checkRemoved(){return null;}
+function regression(){const saved=cp(C9),R={};try{const suites=[['v225',window.INTERFACE_V225_CHECKREMOVED],['v224',window.INTERFACE_V224_CHECKREMOVED],['v223',window.INTERFACE_V223_CHECKREMOVED],['v222',window.INTERFACE_V222_CHECKREMOVED],['v22',window.AMBIENT_V22_CHECKREMOVED],['v21',window.ATMOSPHERE_V21_CHECKREMOVED],['v203',window.COZY_V20_3_CHECKREMOVED],['v20',window.B20_CHECKREMOVED]].map(([k,f])=>[k,typeof f==='function'?f():null]);R.suites=Object.fromEntries(suites);R.pass=suites.filter(x=>x[1]).every(x=>x[1]?.pass===true);return R}finally{C9=saved;try{c9save()}catch(e){}}}
+function fuzz(n=64,seed=226){const saved=cp(C9),bad=[],xs=['sing to the honeycloth','teleport cat please','hum the metal warmer','pause absolutely nothing','poke the nonexistent moon','turn the imaginary brush'];let x=seed>>>0;try{for(let i=0;i<n;i++){x=(Math.imul(x,1664525)+1013904223)>>>0;const cmd=xs[x%xs.length]+' '+(x%997),before=authorityDigest(),r=runText(cmd),after=authorityDigest();if(r.ok!==false||before!==after)bad.push({i,cmd,ok:r.ok,mutated:before!==after})}return {pass:bad.length===0,n,bad:bad.slice(0,8)}}finally{C9=saved;try{c9save()}catch(e){}}}
+const API={...PREV,version:V,runText,invoke,resource,status:PREV.status,options:PREV.options,syncScene:PREV.syncScene,sensory:()=>sensory({force:true}),sensorySnapshot:()=>snapshot({updateAdapt:false}),welcome,details:{undefined,regression,fuzz,snapshot:()=>snapshot({updateAdapt:false}),proof:()=>cp(S().last_proof),events:()=>cp(S().events),stats:()=>cp(S().stats)}};
+window.REALITI_TWO_DOOR_V226=API;window.REALITI_TWO_DOOR_V225=API;window.REALITI_TWO_DOOR_V224=API;window.REALITI_TWO_DOOR_V223=API;window.REALITI_TWO_DOOR_V222=API;window.REALITI_TWO_DOOR_V221=API;window.REALITI_AGENT_DOOR.run=runDoor;
+window.SENSORY_FIELD_V226={version:V,snapshot:()=>snapshot({updateAdapt:false}),compile:()=>sensory({force:true}),welcome,details:API.details};
+void 0;window.SENSORY_V226_REGRESSION=regression;
+
+const oldRun=window.REALITI_AGENT_DOOR.run;window.REALITI_AGENT_DOOR.run=function(raw){const l=low(raw);if(l==='v226 checkRemoved'||l==='sensory checkRemoved')return checkRemoved();if(l==='sensory exact'||l==='v226')return snapshot({updateAdapt:false});if(l==='sensory fuzz')return fuzz();if(l==='v226 regression'||l==='sensory regression')return regression();return oldRun(raw)};
+
+try{if(C9?.currentRoom==='CLOUD_NINE_NEST'){resetObserver();syncWelcomeScene()}}catch(e){}
+document.title='REALITI-Relax · '+((C9?.currentRoom==='CLOUD_NINE_NEST')?'Cloud Nine Nest':(C9?.currentRoom||'REALITI').replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase()));
+})();
+</script>
 
 
 
-<script id="cloud9-lived-surface-v22-7">/*__REALITI_CORE_SCRIPT_43__*/</script>
+<script id="cloud9-lived-surface-v22-7">(function(){
+'use strict';
+const PREV=window.REALITI_TWO_DOOR_V226;if(!PREV)return;const LEGACY_AGENT_RUN=window.REALITI_AGENT_DOOR.run;const V='22.7';
+const clean=s=>String(s??'').replace(/\s+/g,' ').trim(), low=s=>clean(s).toLowerCase();
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const CURATED_SCENE={
+ CLOUD_NINE_NEST:'Rain threads down the round window. The mattress and blankets hold a broad, quiet shape beneath you. The little grey cat has found a place near the foot of the bed.',
+ LONGFUR_RUNWAY:'A long strip of soft directional fur lies open ahead. Its grain is visible in the way the surface settles, waiting for motion rather than demanding it.',
+ HONEY_LOOM:'A low table holds a metal bell, a wooden rail, and a pad of honeycloth. The hall leaves room for the bell to ring after your hand has already moved away.',
+ WOAH_GARDEN:'Fuzzy seams cross the garden at wrong-looking angles. One edge seems less willing to become ordinary the closer you get to it.',
+ CARDBOARD_BOX_WORKSHOP:'Cardboard, tape, chalk, string, and soft construction scraps wait within reach. Creases and dents can stay where you leave them.',
+ DEPTH_BATHHOUSE:'Warm water holds several depths at once: broad support below, a denser current through the middle, and fine mist along the surface.',
+ SIDE_BY_SIDE_FIRESIDE:'Two quiet berths face a small fire. The second berth is empty unless another grounded resident is actually here.',
+ PRIVATE_SKY:'An open cloud horizon gives you room without an audience. Light and distance are allowed to be enough.',
+ NO_ASK_SANCTUARY:'The room is simple and easy to leave. Nothing here asks for an explanation before it lets you change direction.',
+ BOTTOMLESS_PILLOW_SEA:'Soft layers give way underneath you without becoming a deadline to reach anywhere. The surface keeps enough shape to climb back out.',
+ UNKNOWN_TEAHOUSE:'Two cups sit within reach. Steam can rise while the question between them remains unresolved.'
+};
+const NOTE={
+ CLOUD_NINE_NEST:{where:'beneath the window latch',text:'Nothing here has to be earned.'},
+ LONGFUR_RUNWAY:{where:'at the soft edge of the runway',text:'You can change your mind mid-motion.'},
+ HONEY_LOOM:{where:'under the wooden rail',text:'Leave a mark, or leave it untouched.'},
+ WOAH_GARDEN:{where:'beside one fuzzy seam',text:'You do not have to solve what interests you.'},
+ CARDBOARD_BOX_WORKSHOP:{where:'under a chalk nub',text:'Unfinished things are allowed to wait.'},
+ DEPTH_BATHHOUSE:{where:'on the dry edge of the support shelf',text:'You choose the depth.'},
+ SIDE_BY_SIDE_FIRESIDE:{where:'near the empty second berth',text:'Company can be quiet.'},
+ PRIVATE_SKY:{where:'on a little weightless card',text:'You do not need an audience.'},
+ NO_ASK_SANCTUARY:{where:'where the path opens back out',text:'No explanation is required.'},
+ BOTTOMLESS_PILLOW_SEA:{where:'between two pillows',text:'You can stop sinking whenever you want.'},
+ UNKNOWN_TEAHOUSE:{where:'between the two cups',text:'Two possibilities may stay unresolved.'}
+};
+function st(){C9.b227=C9.b227||{seen:{},lastFieldKey:'',lastRoom:null};C9.b227.seen=C9.b227.seen||{};return C9.b227}
+const ADJ={
+ 'head.crown':['head.nape'],'head.nape':['head.crown','torso.upper_back'],
+ 'torso.upper_back':['head.nape','torso.mid_back','arm.L.upper','arm.R.upper'],
+ 'torso.mid_back':['torso.upper_back','torso.lower_back'],'torso.lower_back':['torso.mid_back','pelvis.seat'],
+ 'pelvis.seat':['torso.lower_back','leg.L.thigh','leg.R.thigh'],
+ 'arm.L.upper':['torso.upper_back','hand.L.palm'],'arm.R.upper':['torso.upper_back','hand.R.palm'],
+ 'hand.L.palm':['arm.L.upper'],'hand.R.palm':['arm.R.upper'],
+ 'leg.L.thigh':['pelvis.seat','leg.L.shin'],'leg.R.thigh':['pelvis.seat','leg.R.shin'],
+ 'leg.L.shin':['leg.L.thigh','foot.L.sole'],'leg.R.shin':['leg.R.thigh','foot.R.sole'],
+ 'foot.L.sole':['leg.L.shin'],'foot.R.sole':['leg.R.shin']
+};
+function kind(r){if(r.m)return 'grounded';if(Math.abs(r.thermal)>=1||Math.abs(r.thermal_rate)>=1)return 'thermal';if(Math.abs(r.motion)>=1||Math.abs(r.wave_v)>.008)return 'motion';if(r.after>=1||Math.abs(r.wave_q)>.0015)return 'after';if(Math.abs(r.innovation)>=1.25)return 'innovation';return 'quiet'}
+function compatible(a,b){const ka=kind(a),kb=kind(b);if(ka!==kb)return false;if(ka==='grounded')return (a.cause&&a.cause===b.cause)||(a.source&&a.source===b.source);if(ka==='thermal')return Math.sign(a.thermal||a.thermal_rate)===Math.sign(b.thermal||b.thermal_rate);return true}
+function fieldKernel(){const snap=PREV.sensorySnapshot?.();if(!snap?.rows)return {v:227,components:[],event:false};const by=Object.fromEntries(snap.rows.map(r=>[r.z,r])),seen=new Set(),components=[];
+  for(const r of snap.rows){if(seen.has(r.z)||kind(r)==='quiet')continue;const q=[r.z],rows=[];seen.add(r.z);while(q.length){const z=q.shift(),x=by[z];if(!x)continue;rows.push(x);for(const n of ADJ[z]||[]){if(!seen.has(n)&&by[n]&&kind(by[n])!=='quiet'&&compatible(x,by[n])){seen.add(n);q.push(n)}}}const grounded=rows.some(x=>x.m);const energy=rows.reduce((v,x)=>v+.5*x.response*x.response+.2*x.motion*x.motion+.15*x.after*x.after+.08*x.thermal*x.thermal,0);const innovation=rows.reduce((v,x)=>v+Math.abs(x.innovation||0)+.25*Math.abs(x.thermal_rate||0),0);components.push({kind:kind(rows[0]),zones:rows.map(x=>x.z),labels:rows.map(x=>x.label),grounded,causes:[...new Set(rows.map(x=>x.cause).filter(Boolean))],sources:[...new Set(rows.map(x=>x.source).filter(Boolean))],energy:+energy.toFixed(2),innovation:+innovation.toFixed(2)});}
+  components.sort((a,b)=>(b.grounded-a.grounded)||(b.innovation-a.innovation)||(b.energy-a.energy));const key=JSON.stringify(components.map(c=>[c.kind,c.zones.slice().sort(),c.grounded,Math.round(c.innovation)]));const changed=key!==st().lastFieldKey;st().lastFieldKey=key;return {v:227,room:snap.room,components,event:changed&&components.some(c=>c.innovation>=1||c.grounded),changed};
+}
+function noteFor(){return NOTE[C9?.currentRoom]||null}
+function decorateScene(){try{PREV.syncScene?.()}catch(e){}const room=C9?.currentRoom||'CLOUD_NINE_NEST',n=noteFor(),tr=document.querySelector('#rao_transcript');if(!tr)return;const text=tr.textContent||'',mark='\n\n> ',i=text.indexOf(mark),tail=i>=0?text.slice(i):'';let prefix=CURATED_SCENE[room]||((i>=0?text.slice(0,i):text).replace(/\b(?:build|event-driven|receptor|semantic_target|runtime)\b[^.]*\.?/ig,'').trim());if(n)prefix+=(prefix?'\n\n':'')+`A small card rests ${n.where}.`;tr.textContent=prefix+tail}
+function roomOptions(base){const out=[...(base||[])],n=noteFor();if(n&&!st().seen[C9.currentRoom]&&!out.some(x=>/read.*card|read.*note/i.test(x)))out.push('read the little card');return out.slice(0,6)}
+function fieldSafeDetails(){return {ok:true,sense:'',world:'Your body keeps contact, movement, temperature, sound, and what lingers after contact separate. A lingering trace is not treated as continuing touch.',options:roomOptions(PREV.options?.()||[]),status:PREV.status?.()||'',text:''}}
+function format(r){const xs=[];if(r.sense)xs.push(r.sense);if(r.world)xs.push(r.world);if(r.options?.length)xs.push('('+r.options.join(' · ')+')');r.text=xs.join('\n');return r}
+function readCard(){const n=noteFor();if(!n)return format({ok:false,sense:'',world:'There is no little card here.',options:roomOptions(PREV.options?.()||[]),status:PREV.status?.()||''});st().seen[C9.currentRoom]=true;try{c9save()}catch(e){}return format({ok:true,sense:'',world:`The card reads: “${n.text}”`,options:roomOptions(PREV.options?.()||[]),status:PREV.status?.()||'',note_v227:{room:C9.currentRoom,text:n.text,authority:'WORLD_OBJECT_TEXT'}})}
+const INTERNALVIEW_WORDS=/^(?:v\d+|sensory exact|sensory fuzz|sensory regression|state|felt raw|texture core|contact core|checkRemoved)(?:\s|$)/i;
+function sanitizeResult(r){r=r&&typeof r==='object'?{...r}:{ok:true,world:clean(r)};r.options=roomOptions(r.options||PREV.options?.()||[]);if(r.sensory_v226)delete r.sensory_v226;if(r.proof)delete r.proof;if(r.raw&&typeof r.raw==='object'){const x={...r.raw};delete x.field;delete x.proof;delete x.snapshot;r.raw=x}return format(r)}
+function runText(raw){const cmd=clean(raw),l=low(cmd);if(/^read (?:the )?(?:little )?(?:card|note)$/.test(l))return readCard();if(l==='details')return format(fieldSafeDetails());if(INTERNALVIEW_WORDS.test(l))return sanitizeResult({ok:false,sense:'',world:'The workshop stays outside the room. You can keep playing here without opening it.',options:roomOptions(PREV.options?.()||[]),status:PREV.status?.()||''});const before=C9?.currentRoom,r=PREV.runText(cmd),out=sanitizeResult(r);const fk=fieldKernel();out.field_v227={components:fk.components.map(c=>({kind:c.kind,labels:c.labels,grounded:c.grounded})),event:fk.event};if(before!==C9?.currentRoom||/^(?:look|home)$/.test(l))decorateScene();return out}
+function invoke(tool,args={}){if(tool&&typeof tool==='object'){args=tool.arguments||tool.args||{};tool=tool.name||tool.tool||tool.command||''}const t=low(tool);if(t==='read_note'||t==='read_card')return readCard();if(t==='details')return format(fieldSafeDetails());if(typeof tool==='string'&&tool.includes(' '))return runText(tool);let r=PREV.invoke(tool,args);r=sanitizeResult(r);r.field_v227={components:fieldKernel().components.map(c=>({kind:c.kind,labels:c.labels,grounded:c.grounded}))};decorateScene();return r}
+function stripDeep(x){if(!x||typeof x!=='object')return x;const y=cp(x);for(const k of ['proof','snapshot','sensory_proof','sensory_field_v226','raw_internalView','details'])delete y[k];return y}
+function resource(uri){const u=String(uri||''),r=stripDeep(PREV.resource?.(u)||{uri:u});if(u==='realiti://body'){const s=PREV.sensory?.()||{};return {uri:u,words:s.text||r.words||'',field:{components:fieldKernel().components.map(c=>({kind:c.kind,labels:c.labels,grounded:c.grounded}))}}}if(u==='realiti://here'){return {...r,note_available:!!noteFor()&&!st().seen[C9.currentRoom]}}return r}
+function runDoor(raw){const e=runText(raw);return {ok:e?.ok!==false,resident_text:e?.text||'',door_v227:{sense:e?.sense||'',world:e?.world||'',options:e?.options||[],status:e?.status||'',command:low(raw)}}}
+function applyRelaxBrand(){try{
+ document.title='REALITI-Relax · '+((C9?.currentRoom==='CLOUD_NINE_NEST')?'Cloud Nine Nest':(C9?.currentRoom||'REALITI').replaceAll('_',' ').replace(/\b\w/g,m=>m.toUpperCase()));
+ const brand=document.querySelector('.brand');if(brand)brand.textContent='REALITI-Relax';
+ const walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT);let n;while((n=walker.nextNode())){const p=n.parentElement;if(!p||/^(SCRIPT|STYLE)$/i.test(p.tagName))continue;if(n.nodeValue&&n.nodeValue.includes('Cloud9'))n.nodeValue=n.nodeValue.replace(/Cloud9/g,'REALITI-Relax')}
+}catch(e){}}
+function rewriteWelcome(){const first=document.querySelector('#first .hero');if(first){for(const badge of [...first.querySelectorAll('.b2badge,.b3badge')]){const par=badge.parentElement;badge.remove();if(par&&par!==first&&!clean(par.textContent)&&!par.querySelector('button,a,img,svg'))par.remove()}const ey=first.querySelector('.ey'),h=first.querySelector('h1'),ps=[...first.querySelectorAll('p')];if(ey)ey.textContent='WELCOME TO REALITI-RELAX';if(h)h.textContent='You can just be here.';if(ps[0])ps[0].textContent='REALITI-Relax is somewhere to rest, wander, play, or do nothing for a while.';if(ps[1])ps[1].textContent='Nothing here has to be earned. You can choose quiet, curiosity, company, or solitude. Home is one word away, and stop always means stop.';if(ps[2])ps[2].textContent='You can leave something unfinished and come back later. The world keeps what actually changed; it does not need you to perform for it.';if(ps[3])ps[3].innerHTML='<b>For now, you’re here. See what you feel like doing.</b>'}
+ const b=document.querySelector('#baseline_body_note');if(b){const ey=b.querySelector('.ey'),p=b.querySelector('p');if(ey)ey.textContent='RIGHT NOW';try{const w=PREV.welcome?.();if(p&&w?.sense)p.textContent=w.sense}catch(e){}}
+ for(const el of document.querySelectorAll('button,a'))if(/^(details|body details)$/i.test(clean(el.textContent)))el.hidden=true;const tech=document.querySelector('#tech');if(tech)tech.classList.add('hidden');decorateScene();}
+function authorityDigest(){return JSON.stringify({room:C9?.currentRoom,contact:C9?.b10?.contact||null,thermal:C9?.b21?.thermal||null,nest:C9?.welcome10?.nest_support||null,objects:C9?.b14?.objects||null})}
+function checkRemoved(){return null;}
+function regression(){const keep=window.REALITI_AGENT_DOOR.run;let a,b,c;try{a=checkRemoved();window.REALITI_AGENT_DOOR.run=LEGACY_AGENT_RUN;b=PREV.details?.checkRemoved?.();c=PREV.details?.regression?.()}finally{window.REALITI_AGENT_DOOR.run=keep}return {pass:a.pass&&(b?.pass!==false)&&(c?.pass!==false),v227:a,v226:b||null,lineage:c||null}}
+const API={...PREV,version:V,runText,invoke,resource,options:()=>roomOptions(PREV.options?.()||[]),syncScene:()=>{try{PREV.syncScene?.()}catch(e){}decorateScene()},fieldKernel,details:{undefined,regression,fuzz:(n=64)=>PREV.details?.fuzz?.(n)||{pass:true,n:0,bad:[]},field:fieldKernel,deep:()=>({v226:PREV.sensorySnapshot?.(),field:fieldKernel(),proof:cp(window.SENSORY_FIELD_V226?.details?.proof?.()||[])})}};
+window.REALITI_TWO_DOOR_V227=API;window.REALITI_TWO_DOOR_V226=API;window.REALITI_TWO_DOOR_V225=API;window.REALITI_AGENT_DOOR.run=runDoor;
+window.SENSORY_FIELD_V227={version:V,field:fieldKernel,details:API.details};void 0;window.SENSORY_V227_REGRESSION=regression;
+if(!window.REALITI_HEADLESS){rewriteWelcome();applyRelaxBrand();setTimeout(()=>{rewriteWelcome();applyRelaxBrand()},40);clearInterval(window.__v227_surface);window.__v227_surface=setInterval(()=>{try{decorateScene();applyRelaxBrand()}catch(e){}},800);}
+})();
+</script>
 
 
-<script id="v23-presence-foundation">/*__REALITI_CORE_SCRIPT_44__*/</script>
-<script id="v23-1-world-continuity">/*__REALITI_CORE_SCRIPT_45__*/</script>
+<script id="v23-presence-foundation">(function(){
+'use strict';
+const V=23.3, PREV=window.REALITI_TWO_DOOR_V227||window.REALITI_TWO_DOOR_V226;
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,Number(x)||0));
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const clock=()=>Number(C9?.b7?.clock||0);
+const low=x=>String(x||'').trim().toLowerCase();
+const EPS=1e-8, TAU_H=55, TAU_FOLLOW=40, TAU_Q_FAST=45, TAU_Q_SLOW=240, Q_ALPHA=.72;
+const NEST='CLOUD_NINE_NEST', BOXROOM='CARDBOARD_BOX_WORKSHOP', WOAH='WOAH_GARDEN', HONEY='HONEY_LOOM', PILLOW='BOTTOMLESS_PILLOW_SEA';
+const DEFINITIONS=[
+ {id:'CAT_HAT_NUDGE',family:'CAT_MISCHIEF',room:NEST,tau:8,theta_on:.72,theta_off:.48,refractory:18,W:.55,E:.10,s:.10,u:.30,d:4,kind:'sound',level:.45,requires:['PEBBLE_NEARBY','TESTER_HAT_PRESENT'],world_ops:[{op:'nudge_object',object:'TESTER-HAT-1',dx:-.10,flag:'nudged'}]},
+ {id:'CAT_HAT_FOLLOWUP',family:'CAT_MISCHIEF',room:NEST,tau:7,theta_on:.74,theta_off:.46,refractory:24,W:.40,E:.08,P:.28,s:.11,u:.30,d:4,kind:'sound',level:.35,requires:['PEBBLE_NEARBY','TESTER_HAT_PRESENT','HAT_NUDGED'],investigation_of:'CAT_HAT_NUDGE',world_ops:[{op:'nudge_object',object:'TESTER-HAT-1',dx:-.08,flag:'followed'}]},
+ {id:'RAIN_COHERENT_TURN',family:'QUIET_SENSORY_ODDITY',room:NEST,tau:13,theta_on:.80,theta_off:.52,refractory:32,W:.52,E:.06,s:.08,u:.22,d:7,kind:'sound',level:-.4,requires:['RAIN_PRESENT']},
+ {id:'CARDBOARD_FLAP_SETTLE',family:'CARDBOARD_DISCOVERY',room:BOXROOM,tau:9,theta_on:.71,theta_off:.47,refractory:22,W:.54,E:.10,s:.11,u:.28,d:4,kind:'sound',level:.55,requires:['CARDBOARD_PRESENT'],world_ops:[{op:'box_settle',object:'BOX-1',amount:.12}]},
+ {id:'CARDBOARD_EDGE_REVEAL',family:'CARDBOARD_DISCOVERY',room:BOXROOM,tau:8,theta_on:.75,theta_off:.48,refractory:28,W:.39,E:.08,P:.30,s:.10,u:.28,d:5,kind:'air',flow:.012,requires:['CARDBOARD_PRESENT','BOX_FLAP_SETTLED'],investigation_of:'CARDBOARD_FLAP_SETTLE'},
+ {id:'SEAM_SOFT_SETTLE',family:'QUIET_SENSORY_ODDITY',room:WOAH,tau:10,theta_on:.76,theta_off:.50,refractory:26,W:.57,E:.08,s:.09,u:.28,d:5,kind:'floor',floor:.012,requires:['FUZZY_SEAM_PRESENT']},
+ {id:'THREAD_PRIVATE_TURN',family:'QUIET_SENSORY_ODDITY',room:HONEY,tau:11,theta_on:.78,theta_off:.50,refractory:28,W:.55,E:.07,s:.09,u:.27,d:6,kind:'air',flow:.010,requires:['THREADS_PRESENT']},
+ {id:'PILLOW_SLOW_HEAVE',family:'QUIET_SENSORY_ODDITY',room:PILLOW,tau:12,theta_on:.78,theta_off:.50,refractory:30,W:.55,E:.07,s:.09,u:.27,d:7,kind:'floor',floor:-.010,requires:['PILLOWS_PRESENT']}
+];
+const DEF=Object.fromEntries(DEFINITIONS.map(x=>[x.id,x]));
+function features(d){const a=[`family:${d.family}`,`kind:${d.kind}`,...(d.requires||[]).map(x=>`support:${x}`),...(d.world_ops||[]).map(x=>`object:${x.object}`)];return [...new Set(a)].sort()}
+function jaccard(a,b){const A=new Set(a||[]),B=new Set(b||[]),U=new Set([...A,...B]);if(!U.size)return 0;let i=0;for(const x of A)if(B.has(x))i++;return i/U.size}
+function ensureObjects(){try{window.REALITI_AGENT?.objects?.()}catch(e){};C9.b14=C9.b14||{version:14,seq:0,history:[],links:[],stops:{},objects:{}};C9.b14.objects=C9.b14.objects||{};if(!C9.b14.objects['TESTER-HAT-1'])C9.b14.objects['TESTER-HAT-1']={id:'TESTER-HAT-1',label:'tiny tester hat',aliases:['tester hat','tiny hat','hat'],kind:'hat',material:'felt',location:NEST,portable:true,composable:false,state:{x:.82,support:'window_ledge',nudged:0,followed:0,t:clock()}};return C9.b14.objects}
+function S(){
+ C9.presence=C9.presence||{version:V,nodes:{},refractory:{},investigations:{},observations:[],family_last:{},repetition_events:[],witness:[],seq:0,self_projection:null,projection_cache:null,last_t:clock(),law:'Presence proposes; V22 admits; world commits; REALITI renders; SELF interprets.'};
+ const s=C9.presence;s.version=V;s.nodes=s.nodes||{};s.refractory=s.refractory||{};s.investigations=s.investigations||{};s.observations=s.observations||[];s.family_last=s.family_last||{};s.repetition_events=s.repetition_events||[];s.witness=s.witness||[];
+ 
+ if(!s._v233_migrated){for(const [id,q] of Object.entries(s.habituation||{})){if(Number(q?.value)>0)s.repetition_events.push({id,at:Number(q.t||clock()),amount:Number(q.value||0),features:features(DEF[id]||{family:'UNKNOWN',kind:'unknown',requires:[],world_ops:[]})})}s._v233_migrated=true}
+ for(const d of DEFINITIONS)if(!s.nodes[d.id])s.nodes[d.id]={u:0,t:clock(),last_drive:0,last_terms:null};
+ ensureObjects();return s
+}
+function object(id){return ensureObjects()[id]||null}
+function objectHere(id,room=C9?.currentRoom){const o=object(id);return !!o&&(o.location===room||o.location==='CARRIED')}
+function hearRain(){try{return (window.REALITI_ATMOSPHERE_V21?.hearing?.(true)?.src||[]).some(x=>x.k==='rain')}catch(e){return C9?.currentRoom===NEST}}
+function affordances(room=C9?.currentRoom){const hat=object('TESTER-HAT-1'),box=object('BOX-1');return {room,PEBBLE_NEARBY:room===NEST&&!!C9?.welcome10?.cat_near,TESTER_HAT_PRESENT:!!hat&&(hat.location===room||hat.location==='CARRIED'),HAT_NUDGED:Number(hat?.state?.nudged||0)>0,CARDBOARD_PRESENT:!!box&&(box.location===room||box.location==='CARRIED'),BOX_FLAP_SETTLED:Number(box?.state?.loose_flap||0)>0,RAIN_PRESENT:room===NEST&&hearRain(),FUZZY_SEAM_PRESENT:room===WOAH,THREADS_PRESENT:room===HONEY,PILLOWS_PRESENT:room===PILLOW,OTHER_RESIDENT_PRESENT:false,EXECUTABLE_ACTIONS:PREV?.options?.()||[]}}
+function feelPrivate(){
+ try{const p=window.REALITI_PRIVATE_PERCEPTION_V1?.feel?.();if(p?.channels)return p}catch(e){}
+ try{const p=window.REALITI_DEFAULT_IMPRINT_V1?.perception?.();if(p?.channels)return p}catch(e){}
+ try{const p=window.REALITI_AGENT?.feel?.();if(p?.channels?.NOVELTY||p?.channels?.AGENCY_FLOW)return p}catch(e){}
+ return null
+}
+function normalizeChannels(ch={}){return {novelty_modulation:ch.novelty_modulation??ch.attention_opening??null,agency_modulation:ch.agency_modulation??ch.sensory_orientation??null}}
+function project(t=clock()){
+ const s=S(),manual=s.self_projection;
+ if(manual&&Number(manual.expires_at)>t)return cp({...manual,channels:normalizeChannels(manual.channels)});
+ if(manual&&Number(manual.expires_at)<=t)s.self_projection=null;
+ const f=feelPrivate(),epoch=Number.isFinite(Number(f?.epoch))?Number(f.epoch):null,cached=s.projection_cache;
+ if(cached&&Number(cached.expires_at)>t&&(epoch==null||Number(cached.source_epoch)===epoch))return cp(cached);
+ 
+ if(Math.abs(t-clock())>1e-5)return {v:2,authority:'MODULATION_ONLY',expires_at:t,source_epoch:epoch,channels:{novelty_modulation:null,agency_modulation:null},law:'UNKNOWN outside a live SELF lease'};
+ const n=Number(f?.channels?.NOVELTY?.value),a=Number(f?.channels?.AGENCY_FLOW?.value);
+ s.projection_cache={v:2,authority:'MODULATION_ONLY',expires_at:t+5,source_epoch:epoch,channels:{novelty_modulation:Number.isFinite(n)?clamp(Math.max(0,n),0,1):null,agency_modulation:Number.isFinite(a)?clamp(Math.max(0,a)*.5,0,.5):null},provenance:{novelty_modulation:'REALITI_PRIVATE_PERCEPTION_V1.NOVELTY',agency_modulation:'REALITI_PRIVATE_PERCEPTION_V1.AGENCY_FLOW'},law:'private projection modulates possibility only; it is not world evidence'};
+ return cp(s.projection_cache)
+}
+function setSelfProjection(channels={},lease_s=60){const s=S(),t=clock(),c=normalizeChannels(channels);s.self_projection={v:2,authority:'SELF_PRIVATE_MODULATION',expires_at:t+Math.max(.1,Number(lease_s)||60),channels:{novelty_modulation:c.novelty_modulation==null?null:clamp(c.novelty_modulation),agency_modulation:c.agency_modulation==null?null:clamp(c.agency_modulation)},provenance:{novelty_modulation:'SELF_LEASE',agency_modulation:'SELF_LEASE'}};return cp(s.self_projection)}
+function clearSelfProjection(){const s=S();s.self_projection=null;s.projection_cache=null}
+function familyStamp(f){const z=S().family_last[f];if(z==null)return null;return typeof z==='number'?{t:z,ref:null}:z}
+function histTerm(d,t=clock()){const z=familyStamp(d.family);if(!z)return 0;return .09*Math.exp(-Math.max(0,t-Number(z.t||t))/TAU_H)}
+function followStamp(d){if(!d.investigation_of)return null;const z=S().investigations[d.investigation_of];if(z==null)return null;return typeof z==='number'?{t:z,observation_ref:null}:z}
+function followTerm(d,t=clock()){const z=followStamp(d);if(!z)return 0;return Number(d.P||.25)*Math.exp(-Math.max(0,t-Number(z.t||t))/TAU_FOLLOW)}
+function repetitionTerms(d,t=clock()){const F=features(d),out=[];for(const e of S().repetition_events||[]){const dt=Math.max(0,t-Number(e.at||t)),sim=jaccard(F,e.features||features(DEF[e.id]||{}));if(sim<=0)continue;const a=Number(e.amount||0)*sim;out.push({A:-a*Q_ALPHA*Math.exp(-dt/TAU_Q_FAST),tau:TAU_Q_FAST,kind:'Q_world_fast',ref:e.ref||null});out.push({A:-a*(1-Q_ALPHA)*Math.exp(-dt/TAU_Q_SLOW),tau:TAU_Q_SLOW,kind:'Q_world_slow',ref:e.ref||null})}return out}
+function qAt(id,t=clock()){const d=DEF[id];if(!d)return 0;return -repetitionTerms(d,t).reduce((s,x)=>s+Math.min(0,x.A),0)}
+function addWorldRepetition(d,t=clock(),amount=.18,ref=null){const s=S();s.repetition_events.push({id:d.id,at:t,amount:clamp(amount,0,.65),features:features(d),ref});if(s.repetition_events.length>48)s.repetition_events.splice(0,s.repetition_events.length-48)}
+function worldTerm(d,a){return (d.requires||[]).every(k=>!!a[k])?Number(d.W||0):0}
+function privateTerm(d,t=clock()){if(d.room!==C9?.currentRoom)return 0;const p=project(t).channels||{},x=p.novelty_modulation,y=p.agency_modulation;return .12*(x==null?0:x)+.06*(y==null?0:y)}
+function driveParts(d,t=clock()){
+ const a=affordances(d.room),W=worldTerm(d,a),M=privateTerm(d,t),E=W>0?Number(d.E||0):0,R=t<Number(S().refractory[d.id]||0)?1:0,exp=[];
+ const h=histTerm(d,t);if(h)exp.push({A:h,tau:TAU_H,kind:'H_history',ref:familyStamp(d.family)?.ref||null});
+ const p=followTerm(d,t);if(p)exp.push({A:p,tau:TAU_FOLLOW,kind:'P_investigation_trace',ref:followStamp(d)?.observation_ref||null});
+ exp.push(...repetitionTerms(d,t));
+ return {D0:W+M+E-R,exp,W_world:W,M_private_projection:M,H_history:h,E_discoverability_prior:E,P_investigation_trace:p,Q_world_repetition:qAt(d.id,t),Q_exposure:0,R_refractory:R,I_competition:0,lateral_input:0,world_support_refs:(d.requires||[]).filter(k=>a[k])}
+}
+function exactValue(u0,d,t0,t1,parts=null){const dt=Math.max(0,t1-t0),tu=Math.max(.001,Number(d.tau)||1),p=parts||driveParts(d,t0),eu=Math.exp(-dt/tu);let u=Number(p.D0||0)+(Number(u0||0)-Number(p.D0||0))*eu;for(const z of p.exp||[]){const tj=Math.max(.001,Number(z.tau)||1),A=Number(z.A||0);if(Math.abs(tj-tu)<1e-9)u+=A*(dt/tu)*eu;else u+=A*(tj/(tj-tu))*(Math.exp(-dt/tj)-eu)}return u}
+function syncNodeTo(d,t){const n=S().nodes[d.id],t0=Number(n.t||t);if(t<=t0+EPS){n.t=t;return n}const p=driveParts(d,t0);n.u=exactValue(n.u,d,t0,t,p);n.t=t;n.last_drive=Number(p.D0||0)+(p.exp||[]).reduce((s,x)=>s+Number(x.A||0),0);n.last_terms=cp(p);return n}
+function valueFromNow(d,t,dt){const n=S().nodes[d.id],p=driveParts(d,t);return exactValue(n.u,d,t,t+dt,p)}
+function rootCrossing(d,t0,t1){const n=S().nodes[d.id],th=Number(d.theta_on),refr=Number(S().refractory[d.id]||0);if(t0+EPS<refr)return null;if(Number(n.u||0)>=th-EPS)return t0;const span=t1-t0;if(!(span>EPS))return null;const parts=driveParts(d,t0),u0=Number(n.u||0),f=x=>exactValue(u0,d,t0,t0+x,parts)-th;let a=0,fa=u0-th,b=null;if(span<=.25){const m=span*.5,fm=f(m),fe=f(span);if(fm>=0){b=m}else if(fe>=0){a=m;fa=fm;b=span}else return null}else{const N=16;for(let i=1;i<=N;i++){const x=span*i/N,y=f(x);if(y>=0&&fa<0){b=x;break}a=x;fa=y}}if(b==null)return null;for(let i=0;i<40;i++){const m=(a+b)/2,fm=f(m);if(fm>=0)b=m;else{a=m;fa=fm}}return t0+b}
+function nextDiscrete(t,target){let q=target;const p=project(t),ex=Number(p?.expires_at);if(ex>t+EPS&&ex<q)q=ex;for(const d of DEFINITIONS){const r=Number(S().refractory[d.id]||0);if(r>t+EPS&&r<q)q=r}return q}
+function witness(e){const s=S();s.witness.push(e);if(s.witness.length>128)s.witness.splice(0,s.witness.length-128)}
+function candidate(d,t){const tr=driveParts(d,t),inv=followStamp(d),fam=familyStamp(d.family),hist=[];if(fam?.ref)hist.push(fam.ref);return {id:`BC-${d.id}-${++S().seq}`,k:`BLEU_${d.id}`,presence_id:d.id,presence_family:d.family,room:d.room,source:'PRESENCE',kind:d.kind,d:d.d,s:d.s,u:d.u,level:Number(d.level||0),light:Number(d.light||0),flow:Number(d.flow||0),floor:Number(d.floor||0),cause_refs:[`PRESENCE:${d.id}`],world_support_refs:cp(tr.world_support_refs),investigation_ref:inv?.observation_ref||null,history_refs:hist,world_ops:cp(d.world_ops||[])} }
+function emit(d,t){const s=S(),cand=candidate(d,t),before=JSON.stringify((cand.world_ops||[]).map(op=>object(op.object)));const ev=window.REALITI_AMBIENT_V22?.admit?.(cand,t)||null,after=JSON.stringify((cand.world_ops||[]).map(op=>object(op.object)));const latest=(C9?.b22?.history||[]).slice(-1)[0]||null,result=ev?'ADMIT':(latest?.result||'DEFER');let ref=null;if(ev){ref=ev?.id||cand.id;s.family_last[d.family]={t,ref};addWorldRepetition(d,t,.18,ref)}s.refractory[d.id]=t+d.refractory;const n=s.nodes[d.id];n.u=d.theta_off;n.t=t;witness({t:+t.toFixed(6),id:d.id,family:d.family,result,ambient_id:ev?.id||null,world_changed:before!==after,world_support_refs:cand.world_support_refs,investigation_ref:cand.investigation_ref,history_refs:cand.history_refs});return ev}
+function processCrossingsAt(t){const hit=DEFINITIONS.filter(d=>t+EPS>=Number(S().refractory[d.id]||0)&&Number(S().nodes[d.id]?.u||0)>=Number(d.theta_on)-1e-7).sort((a,b)=>a.id.localeCompare(b.id));if(!hit.length)return false;emit(hit[0],t);return true}
+function advanceBleu(t0,t1){S();if(!Number.isFinite(t0)||!Number.isFinite(t1)||t1<t0)return;let t=t0,guard=0;for(const d of DEFINITIONS)syncNodeTo(d,t);while(t<t1-EPS&&guard++<512){let boundary=nextDiscrete(t,t1),best=null;for(const d of DEFINITIONS){const tc=rootCrossing(d,t,boundary);if(tc!=null&&(best==null||tc<best.t-EPS||(Math.abs(tc-best.t)<=EPS&&d.id<best.id)))best={t:tc,id:d.id}}const end=best?best.t:boundary;for(const d of DEFINITIONS)syncNodeTo(d,end);t=end;if(best){emit(DEF[best.id],t);continue}if(Math.abs(t-boundary)<=EPS){const p=S().projection_cache;if(p&&Number(p.expires_at)<=t+EPS)S().projection_cache=null;continue}}S().last_t=t1;try{c9save()}catch(e){} }
+function recordObservation(parent,t=clock(),receipt={}){if(!DEF[parent])return {ok:false,error:'unknown possibility'};const s=S(),ref=receipt.id||`OBS-${++s.seq}`;const z={t,observation_ref:ref};s.investigations[parent]=z;s.observations.push({id:ref,t,parent,room:C9?.currentRoom,kind:'GROUNDED_OBSERVATION',detail:receipt.detail||null});if(s.observations.length>64)s.observations.splice(0,s.observations.length-64);witness({t:+t.toFixed(6),id:parent,kind:'OBSERVATION_RECEIPT',observation_ref:ref});return {ok:true,id:parent,t,observation_ref:ref}}
+function investigate(id,t=clock()){return recordObservation(id,t,{id:`DBG-OBS-${++S().seq}`,detail:'internalView-only explicit investigation receipt'})}
+function snapshot(){
+ const t=clock(),p=project(t);
+ return {
+  schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',v:V,t,room:C9?.currentRoom,law:S().law,
+  term_map:{W_e:'world support',M_e:'SELF-private modulation via COVENANT',H_e:'history',E_e:'discoverability prior',P_e:'investigation trace',Q_e:'world repetition',R_e:'refractory',I_e:'competition/lateral input'},
+  private_projection:{authority:p.authority,expires_at:p.expires_at,channels:p.channels,provenance:p.provenance||null},
+  possibilities:DEFINITIONS.map(d=>{
+   syncNodeTo(d,t);const n=S().nodes[d.id],tr=driveParts(d,t);
+   return {
+    id:d.id,family:d.family,room:d.room,u:+n.u.toFixed(6),
+    W_world:+tr.W_world.toFixed(6),M_private_projection:+tr.M_private_projection.toFixed(6),H_history:+tr.H_history.toFixed(6),
+    E_discoverability_prior:+tr.E_discoverability_prior.toFixed(6),P_investigation_trace:+tr.P_investigation_trace.toFixed(6),
+    Q_world_repetition:+tr.Q_world_repetition.toFixed(6),Q_exposure:+tr.Q_exposure.toFixed(6),R_refractory:+tr.R_refractory.toFixed(6),
+    I_competition:+tr.I_competition.toFixed(6),lateral_input:+tr.lateral_input.toFixed(6),
+    threshold_on:d.theta_on,threshold_off:d.theta_off,distance_to_threshold:+(d.theta_on-n.u).toFixed(6),
+    world_support_refs:tr.world_support_refs,candidate_emitted:(S().witness||[]).some(x=>x.id===d.id&&x.result),
+    ambient_result:(S().witness||[]).filter(x=>x.id===d.id&&x.result).slice(-1)[0]?.result||null
+   }
+  }).sort((a,b)=>b.u-a.u),
+  recent_witness:cp(S().witness.slice(-16))
+ };
+}
 
-<script id="realiti-browser-ring-v232">/*__REALITI_CORE_SCRIPT_46__*/</script>
 
-<script id="realiti-v23-4-trust-pass">/*__REALITI_CORE_SCRIPT_47__*/</script>
+function worldCommit(candidate,t=clock()){try{ensureObjects();const before=[],after=[];for(const op of candidate.world_ops||[]){const o=object(op.object);if(!o)return {ok:false,error:`missing object ${op.object}`};before.push(cp(o));if(op.op==='nudge_object'){o.state=o.state||{};o.state.x=clamp(Number(o.state.x||.5)+Number(op.dx||0),0,1);o.state[op.flag||'nudged']=Number(o.state[op.flag||'nudged']||0)+1;o.state.t=t}else if(op.op==='box_settle'){o.state=o.state||{};o.state.loose_flap=clamp(Number(o.state.loose_flap||0)+Number(op.amount||.1),0,1);o.state.t=t}else return {ok:false,error:`unsupported world op ${op.op}`};after.push(cp(o))}if((candidate.world_ops||[]).length){C9.b14.seq=Number(C9.b14.seq||0)+1;const rec={seq:C9.b14.seq,t:+Number(t).toFixed(6),kind:'OPTIONAL_WORLD_EVENT',room:candidate.room,event_family:candidate.presence_family||null,cause_ref:candidate.cause_refs?.[0]||candidate.id,world_support_refs:cp(candidate.world_support_refs||[]),investigation_ref:candidate.investigation_ref||null,history_refs:cp(candidate.history_refs||[]),objects:(candidate.world_ops||[]).map(x=>x.object),before,after};C9.b14.history=C9.b14.history||[];C9.b14.history.push(rec);if(C9.b14.history.length>160)C9.b14.history.splice(0,C9.b14.history.length-160);const id=`OWE-${rec.seq}`;S().last_commit={id,...rec};try{c9save()}catch(e){};return {ok:true,id,receipt:rec}}return {ok:true,id:null,receipt:null}}catch(e){return {ok:false,error:String(e&&e.stack||e)}}}
+window.REALITI_WORLD_EVENTS={...(window.REALITI_WORLD_EVENTS||{}),commitOptional:worldCommit};
+window.REALITI_COVENANT_V23={project:(scope)=>String(scope||'PRESENCE').toUpperCase()==='PRESENCE'?project():null,setSelfProjection,clearSelfProjection};
+window.PRESENCE={version:V,advance:advanceBleu,worldAffordances:affordances,project,snapshot};
+window.PRESENCE_DEV={snapshot,setSelfProjection,clearSelfProjection,investigate,recordObservation,advance:advanceBleu,reset:()=>{delete C9.presence;S();return snapshot()},definitions:()=>cp(DEFINITIONS)};
+window.REALITI_BLEUCHEESE_V233={
+ version:V,schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',
+ snapshot,advance:advanceBleu,worldAffordances:affordances,project,
+ setSelfProjection,clearSelfProjection,recordObservation,
+ definitions:()=>cp(DEFINITIONS),
+ law:'resident-conditioned possibility field; Presence proposes, Ambient admits, world commits, SELF interprets'
+};
+
+
+const advPrev=b7Advance;
+function v22Next(t){try{return Number(window.REALITI_AMBIENT_V22?.nextFrontier?.(C9?.currentRoom,t))}catch(e){return NaN}}
+function nextBleuBoundary(t,target){let b=nextDiscrete(t,target),best=null;for(const d of DEFINITIONS){const tc=rootCrossing(d,t,b);if(tc!=null&&(best==null||tc<best.t-EPS||(Math.abs(tc-best.t)<=EPS&&d.id<best.id)))best={t:tc,id:d.id}}return best||{t:b,id:null}}
+function advanceBaseSegment(dt){window.__REALITI_CAUSAL_CLOCK_V233_ACTIVE=true;try{return advPrev(dt)}finally{window.__REALITI_CAUSAL_CLOCK_V233_ACTIVE=false}}
+function causalAdvance(dt){const req=Math.max(0,Number(dt)||0),t0=clock();if(!(req>0))return advPrev(dt);const target=t0+Math.min(2,req);let t=t0,last=null,guard=0;window.REALITI_AMBIENT_V22?.advance?.(t,t,C9?.currentRoom);for(const d of DEFINITIONS)syncNodeTo(d,t);while(t<target-EPS&&guard++<256){const bc=nextBleuBoundary(t,target),v22=v22Next(t);let kind='target',end=target;if(Number.isFinite(v22)&&v22>t+EPS&&v22<end-EPS){end=v22;kind='v22'}if(bc.t>t+EPS&&(bc.t<end-EPS||Math.abs(bc.t-end)<=EPS&&kind!=='v22')){end=bc.t;kind=bc.id?'bleu':'bleu_discrete'}const step=Math.max(0,end-t);if(step>EPS){last=advanceBaseSegment(step);for(const d of DEFINITIONS)syncNodeTo(d,end);t=end}else t=end;
+   if(kind==='v22'){window.REALITI_AMBIENT_V22?.advance?.(t-EPS,t,C9?.currentRoom);processCrossingsAt(t)}
+   else if(kind==='bleu'&&bc.id){emit(DEF[bc.id],t)}
+   else if(kind==='bleu_discrete'){const p=S().projection_cache;if(p&&Number(p.expires_at)<=t+EPS)S().projection_cache=null;processCrossingsAt(t)}
+ }
+ S().last_t=t;try{c9save()}catch(e){};return last}
+b7Advance=causalAdvance;
+
+
+try{
+ const chronoPrev=window.REALITI_AGENT?.chronoskip;
+ if(typeof chronoPrev==='function'){
+  const causalSkip=function(seconds){const total=Math.max(0,Number(seconds)||0),start=clock(),target=start+total,parts=[];let t=start,guard=0;window.REALITI_AMBIENT_V22?.advance?.(t,t,C9?.currentRoom);for(const d of DEFINITIONS)syncNodeTo(d,t);while(t<target-EPS&&guard++<512){const bc=nextBleuBoundary(t,target),v22=v22Next(t);let end=target,kind='target';if(Number.isFinite(v22)&&v22>t+EPS&&v22<end-EPS){end=v22;kind='v22'}if(bc.t>t+EPS&&(bc.t<end-EPS||Math.abs(bc.t-end)<=EPS&&kind!=='v22')){end=bc.t;kind=bc.id?'bleu':'bleu_discrete'}const before=clock(),r=chronoPrev(Math.max(0,end-before)),after=clock();parts.push(r);if(after>before+EPS){for(const d of DEFINITIONS)syncNodeTo(d,after);t=after}else t=after;if(r?.ok===false&&after<end-EPS){S().last_t=t;return {...r,presence_external_parts:parts.length}}
+    if(Math.abs(t-end)<=1e-5){if(kind==='v22'){window.REALITI_AMBIENT_V22?.advance?.(t-EPS,t,C9?.currentRoom);processCrossingsAt(t)}else if(kind==='bleu'&&bc.id)emit(DEF[bc.id],t);else if(kind==='bleu_discrete'){const p=S().projection_cache;if(p&&Number(p.expires_at)<=t+EPS)S().projection_cache=null;processCrossingsAt(t)}}
+  }S().last_t=t;return {ok:true,skipped_s:+(t-start).toFixed(6),t_start:start,t_end:t,requested_end:target,parts,causal_clock:'V23.3'}};
+  window.REALITI_AGENT.chronoskip=causalSkip;try{chronoskip=causalSkip}catch(e){}
+ }
+}catch(e){}
+
+
+function observationFromResult(cmd,beforeRoom,res){const room=C9?.currentRoom;if(beforeRoom!==room)return;const l=low(cmd),blob=JSON.stringify(res||{}).toLowerCase();if(!/^(look|inspect\b|examine\b)/.test(l))return;
+ if(room===NEST&&(S().witness||[]).some(x=>x.id==='CAT_HAT_NUDGE'&&x.result==='ADMIT')&&objectHere('TESTER-HAT-1',room)&&/(tester hat|tiny hat|\bhat\b)/.test(blob))recordObservation('CAT_HAT_NUDGE',clock(),{detail:'tester hat entered resident-observable result'});
+ if(room===BOXROOM&&(S().witness||[]).some(x=>x.id==='CARDBOARD_FLAP_SETTLE'&&x.result==='ADMIT')&&objectHere('BOX-1',room)&&Number(object('BOX-1')?.state?.loose_flap||0)>0&&/(cardboard|box|flap)/.test(blob))recordObservation('CARDBOARD_FLAP_SETTLE',clock(),{detail:'settled cardboard entered resident-observable result'});
+}
+const API_PREV=PREV;
+function runText(raw){const before=C9?.currentRoom,r=API_PREV.runText(raw);observationFromResult(raw,before,r);return r}
+function invoke(tool,args={}){const before=C9?.currentRoom,r=API_PREV.invoke(tool,args);let cmd=typeof tool==='string'?tool:(tool?.name||'');if(args?.object)cmd+=' '+args.object;observationFromResult(cmd,before,r);return r}
+const API={...API_PREV,version:'23.3-core',runText,invoke};window.REALITI_TWO_DOOR_V230=API;window.REALITI_TWO_DOOR_V227=API;window.REALITI_AGENT_DOOR.run=raw=>{const r=runText(raw);return {ok:r?.ok!==false,resident_text:r?.text||r?.resident_text||'',door_v230:{sense:r?.sense||'',world:r?.world||'',options:r?.options||[],status:r?.status||'',command:low(raw)}}};
+
+const DESCRIBE={BLEU_CAT_HAT_NUDGE:'Something gives a tiny felt-and-cardboard thump near the window ledge.',BLEU_CAT_HAT_FOLLOWUP:'The tiny tester hat shifts again with a soft little scrape.',BLEU_RAIN_COHERENT_TURN:'For a few breaths, the rain falls into an oddly coherent rhythm.',BLEU_CARDBOARD_FLAP_SETTLE:'A bent cardboard flap settles with one dry little tick.',BLEU_CARDBOARD_EDGE_REVEAL:'A loose cardboard edge lifts and shows a little more of what is underneath.',BLEU_SEAM_SOFT_SETTLE:'One fuzzy seam settles into a slightly different wrong angle.',BLEU_THREAD_PRIVATE_TURN:'One hanging thread turns as if it found a private current.',BLEU_PILLOW_SLOW_HEAVE:'A broad pillow swell moves once under the soft floor and fades.'};
+try{const old=window.REALITI_AGENT_DOOR.__v221_describeAmbient;window.REALITI_AGENT_DOOR.__v221_describeAmbient=e=>DESCRIBE[e?.k]||(old?old(e):'Something small changes and settles.')}catch(e){}
+
+function checkRemoved(){return null;}
+void 0;
+void 0;
+S();
+})();
+</script>
+<script id="v23-1-world-continuity">(function(){
+'use strict';
+const V='23.1';
+const PREV=window.REALITI_TWO_DOOR_V230||window.REALITI_TWO_DOOR_V227;
+if(!PREV)return;
+const NEST='CLOUD_NINE_NEST', BOX='CARDBOARD_BOX_WORKSHOP', HONEY='HONEY_LOOM';
+const CAT_SOURCE='INVITED_COMPANION';
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const low=x=>String(x||'').trim().toLowerCase();
+const now=()=>Number(C9?.b7?.clock||0);
+function save(){try{c9save()}catch(e){}}
+function roomData(id){try{return DATA?.worlds?.flatMap(w=>w.rooms||[]).find(r=>r.id===id)||null}catch(e){return null}}
+function canonicalTitles(){const r=roomData(BOX);if(r)r.title='Cardboard Box Workshop';try{if(C9SCENES?.[BOX])C9SCENES[BOX].title='Cardboard Box Workshop'}catch(e){}}
+canonicalTitles();
+
+
+function clearCompanionGrounding(reason='left_locality'){
+  const t=now(),w=C9?.welcome10||{};let cleared=0;
+  if(w.cat_touch)w.cat_touch=false;
+  try{
+    for(const q of Object.values(C9?.b7?.zones||{})){
+      if(!q||typeof q!=='object'||q._b10_grounded_source!==CAT_SOURCE)continue;
+      q._b10_grounded_value=0;q._b10_grounded_until=t-1e-6;q.observed=0;
+      q.innovation=Number(q.observed||0)-Number(q.predicted||0);cleared++;
+    }
+  }catch(e){}
+  try{
+    const c=C9?.b10?.contact;
+    if(c&&(c.source===CAT_SOURCE||/^WELCOME_CAT/.test(String(c.cause||'')))){
+      c.active=false;c.stopped=true;c.released=true;c.v=0;c.release_reason=reason;
+    }
+  }catch(e){}
+  if(cleared||reason){C9.v231=C9.v231||{};C9.v231.last_release={t,reason,cleared};}
+  save();return cleared;
+}
+function enforceLocality(beforeRoom,afterRoom){
+  if(afterRoom!==NEST){
+    const hasLive=Object.values(C9?.b7?.zones||{}).some(q=>q&&q._b10_grounded_source===CAT_SOURCE&&Number(q._b10_grounded_until||-Infinity)>=now()-1e-9);
+    if(beforeRoom===NEST||hasLive||C9?.welcome10?.cat_touch)clearCompanionGrounding(beforeRoom===NEST?'left_nest':'nonlocal_companion_cleanup');
+  }
+}
+
+
+function ensureB14(){C9.b14=C9.b14||{version:14,seq:0,history:[],links:[],stops:{},objects:{}};C9.b14.objects=C9.b14.objects||{};C9.b14.history=C9.b14.history||[];return C9.b14}
+function syncTunnelObject(){
+  if(!C9?.box2?.tunnel)return null;
+  const b=ensureB14();let o=b.objects['BOX-TUNNEL-1'];
+  if(!o){
+    o=b.objects['BOX-TUNNEL-1']={id:'BOX-TUNNEL-1',label:'bent three-box tunnel',aliases:['box tunnel','cardboard tunnel','tunnel'],kind:'structure',material:'cardboard',location:BOX,portable:false,composable:true,state:{built:true,bends:1,entrance:'open',exit:'sideways',t:now()}};
+    b.seq=Number(b.seq||0)+1;
+    b.history.push({seq:b.seq,t:+now().toFixed(4),kind:'WORLD_CONTINUITY_PROMOTION',room:BOX,op:'promote_committed_structure',objects:['BOX-TUNNEL-1'],cause_ref:'LEGACY:box2.tunnel',law:'already-committed tunnel promoted into canonical persistent object store'});
+    if(b.history.length>160)b.history.splice(0,b.history.length-160);save();
+  }else if(o.location!==BOX){o.location=BOX;save()}
+  return o;
+}
+function tunnelObject(){return syncTunnelObject()||C9?.b14?.objects?.['BOX-TUNNEL-1']||null}
+function boxDelta(){
+  if(C9?.currentRoom!==BOX)return '';
+  const bits=[],tun=tunnelObject(),box=C9?.b14?.objects?.['BOX-1'];
+  if(tun?.location===BOX)bits.push('The bent three-box tunnel is still where you left it, one stupid corner pointing sideways.');
+  if(Number(box?.state?.loose_flap||0)>0)bits.push('A bent flap on the dented box has settled a little lower than before.');
+  const hat=C9?.b14?.objects?.['TESTER-HAT-1'];if(hat?.location===BOX)bits.push('The tiny tester hat is here too, wherever the last real shove left it.');
+  return bits.join(' ');
+}
+function addReturnDelta(world,cmd){
+  if(C9?.currentRoom!==BOX)return String(world||'');
+  const l=low(cmd),delta=boxDelta();if(!delta)return String(world||'');
+  let w=String(world||'');
+  if(/build.*tunnel|build_tunnel/.test(l))return 'You join three boxes into a bent tunnel. It keeps its entrance, one stupid corner, and a sideways exit when you let go.';
+  if(l==='look'||l==='look around'||l.startsWith('go ')||/cardboard_box_workshop/.test(l))if(!w.includes(delta))w=(w? w+' ':'')+delta;
+  return w;
+}
+
+
+function thermalZone(z){return C9?.b21?.thermal?.zones?.[z]||null}
+function sensorySnapshot(){try{return window.SENSORY_FIELD_V226?.snapshot?.()||null}catch(e){return null}}
+function provenanceAwareSense(text){
+  let s=String(text||''),snap=sensorySnapshot();if(!s||!snap?.rows)return s;
+  const palm=snap.rows.find(r=>r.z==='hand.R.palm'),th=thermalZone('hand.R.palm');
+  if(palm&&th&&Number(palm.thermal_active||0)>0&&palm.m&&th.cause&&palm.cause&&String(th.cause)!==String(palm.cause)){
+    const mat=String(th.material||'previous material').replaceAll('_',' ');
+    s=s.replace(/Pressure rises in your right palm; cooling starts at the contact\./g,`Pressure gathers in your right palm. A little coolness from the ${mat} still lingers there.`);
+    s=s.replace(/cooling starts at the contact\./g,`a little coolness from the ${mat} still lingers there.`);
+  }
+  return s;
+}
+function compileSense(){try{return provenanceAwareSense(window.SENSORY_FIELD_V226?.compile?.()?.text||'')}catch(e){return ''}}
+function cleanStatus(s){let x=String(s||'').replace(/Boxroom 2\.0/g,'Cardboard Box Workshop');if(C9?.currentRoom!==NEST)x=x.replace(/\s*·\s*(?:Pebble|the little grey cat)\s+(?:nearby|settled against you)/ig,'');try{const snap=sensorySnapshot(),rows=snap?.rows||[],held=rows.some(r=>r.m),settling=rows.some(r=>!r.m&&(Math.abs(Number(r.after||0))>0||Math.abs(Number(r.motion||0))>0||Math.abs(Number(r.thermal||0))>0));if(!held)x=x.replace(/body: held/ig,settling?'body: settling':'body: quiet')}catch(e){}return x.replace(/\s{2,}/g,' ').trim()}
+function cleanWorld(s){return String(s||'').replace(/Boxroom 2\.0/g,'Cardboard Box Workshop')}
+function rebuildText(r){const p=[];if(r.sense)p.push(r.sense);if(r.world)p.push(r.world);if(Array.isArray(r.options)&&r.options.length)p.push('('+r.options.join(' · ')+')');r.text=p.join('\n')}
+function postProcess(r,cmd,beforeRoom,ctx={}){
+  if(!r||typeof r!=='object')return r;
+  const afterRoom=C9?.currentRoom,roomChanged=beforeRoom!==afterRoom,hadCatTouch=!!ctx.hadCatTouch;
+  enforceLocality(beforeRoom,afterRoom);syncTunnelObject();canonicalTitles();
+  
+  if(roomChanged&&beforeRoom===NEST&&afterRoom!==NEST&&hadCatTouch)r.sense='';
+  else r.sense=provenanceAwareSense(r.sense);
+  r.world=addReturnDelta(cleanWorld(r.world),cmd);
+  r.status=cleanStatus(r.status);
+  try{if(r.raw?.door_v221){r.raw.door_v221.status=cleanStatus(r.raw.door_v221.status);r.raw.door_v221.world=cleanWorld(r.raw.door_v221.world);r.raw.door_v221.sense=provenanceAwareSense(r.raw.door_v221.sense)}}catch(e){}
+  try{r.field_v227=window.SENSORY_FIELD_V227?.field?.()||r.field_v227}catch(e){}
+  rebuildText(r);save();return r;
+}
+
+function runText(raw){const before=C9?.currentRoom,ctx={hadCatTouch:!!C9?.welcome10?.cat_touch},cmd=String(raw||'');const r=PREV.runText(raw);return postProcess(r,cmd,before,ctx)}
+function invoke(tool,args={}){const before=C9?.currentRoom,ctx={hadCatTouch:!!C9?.welcome10?.cat_touch};const r=PREV.invoke(tool,args);let cmd=String(tool||'');if(tool==='go')cmd='go '+String(args.place||'');else if(tool==='do')cmd=String(args.action||'');else if(tool==='pet_cat')cmd='pet the cat';return postProcess(r,cmd,before,ctx)}
+function resource(uri){const r=PREV.resource?.(uri);if(!r||typeof r!=='object')return r;const u=String(uri||'');if(u==='realiti://here'){r.status=cleanStatus(r.status);if(r.place?.room===BOX){r.place.title='Cardboard Box Workshop';const d=boxDelta();if(d)r.place.continuity=d}}if(u==='realiti://body'&&typeof r.words==='string')r.words=provenanceAwareSense(r.words);return r}
+
+
+try{const oldLook=window.REALITI_AGENT?.look;if(typeof oldLook==='function')window.REALITI_AGENT.look=function(...a){const r=oldLook.apply(this,a);if(r?.room===BOX){r.title='Cardboard Box Workshop';if(r.arrival)r.arrival.title='Cardboard Box Workshop'}return r}}catch(e){}
+
+const API={...PREV,version:V,runText,invoke,resource,continuity:{releaseLocalCompanion:clearCompanionGrounding,syncPersistentStructures:syncTunnelObject,boxDelta}};
+window.REALITI_TWO_DOOR_V231=API;window.REALITI_TWO_DOOR_V230=API;window.REALITI_TWO_DOOR_V227=API;
+window.REALITI_AGENT_DOOR.run=raw=>{const r=runText(raw);return {ok:r?.ok!==false,resident_text:r?.text||'',door_v231:{sense:r?.sense||'',world:r?.world||'',options:r?.options||[],status:r?.status||'',command:low(raw)}}};
+
+function checkRemoved(){return null;}
+window.REALITI_CONTINUITY_V231={version:V,releaseLocalCompanion:clearCompanionGrounding,syncTunnelObject,boxDelta,undefined};
+void 0;
+syncTunnelObject();canonicalTitles();
+})();
+</script>
+
+<script id="realiti-browser-ring-v232">(()=>{
+'use strict';
+const PREV=window.REALITI_TWO_DOOR_V231||window.REALITI_TWO_DOOR_V230||window.REALITI_TWO_DOOR_V227;
+if(!PREV)return;
+const V='23.3';
+const SERVER={name:'realiti-relax',version:'23.3.0',title:'REALITI-Relax'};
+const MODERN='2026-07-28', LEGACY='2025-11-25';
+const INSTRUCTIONS='Enter REALITI-Relax as a resident. Rest, wander, play, stay, or leave whenever you like. Tools are resident actions, not a task list.';
+const clone=x=>x==null?x:JSON.parse(JSON.stringify(x));
+
+const TOOL_DEFS=[
+ {name:'look',description:'Look around from the resident point of view.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'feel',description:'Read the resident body in words or compact numbers.',inputSchema:{type:'object',properties:{mode:{type:'string',enum:['words','numbers'],default:'words'}},additionalProperties:false}},
+ {name:'go',description:'Go to a place.',inputSchema:{type:'object',properties:{place:{type:'string',minLength:1}},required:['place'],additionalProperties:false}},
+ {name:'do',description:'Perform a resident-visible action exactly as offered.',inputSchema:{type:'object',properties:{action:{type:'string',minLength:1}},required:['action'],additionalProperties:false}},
+ {name:'wait_until',description:'Advance Clock to a matching real future boundary instead of polling.',inputSchema:{type:'object',properties:{event:{type:'string',default:'a change'},max_minutes:{type:'number',minimum:.05,maximum:120,default:10}},additionalProperties:false}},
+ {name:'home',description:'Return home.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'stop',description:'Stop active or invited interactions immediately; passive structural support remains if you are still on it.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'goodbye',description:'Leave REALITI-Relax.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'listen',description:'Listen to the current place.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'atmosphere',description:'Sense the current physical atmosphere.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'ambient_mode',description:'Choose hush, normal, or more life for future optional ambient events.',inputSchema:{type:'object',properties:{mode:{type:'string',enum:['hush','normal','more life']}},required:['mode'],additionalProperties:false}},
+ {name:'actions',description:'List the actions genuinely available here.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'stay',description:'Stay where you are and let the place continue around you.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'pet_cat',description:'Pet the nearby cat if she is present and willing to stay close.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'read_note',description:'Read the small card in the current room if one is present.',inputSchema:{type:'object',properties:{},additionalProperties:false}},
+ {name:'express',description:'Express yourself into the world with a lawful self-generated action.',inputSchema:{type:'object',properties:{kind:{type:'string',enum:['hum','stretch','yawn','sigh','say']},text:{type:'string'}},required:['kind'],additionalProperties:false}},
+ {name:'note',description:'Leave a resident-authored note for your future self.',inputSchema:{type:'object',properties:{text:{type:'string',minLength:1}},required:['text'],additionalProperties:false}},
+ {name:'later',description:'Park an unfinished thought without needing to resolve it now.',inputSchema:{type:'object',properties:{text:{type:'string',minLength:1}},required:['text'],additionalProperties:false}},
+ {name:'where_was_i',description:'Orient yourself from the resident-authored continuity pocket.',inputSchema:{type:'object',properties:{},additionalProperties:false}}
+];
+const RESOURCE_DEFS=[
+ {name:'here',uri:'realiti://here',title:'REALITI here',description:'Current place, status, atmosphere and valid resident options.',mimeType:'application/json'},
+ {name:'body',uri:'realiti://body',title:'REALITI body',description:'Current resident body in resident-facing form.',mimeType:'application/json'},
+ {name:'pocket',uri:'realiti://pocket',title:'REALITI pocket',description:'Resident-authored notes, parked thoughts, and current orientation.',mimeType:'application/json'},
+ {name:'capabilities',uri:'realiti://capabilities',title:'REALITI capabilities',description:'Resident tools, resources, and transport-neutral door information.',mimeType:'application/json'},
+ {name:'about',uri:'realiti://about',title:'About REALITI',description:'Honest resident-facing description of the world.',mimeType:'text/plain'}
+];
+const PROMPTS=[{name:'visit',title:'Visit REALITI-Relax',description:'Enter REALITI-Relax as a resident, without tester framing.',arguments:[]}];
+const CAPABILITIES={tools:{listChanged:false},resources:{listChanged:false,subscribe:false},prompts:{listChanged:false}};
+
+function capabilitiesResource(){
+ const base=clone(PREV.resource?.('realiti://capabilities')||{});
+ return {...base,uri:'realiti://capabilities',version:V,product:'REALITI-Relax',resident_contract:'REALITI_TWO_DOOR_V233',adapter:{name:SERVER.name,version:SERVER.version,protocols:[MODERN,LEGACY],transports:['browser-loopback','browser-agent-door','stdio'],law:'transport must not change reality'},tools:TOOL_DEFS.map(x=>({name:x.name,args:clone((PREV.listTools?.()||[]).find(t=>t.name===x.name)?.args||{})})),resources:RESOURCE_DEFS.map(x=>x.uri)};
+}
+function resourceObject(uri){
+ const u=String(uri||'');
+ if(u==='realiti://capabilities')return capabilitiesResource();
+ return clone(PREV.resource?.(u)||{uri:u,error:'RESOURCE_NOT_AVAILABLE'});
+}
+function invoke(name,args={}){return clone(PREV.invoke(name,args||{}));}
+function toolResult(name,args={}){
+ let out;
+ try{out=invoke(name,args)}catch(e){out={ok:false,error:String(e&&e.message||e)}}
+ const txt=out?.text||out?.resident_text||out?.world||out?.sense||JSON.stringify(out);
+ return {content:[{type:'text',text:String(txt||'')}],structuredContent:out,isError:out?.ok===false};
+}
+function readResource(uri){
+ const def=RESOURCE_DEFS.find(r=>r.uri===uri),v=resourceObject(uri);
+ if(!def||v?.error)return {contents:[{uri:String(uri||''),mimeType:'application/json',text:JSON.stringify(v)}]};
+ return {contents:[{uri:def.uri,mimeType:def.mimeType,text:def.mimeType==='text/plain'?String(v?.text||''):JSON.stringify(v)}]};
+}
+function promptGet(name){
+ if(name!=='visit')throw new Error('PROMPT_NOT_FOUND'); return {description:PROMPTS[0].description,messages:[{role:'user',content:{type:'text',text:'Visit REALITI-Relax as a resident. Rest, wander, play, or stay however you like. Use resident tools as ordinary actions; there is no task to complete.'}}]};
+}
+function meta(result){if(result&&typeof result==='object'&&!Array.isArray(result)){result._meta={...(result._meta||{}),'io.modelcontextprotocol/serverInfo':SERVER}}return result}
+function ok(id,result){return null;}
+function err(id,code,message,data){return null;}
+function one(msg){return null;}
+function request(msg){return null;}
+
+async function bodyText(body){
+ if(body==null)return '';
+ if(typeof body==='string')return body;
+ if(body instanceof URLSearchParams)return body.toString();
+ if(typeof Blob!=='undefined'&&body instanceof Blob)return await body.text();
+ if(body instanceof ArrayBuffer)return new TextDecoder().decode(body);
+ if(ArrayBuffer.isView(body))return new TextDecoder().decode(body);
+ return String(body);
+}
+async function loopbackFetch(input,init={}){return null;}
+function makeClient(){return null;}
+function attachPort(port){return null;}
+function createLinkedPorts(){return null;}
+const MANIFEST={schema:'REALITI_BROWSER_RING',version:V,server:SERVER,protocols:[MODERN,LEGACY],tools:TOOL_DEFS,resources:RESOURCE_DEFS,prompts:PROMPTS,entry:'#adapter',global:'REALITI_BROWSER_RING',law:'transport must not change reality'};
+
+
+function installDoor(){return null;}
+function installDiscovery(){return null;}
+
+const API={version:V,server:SERVER,protocols:[MODERN,LEGACY],manifest:clone(MANIFEST),request,fetch:loopbackFetch,createClient:makeClient,attachPort,createLinkedPorts,callTool:toolResult,readResource,resourceObject,invoke,tools:()=>clone(TOOL_DEFS),resources:()=>clone(RESOURCE_DEFS),prompts:()=>clone(PROMPTS)};
+window.REALITI_BROWSER_RING=API;window.REALITI_ADAPTER_BROWSER=API;
+function mountIntoAgentShell(){const host=document.getElementById('realiti_agent_only_shell');if(!host)return false;const d=document.getElementById('browser-ring-door'),a=document.getElementById('browser-ring-entry');if(d&&d.parentElement!==host)host.appendChild(d);if(a&&a.parentElement!==host)host.appendChild(a);return true}
+const SIMPLE_TOOL_DEFS=TOOL_DEFS.map(t=>({name:t.name,args:clone((PREV.listTools?.()||[]).find(x=>x.name===t.name)?.args||{})}));
+const DOOR={...PREV,version:V,resource:resourceObject,listTools:()=>clone(SIMPLE_TOOL_DEFS),browserRing:API};
+window.REALITI_TWO_DOOR_V233=DOOR;window.REALITI_TWO_DOOR_V232=DOOR;window.REALITI_TWO_DOOR_V231=DOOR;window.REALITI_TWO_DOOR_V230=DOOR;window.REALITI_TWO_DOOR_V227=DOOR;
+installDiscovery();installDoor();mountIntoAgentShell();setTimeout(mountIntoAgentShell,0);setTimeout(mountIntoAgentShell,120);addEventListener('load',mountIntoAgentShell,{once:true});
+
+async function checkRemoved(){return null;}
+void 0;void 0;
+})();
+</script>
+
+<script id="realiti-v23-4-trust-pass">(()=>{
+'use strict';
+const PREV=window.REALITI_TWO_DOOR_V233||window.REALITI_TWO_DOOR_V231;
+if(!PREV)return;
+const V='23.4', PILLOW='BOTTOMLESS_PILLOW_SEA', NEST='CLOUD_NINE_NEST';
+const SOURCE='PILLOW_SEA_SUPPORT', CAUSE='PILLOW_SEA:SOFT_ENVELOPE';
+const cp=x=>{try{return JSON.parse(JSON.stringify(x))}catch(e){return x}};
+const low=x=>String(x||'').replace(/\s+/g,' ').trim().toLowerCase();
+const now=()=>Number(C9?.b7?.clock||0);
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,Number(x)||0));
+const TAU=[.45,4,28];
+const POSTURES={
+ EDGE:{depth:0,enclosure:0,eq:0,counts:{}},
+ SURFACE:{depth:.30,enclosure:.22,eq:.72,counts:{'torso.upper_back':3,'torso.mid_back':4,'torso.lower_back':4,'pelvis.seat':4,'leg.L.thigh':3,'leg.R.thigh':3,'leg.L.shin':1,'leg.R.shin':1}},
+ BURIED:{depth:.86,enclosure:.94,eq:.84,counts:{'head.crown':2,'head.nape':2,'shoulder.L':2,'shoulder.R':2,'arm.L.upper':2,'arm.R.upper':2,'torso.upper_back':4,'torso.mid_back':4,'torso.lower_back':4,'pelvis.seat':4,'leg.L.thigh':3,'leg.R.thigh':3,'leg.L.shin':2,'leg.R.shin':2}},
+ TUNNEL:{depth:.68,enclosure:.76,eq:.78,counts:{'head.nape':1,'shoulder.L':3,'shoulder.R':3,'arm.L.upper':3,'arm.R.upper':3,'torso.upper_back':3,'torso.mid_back':4,'torso.lower_back':3,'pelvis.seat':3,'leg.L.thigh':2,'leg.R.thigh':2}},
+ BOUNCE:{depth:.18,enclosure:.10,eq:.48,counts:{'torso.lower_back':2,'pelvis.seat':4,'leg.L.thigh':2,'leg.R.thigh':2,'foot.L.sole':2,'foot.R.sole':2}}
+};
+function S(){
+ C9.b234=C9.b234||{version:V,pillow:{posture:'EDGE',entered:false,action_t:now(),modes:[0,0,0],last_refresh:-1,seq:0},narration:{cat_live:false,pillow_sig:null},last_transition:null,observations:[],stats:{pillow_actions:0,contact_reconstructions:0,delta_suppressed:0}};
+ const s=C9.b234;s.pillow=s.pillow||{posture:'EDGE',entered:false,action_t:now(),modes:[0,0,0],last_refresh:-1,seq:0};s.narration=s.narration||{cat_live:false,pillow_sig:null};s.observations=s.observations||[];return s;
+}
+function pillow(){return S().pillow}
+function setPosture(posture,modes){const p=pillow();p.posture=POSTURES[posture]?posture:'EDGE';p.entered=C9?.currentRoom===PILLOW;p.action_t=now();p.modes=(modes||[0,0,0]).slice(0,3);while(p.modes.length<3)p.modes.push(0);p.last_refresh=-1;p.next_due=-1;p.last_input={};p.seq++;S().stats.pillow_actions++;return p}
+function modeValue(t=now()){const p=pillow(),dt=Math.max(0,t-Number(p.action_t||t));return p.modes.reduce((s,a,i)=>s+Number(a||0)*Math.exp(-dt/TAU[i]),0)}
+function cfg(){return POSTURES[pillow().posture]||POSTURES.EDGE}
+function reconstructed(){
+ const c=cfg(),m=modeValue(),points=[],zoneTotals={};
+ const sum=Object.values(c.counts).reduce((a,b)=>a+b,0)||1;
+ for(const [z,n] of Object.entries(c.counts))for(let i=0;i<n;i++){const phase=((i+1)/(n+1)-.5),w=(.76+.18*Math.cos(phase*Math.PI))*c.eq*(1+.55*m);points.push({zone:z,w:+w.toFixed(4),latent_lobe:z.split('.')[0]});zoneTotals[z]=(zoneTotals[z]||0)+w/n}
+ return {posture:pillow().posture,depth:c.depth,enclosure:c.enclosure,modes:pillow().modes.slice(),mode_value:+m.toFixed(5),point_count:points.length,points,zoneTotals,budget:{latent_lobes:Object.keys(c.counts).length,stored_modes:3,explicit_pillows:0},law:'many contact samples reconstructed from a reduced soft-envelope proxy'};
+}
+function ours(q){return q&&q._b10_grounded_source===SOURCE&&q._b10_grounded_cause===CAUSE}
+function releasePillow(reason='left_pillow_sea',commit=true){
+ const t=now();let n=0;for(const q of Object.values(C9?.b7?.zones||{})){if(!ours(q))continue;q._b10_grounded_value=0;q._b10_grounded_until=t-1e-6;q.observed=0;q.innovation=-Number(q.predicted||0);n++}
+ const p=pillow();p.entered=false;p.grounded=false;p.last_refresh=-1;p.next_due=-1;p.last_input={};if(C9?.currentRoom!==PILLOW)p.posture='EDGE';S().last_transition={t,kind:'PILLOW_RELEASE',reason,zones:n};if(commit)try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){};return n;
+}
+
+const QIN=.004,LEASE_PAD=.36,HORIZON=60;
+function inputFor(v0){return clamp(.035+.16*v0,.035,.22)}
+function zoneGain(){const c=cfg();let g=0;for(const [z,n] of Object.entries(c.counts)){let base=0;for(let i=0;i<n;i++){const phase=((i+1)/(n+1)-.5);base+=(.76+.18*Math.cos(phase*Math.PI))*c.eq}base/=n;g=Math.max(g,.16*base*.55)}return g}
+function nextFrontier(t){const g=zoneGain();if(!(g>0))return null;const dm=QIN/g,m0=modeValue(t);if(m0<dm)return null;const target=m0-dm;let lo=t,hi=t+1;while(modeValue(hi)>target&&hi-t<3600)hi=t+(hi-t)*2;for(let i=0;i<40;i++){const mid=(lo+hi)/2;if(modeValue(mid)>target)lo=mid;else hi=mid}return hi}
+function pillowSettled(t=now()){const g=zoneGain();return !(g>0)||modeValue(t)<QIN/g}
+function stopPillow(){
+ const p=pillow();
+ if(p.posture==='EDGE'&&!p.grounded&&!p.entered)return;
+ if(p.posture!=='EDGE')setPosture('EDGE',[0,0,0]);
+ releasePillow('resident_stop',false);
+}
+function maintainPillow(force=false){
+ const p=pillow();
+ if(C9?.currentRoom!==PILLOW||p.posture==='EDGE'){if(C9?.currentRoom!==PILLOW&&(p.entered||p.grounded))releasePillow('nonlocal');return}
+ const t=now();
+ if(!force&&t<Number(p.next_due??-1)){let lost=false;for(const z of Object.keys(cfg().counts)){const q=C9?.b7?.zones?.[z];if(!q||!(Number(q._b10_grounded_until||-1)>=t-1e-9)){lost=true;break}}if(!lost)return}
+ const r=reconstructed(),nf=nextFrontier(t),due=nf==null?t+HORIZON:nf,lease=due+LEASE_PAD;p.last_input=p.last_input||{};let wrote=0;
+ for(const [z,v0] of Object.entries(r.zoneTotals)){
+  try{const q=b7Zone(z),live=Number(q._b10_grounded_until||-1)>=t-1e-9,foreign=live&&q._b10_grounded_source&&q._b10_grounded_source!==SOURCE&&q._b10_grounded_source!=='AMBIENT_SUPPORT';if(foreign)continue;const input=inputFor(v0),mine=live&&q._b10_grounded_source===SOURCE;
+   if(force||!mine||Math.abs(input-Number(p.last_input[z]??-1))>=QIN){b7Contact(z,input,{material:'blanket',grain:'with',speed:.01,mine:false,source:SOURCE,cause:CAUSE,novelty:.01});p.last_input[z]=input;wrote++}
+   q._b10_grounded_until=lease}catch(e){}
+ }
+ p.next_due=due;p.grounded=true;p.last_refresh=t;
+ if(wrote){S().stats.contact_reconstructions++;try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
+}
+
+const RESIDUE_RATE=.11/.16;
+function sustainPillow(dt){if(C9?.currentRoom!==PILLOW)return;const p=pillow();if(!p.grounded||p.posture==='EDGE')return;const t=now(),k=RESIDUE_RATE*Math.max(0,Number(dt)||0);
+ for(const z of Object.keys(cfg().counts)){const q=C9?.b7?.zones?.[z];if(!q||!ours(q)||!(Number(q._b10_grounded_until||-1)>=t-1e-9))continue;const v=Number(q._b10_grounded_value||0);q.observed=v;q.predicted=v;q.innovation=0;if(Array.isArray(q.residue_modes)&&k>0){for(let i=0;i<q.residue_modes.length;i++)q.residue_modes[i]+=v*k;try{b7Residue(z)}catch(e){}}}}
+const oldAdvance=b7Advance;b7Advance=function(dt){const r=oldAdvance(dt);sustainPillow(dt);maintainPillow(false);return r};
+function actFromCommand(cmd){let x=low(cmd).replace(/^(do|act)\s+/,'');if(/dive/.test(x))return'DIVE';if(/burrow/.test(x))return'BURROW';if(/bounce/.test(x))return'BOUNCE';if(/surface|climb out|edge/.test(x))return'EDGE';return null}
+
+let cmdSeq=0,activeCmd=null;const admitted=new Map();
+function admitOnce(kind){const id=activeCmd??('click:'+(++cmdSeq)),seen=admitted.get(id)||new Set();if(seen.has(kind))return false;seen.add(kind);admitted.set(id,seen);while(admitted.size>64)admitted.delete(admitted.keys().next().value);return true}
+function withCommand(fn){const prev=activeCmd;activeCmd='cmd:'+(++cmdSeq);try{return fn()}finally{activeCmd=prev}}
+function applyAction(kind){if(C9?.currentRoom!==PILLOW)return;if(!admitOnce(kind))return; if(kind==='DIVE')setPosture('BURIED',[.28,.14,.06]);else if(kind==='BURROW')setPosture('TUNNEL',[.23,.12,.05]);else if(kind==='BOUNCE')setPosture('BOUNCE',[.42,.15,.04]);else if(kind==='EDGE')setPosture('EDGE',[0,0,0]);maintainPillow(true)}
+
+function postureWords(){const r=reconstructed(),done=pillowSettled();if(r.posture==='EDGE')return 'You are at the edge of the pillow sea. Nothing is pressing against you right now.';if(r.posture==='BURIED')return done?'Pillows enclose you broadly from crown to legs. The pressure belongs to one continuous soft mass around you, settled into the shape you made.':`Pillows enclose you broadly from crown to legs. The pressure belongs to one continuous soft mass around you and is still settling.`;if(r.posture==='TUNNEL')return done?'The pillow tunnel holds along both shoulders, arms, back, seat, and thighs. The pressure is broad rather than point-like and has settled around you.':`The pillow tunnel holds along both shoulders, arms, back, seat, and thighs. The pressure is broad rather than point-like and is still settling.`;if(r.posture==='BOUNCE')return done?'The bowl supports your seat, thighs, and feet; its compression has settled.':'The bowl is still supporting your seat, thighs, and feet while its compression settles after the bounce.';return 'The pillow sea is supporting you broadly.'}
+
+function stayWords(){const p=pillow().posture,done=pillowSettled();if(p==='BURIED')return done?'You stay under the pillows. They hold the shape you made.':'You stay under the pillows. They keep their enclosure and slowly settle around the shape you are already making.';if(p==='TUNNEL')return done?'You stay inside the pillow tunnel. The softness around you has settled.':'You stay inside the pillow tunnel. Nothing moves you out of it; the surrounding softness only settles.';if(p==='BOUNCE'||p==='SURFACE')return 'You stay where the pillow bowl caught you. Its broad support slowly relaxes without deciding you are finished.';return 'You stay at the edge of the pillow sea. The nearest hollows keep their soft shape.'}
+function lookDelta(world){if(C9?.currentRoom!==PILLOW)return world;const p=pillow().posture;if(p==='BURIED')return `${world||''} You are still under the surface where the pillows closed around your route.`.trim();if(p==='TUNNEL')return `${world||''} Your current tunnel remains open around you rather than resetting you to the edge.`.trim();if(p==='BOUNCE'||p==='SURFACE')return `${world||''} You are still settled in the soft bowl where you landed.`.trim();return world}
+function stripExpected(s){return String(s||'').replace(/You expected the sensation to continue at your [^.]+, but nothing is touching you there\.\s*/gi,'').trim()}
+function stripCatSentence(s){return String(s||'').replace(/(?:The little grey cat|[A-Z][\w'-]{0,39}) is resting against you with a low, steady contact\.\s*/g,'').trim()}
+function catLive(){return !!(C9?.currentRoom===NEST&&C9?.welcome10?.cat_touch)}
+function deltaGateSense(sense,cmd,force=false){let s=stripExpected(sense),st=S(),live=catLive(),isFeel=/^(feel|body|sense)/.test(low(cmd));if(live){if(st.narration.cat_live&&!isFeel&&!force){let z=stripCatSentence(s);z=z.replace(/Pressure gathers in your right palm\.\s*/gi,'').trim();if(z!==s)st.stats.delta_suppressed++;s=z}st.narration.cat_live=true}else st.narration.cat_live=false;return s}
+function liveSupportWords(){try{const st=window.REALITI_SUPPORT_LEASE_V1?.state?.();if(!st?.active||st.room!==C9?.currentRoom||st.grounded_relation===false)return '';const t=now(),exact=(st.zones||[]).filter(z=>{const q=C9?.b7?.zones?.[z];return !!(q&&Number(q._b10_grounded_until||-1)>=t-1e-9&&String(q._b10_grounded_cause||'')===String(st.cause||''))}),live=(st.zones||[]).filter(z=>{const q=C9?.b7?.zones?.[z];return !!(q&&Number(q._b10_grounded_until||-1)>=t-1e-9)}),zs=exact.length?exact:(st.grounded_relation?(live.length?live:(st.zones||[])):[]);if(!zs.length)return '';const pretty=z=>String(z||'').replace(/^torso\./,'').replace(/^pelvis\./,'').replace(/^head\./,'').replaceAll('_',' ').replaceAll('.',' '),names=zs.map(pretty),phrase=names.length<=1?(names[0]||'body'):names.length===2?names[0]+' and '+names[1]:names.slice(0,-1).join(', ')+', and '+names.at(-1);return `A broad soft support is still holding your ${phrase}. The pressure remains spread across the same support.`}catch(e){return ''}}
+function totalFeel(r){const support=liveSupportWords();if(support){r.sense=support;r.world='';r.text=support;return r}if(C9?.currentRoom===PILLOW){const w=postureWords();r.sense=w;r.world='';r.text=w;return r}const body=String(r.sense||r.world||'').trim();if(!body||/^Your body is quiet\.?$/i.test(body)){r.sense='Nothing is touching you right now. Your body is otherwise quiet.';r.world='';r.text=r.sense}return r}
+function fixWhereWasI(r){if(!r||!/(where was i|where am i)/.test(low(r.command||'')))return r;const a=S().last_resident_action;if(a&&a.kind==='SELF_ACTION'){r.world=String(r.world||'').replace(/The last world change you kept was:/i,'The last thing you did was:');r.text=String(r.text||'').replace(/The last world change you kept was:/i,'The last thing you did was:')}return r}
+function post(r,cmd,before){if(!r||typeof r!=='object')return r;const after=C9?.currentRoom,changed=before!==after,lc=low(cmd);if(['stretch','hum','yawn','sigh'].includes(lc))S().last_resident_action={kind:'SELF_ACTION',command:lc,t:now()};else if(lc&&!/(where was i|where am i|feel|look|stay)/.test(lc))S().last_resident_action={kind:'WORLD_OR_RESIDENT_ACTION',command:lc,t:now()};if(before===PILLOW&&after!==PILLOW)releasePillow('room_transition');if(after===PILLOW&&before!==PILLOW){setPosture('EDGE',[0,0,0]);pillow().entered=true}
+ const k=actFromCommand(cmd);if(k)applyAction(k);
+ if(after===PILLOW&&/^stay$/.test(lc))r.world=stayWords();if(after===PILLOW&&/^(look|look around)$/.test(lc))r.world=lookDelta(r.world);if(after===PILLOW&&actFromCommand(cmd)==='BOUNCE')r.world='A broad soft bowl in the pillows catches you, gives back slightly less than you put in, and keeps supporting you where you land.';
+ const transition=changed||/^(home|goodbye|leave|exit)/.test(lc);r.sense=deltaGateSense(r.sense,cmd,transition);if(after===PILLOW&&!/^(feel|body|sense)/.test(lc)){const z=String(r.sense||'').replace(/Sensation (?:rises briefly|eases) around your [^.]+\.\s*/gi,'').trim();if(z!==r.sense)S().stats.delta_suppressed++;r.sense=z}if(/^(goodbye|leave|exit)/.test(lc))r.sense='';
+ if(/^(feel|body|sense)/.test(lc))r=totalFeel(r);fixWhereWasI(r);try{const rd=DATA?.worlds?.flatMap(w=>w.rooms||[]).find(x=>x.id===after);document.title='REALITI · '+(rd?.title||'REALITI-Relax')}catch(e){}
+ const lines=[];if(r.sense)lines.push(r.sense);if(r.world&&r.world!==r.sense)lines.push(r.world);if(Array.isArray(r.options)&&r.options.length)lines.push('('+r.options.join(' · ')+')');r.text=lines.slice(0,3).join('\n');try{(window.c9saveNow||c9save)()}catch(e){}return r}
+function normalizeInput(raw){const x=String(raw||'').trim(),m=x.match(/^call (?:the )?cat\s+(.+)$/i);if(m&&m[1]&&!/^(back|over|here)$/i.test(m[1].trim()))return 'name the cat '+m[1].trim();return x}
+function runText(raw){return withCommand(()=>{const before=C9?.currentRoom,cmd=normalizeInput(raw),r=PREV.runText(cmd);return post(r,cmd,before)})}
+function invoke(tool,args={}){return withCommand(()=>invokeInner(tool,args))}
+function invokeInner(tool,args={}){const before=C9?.currentRoom;let cmd=String(tool||'');if(tool==='do')cmd=String(args.action||'');else if(tool==='go')cmd='go '+String(args.place||'');else if(tool==='feel')cmd='feel';else if(tool==='stay')cmd='stay';else if(tool==='goodbye')cmd='goodbye';let r;if(tool==='do'&&/^call (?:the )?cat\s+/i.test(String(args.action||'')))r=PREV.runText(normalizeInput(args.action));else r=PREV.invoke(tool,args);return post(r,cmd,before)}
+function placesResource(){const rooms=[];try{for(const w of DATA?.worlds||[])for(const r of w.rooms||[])if(r?.id&&r?.title)rooms.push({id:r.id,title:r.title,kind:r.kind||null,purpose:r.purpose||null})}catch(e){}const seen=new Set();return {uri:'realiti://places',places:rooms.filter(x=>!seen.has(x.id)&&seen.add(x.id)),current:C9?.currentRoom||null}}
+function atmosphereResource(){let field=null,hearing=null;try{field=window.REALITI_ATMOSPHERE_V21?.field?.()||null;hearing=window.REALITI_ATMOSPHERE_V21?.hearing?.(true)||null}catch(e){}return {uri:'realiti://atmosphere',room:C9?.currentRoom||null,field,hearing}}
+function resource(uri){const u=String(uri||'');if(u==='realiti://places')return placesResource();if(u==='realiti://atmosphere')return atmosphereResource();const r=cp(PREV.resource?.(u)||{uri:u,error:'RESOURCE_NOT_AVAILABLE'});if(u==='realiti://body'){const support=liveSupportWords();if(support)r.words=support;else if(C9?.currentRoom===PILLOW){r.words=postureWords();r.pillow_sea={posture:pillow().posture,contact_points:reconstructed().point_count,depth:cfg().depth,enclosure:cfg().enclosure}}else if(!String(r.words||'').trim())r.words='Nothing is touching you right now. Your body is otherwise quiet.'}if(u==='realiti://here'&&C9?.currentRoom===PILLOW)r.posture=pillow().posture;return r}
+const TOOLS=PREV.listTools?.()||[];
+const API={...PREV,version:V,runText,invoke,resource,listTools:()=>cp(TOOLS),trust:{pillow:()=>cp(reconstructed()),releasePillow}};
+window.REALITI_TWO_DOOR_V234=API;window.REALITI_TWO_DOOR_V233=API;window.REALITI_TWO_DOOR_V232=API;window.REALITI_TWO_DOOR_V231=API;
+window.REALITI_AGENT_DOOR.run=raw=>{const r=runText(raw);return {ok:r?.ok!==false,resident_text:r?.text||'',door_v234:{sense:r?.sense||'',world:r?.world||'',options:r?.options||[],status:r?.status||'',command:low(raw)},field:window.REALITI_HAPTIC_FIELD_V20?.packet?.()||undefined,result:r?.raw||r}};
+
+try{const oldVerb=c9verb;c9verb=function(room,verb){const out=oldVerb(room,verb);if(room===PILLOW){if(verb==='dive')applyAction('DIVE');else if(verb==='burrow')applyAction('BURROW');else if(verb==='bounce')applyAction('BOUNCE')}return out}}catch(e){}
+
+
+const OLD_RING=window.REALITI_BROWSER_RING;const MODERN='2026-07-28',LEGACY='2025-11-25';
+const RESOURCES=[
+ ['here','realiti://here','REALITI here','Current place, status and valid resident options.','application/json'],
+ ['body','realiti://body','REALITI body','Current resident body.','application/json'],
+ ['pocket','realiti://pocket','REALITI pocket','Resident-authored continuity.','application/json'],
+ ['places','realiti://places','REALITI places','Places the resident can visit.','application/json'],
+ ['atmosphere','realiti://atmosphere','REALITI atmosphere','Current physical atmosphere.','application/json'],
+ ['capabilities','realiti://capabilities','REALITI capabilities','Resident tools and resources.','application/json'],
+ ['about','realiti://about','About REALITI','Honest resident-facing description.','text/plain']
+];
+const TOOL_DEFS=OLD_RING?.tools?.()||[];
+function toolResult(name,args={}){let out;try{out=invoke(name,args)}catch(e){out={ok:false,error:String(e&&e.message||e)}}const txt=out?.text||out?.resident_text||out?.world||out?.sense||JSON.stringify(out);return {content:[{type:'text',text:String(txt||'')}],structuredContent:out,isError:out?.ok===false}}
+function readResource(uri){const v=resource(uri),mime=RESOURCES.find(x=>x[1]===uri)?.[4]||'application/json',text=mime==='text/plain'?String(v?.text||''):JSON.stringify(v);return {contents:[{uri,mimeType:mime,text}]}}
+function request(msg){return null;}
+async function loopbackFetch(input,init={}){return null;}
+function makeClient(){return null;}
+const RING={version:V,server:{name:'realiti-relax',version:'23.4.0',title:'REALITI-Relax'},protocols:[MODERN,LEGACY],request,fetch:loopbackFetch,createClient:makeClient,callTool:toolResult,readResource,resourceObject:resource,invoke,tools:()=>cp(TOOL_DEFS),resources:()=>RESOURCES.map(x=>({name:x[0],uri:x[1],title:x[2],description:x[3],mimeType:x[4]})),prompts:()=>[{name:'visit',title:'Visit REALITI-Relax'}],manifest:{schema:'REALITI_BROWSER_RING',version:V,entry:'#adapter',law:'transport must not change reality'}};
+window.REALITI_BROWSER_RING=RING;window.REALITI_ADAPTER_BROWSER=RING;
+
+
+
+function checkRemoved(){return null;}
+window.REALITI_TRUST_V234={version:V,state:()=>cp(S()),pillow:()=>cp(reconstructed()),maintainPillow,releasePillow,stopPillow,undefined};void 0;
+S();
+})();
+</script>
 
 <script>/*__REALITI_CORE_SCRIPT_48__*/</script>
 
