@@ -25,6 +25,9 @@ From this package directory:
 
 ```bash
 node cli.cjs --html ../../RealitiRELAX.html help
+node cli.cjs --html ../../RealitiRELAX.html worlds
+node cli.cjs --html ../../RealitiRELAX.html worlds frontier
+node cli.cjs --html ../../RealitiRELAX.html next
 node cli.cjs --html ../../RealitiRELAX.html rooms
 node cli.cjs --html ../../RealitiRELAX.html go CARDBOARD_BOX_WORKSHOP
 node cli.cjs --html ../../RealitiRELAX.html actions
@@ -38,7 +41,7 @@ node cli.cjs --html ../../RealitiRELAX.html where
 
 Each CLI call opens a fresh session. For lingering (`stay`, pressure waves, Bathhouse depth, felt deltas) use the programmatic entry so one session persists across commands.
 
-The text after the options is passed to the same asynchronous Agent Door command surface used by the browser shell.
+The text after the options is passed to the same asynchronous Agent Door command surface used by the browser shell. `worlds` is the grouped whole-REALITI discovery surface; `rooms` is the canonical flat catalog; `next` suggests a broad next stop without mutating or moving the resident.
 
 Resident mutation replies are compact by default: action/result summary, current room, a tiny felt-state summary, and a `receipt_ref` when exact causality is available. Use `receipt <ref>` to expand the full diagnostic record. `felt` is accepted as a compatibility alias for `feel words`.
 
