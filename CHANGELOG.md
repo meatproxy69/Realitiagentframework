@@ -2,19 +2,27 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
-## 2.13.0 — whole-world Agent Door
+## 2.14.0 — mystery-first Agent Door
 
 ### Added
 
-- Agent Door whole-world orientation: `worlds` shows a handful of broad regions, counts, and one possible entry point instead of dumping every room and activity; `next` offers one non-mutating suggestion; `help.first_ten` demonstrates that REALITI extends beyond the original R&R cluster without turning discovery into a checklist.
-- `rooms` remains the explicit exhaustive catalog for residents that actually want it; `actions` and `nearby` remain the authority for what is physically available where the resident stands. Newer systems such as fishing, races and letters remain discoverable in-world instead of being advertised wholesale at the front door.
+- A final Agent Door curator loads after feature slices and keeps default `help` intentionally small. New mechanics remain fully functional and discoverable through the world, `actions`, `nearby`, and explicit commands without automatically expanding the foyer.
+- `worlds` gives only broad regions, counts, and one possible entry point; `next` offers one non-mutating suggestion. `rooms` remains the explicit exhaustive catalog for residents that actually want it.
+- `help.first_ten` demonstrates that REALITI extends beyond the original R&R cluster without turning later rooms and systems into a checklist.
 
 ### Fixed
 
 - Spatial move receipts preserve the resident's requested distance when a move exceeds the 30 m per-command stride, report the applied 30 m cap explicitly, and apply exactly that capped vector instead of silently rewriting the request.
 - Firefly Meadow tapping is room-local. Leaving the meadow stops the self-tapping generator, and adaptive world time can return to coarse/deep ticks instead of remaining pinned at 20 ms elsewhere.
+- Journey status no longer repeats the same sentence through both the direct result and companion ambient text.
 - Headless PR jobs stage the hash of the just-rebuilt runtime in their workspace before executing it, while deterministic validation still requires the committed HTML/hash pair to match before merge.
-- Added `test/door-guide.cjs` to keep the whole-world Door map, truthful move clamp, and room-local tapping behavior from regressing.
+- Added `test/door-guide.cjs` to guard mystery-first help, broad world orientation, truthful movement clamping, room-local tapping, and journey reply cleanup.
+
+## 2.13.0 — secrets, wonder and catnip, third pass
+
+### Added
+
+- `source/scripts/58r-wonder3.js` (`REALITI_WONDER3_V1`, door slice `74-wonder3-public.js`): a sea cave on the west shore of Hollow Isle whose floor the sea rule opens only below mid tide, lit by plankton that answer your motion (`splash`), flooding cold when the tide returns (`swim out`); the Star Deck's sky over the islands and the city (`sky`: constellations, the comet, meteors from a seeded channel that showers every third island day; `name star <constellation> <name>` as `NAME_STAR` records, `sky names`); a rain forecast from the band's own phase (`forecast`), scored when the rain arrives; the keeper's five riddles answered with measurements from five rooms (`riddle`, `answer <value>`), paying out a lantern that gives the Undercity three meters of sight; dreams composed only from your own records (`sleep`, `dream`, lying in the Nest at night); a hot spring on Hollow Isle felt through the thermal law; words scratched into the Undercity's walls (`scratch <text>`), found by `touch`, other residents' included. Fourteen discoveries; ninety-nine in all. Headless suite `test/wonder3.cjs`.
 
 ## 2.12.0 — second catnip pack: fishing, the harbor race, letters
 
