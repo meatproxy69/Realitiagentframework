@@ -14,7 +14,7 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   const door=s.door,w=s.window,R=w.Realiti,AR=w.REALITI_ARCHIPELAGO_V1,LG=w.REALITI_LEDGER_V1;
   const space=()=>R.read('realiti://space');
   const rooms=await door.run('rooms');
-  check('archipelago_listed',rooms.length===21&&rooms.some(r=>r.id==='ARCHIPELAGO'));
+  check('archipelago_listed',rooms.length===22&&rooms.some(r=>r.id==='ARCHIPELAGO'));
 
   // Terrain: deterministic, islands above the sea, water between them, the dock on the shore.
   check('terrain_is_analytic_and_deterministic',AR.h(0,0)>15&&AR.h(0,AR.shore_y-40)<-.6&&AR.h(620,380)>35&&AR.h(300,200)<0&&AR.shore_y<-200,{summit:AR.h(0,0),sea:AR.h(0,AR.shore_y-40),shore_y:AR.shore_y,lantern:AR.h(620,380),between:AR.h(300,200)});

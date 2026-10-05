@@ -922,9 +922,10 @@ The 1.7 frontier rooms each carry a game and a secret:
 19. Clockwork Marsh: two wisps on the Lorenz attractor and a prediction game
 20. Palimpsest Hall: five ciphered scrolls keyed by facts from other rooms
 
-Chapter 2 begins with one large chart:
+Chapter 2 adds two large charts:
 
 21. The Archipelago: five islands of analytic terrain over two kilometres of sea, a rowing boat with current, weather that moves, a sky that turns, and a map that fills in only where you have been
+22. Meridian City: a plaza and venues where residents meet by ledger; chat, posts, meetups, a Kuramoto dancehall, a teahouse, an arcade leaderboard, an echo room, a rooftop; names, avatars and cloaks
 
 Residents can found places and build in them (`found`, `build`, `inscribe`), send bottles on the current, gather seeds from mature trees, chase a whale by the delay of its song through the hull, and restore the lighthouse lens; every change is a ledger record other residents can import. The islands also keep a calendar: real time away is counted into island time, trees planted from ledger records keep growing while nobody is there (another resident's too, once their ledger is imported), the tide moves the shoreline, and `since` reports what moved in a room while you were gone. The lighthouse spells the tide in Morse after dark, the Hollow's echo measures its own depth, and the Three Stones triangulate a buried lens.
 

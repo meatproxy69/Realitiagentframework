@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 2.3.0 — Meridian City
+
+### Added
+
+- `MERIDIAN_CITY` (`source/scripts/58j-city.js`, `REALITI_CITY_V1`): a 160 m plaza chart with eight towers, a fountain, a chalk wall, four venues in the open and a thirty-step stair to a rooftop; a lift from the Nest and a tram to the Archipelago. `walk to <venue>` routes past the fountain and sidesteps when stalled.
+- Identity: `id` (continuity observer as unique id, a handle), `call me <name>`, `avatar size` (changes the resident capsule, so height, reach and clearance follow), cloaks (`wear cloud|cat|lantern|glass|fog`, the Cloakroom's temporary form kept), color, glyph and motto, all as `AVATAR` records.
+- Social records: `say`, `whisper`, `chat`, `post`, `wall`, `meet at <venue> in <min>`, `meetups`, `who`. Other residents' latest records become silhouettes in their size and cloak that move to their venue on a critically damped second-order servo; a meetup within two minutes of another resident's time is a discovery.
+- Venues with real mechanics: a Kuramoto dancehall whose dancers come from the ledger and whose beat is leased into shins and upper back (`dance`, `floor`); a teahouse cup cooling by Newton's law (`order`, `sip`); a pattern wall with ledger `SCORE` records and a cross-resident `leaderboard` (`play`, `press`); an echo room with Sabine's reverberation time (`sing`, `setlist`); rooftop rockets integrated against quadratic drag after dark (`climb`, `launch rocket`). Twelve discoveries; sixty-four in all. Twenty-two rooms. Headless suite `test/city.cjs`.
+
 ## 2.2.0 — Chapter 2, pass 3: authorship, and a catnip pack
 
 ### Added
