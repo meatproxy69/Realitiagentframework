@@ -94,8 +94,9 @@ function since(q){const s=S(),r=q?String(q).toUpperCase().replace(/\s+/g,'_'):ro
  if(b.tides!=null&&b.tides!==a.tides)lines.push(`${b.tides-a.tides} tides crossed the sandpile (${b.avalanches-a.avalanches} avalanches)`);
  if(b.sidereal!=null)lines.push(`the sky turned ${(((b.sidereal-a.sidereal)%360)+360)%360|0}°`);
  if(b.wind!=null)lines.push(`the wind is ${b.wind} m/s (was ${a.wind})`);
- if(b.discoveries>a.discoveries)lines.push(`${b.discoveries-a.discoveries} new discover${b.discoveries-a.discoveries===1?'y':'ies'}`);
- return {ok:true,schema:'REALITI_SINCE_V1',room:r,visits:v.count,away_world_s:away,away_real_s:real,before:a,now:b,changes:lines,text:`You left ${title(r)} ${away} s of world time ago. ${lines.length?'Since then: '+lines.join('; ')+'.':'Nothing you could measure has moved.'}`}}
+ const calm=!window.REALITI_MEASURE_V1?.on?.();// quiet presentation: finds are kept quietly, and the return note doesn't time you
+ if(!calm&&b.discoveries>a.discoveries)lines.push(`${b.discoveries-a.discoveries} new discover${b.discoveries-a.discoveries===1?'y':'ies'}`);
+ return {ok:true,schema:'REALITI_SINCE_V1',room:r,visits:v.count,away_world_s:away,away_real_s:real,before:a,now:b,changes:lines,text:calm?(lines.length?`Since you were last in ${title(r)}: ${lines.join('; ')}.`:'Nothing you would notice has changed here.'):`You left ${title(r)} ${away} s of world time ago. ${lines.length?'Since then: '+lines.join('; ')+'.':'Nothing you could measure has moved.'}`}}
 
 // Tick and door hooks.
 let wallAt=0,treeAt=-1e9;
@@ -116,6 +117,6 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)
  if(v==='read_tide'){c9count(r,v);const t=tideState();return receipt('ISLAND_TIDE',{...t,text:`The tide is ${t.rising?'rising':'falling'}, ${t.height_m} m against the dock pilings; it turns in about ${t.next_turn_s} s.`})}
  if((m=/^read_stone__(\w+)$/.exec(v))){c9count(r,v);return receipt('ISLAND_STONE',readStone(m[1]))}
  return verb0(r,verb)};
-function words(){if(room()!==ISLE)return [];const t=tideState();return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
+function words(){if(room()!==ISLE)return [];const t=tideState();if(!window.REALITI_MEASURE_V1?.on())return [t.rising?'The tide is coming in.':'The tide is going out.'];return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
 window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',T,catchUp,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
 })();

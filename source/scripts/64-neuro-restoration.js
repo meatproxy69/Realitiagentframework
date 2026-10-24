@@ -114,6 +114,7 @@ function command(raw){
  if(l==='neuro causes')return causes();
  m=/^neuro cause\s+(.+)$/i.exec(s);if(m)return cause(m[1]);
  if(l==='neuro halo')return {ok:true,state:cp(window.REALITI_HALO_V1?.snapshot?.()||null),proof:cp(window.REALITI_HALO_V1?.acceptance?.()||null)};
+ if(l==='neuro labs on'||l==='neuro labs off'){C9.neuroLabs=l.endsWith(' on');try{c9save()}catch(e){}return {ok:true,labs:C9.neuroLabs,text:C9.neuroLabs?'Lab benches show in action lists where a room has them.':'Lab benches are out of the action lists. neuro labs on brings them back.'}}
  if(l==='neuro presets')return presetList();
  m=/^neuro preset(?: use)?\s+(.+)$/i.exec(s);if(m)return applyPreset(m[1]);
  return null
@@ -140,7 +141,7 @@ const LABS={
  ]
 };
 const actionBase=b4AgentActions;
-b4AgentActions=function(){const a=actionBase(),seen=new Set(a.map(x=>x.id));for(const [id,label] of LABS[C9.currentRoom]||[])if(!seen.has(id))a.push({id,label});return a};
+b4AgentActions=function(){const a=actionBase(),seen=new Set(a.map(x=>x.id));if(C9.neuroLabs!==false)for(const [id,label] of LABS[C9.currentRoom]||[])if(!seen.has(id))a.push({id,label});return a};
 
 function oldLab(fn,verb,label,stateFn){
  if(typeof fn!=='function')return {ok:false,error:'LAB_MECHANISM_UNAVAILABLE',lab:label};

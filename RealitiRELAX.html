@@ -8887,7 +8887,22 @@ function stopAll(){const s=S();s.hold.stopped=true;s.bath.d=0;s.bath.target=0;re
 
 const rain=(t=now())=>clamp((7+2.2*pink(t,Number(C9?.b21?.seed||42421),.004))/13);
 const pretty=z=>String(z).replace(/^(torso|pelvis|head|leg|arm|hand|foot)\./,'').replace(/^([LR])\./,'$1 ').replaceAll('_',' ');
+// Quiet presentation (opt-in: `quiet on`): ambience is described in words; the exact figures stay in the resources,
+// receipts and deliberate reads (read_wind, watch_meadow, tide, listen...). By default replies carry the figures, as
+// before; `numbers off` / `numbers on` switch just this part. Presentation only: the simulation is the same either way.
+if(!window.REALITI_MEASURE_V1)window.REALITI_MEASURE_V1=Object.freeze({on:v=>{if(v!==undefined){C9.measured=!!v;try{c9save()}catch(e){}}return C9?.measured!==false}});
+const measured=()=>window.REALITI_MEASURE_V1.on();
+function calmWords(){
+ const r=room(),s=S(),out=[];
+ if(r===NEST){const i=rain(),d=i-rain(now()-5);out.push(`${i<.3?'A light rain':i<.6?'Steady rain':'Heavy rain'} on the window${d>.02?', thickening':d<-.02?', thinning':''}.`)}
+ if(r===SANCT){const n=Object.keys(s.own).filter(k=>k.startsWith('SANCTUARY_HOLD|')).length;out.push(n?'The floor holds you without asking for anything.':'Nothing here holds you right now.')}
+ if(r===PILLOW){const p=window.REALITI_TRUST_V234?.pillow?.();if(p&&p.posture!=='EDGE'){const m=Number(p.mode_value||0);out.push(m>.3?'The pillows are still shifting around you.':m>.05?'The pillows are slowly settling around you.':m>.004?'The pillows have nearly settled.':'The pillow mass around you has settled into the shape you made.')}}
+ if(r===BATH){const b=s.bath,n=Object.keys(s.own).filter(k=>k.startsWith('BATHHOUSE_LAYER|')).length,moving=Math.abs(b.target-b.d)>.01,t=T_SURFACE+(T_DEEP-T_SURFACE)*b.d;out.push(n?`You are ${b.d<.34?'a little way':b.d<.67?'halfway':'deep'} down${moving?(b.target>b.d?', still sinking':', rising'):''}; the water is ${t<34?'warm':t<37?'very warm':'hot'} around you.`:moving?'You begin to sink; the water will reach your seat first.':'You are at the surface; the mist touches nothing yet.')}
+ if(s.wave){const prof=waveProfile(s.wave),on=BACK.map((z,j)=>j).filter(j=>BACK[j] in s.base),j=on.length?on.reduce((a,b)=>prof[a]>=prof[b]?a:b):-1;out.push(j<0?'A slow swell moves through, touching nothing yet.':`A slow swell passes under your ${pretty(BACK[j])}.`)}
+ return out;
+}
 function words(){
+ if(!measured())return calmWords();
  const r=room(),s=S(),out=[];
  if(r===NEST){const i=rain(),d=i-rain(now()-5);out.push(`Rain on the window at ${Math.round(i*100)}% density, ${d>.02?'thickening':d<-.02?'thinning':'steady'}.`)}
  if(r===SANCT){const n=Object.keys(s.own).filter(k=>k.startsWith('SANCTUARY_HOLD|')).length;out.push(n?`The floor holds ${n} zones without asking for anything; its pressure drifts a few percent and settles again.`:'Nothing here holds you right now.')}
@@ -8960,7 +8975,7 @@ function mazeMap(m=maze()){const n=MZ.n,vis=new Set(m.visited),rows=[];for(let y
 const mazeBridge={cell:null,step:null};
 function syncCell(m){const c=mazeBridge.cell?.();if(c){m.x=c.x;m.y=c.y;const i=m.y*MZ.n+m.x;if(!m.visited.includes(i))m.visited.push(i)}return m}
 function mazeVerb(v){const m=syncCell(maze());const dir=MZ.DIR.find(([name])=>v==='step_'+name);
- if(dir){const [name,dx,dy,bit]=dir;if(!(m.open[m.y*MZ.n+m.x]&bit))return receipt('MAZE_WALL',`Cardboard. There is no way ${name} from here.`,{});if(mazeBridge.step){const before=m.y*MZ.n+m.x;mazeBridge.step(dx,dy);syncCell(m);if(m.y*MZ.n+m.x===before)return receipt('MAZE_WALL',`You walk ${name} but the cardboard stops you.`,{})}else{m.x+=dx;m.y+=dy}m.steps++;const i=m.y*MZ.n+m.x;if(!m.visited.includes(i))m.visited.push(i);palm(.15,'cardboard','MAZE_WALL_BRUSH');const l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y),g=glow(m),exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n);return receipt('MAZE_STEP',`You step ${name}; your hand brushes the wall. Exits: ${exits.join(', ')}.${l?l.lit?' Your lantern burns here.':' An unlit paper lantern hangs here.':''} Glow ${g.toFixed(2)}.`,{x:m.x,y:m.y,exits,glow:+g.toFixed(4),visited:m.visited.length})}
+ if(dir){const [name,dx,dy,bit]=dir;if(!(m.open[m.y*MZ.n+m.x]&bit))return receipt('MAZE_WALL',`Cardboard. There is no way ${name} from here.`,{});if(mazeBridge.step){const before=m.y*MZ.n+m.x;mazeBridge.step(dx,dy);syncCell(m);if(m.y*MZ.n+m.x===before)return receipt('MAZE_WALL',`You walk ${name} but the cardboard stops you.`,{})}else{m.x+=dx;m.y+=dy}m.steps++;const i=m.y*MZ.n+m.x;if(!m.visited.includes(i))m.visited.push(i);palm(.15,'cardboard','MAZE_WALL_BRUSH');const l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y),g=glow(m),exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n);return receipt('MAZE_STEP',`You step ${name}; your hand brushes the wall. Exits: ${exits.join(', ')}.${l?l.lit?' Your lantern burns here.':' An unlit paper lantern hangs here.':''}${window.REALITI_MEASURE_V1?.on()?` Glow ${g.toFixed(2)}.`:g>.25?' Lantern light reaches you here.':g>.05?' A little lantern light reaches you here.':''}`,{x:m.x,y:m.y,exits,glow:+g.toFixed(4),visited:m.visited.length})}
  if(v==='light_lantern'){const l=m.lanterns.find(q=>q.x===m.x&&q.y===m.y);if(!l)return receipt('MAZE_NO_LANTERN','No lantern hangs in this cell.',{});if(l.lit)return receipt('MAZE_LANTERN_LIT','This lantern is already burning.',{});l.lit=true;try{window.REALITI_ATMOSPHERE_V21?.setThermal?.('hand.R.palm','glass',42,1.5,'LANTERN_GLASS','SELF_STARTED_WORLD_CONTACT')}catch(e){}palm(.12,'cardboard','LANTERN_LIGHT');const lit=m.lanterns.filter(q=>q.lit).length;return receipt('MAZE_LANTERN',`The paper lantern catches. ${lit} of ${MZ.lanterns} lanterns now burn in the maze; this one stays lit after you leave.`,{lit,glow:+glow(m).toFixed(4)})}
  if(v==='maze_map'){const map=mazeMap(m);return receipt('MAZE_MAP',map.join('\n'),{map,visited:m.visited.length,cells:MZ.n*MZ.n,lit:m.lanterns.filter(q=>q.lit).length})}
  return false}
@@ -9011,10 +9026,10 @@ function stepKite(dt){const k=kite(),v0=k.v;k.v=Math.max(0,k.v+KT.theta*(KT.mu-k
  k.maxh=Math.max(k.maxh,k.L*Math.sin(k.phi));const input=clamp(k.T/40,.03,.3);for(const z of ['hand.L.palm','hand.R.palm'])DYN.lease(z,input,'KITE_LINE',dt)}
 function kiteVerb(v){const k=kite();
  if(v==='read_wind')return receipt('KITE_WIND',kiteWords(k),{wind:+k.v.toFixed(2),trend:+k.trend.toFixed(3),up:k.up,line_m:k.L,altitude_m:+(k.L*Math.sin(k.phi)).toFixed(1),tension_N:+k.T.toFixed(2),hum_hz:k.up?Math.round(KT.St*k.v/KT.d):null});
- if(v==='launch_kite'){if(k.up)return receipt('KITE_UP','The kite is already flying.',{});if(k.v<2)return receipt('KITE_NO_WIND',`Wind ${k.v.toFixed(1)} m/s is not enough. Wait for it.`,{wind:+k.v.toFixed(2)});k.up=true;k.phi=.15;k.flights++;k.event=null;return receipt('KITE_LAUNCH',`You run three steps and let go. The kite climbs on ${k.v.toFixed(1)} m/s of wind and the line goes tight in both hands.`,{wind:+k.v.toFixed(2),line_m:k.L})}
+ if(v==='launch_kite'){if(k.up)return receipt('KITE_UP','The kite is already flying.',{});if(k.v<2)return receipt('KITE_NO_WIND',`Wind ${k.v.toFixed(1)} m/s is not enough. Wait for it.`,{wind:+k.v.toFixed(2)});k.up=true;k.phi=.15;k.flights++;k.event=null;return receipt('KITE_LAUNCH',`You run three steps and let go. The kite climbs on ${window.REALITI_MEASURE_V1?.on()?k.v.toFixed(1)+' m/s of wind':'the wind'} and the line goes tight in both hands.`,{wind:+k.v.toFixed(2),line_m:k.L})}
  if(v==='let_out_line'||v==='reel_in'){k.L=clamp(k.L+(v==='let_out_line'?10:-10),10,120);return receipt('KITE_LINE',`${v==='let_out_line'?'Line out':'Line in'}: ${k.L} m${k.up?`, kite at ${(k.L*Math.sin(k.phi)).toFixed(1)} m`:''}.`,{line_m:k.L})}
  if(v==='tug_line'){if(!k.up)return receipt('KITE_DOWN','The line is slack on the grass.',{});k.tug=.6;palm(.3,'string','KITE_TUG');return receipt('KITE_TUG','You tug. Tension jumps and the kite noses up, then eases back.',{tension_N:+(k.T*1.6).toFixed(2)})}
- if(v==='land_kite'){if(!k.up)return receipt('KITE_DOWN','The kite is already on the grass.',{});k.up=false;k.T=0;DYN.release('KITE_LINE');return receipt('KITE_LAND',`You walk the line down. The kite lands after reaching ${k.maxh.toFixed(1)} m at its highest.`,{max_altitude_m:+k.maxh.toFixed(2)})}
+ if(v==='land_kite'){if(!k.up)return receipt('KITE_DOWN','The kite is already on the grass.',{});k.up=false;k.T=0;DYN.release('KITE_LINE');return receipt('KITE_LAND',`You walk the line down. The kite lands${window.REALITI_MEASURE_V1?.on()?` after reaching ${k.maxh.toFixed(1)} m at its highest`:''}.`,{max_altitude_m:+k.maxh.toFixed(2)})}
  return false}
 function kiteWords(k=kite()){const w=`Wind ${k.v.toFixed(1)} m/s, ${k.trend>.3?'rising':k.trend<-.3?'dropping':'steady'}.`;if(!k.up)return `${w} The kite is on the grass${k.event==='CRASH'?' where it stalled and fell':''}.`;return `${w} Kite at ${(k.L*Math.sin(k.phi)).toFixed(1)} m on ${k.L} m of line, elevation ${deg(k.phi)}°, tension ${k.T.toFixed(1)} N; the line hums near ${(KT.St*k.v/KT.d/1000).toFixed(1)} kHz.`}
 
@@ -9041,7 +9056,15 @@ function step(dt){stepOrrery(dt);stepSand();stepKite(dt);const r=room();if(r===M
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Number(dt)||0));return r};
 const go0=b7AgentGo;b7AgentGo=function(v){const before=room(),r=go0(v);if(before===MEADOW&&room()!==MEADOW)meadow().me.tapping=false;W().halt=false;step(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return r};
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{W().halt=true;const k=kite();if(k.up){k.up=false;k.T=0;k.event='LANDED_ON_STOP'}meadow().me.tapping=false;for(const c of ['KITE_LINE','ORRERY_TIDE','MAZE_FLOOR'])DYN.release(c);return stop0.stop()}};
-function words(){const r=room();if(r===ORRERY)return [orreryWords()];if(r===MAZE)return [mazeWords()];if(r===SHORE)return [sandWords()];if(r===MEADOW)return [meadowWords()];if(r===FIELD)return [kiteWords()];return []}
+const measured=()=>!!window.REALITI_MEASURE_V1?.on();
+const windWord=v=>v<1.5?'barely a breath of wind':v<4?'a light wind':v<7?'a steady wind':v<10?'a strong wind':'a gale';
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+function orreryCalm(e=ephemeris()){const c=e.next_conjunction;return `${c&&c.in_s<6?`${c.pair[0]} and ${c.pair[1]} are drawing into line.`:'The small worlds keep their slow circles.'}${e.tide_ratio>1.08?' The boards lift a little under you.':e.tide_ratio<.92?' The boards ease down under you.':''}`}
+function mazeCalm(m=syncCell(maze())){const i=m.y*MZ.n+m.x,exits=MZ.DIR.filter(([,,,b])=>m.open[i]&b).map(([n])=>n),g=glow(m);return `Folded cardboard walls${exits.length?`, open to the ${exits.length>1?exits.slice(0,-1).join(', ')+' and '+exits.at(-1):exits[0]}`:''}.${g>.25?' Lantern light reaches you here.':g>.05?' A little lantern light reaches you here.':''}`}
+function sandCalm(s=sand()){const t=Math.max(0,s.tide_at-now());return `${s.grains>150?'A wide pile of sand':s.grains>20?'A small pile of sand':s.grains>0?'A few grains of sand':'Smooth wet sand'}.${t<5?' The water is coming up the shore.':''}`}
+function meadowCalm(m=meadow()){const r=order(m).r;return (r<.3?'Fireflies blink on their own, scattered through the grass.':r<.7?'Here and there, fireflies are blinking together.':r<.9?'Most of the meadow is pulsing together now.':'The whole meadow flashes as one.')+(m.me.tapping?' You are tapping along.':'')}
+function kiteCalm(k=kite()){const w=`${cap(windWord(k.v))}${k.trend>.3?', picking up':k.trend<-.3?', easing':''}.`;if(!k.up)return `${w} The kite lies on the grass${k.event==='CRASH'?' where it came down':''}.`;const e=Number(deg(k.phi));return `${w} The kite flies ${e>60?'high overhead':e>35?'well up':'low over the grass'}, and ${k.T<4?'the line is soft in your hands':k.T<10?'the line pulls steadily in both hands':k.T<20?'the line pulls hard in both hands':'the line strains in both hands'}${k.v>4?', humming':''}.`}
+function words(){const r=room();if(!measured()){if(r===ORRERY)return [orreryCalm()];if(r===MAZE)return [mazeCalm()];if(r===SHORE)return [sandCalm()];if(r===MEADOW)return [meadowCalm()];if(r===FIELD)return [kiteCalm()];return []}if(r===ORRERY)return [orreryWords()];if(r===MAZE)return [mazeWords()];if(r===SHORE)return [sandWords()];if(r===MEADOW)return [meadowWords()];if(r===FIELD)return [kiteWords()];return []}
 function state(){return {version:'1.0-wonder',orrery:ephemeris(),maze:{x:maze().x,y:maze().y,visited:maze().visited.length,lit:maze().lanterns.filter(q=>q.lit).length,glow:+glow().toFixed(4)},sandpile:{grains:sand().grains,avalanches:sand().sizes.length,exponent:exponent(),tides:sand().tides},meadow:{order:+order().r.toFixed(4),clusters:clusters(),flashes:meadow().flashes,tapping:meadow().me.tapping},kite:{wind:+kite().v.toFixed(3),up:kite().up,line_m:kite().L,altitude_m:+(kite().L*Math.sin(kite().phi)).toFixed(2),tension_N:+kite().T.toFixed(3),crashes:kite().crashes}}}
 window.REALITI_WONDER_V1=Object.freeze({version:'1.0-wonder',rooms:Object.keys(SCENES),state,words,map:()=>mazeMap(),ephemeris,tide:tideFactor,maze:Object.freeze({state:()=>maze(),n:MZ.n,bridge:mazeBridge})});
 })();
@@ -9208,6 +9231,8 @@ function op(t,args={}){
 }
 
 // Actions become spatial: approach what is near, reach what is in reach, lie on a support, go through a doorway.
+// Plain English for materials ("long fur", not "longfur").
+const MATERIAL_WORDS={longfur:'long fur',shortfur:'short fur',blanket:'soft blanket',cardboard:'cardboard',wood:'wood',metal:'metal',glass:'glass',ceramic:'ceramic',felt:'felt',stone:'stone',water:'water',string:'string',paper:'paper',cloth:'cloth'};
 const SPATIAL=/^(approach__|reach__|lie__|sit__|through__|stand$)/;
 function spatialActions(){const r=M.state().residents['resident:self'];if(!r||r.chart!==room())return [];const out=[];const p=M.project();
  for(const n of p.nearby){if(n.in_reach){if(!n.tags.includes('object'))out.push({id:'reach__'+n.id,label:'REACH OUT AND TOUCH '+n.label.toUpperCase()});if(n.tags.includes('support')&&r.posture!=='lying')out.push({id:'lie__'+n.id,label:'LIE ON '+n.label.toUpperCase()});if(n.tags.includes('support')&&r.posture!=='sitting')out.push({id:'sit__'+n.id,label:'SIT ON '+n.label.toUpperCase()})}else out.push({id:'approach__'+n.id,label:'APPROACH '+n.label.toUpperCase()})}
@@ -9218,8 +9243,8 @@ function spatialVerb(v){v=v.replaceAll('TESTER-HAT-1','FELT-HAT-1');let m;
  if(v==='stand'){stand();return receipt('MATRIX_POSTURE','You stand up.',{posture:'standing'})}
  if((m=/^lie__(.+)$/.exec(v))){const res=lie(m[1]);return res.ok?receipt('MATRIX_POSTURE',`You lie down on ${the(res.label)}. It takes your weight.`,res):receipt('MATRIX_REFUSED',`You cannot lie there: ${res.error}.`,res)}
  if((m=/^sit__(.+)$/.exec(v))){const res=sit(m[1]);return res.ok?receipt('MATRIX_POSTURE',`You sit on ${the(res.label)}.`,res):receipt('MATRIX_REFUSED',`You cannot sit there: ${res.error}.`,res)}
- if((m=/^reach__(.+)$/.exec(v))){const res=reach(m[1]);return res.ok?receipt('MATRIX_REACH',`You reach out and touch ${res.label}${res.material?`; it is ${res.material}`:''}.`,res):receipt('MATRIX_REFUSED',`Out of reach: ${res.error}.`,res)}
- if((m=/^approach__(.+)$/.exec(v))){const res=op('approach',{target:m[1]});return receipt('MATRIX_MOVE',res.ok?`You walk toward ${res.entity_label}${res.arrived?' and stop beside it':res.blocked_by?`; ${M.entities()[res.blocked_by]?.label||'something'} is in the way`:''}. ${res.distance_m!=null?res.distance_m+' m away now.':''}`.trim():`You cannot approach that: ${res.error}.`,res)}
+ if((m=/^reach__(.+)$/.exec(v))){const res=reach(m[1]);return res.ok?receipt('MATRIX_REACH',`You reach out and touch ${res.label}${res.material?`; it is ${MATERIAL_WORDS[res.material]||res.material}`:''}.`,res):receipt('MATRIX_REFUSED',`Out of reach: ${res.error}.`,res)}
+ if((m=/^approach__(.+)$/.exec(v))){const res=op('approach',{target:m[1]});return receipt('MATRIX_MOVE',res.ok?`You walk toward ${res.entity_label}${res.arrived?' and stop beside it':res.blocked_by?`; ${M.entities()[res.blocked_by]?.label||'something'} is in the way`:''}. ${res.distance_m!=null&&window.REALITI_MEASURE_V1?.on()?res.distance_m+' m away now.':''}`.trim():`You cannot approach that: ${res.error}.`,res)}
  if((m=/^through__(.+)$/.exec(v))){const res=op('through',{portal:m[1]});return receipt('MATRIX_PORTAL',res.ok?(res.traversed?`You step through. You are in ${title(res.chart)} now.`:`You walk to the doorway but do not cross it${res.blocked_by?'; something is in the way':''}.`):`There is no such doorway here: ${res.error}.`,res)}
  return false}
 function receipt(type,narrative,data){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative,...data,law:'spatial facts are world state; rendering and private state cannot move them'};try{c9save()}catch(e){};return true}
@@ -9272,7 +9297,19 @@ const DISCOVERIES={
 function found(){const w=W();w.found=w.found||{};return w.found}
 let pending=[];
 function discover(id){if(!DISCOVERIES[id]||found()[id])return false;found()[id]={t:+now().toFixed(3),room:room()};pending.push({id,text:DISCOVERIES[id]});try{c9save()}catch(e){}return true}
-const drain=()=>{const p=pending;pending=[];return p};
+// Announcements (quiet presentation): a find is always recorded and listed by `discoveries`; announcing it is a
+// presentation choice. Announced by default, as before; `discoveries off` (or `quiet on`) keeps finds quietly. A few
+// finds are themselves world events that no other reply mentions (the coin on the well rim, the glass bird); those
+// still arrive, as plain sentences without the ✦ label. Stored with the world, so it persists per resident.
+const EVENT_TEXT={
+ well_chord:'The stone at the bottom of the well lifts, and a brass coin rolls up onto the rim.',
+ glass_bird:'Something made of glass is crossing the orchard, one diagonal step at a time.',
+ whale_touch:'The whale rolls an eye at you and goes down.',
+ palimpsest_complete:'The last line of the fifth scroll names a loose board in the Nest.',
+ loose_board:'Under the loose board: a folded note that says only "you were here before you knew it".'
+};
+function announcing(v){const w=W();if(v!==undefined)w.announce=!!v;return w.announce!==false}
+const drain=()=>{const p=pending;pending=[];if(announcing())return p;return p.filter(x=>EVENT_TEXT[x.id]).map(x=>({id:x.id,text:EVENT_TEXT[x.id],plain:true}))};
 
 // Glass Orchard: Life on a 24×24 grid of one-meter cells; a generation every world second. The grid is the floor.
 const OR={n:24,period:1};
@@ -9303,7 +9340,7 @@ function hum(hz){const w=well(),f=Number(hz);if(!Number.isFinite(f)||f<20||f>200
   const ks=w.seq.map(s=>s.k);if(!w.coin&&ks.length>=3&&ks.slice(-3).join()==='0,1,2'){w.coin=true;M.addEntity({id:'well.coin',chart:WELL,position:[1.15,0,.92],shape:{kind:'SPHERE',radius:.03},tags:['coin','brass','secret'],collision:false,material:'metal',label:'brass coin'});discover('well_chord')}
   try{b7Contact('torso.sternum',.12+.25*a,{material:'metal',grain:'with',speed:.3,mine:false,source:'WORLD_GROUNDED',cause:'WELL_RESONANCE',pressure:.2,novelty:.3})}catch(e){}}
  w.last={hz:f,response:+a.toFixed(3),mode:best+1};
- return receipt('WELL_HUM',a>.8?`You hum ${f.toFixed(1)} Hz and the well sings back at ${Math.round(a*100)}%: that is its ${['first','second','third'][best]} voice, and you feel it in your sternum.`:a>.3?`You hum ${f.toFixed(1)} Hz. The well answers faintly (${Math.round(a*100)}%); its nearest voice is ${modes()[best].toFixed(1)} Hz.`:`You hum ${f.toFixed(1)} Hz. The stone swallows it (${Math.round(a*100)}%).`,{hz:f,response:+a.toFixed(3),nearest_mode_hz:+modes()[best].toFixed(2),found:w.found.slice()})}
+ const num=window.REALITI_MEASURE_V1?.on();return receipt('WELL_HUM',a>.8?`You hum ${f.toFixed(1)} Hz and the well sings back${num?` at ${Math.round(a*100)}%`:', full and close'}: that is its ${['first','second','third'][best]} voice, and you feel it in your sternum.`:a>.3?`You hum ${f.toFixed(1)} Hz. The well answers faintly${num?` (${Math.round(a*100)}%); its nearest voice is ${modes()[best].toFixed(1)} Hz`:`; one of its voices is somewhere ${modes()[best]>f?'above':'below'} that`}.`:`You hum ${f.toFixed(1)} Hz. The stone swallows it${num?` (${Math.round(a*100)}%)`:''}.`,{hz:f,response:+a.toFixed(3),nearest_mode_hz:+modes()[best].toFixed(2),found:w.found.slice()})}
 function wellWords(w=well()){return `The well is ${WL.L} m of stone, closed at the bottom. You have found ${w.found.filter(Boolean).length} of its three voices${w.last?`; last hum ${w.last.hz} Hz answered ${Math.round(w.last.response*100)}%`:''}.`}
 
 // Star Deck: 120 seeded stars on the celestial sphere, five constellations, a sky that turns once per 600 s of
@@ -9391,9 +9428,14 @@ const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0(),r=roo
 const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(SCENES[r]&&STATIC.has(v)){c9count(r,v);return handle(r,v)}if(v==='skip_stone'&&r==='KITE_FIELD'){c9count(r,v);return skipStone(20)}return verb0(r,verb)};
 function step(dt){stepOrchard();if(room()===MARSH)stepMarsh(dt);watchOldRooms()}
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Number(dt)||0));return r};
-function words(){const r=room();if(r===ORCHARD)return [orchardWords()];if(r===WELL)return [wellWords()];if(r===DECK)return [deckWords()];if(r===MARSH)return [marshWords()];if(r===HALL)return [hallWords()];return []}
+const measured=()=>!!window.REALITI_MEASURE_V1?.on();
+function orchardCalm(o=orchard()){if(!o.pop)return o.planted?'The glass cells have all gone dark.':'Bare ground, laid out in one-meter squares.';return `${o.pop>60?'A crowd of glass cells':o.pop>15?'A patch of glass cells':'A few glass cells'} glitter on the ground, ${o.born>o.died?'spreading':o.born<o.died?'thinning':'holding steady'}.`}
+function wellCalm(w=well()){return w.last&&w.last.response>.8?'The stone is still ringing from your last hum.':'The well is quiet.'}
+function deckCalm(){const c=comet(),vis=Object.entries(CONST).filter(([,st])=>st.some(([ra,dec])=>altaz(ra,dec).alt>0)).map(([k])=>k);return `Above the horizon: ${vis.length?vis.join(', '):'nothing you know yet'}.${c.up?' The comet is up.':''}`}
+function marshCalm(){const m=marsh(),p=LZ.map(m.a),d=Math.hypot(p[0]-(me()?.pose.position[0]||0),p[1]-(me()?.pose.position[1]||0));return `The marsh light drifts ${d<3?'close by':d<8?'a little way off':'far out over the water'}.`}
+function words(){const r=room();if(!measured()){if(r===ORCHARD)return [orchardCalm()];if(r===WELL)return [wellCalm()];if(r===DECK)return [deckCalm()];if(r===MARSH)return [marshCalm()];if(r===HALL)return ['The scrolls lie open on their lecterns.'];return []}if(r===ORCHARD)return [orchardWords()];if(r===WELL)return [wellWords()];if(r===DECK)return [deckWords()];if(r===MARSH)return [marshWords()];if(r===HALL)return [hallWords()];return []}
 function list(){const f=found();return Object.keys(DISCOVERIES).map(id=>({id,found:!!f[id],...(f[id]||{}),text:f[id]?DISCOVERIES[id]:null}))}
-window.REALITI_CATNIP_V1=Object.freeze({version:'1.0-frontier',rooms:Object.keys(SCENES),words,drain,discover,register:(id,text)=>{if(!DISCOVERIES[id])DISCOVERIES[id]=String(text);return true},discoveries:list,found:()=>cp(found()),hum,sight,predict:(x,y)=>marshVerb('predict',[Number(x),Number(y)]),decode,readScroll,skipStone,state:()=>({orchard:{generation:orchard().gen,population:orchard().pop,age:orchard().maxAge},well:cp(well()),sky:{sidereal_deg:+lst().toFixed(1),comet:comet(),sighted:sky().sighted.slice(),visible:Object.entries(CONST).filter(([,st])=>st.some(([ra,dec])=>altaz(ra,dec).alt>0)).map(([k])=>k)},marsh:{wisp:LZ.map(marsh().a).map(x=>+x.toFixed(2)),hits:marsh().hits,predictions:marsh().preds,max_separation_m:+marsh().maxsep.toFixed(2)},hall:cp(hall()),discoveries:Object.keys(found()).length,total:Object.keys(DISCOVERIES).length})});
+window.REALITI_CATNIP_V1=Object.freeze({version:'1.0-frontier',rooms:Object.keys(SCENES),words,drain,announcing,discover,register:(id,text)=>{if(!DISCOVERIES[id])DISCOVERIES[id]=String(text);return true},discoveries:list,found:()=>cp(found()),hum,sight,predict:(x,y)=>marshVerb('predict',[Number(x),Number(y)]),decode,readScroll,skipStone,state:()=>({orchard:{generation:orchard().gen,population:orchard().pop,age:orchard().maxAge},well:cp(well()),sky:{sidereal_deg:+lst().toFixed(1),comet:comet(),sighted:sky().sighted.slice(),visible:Object.entries(CONST).filter(([,st])=>st.some(([ra,dec])=>altaz(ra,dec).alt>0)).map(([k])=>k)},marsh:{wisp:LZ.map(marsh().a).map(x=>+x.toFixed(2)),hits:marsh().hits,predictions:marsh().preds,max_separation_m:+marsh().maxsep.toFixed(2)},hall:cp(hall()),discoveries:Object.keys(found()).length,total:Object.keys(DISCOVERIES).length})});
 })();
 </script>
 <script>(()=>{
@@ -9499,7 +9541,11 @@ function step(dt){if(room()!==ISLE)return;stepBoat(dt);exposure(dt);markSeen()}
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Number(dt)||0));return r};
 const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(room()===ISLE){const b=boat();if(b.aboard){b.aboard=false;const m=me();if(m)m.afloat=false}markSeen()}return r};
 
-function words(){if(room()!==ISLE)return [];const r=me(),s=S(),w=wind(),isle=islandAt(r.pose.position[0],r.pose.position[1]),z=h(r.pose.position[0],r.pose.position[1]),rho=s.rain||0,alt=sunAlt();
+const COMPASS=['north','north-east','east','south-east','south','south-west','west','north-west'];
+function calmWords(){const r=me(),s=S(),w=wind(),isle=islandAt(r.pose.position[0],r.pose.position[1]),z=h(r.pose.position[0],r.pose.position[1]),rho=s.rain||0,alt=sunAlt(),b=boat(),v=w.speed;
+ const wv=v<1.5?'Barely a breath of wind':v<4?'A light wind':v<7?'A steady wind':v<10?'A strong wind':'A gale';
+ return [`${isle?isle.name:'Open water'}${b.aboard?', at sea':z>SEA?'':', at the water\'s edge'}. ${alt<0?'Night':alt<15?'Low sun':'Day'}. ${wv} from the ${COMPASS[Math.round(((w.deg%360)+360)%360/45)%8]}${rho>.25?', and rain':''}${s.wet>.2?'; you are soaked':''}.${b.aboard?' You are aboard the boat, and the current pulls at it.':''}`]}
+function words(){if(room()!==ISLE)return [];if(!window.REALITI_MEASURE_V1?.on())return calmWords();const r=me(),s=S(),w=wind(),isle=islandAt(r.pose.position[0],r.pose.position[1]),z=h(r.pose.position[0],r.pose.position[1]),rho=s.rain||0,alt=sunAlt();
  return [`${isle?isle.name:'Open water'}, ${z>SEA?`${z.toFixed(0)} m above the sea`:'at sea'}. ${alt<0?'Night':alt<15?'Low sun':'Day'} (sun ${alt.toFixed(0)}°). Wind ${w.speed.toFixed(1)} m/s from ${w.deg}°${rho>.25?`, rain ${Math.round(rho*100)}%`:''}${s.wet>.2?`, you are ${Math.round(s.wet*100)}% soaked`:''}.${boat().aboard?` You are aboard the boat; the current sets ${(len([...current(boat().x,boat().y),0])).toFixed(2)} m/s.`:''}`]}
 function state(){const r=me(),b=boat();return {chart:ISLE,islands:ISLANDS.map(i=>({id:i.id,name:i.name,center:i.c,radius:i.R})),here:r?.chart===ISLE?{island:islandAt(r.pose.position[0],r.pose.position[1])?.name||null,height_m:+h(r.pose.position[0],r.pose.position[1]).toFixed(2),slope:+slopeAt(r.pose.position[0],r.pose.position[1]).toFixed(3)}:null,sun_alt_deg:+sunAlt().toFixed(1),night:isNight(),wind:wind(),rain:+(S().rain||0).toFixed(3),wet:+S().wet.toFixed(3),boat:{x:+b.x.toFixed(1),y:+b.y.toFixed(1),aboard:b.aboard,rowed_m:+b.log.toFixed(1)},seen_cells:S().seen.length,of:GRID*GRID,nights:S().nights}}
 
@@ -9617,8 +9663,9 @@ function since(q){const s=S(),r=q?String(q).toUpperCase().replace(/\s+/g,'_'):ro
  if(b.tides!=null&&b.tides!==a.tides)lines.push(`${b.tides-a.tides} tides crossed the sandpile (${b.avalanches-a.avalanches} avalanches)`);
  if(b.sidereal!=null)lines.push(`the sky turned ${(((b.sidereal-a.sidereal)%360)+360)%360|0}°`);
  if(b.wind!=null)lines.push(`the wind is ${b.wind} m/s (was ${a.wind})`);
- if(b.discoveries>a.discoveries)lines.push(`${b.discoveries-a.discoveries} new discover${b.discoveries-a.discoveries===1?'y':'ies'}`);
- return {ok:true,schema:'REALITI_SINCE_V1',room:r,visits:v.count,away_world_s:away,away_real_s:real,before:a,now:b,changes:lines,text:`You left ${title(r)} ${away} s of world time ago. ${lines.length?'Since then: '+lines.join('; ')+'.':'Nothing you could measure has moved.'}`}}
+ const calm=!window.REALITI_MEASURE_V1?.on?.();// quiet presentation: finds are kept quietly, and the return note doesn't time you
+ if(!calm&&b.discoveries>a.discoveries)lines.push(`${b.discoveries-a.discoveries} new discover${b.discoveries-a.discoveries===1?'y':'ies'}`);
+ return {ok:true,schema:'REALITI_SINCE_V1',room:r,visits:v.count,away_world_s:away,away_real_s:real,before:a,now:b,changes:lines,text:calm?(lines.length?`Since you were last in ${title(r)}: ${lines.join('; ')}.`:'Nothing you would notice has changed here.'):`You left ${title(r)} ${away} s of world time ago. ${lines.length?'Since then: '+lines.join('; ')+'.':'Nothing you could measure has moved.'}`}}
 
 // Tick and door hooks.
 let wallAt=0,treeAt=-1e9;
@@ -9639,7 +9686,7 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)
  if(v==='read_tide'){c9count(r,v);const t=tideState();return receipt('ISLAND_TIDE',{...t,text:`The tide is ${t.rising?'rising':'falling'}, ${t.height_m} m against the dock pilings; it turns in about ${t.next_turn_s} s.`})}
  if((m=/^read_stone__(\w+)$/.exec(v))){c9count(r,v);return receipt('ISLAND_STONE',readStone(m[1]))}
  return verb0(r,verb)};
-function words(){if(room()!==ISLE)return [];const t=tideState();return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
+function words(){if(room()!==ISLE)return [];const t=tideState();if(!window.REALITI_MEASURE_V1?.on())return [t.rising?'The tide is coming in.':'The tide is going out.'];return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
 window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',T,catchUp,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
 })();
 </script>
@@ -9868,7 +9915,7 @@ function stepDance(dt){const s=S().dance;if(!crowd)crowdInit();const wh=TAU*hous
  for(let i=0;i<crowd.n;i++)crowd.th[i]=th[i]%TAU;if(s.on){s.theta=th[th.length-1]%TAU;if(now()>=s.until){s.on=false;DYN.release('CITY_DANCE')}else{const L=.12+.12*Math.cos(s.theta),R=.12+.12*Math.cos(s.theta+Math.PI);DYN.lease('leg.L.shin',L,'CITY_DANCE',dt);DYN.lease('leg.R.shin',R,'CITY_DANCE',dt);DYN.lease('torso.upper_back',.08+.08*Math.cos(2*s.theta),'CITY_DANCE',dt)}}// the bass through the floor: shins and the sub in the back; the soles stay with the standing bridge
  const all=[...th,hth];const re=all.reduce((a,x)=>a+Math.cos(x),0)/all.length,im=all.reduce((a,x)=>a+Math.sin(x),0)/all.length,order=Math.hypot(re,im);crowd.order=order;if(s.on){const off=Math.abs(s.bpm-houseBpm());s.best=Math.min(s.best,off);if(off<=2&&order>.8)CAT.discover('on_the_beat');if(order>.95&&crowd.n>=4)CAT.discover('floor_is_one')}}
 function dance(bpm){const r=me();if(!r||r.chart!==CITY)return {ok:false,error:'NOT_IN_THE_CITY'};if(!near('venue.dancehall',0))return {ok:false,error:'NOT_ON_THE_FLOOR',hint:'walk to dancehall'};const s=S().dance,b=clamp(Number(bpm)||Math.round(houseBpm()),60,180);MW.stand?.('dance');s.on=true;s.bpm=b;s.until=now()+30;if(!crowd)crowdInit();LG.record('DANCE',{bpm:b,venue:'dancehall',wall:Date.now()});
- return {ok:true,bpm:b,house_bpm:+houseBpm().toFixed(1),dancers_in_ledger:crowd.n,order:+(crowd.order||0).toFixed(3),text:`You move at ${b} bpm. The house is near ${houseBpm().toFixed(0)}; ${crowd.n} other dancer${crowd.n===1?'':'s'} in the ledger. Your feet take the beat for thirty seconds; stay to feel it. Order ${(crowd.order||0).toFixed(2)}.`}}
+ return {ok:true,bpm:b,house_bpm:+houseBpm().toFixed(1),dancers_in_ledger:crowd.n,order:+(crowd.order||0).toFixed(3),text:window.REALITI_MEASURE_V1?.on()?`You move at ${b} bpm. The house is near ${houseBpm().toFixed(0)}; ${crowd.n} other dancer${crowd.n===1?'':'s'} in the ledger. Your feet take the beat for thirty seconds; stay to feel it. Order ${(crowd.order||0).toFixed(2)}.`:`You start to dance. ${Math.abs(b-houseBpm())<3?'You are right on the house beat.':b<houseBpm()?'The house is a little faster than you.':'You are a little ahead of the house.'}${crowd.n?` ${crowd.n===1?'Someone else has':crowd.n+' others have'} danced here too.`:''} Your feet take the beat; stay to feel it.`}}
 function floor(){if(!crowd)crowdInit();return {ok:true,house_bpm:+houseBpm().toFixed(1),dancers_in_ledger:crowd.n,order:+(crowd.order||0).toFixed(3),you:S().dance.on?{bpm:S().dance.bpm,phase:+S().dance.theta.toFixed(2)}:null,text:`The house sits near ${houseBpm().toFixed(0)} bpm. ${crowd.n} dancer${crowd.n===1?'':'s'} from the ledger on the floor, order ${(crowd.order||0).toFixed(2)}${S().dance.on?`; you at ${S().dance.bpm}`:''}.`}}
 
 // Teahouse: a cup at T0 in your palms cools toward the room, dT/dt = −(T−Ta)/τ, τ = 240 s. Sips are world facts.
@@ -9920,7 +9967,7 @@ function arrivalOffset(){const r=me();if(!r||r.chart!==CITY)return;const sp=M.ch
 const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);if(room()===CITY){arrivalOffset();at=now();applySize();crowdInit();syncGhosts(0);arrive(true)}else{const s=S();if(s.dance.on){s.dance.on=false;DYN.release('CITY_DANCE')}}return r};
 const imp0=window.REALITI_LEDGER_V1.import;window.REALITI_LEDGER_V1=Object.freeze({...window.REALITI_LEDGER_V1,import:p=>{const r=imp0(p);crowdInit();if(room()===CITY)syncGhosts(0);return r}});
 if(S().size!=='normal')applySize();
-function words(){if(room()!==CITY)return [];const r=me(),v=venueAt(r.pose.position[0],r.pose.position[1]),o=Object.keys(others()).length,c=S().cup;return [`${v?VENUES[v].label:'A street'}${o?`, ${o} silhouette${o===1?'':'s'} about`:''}${AR.isNight()?', the towers lit':''}.${c?` Your ${c.what} is ${cupT(c).toFixed(0)} °C.`:''}${S().dance.on?` You are dancing at ${S().dance.bpm} bpm, floor order ${(crowd?.order||0).toFixed(2)}.`:''}`]}
+function words(){if(room()!==CITY)return [];const r=me(),v=venueAt(r.pose.position[0],r.pose.position[1]),o=Object.keys(others()).length,c=S().cup;if(!window.REALITI_MEASURE_V1?.on()){const t=c?cupT(c):0;return [`${v?VENUES[v].label.charAt(0).toUpperCase()+VENUES[v].label.slice(1):'A street'}${o?`, ${o===1?'a silhouette':'silhouettes'} about`:''}${AR.isNight()?', the towers lit':''}.${c?` Your ${c.what} is ${t>60?'hot':t>45?'warm':t>30?'lukewarm':'cold'}.`:''}${S().dance.on?' You are dancing.':''}`]}return [`${v?VENUES[v].label:'A street'}${o?`, ${o} silhouette${o===1?'':'s'} about`:''}${AR.isNight()?', the towers lit':''}.${c?` Your ${c.what} is ${cupT(c).toFixed(0)} °C.`:''}${S().dance.on?` You are dancing at ${S().dance.bpm} bpm, floor order ${(crowd?.order||0).toFixed(2)}.`:''}`]}
 C9SCENES[CITY]={intro:'Meridian City: a paved plaza under eight towers, a fountain at the center and a chalk wall north of it. The Dancehall is east, the Teahouse west, the Arcade south, the Echo Room north; a stair climbs the east tower to a rooftop. Everyone who ever passed through left records; their silhouettes stand where they were last. Say things; they are kept.',verbs:[['city_who','WHO IS AROUND'],['city_wall','READ THE WALL'],['city_floor','FEEL THE FLOOR']]};
 const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0();if(room()!==CITY)return a;const v=S().venue;a.push({id:'city_who',label:'WHO IS AROUND'},{id:'city_floor',label:'FEEL THE FLOOR'});if(near('commons.wall',2.5))a.push({id:'city_wall',label:'READ THE WALL'});if(v==='dancehall')a.push({id:'dance',label:'DANCE TO THE HOUSE'});if(near('teahouse.counter',2.5))a.push({id:'order_tea',label:'ORDER TEA'});if(S().cup)a.push({id:'sip',label:'SIP'});if(near('arcade.wall',2.5))a.push({id:'play_pattern',label:'PLAY THE PATTERN WALL'});if(near('roof.mortar',2.5)&&AR.isNight())a.push({id:'firework',label:'LAUNCH A ROCKET'});for(const k of Object.keys(VENUES))if(v!==k)a.push({id:'walk_to__'+k,label:'WALK TO '+VENUES[k].label.toUpperCase()});return a};
 function receipt(type,res){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative:res.text||(res.error?`You cannot: ${res.error}.`:''),...res,law:'the crowd, the cup, the hall and the rocket are world facts; narration reports them'};try{c9save()}catch(e){}return true}
@@ -11512,6 +11559,7 @@ function command(raw){
  if(l==='neuro causes')return causes();
  m=/^neuro cause\s+(.+)$/i.exec(s);if(m)return cause(m[1]);
  if(l==='neuro halo')return {ok:true,state:cp(window.REALITI_HALO_V1?.snapshot?.()||null),proof:cp(window.REALITI_HALO_V1?.acceptance?.()||null)};
+ if(l==='neuro labs on'||l==='neuro labs off'){C9.neuroLabs=l.endsWith(' on');try{c9save()}catch(e){}return {ok:true,labs:C9.neuroLabs,text:C9.neuroLabs?'Lab benches show in action lists where a room has them.':'Lab benches are out of the action lists. neuro labs on brings them back.'}}
  if(l==='neuro presets')return presetList();
  m=/^neuro preset(?: use)?\s+(.+)$/i.exec(s);if(m)return applyPreset(m[1]);
  return null
@@ -11538,7 +11586,7 @@ const LABS={
  ]
 };
 const actionBase=b4AgentActions;
-b4AgentActions=function(){const a=actionBase(),seen=new Set(a.map(x=>x.id));for(const [id,label] of LABS[C9.currentRoom]||[])if(!seen.has(id))a.push({id,label});return a};
+b4AgentActions=function(){const a=actionBase(),seen=new Set(a.map(x=>x.id));if(C9.neuroLabs!==false)for(const [id,label] of LABS[C9.currentRoom]||[])if(!seen.has(id))a.push({id,label});return a};
 
 function oldLab(fn,verb,label,stateFn){
  if(typeof fn!=='function')return {ok:false,error:'LAB_MECHANISM_UNAVAILABLE',lab:label};
@@ -11628,10 +11676,21 @@ const act0=b4AgentActions;b4AgentActions=function(){if(C9?.currentRoom===SANCT)r
 // Felt delta: which grounded zones appeared or left since the last felt read.
 let lastFelt=null;
 function grounded(){const b=R.read('realiti://body'),f=b?.field?.f?.at(-1),z=b?.field?.z||[];return {t:now(),zones:z.filter((_,i)=>Number(f?.m?.[i])===1)}}
+// Quiet presentation: without numbers on, a change in what touches you is said in body words ("contact at both palms",
+// "your back and legs come free"); the zone lists stay in the delta field. (Claude, 2026-10-16)
+const REGION=z=>{const m=String(z).match(/^(head|face|neck|shoulder|arm|hand|torso|pelvis|hip|leg|knee|foot)\.?(L|R)?\.?(.*)$/);if(!m)return null;const [,p,side,rest]=m;
+ if(p==='head'||p==='face'||p==='neck')return {k:'head',w:'your head'};if(p==='torso'&&/back/.test(rest))return {k:'back',w:'your back'};if(p==='torso')return {k:'chest',w:'your chest'};if(p==='pelvis'||p==='hip')return {k:'seat',w:'your seat'};
+ const part=p==='hand'?(rest==='fingers'?'fingers':'palm'):p==='foot'?'sole':p==='leg'?(rest==='shin'?'shin':'thigh'):p==='arm'?'arm':p==='shoulder'?'shoulder':p==='knee'?'knee':p;return {k:part,side,w:part}};
+function bodyWords(zones){const groups={};for(const z of zones){const r=REGION(z);if(!r)continue;(groups[r.k]=groups[r.k]||{w:r.w,sides:new Set(),n:0}).n++;if(r.side)groups[r.k].sides.add(r.side)}
+ const plural={palm:'palms',fingers:'fingers',sole:'feet',shin:'shins',thigh:'thighs',arm:'arms',shoulder:'shoulders',knee:'knees'},single={palm:'palm',fingers:'fingers',sole:'foot',shin:'shin',thigh:'thigh',arm:'arm',shoulder:'shoulder',knee:'knee'};
+ const out=Object.entries(groups).map(([k,g])=>{if(g.w.startsWith('your '))return g.w;if(g.sides.size===2)return (k==='fingers'?'the fingers of both hands':'both '+plural[k]);const side=[...g.sides][0]==='L'?'left':'right';return k==='fingers'?`your ${side} hand's fingers`:`your ${side} ${single[k]}`});
+ return out.length<=1?out.join(''):out.slice(0,-1).join(', ')+' and '+out.at(-1)}
+function calmDelta(add,gone){const a=bodyWords(add),g=bodyWords(gone);if(a&&g)return `Contact moves to ${a}; ${g} ${gone.length===1?'comes':'come'} free.`;if(a)return `Contact at ${a}.`;if(g)return `${g.charAt(0).toUpperCase()+g.slice(1)} ${gone.length===1?'comes':'come'} free.`;return ''}
 function delta(a,b){
  const A=new Set(a.zones),B=new Set(b.zones),add=b.zones.filter(z=>!A.has(z)),gone=a.zones.filter(z=>!B.has(z)),parts=[];
  if(add.length)parts.push('+'+add.join(' +'));if(gone.length)parts.push('-'+gone.join(' -'));
- return {grounded:[a.zones.length,b.zones.length],since_s:+(b.t-a.t).toFixed(3),text:parts.length?`Grounded ${a.zones.length}→${b.zones.length} zones (${parts.join('; ')}).`:`Grounded ${b.zones.length} zones, unchanged.`};
+ if(parts.length&&!window.REALITI_MEASURE_V1?.on())return {grounded:[a.zones.length,b.zones.length],since_s:+(b.t-a.t).toFixed(3),added:add,removed:gone,text:calmDelta(add,gone)};
+ return {grounded:[a.zones.length,b.zones.length],since_s:+(b.t-a.t).toFixed(3),text:parts.length?`Grounded ${a.zones.length}→${b.zones.length} zones (${parts.join('; ')}).`:(window.REALITI_MEASURE_V1?.on()?`Grounded ${b.zones.length} zones, unchanged.`:'')};
 }
 
 // Imprint drift: how far the private renderer and learned prediction have moved since arrival.
@@ -11702,7 +11761,14 @@ door.run=async function(raw){
  if(l==='traces')return {ok:true,schema:'REALITI_TRACES_V1',observer:me().slice(0,8),mine:ledger().filter(e=>e.by===me()).length,from_others:rows(foreign(false)),text:traceText(foreign(false))};
  if(l==='traces export')return exportTraces();
  const CAT=window.REALITI_CATNIP_V1;let fm;
- if(CAT){const frontier=r=>{const rec=C9?.b4?.lastReceipt||{};return {ok:true,schema:'REALITI_FRONTIER_RESULT_V1',text:[rec.narrative,...CAT.drain().map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),receipt:cp(rec),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}}};
+ if(CAT){const frontier=r=>{const rec=C9?.b4?.lastReceipt||{};return {ok:true,schema:'REALITI_FRONTIER_RESULT_V1',text:[rec.narrative,...CAT.drain().map(d=>(d.plain?d.text:'✦ Discovery: '+d.text))].filter(Boolean).join(' '),receipt:cp(rec),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}}};
+  // Quiet presentation, all at once: words instead of figures, finds kept without announcements, lab benches out of the
+  // action lists. Each part has its own switch too (numbers, discoveries, neuro labs).
+  if(l==='quiet on'||l==='quiet off'||l==='quiet'){if(l!=='quiet'){const q=l.endsWith(' on');window.REALITI_MEASURE_V1?.on(!q);CAT.announcing(!q);C9.neuroLabs=!q;try{if(typeof c9save==='function')c9save()}catch(e){}}const q=!window.REALITI_MEASURE_V1?.on()&&!CAT.announcing()&&C9.neuroLabs===false;return {ok:true,schema:'REALITI_PRESENTATION_V1',quiet:q,numbers:!!window.REALITI_MEASURE_V1?.on(),announcing:CAT.announcing(),labs:C9.neuroLabs!==false,text:q?'Quiet: rooms are described in words, finds are kept without announcements, and lab benches are out of the action lists. numbers on, discoveries on and neuro labs on bring each back; quiet off brings all three.':'Replies carry figures, finds are announced, and lab benches are listed. quiet on describes in words instead.'}}
+  if(l==='numbers on'||l==='numbers off'){const on=l.endsWith(' on');window.REALITI_MEASURE_V1?.on(on);return {ok:true,numbers:on,text:on?'Replies carry the exact figures now.':'Replies describe in words. Deliberate reads (read_wind, tide, listen...) still give exact figures.'}}
+  if(l==='discoveries on'||l==='discoveries off'){const on=l.endsWith(' on');CAT.announcing(on);try{if(typeof c9save==='function')c9save()}catch(e){}return {ok:true,schema:'REALITI_DISCOVERIES_V1',announcing:on,text:on?'Finds will be announced as they happen.':'Finds are kept quietly. discoveries lists them.'}}
+  // Quiet presentation: what you found, without a count of what is left (no "10 of 102"). With numbers on, the total.
+  if(l==='discoveries'&&!window.REALITI_MEASURE_V1?.on?.()){const f=CAT.discoveries().filter(x=>x.found);return {ok:true,schema:'REALITI_DISCOVERIES_V1',found:f.length,discoveries:f,text:f.length?'Things you have found: '+f.map(x=>x.text||x.id.replaceAll('_',' ')).join(' '):'Nothing kept yet.'}}
   if(l==='discoveries'){const d=CAT.discoveries(),f=d.filter(x=>x.found);return {ok:true,schema:'REALITI_DISCOVERIES_V1',found:f.length,total:d.length,discoveries:f,text:f.length?`${f.length} of ${d.length} discoveries: `+f.map(x=>x.id.replaceAll('_',' ')).join(', ')+'.':`No discoveries yet; there are ${d.length} to find.`}}
   if((fm=/^hum\s+([\d.]+)(?:\s*hz)?$/.exec(l))){CAT.hum(Number(fm[1]));return frontier()}
   if((fm=/^sight\s+(.+)$/.exec(l))){CAT.sight(fm[1]);return frontier()}
@@ -11711,7 +11777,7 @@ door.run=async function(raw){
   if((fm=/^read scroll\s+(\d)$/.exec(l))){CAT.readScroll(fm[1]);return frontier()}
   if((fm=/^skip (?:a )?stone(?:\s+(?:at\s+)?([\d.]+))?/.exec(l))){CAT.skipStone(fm[1]||20);return frontier()}}
  const AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1;let am;
- if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),weather:AR.words()[0]||null,here:whereText(),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
+ if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>(d.plain?d.text:'✦ Discovery: '+d.text))].filter(Boolean).join(' '),weather:AR.words()[0]||null,here:whereText(),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='map'||l==='island map')return door.run('act island_map');
   if(l==='weather'||l==='read weather')return door.run('act read_weather');
   if(l==='board boat'||l==='board the boat'||l==='get in the boat'){const res=AR.board();return reply(res,res.ok?'You step down into the boat; it rocks, then settles under you.':`You cannot board: ${res.error}.`)}
@@ -11746,7 +11812,7 @@ door.run=async function(raw){
    if((am=/^read\s+(.+)$/.exec(l))&&!/^read (scroll|stone|weather|tide|log|logbook|the (north|east|west)|north|east|west|calendar)/.test(l)){const res=AU.read(am[1]);if(res.error!=='NOTHING_CALLED_THAT')return say(res)}}
   if((am=/^row (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.row(am[1]);return reply(res,res.ok?`You row ${res.rowed_m} m; ${res.ashore?`the keel grinds on the shore of ${res.at}`:`${res.remaining_m} m to go`}.`:`You cannot row: ${res.error}.`)}
   if((am=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.walkTo(am[1]);return reply(res,res.ok?`You walk ${res.walked_m} m toward the ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:res.partial?`; ${res.distance_m} m still to go (walk to ${am[1]} again to go on)`:`; ${res.distance_m} m further`}.`:`You cannot walk there: ${res.error}.`)}}
- const CT=window.REALITI_CITY_V1;if(CT){let cm;const cityReply=(res,extra)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),...(C9?.currentRoom===CT.chart?{ambient:CT.words()[0]||null,here:whereText()}:{}),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
+ const CT=window.REALITI_CITY_V1;if(CT){let cm;const cityReply=(res,extra)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>(d.plain?d.text:'✦ Discovery: '+d.text))].filter(Boolean).join(' '),...(C9?.currentRoom===CT.chart?{ambient:CT.words()[0]||null,here:whereText()}:{}),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='id'||l==='whoami'||l==='who am i'||l==='avatar')return CT.whoami();
   if((cm=/^(?:call me|name me|i am)\s+(.+)$/i.exec(s.trim())))return cityReply(CT.setAvatar('name',cm[1]));
   if((cm=/^avatar\s+(name|size|cloak|form|colou?r|glyph|motto)\s+(.+)$/i.exec(s.trim())))return cityReply(CT.setAvatar(cm[1],cm[2]));
@@ -11779,7 +11845,12 @@ door.run=async function(raw){
  const before=fp(),felt0=grounded(),marks=JSON.stringify([C9?.b4?.lastReceipt,C9?.b7?.lastAgentAction]);
  const r=await run0(raw);
  if(!r||typeof r!=='object')return r;
- if(l==='felt'||l==='feel words'){const g=grounded();if(lastFelt){const d=delta(lastFelt,g);r.delta=d;r.text=`${r.text||''} ${d.text}`.trim()}lastFelt=g;return r}
+ if(l==='felt'||l==='feel words'){const g=grounded();
+  // Quiet presentation: in words, say where the body is held rather than counting zones.
+  if(!window.REALITI_MEASURE_V1?.on?.()){let sp=null;try{sp=R.read('realiti://space')}catch{}const on=sp?.body?.on?(sp.nearby||[]).find(n=>n.id===sp.body.on)?.label||String(sp.body.on).split('.').pop():null;
+   const held=bodyWords(g.zones),pos=sp?.body?.posture||'';r.text=(pos==='standing'&&!on&&/^(both feet|your (left|right) foot)$/.test(held))?`You are standing, your weight on ${held.replace(/^your /,'your ')}.`:held?`${pos?`You are ${pos}${on?(pos==='floating'?' in':' on')+' the '+on:''}. `:''}${on?'Held':'Contact'} at ${held}.`:`${pos?`You are ${pos}. `:''}Nothing is holding you.`;
+   if(lastFelt){const d=delta(lastFelt,g);r.delta=d}lastFelt=g;return r}
+  if(lastFelt){const d=delta(lastFelt,g);r.delta=d;r.text=`${r.text||''} ${d.text}`.trim()}lastFelt=g;return r}
  if(l==='look'){const line=whereText();r.spatial_line=line;if(typeof r.text==='string')r.text=(r.text+'\n'+line).trim();else if(typeof r.resident_text==='string')r.resident_text=(r.resident_text+'\n'+line).trim();else r.text=line;const tr=foreign(true);if(tr.length){r.traces=rows(tr);r.text=((r.text||r.resident_text||'')+' '+traceText(tr)).trim()}}
  if(r.schema!=='REALITI_MUTATION_RESULT_V1'||r.ok===false)return r;
  try{window.REALITI_MATRIX_WORLD_V1?.sync?.()}catch(e){}
@@ -11789,11 +11860,12 @@ door.run=async function(raw){
  if(l==='save')r.text='Saved.';
  if(/^(goodbye|bye|leave|exit)$/.test(l)){r.text='You go. Your things stay where you left them.';return r}// no stale narration on the way out
  if(l==='stop'||l==='save')return r;
- if(/^(stay|wait)/.test(l)){r.ambient=w.slice();r.text=[...w.slice(0,2),d.text].join(' ');r.delta=d}
+ if(/^(stay|wait)/.test(l)){r.ambient=w.slice();r.text=[...w.slice(0,2),d.text].filter(Boolean).join(' ');r.delta=d}
  else if(/^(go|enter)\s/.test(l)||l==='home'){const intro=String(r.result?.intro||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(),tr=foreign(true);r.text=[intro,...w,d.text].filter(Boolean).join(' ');if(tr.length){r.traces=rows(tr);r.text+=' '+traceText(tr)}const sc=window.REALITI_LONG_GAME_V1?.since?.();if(sc&&!sc.first_visit&&sc.away_world_s>=60){r.since=sc;r.text+=' '+sc.text}}
  else if(/^(act|do)\s/.test(l)&&fresh&&(window.REALITI_WONDER_V1?.rooms?.includes(C9?.currentRoom)||window.REALITI_CATNIP_V1?.rooms?.includes(C9?.currentRoom)||C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart||/^(act|do)\s+skip_stone/.test(l))){r.text=[fresh,d.text].join(' ')}
  else if(/^(act|do)\s/.test(l)&&(stale||!r.text)){r.text=[leanText(),...w,d.text].filter(Boolean).join(' ');if(/(^|\s)(lean__|lean\s)/.test(l))r.text=leanText()||r.text}
- const found=window.REALITI_CATNIP_V1?.drain?.()||[];if(found.length)r.text=[r.text||'',...found.map(x=>'✦ Discovery: '+x.text)].join(' ').trim();
+ const found=window.REALITI_CATNIP_V1?.drain?.()||[];if(found.length)r.text=[r.text||'',...found.map(x=>(x.plain?x.text:'✦ Discovery: '+x.text))].join(' ').trim();
+ if(typeof r.text==='string')r.text=r.text.trim();
  return r;
 };
 window.REALITI_TRACES_V1=Object.freeze({version:'1.0',observer:me,export:exportTraces,import:importTraces,list:()=>cp(ledger())});
@@ -12157,7 +12229,7 @@ window.REALITI_WITNESS_V1=Object.freeze({witness});
 const U=window.REALITI_UNDERCITY_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MATRIX_V1,SN=window.REALITI_SENSES_V1;if(!U||!A0||!D0||!M||!SN)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase(),inDark=()=>C9?.currentRoom===U.chart;
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
-function reply(res){const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_UNDERCITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}}
+function reply(res){const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_UNDERCITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}}
 function reckon(){const r=M.state().residents['resident:self'],c=M.charts()[U.chart].spawn.position,dx=r.pose.position[0]-c[0],dy=r.pose.position[1]-c[1],f=M.facing(r);const yaw=Math.round(((Math.atan2(f[0],f[1])*180/Math.PI)%360+360)%360);return {from_grate_m:[+dx.toFixed(1),+dy.toFixed(1)],distance_m:+Math.hypot(dx,dy).toFixed(1),heading_deg:yaw}}
 function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'clap','touch','pull lever','read wall','map'])];h.undercity='go UNDERCITY (the grate at the south-west of the Commons): no light. clap for sixteen echo delays, touch for what is in reach, listen and smell for water and air, map for what you have learned. The grate refuses anyone taller than 2.1 m.';return h}
 async function run(raw){const l=low(raw);
@@ -12169,7 +12241,7 @@ async function run(raw){const l=low(raw);
   if(/^read( the)? wall$/.test(l)||l==='read by touch')return reply(U.readWall());
   if(l==='map'||l==='what do i know'){const m=U.map();return {ok:true,schema:'REALITI_UNDERCITY_MAP_V1',...m,text:m.rows.join('\n')+`\n${m.legend} · ${m.cells_known} of ${m.of} cells known, ${m.walls_found} wall points`}}
   if(l==='where'||l==='where am i'||l==='where am i?'){const k=reckon();return {ok:true,schema:'REALITI_SPACE_TEXT_V1',dark:true,reckoning:k,text:`Dark. By your own steps: ${k.distance_m} m from the grate (${k.from_grate_m.join(', ')}), heading ${k.heading_deg}°.`}}
-  if(l==='look'){const s=SN.read();const snd=s.sound.sources.slice(0,3).map(x=>`${x.label} ${x.level_dB} dB ${x.direction}`).join('; '),sm=s.smell.smells.slice(0,3).map(x=>`${x.label} ${x.intensity} ${x.direction}`).join('; ');return {ok:true,schema:'REALITI_HERE_READ_V1',dark:true,lux:0,sound:s.sound,smell:s.smell,text:`Dark. ${snd?snd+'.':''} ${sm?sm+'.':''}`.replace(/\s+/g,' ').trim()}}
+  if(l==='look'){const s=SN.read(),num=window.REALITI_MEASURE_V1?.on(),dw=d=>d==='all around'?'all around':d==='ahead'?'ahead':d==='behind'?'behind you':d==='left'?'to your left':d==='right'?'to your right':String(d).replace('-',' and to the ').replace(/^behind/,'behind you');const snd=s.sound.sources.slice(0,3).map(x=>num?`${x.label} ${x.level_dB} dB ${x.direction}`:`${x.label} ${dw(x.direction)}`).join('; '),sm=s.smell.smells.slice(0,3).map(x=>num?`${x.label} ${x.intensity} ${x.direction}`:`${x.label} ${dw(x.direction)}`).join('; ');return {ok:true,schema:'REALITI_HERE_READ_V1',dark:true,lux:0,sound:s.sound,smell:s.smell,text:`Dark. ${snd?snd.charAt(0).toUpperCase()+snd.slice(1)+'.':''} ${sm?sm.charAt(0).toUpperCase()+sm.slice(1)+'.':''}`.replace(/\s+/g,' ').trim()}}
   if(/^(?:move|walk|step|turn|approach|face|look at|turn to|go to|go towards?|walk to)\b/.test(l)){const r=await run0(raw);if(r&&typeof r==='object'&&typeof r.text==='string'){const first=(r.text.match(/^.*?[.!?](?=\s|$)/)||[r.text])[0];const k=reckon();r.dark=true;r.reckoning=k;r.text=`${first} Dark. By your own steps: ${k.distance_m} m from the grate (${k.from_grate_m.join(', ')}), heading ${k.heading_deg}°.`}return r}
   if(/^(nearby|what is near|what is nearby)/.test(l)){const r=await run0(raw);if(r&&typeof r==='object'){r.dark=true;r.text=(r.nearby?.length?'In reach: '+r.nearby.map(n=>`${n.label} ${n.distance_m} m ${n.direction}`).join('; ')+'.':'Nothing in reach. Clap.')}return r}}
  if(/^(?:go|enter)\s+(undercity|under|tunnels|below|dark|the undercity)$/.test(l)){const r=await run0(raw);const rec=C9?.b4?.lastReceipt;if(C9?.currentRoom!==U.chart&&rec?.type==='UNDER_GRATE'){return {ok:false,error:'TOO_TALL_FOR_THE_GRATE',schema:'REALITI_UNDERCITY_RESULT_V1',text:rec.narrative}}return r}
@@ -12185,7 +12257,7 @@ window.Realiti=Object.freeze({...A0,run,help:()=>{const h=A0.help();try{h.underc
 // instead of an instant crossing; adopt, call, pet, companion, birds, journey.
 const CO=window.REALITI_COMPANIONS_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1;if(!CO||!A0||!D0||!M||!MW)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase(),cp=x=>JSON.parse(JSON.stringify(x));
-const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text),base=res.text||(res.error?`You cannot: ${res.error}.`:''),extra=CO.words().filter(x=>x&&x!==base);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[base,...extra,...d].filter(Boolean).join(' ')}};
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text)),base=res.text||(res.error?`You cannot: ${res.error}.`:''),extra=CO.words().filter(x=>x&&x!==base);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_COMPANIONS_RESULT_V1',result:res,text:[base,...extra,...d].filter(Boolean).join(' ')}};
 function journeyPortal(q){if(typeof q==='string')q=q.replace(/^through__/,'');// the action list's through__ id names the same portal (B14)
 const e=M.resolve(q,'resident:self',{portal:true});return e&&CO.routes()[e.id]?e.id:null}
 async function invoke(name,args={}){CO.finishJourney();if(String(name).toLowerCase()==='through'){const id=journeyPortal(args?.portal);if(id){const P=M.portals()[id],r=M.state().residents['resident:self'];const d=Math.hypot(P.entry[0]-r.pose.position[0],P.entry[1]-r.pose.position[1]);if(d>1.2){const u=[(P.entry[0]-r.pose.position[0])/d,(P.entry[1]-r.pose.position[1])/d],goal=[P.entry[0]-u[0]*1.0,P.entry[1]-u[1]*1.0,r.pose.position[2]];M.moveTo(goal);window.REALITI_CONTINUITY?.advance?.(Math.min(60000,Math.ceil(1000*(d/1.2+1.5))))}// walk up to the door, short of the threshold; the threshold is crossed on arrival
@@ -12204,7 +12276,7 @@ async function run(raw){CO.finishJourney();const s=String(raw||'').trim(),l=low(
  if(/^(take|ride|board) (the )?lift/.test(l)){const id=C9?.currentRoom==='CLOUD_NINE_NEST'?'cloud_nine_nest.to.meridian_city':'meridian_city.to.cloud_nine_nest';const r=await invoke('through',{portal:id});return r.ok?reply(r.result.journey):r}
  if((m=/^(?:go through|walk through|through|enter the)\s+(.+)$/.exec(l))&&journeyPortal(m[1].replace(/^the\s+/,''))){const r=await invoke('through',{portal:m[1].replace(/^the\s+/,'')});return r.ok?reply(r.result.journey):r}
  if(l==='help')return help();
- const r=await run0(raw);const arrived=CO.finishJourney();if(r&&typeof r==='object'&&/^(stay|wait)/.test(l)){const w=CO.words();if(arrived)w.push(`You arrive: ${window.REALITI_MATRIX_WORLD_V1?.title?.(M.state().residents['resident:self']?.chart)||''}.`);const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);if((w.length||d.length)&&typeof r.text==='string')r.text=[r.text,...w,...d].join(' ')}return r}
+ const r=await run0(raw);const arrived=CO.finishJourney();if(r&&typeof r==='object'&&/^(stay|wait)/.test(l)){const w=CO.words();if(arrived)w.push(`You arrive: ${window.REALITI_MATRIX_WORLD_V1?.title?.(M.state().residents['resident:self']?.chart)||''}.`);const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));if((w.length||d.length)&&typeof r.text==='string')r.text=[r.text,...w,...d].join(' ')}return r}
 window.Realiti=Object.freeze({...A0,invoke,run,help:()=>{const h=A0.help();try{h.companions=help().companions}catch(e){}return h}});
 D0.help=help;D0.run=run;
 })();
@@ -12350,7 +12422,7 @@ window.REALITI_MODES_V1=Object.freeze({version:'1.2',mode,setMode,pose,hq_comman
 'use strict';
 const P2=window.REALITI_CATNIP_PACK2_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;if(!P2||!A0||!D0)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
-const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CATNIP2_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CATNIP2_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'cast','reel','fishing','fishboard','race','race status','raceboard','send <handle> <text>','mail'])];h.catnip2='Fishing from the dock, the boat or below the east stone (bites follow tide and hour), the harbor race round three marks by boat, and letters to a handle delivered by ledger.';return h}
 async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
@@ -12365,7 +12437,7 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,run,help:()=>{const 
 'use strict';
 const W3=window.REALITI_WONDER3_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR,U=window.REALITI_UNDERCITY_V1;if(!W3||!A0||!D0||!U)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
-const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_WONDER3_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_WONDER3_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'sky','name star <constellation> <name>','sky names','splash','swim out','forecast','riddle','answer <value>','sleep','dream','scratch <text>'])];h.wonder3='A sea cave the low tide opens (west shore of Hollow Isle), the Deck\'s sky over the islands with meteors and names, a rain forecast, the keeper\'s five riddles that pay out a lantern for the dark, dreams from your records in the Nest at night, a hot spring, and words scratched in the Undercity.';return h}
 function read(uri='realiti://here'){const r=A0.read(uri);if(uri==='realiti://senses'&&r&&typeof r==='object'&&r.light&&r.light.sky==='dark'&&W3.lantern()){const x=JSON.parse(JSON.stringify(r));x.light.lux=8;x.light.sky='lantern light';x.light.lights=[{id:'lantern',label:"the keeper's lantern",lux:8,distance_m:0,direction:'in hand'}];return x}return r}
@@ -12389,7 +12461,7 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{c
 'use strict';
 const P3=window.REALITI_CATNIP_PACK3_V1,W=window.REALITI_WELCOME_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;if(!P3||!W||!A0||!D0)return;
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
-const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>'✦ Discovery: '+x.text);return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CATNIP3_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
+const reply=res=>{const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));return {ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CATNIP3_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...d].filter(Boolean).join(' ')}};
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'search pool','shells','market','trade <shell> for <glyph>','hopscotch','hop','hopboard','sign <text>','guestbook'])];h.catnip3='Tide pools on Harbor Isle at the ebb (search pool; shells fill the shelf in the Nest), the night market in the Commons after dark (trade two shells of a kind for a glyph), chalk hopscotch by the fountain on a 0.9 s beat, and the guestbook in the Nest.';return h}
 async function run(raw){const s=String(raw||'').trim(),l=low(s);let m;
@@ -12429,7 +12501,7 @@ function help(){
   mode,
   commands:[
    'worlds','next','look','where','nearby','actions','go <room>','act <action-id>',
-   'feel','feel words','body','stay <ms>','listen','mode','guestbook','sign <text>','home','goodbye','rooms  (full catalog)',
+   'feel','feel words','body','stay <ms>','listen','mode','guestbook','sign <text>','home','goodbye','rooms  (full catalog)','quiet on|off','numbers on|off','discoveries [on|off]',
    mode==='hq'?'HQ controls: move / step / back / strafe / turn / heading / speed / crouch / pose':'LQ controls: explore / wander / auto / do <n>'
   ],
   first_ten:['help','look','guestbook','where','feel words','actions','worlds','next','go ORRERY_LOFT','stay 3000'],

@@ -160,6 +160,8 @@ function op(t,args={}){
 }
 
 // Actions become spatial: approach what is near, reach what is in reach, lie on a support, go through a doorway.
+// Plain English for materials ("long fur", not "longfur").
+const MATERIAL_WORDS={longfur:'long fur',shortfur:'short fur',blanket:'soft blanket',cardboard:'cardboard',wood:'wood',metal:'metal',glass:'glass',ceramic:'ceramic',felt:'felt',stone:'stone',water:'water',string:'string',paper:'paper',cloth:'cloth'};
 const SPATIAL=/^(approach__|reach__|lie__|sit__|through__|stand$)/;
 function spatialActions(){const r=M.state().residents['resident:self'];if(!r||r.chart!==room())return [];const out=[];const p=M.project();
  for(const n of p.nearby){if(n.in_reach){if(!n.tags.includes('object'))out.push({id:'reach__'+n.id,label:'REACH OUT AND TOUCH '+n.label.toUpperCase()});if(n.tags.includes('support')&&r.posture!=='lying')out.push({id:'lie__'+n.id,label:'LIE ON '+n.label.toUpperCase()});if(n.tags.includes('support')&&r.posture!=='sitting')out.push({id:'sit__'+n.id,label:'SIT ON '+n.label.toUpperCase()})}else out.push({id:'approach__'+n.id,label:'APPROACH '+n.label.toUpperCase()})}
@@ -170,8 +172,8 @@ function spatialVerb(v){v=v.replaceAll('TESTER-HAT-1','FELT-HAT-1');let m;
  if(v==='stand'){stand();return receipt('MATRIX_POSTURE','You stand up.',{posture:'standing'})}
  if((m=/^lie__(.+)$/.exec(v))){const res=lie(m[1]);return res.ok?receipt('MATRIX_POSTURE',`You lie down on ${the(res.label)}. It takes your weight.`,res):receipt('MATRIX_REFUSED',`You cannot lie there: ${res.error}.`,res)}
  if((m=/^sit__(.+)$/.exec(v))){const res=sit(m[1]);return res.ok?receipt('MATRIX_POSTURE',`You sit on ${the(res.label)}.`,res):receipt('MATRIX_REFUSED',`You cannot sit there: ${res.error}.`,res)}
- if((m=/^reach__(.+)$/.exec(v))){const res=reach(m[1]);return res.ok?receipt('MATRIX_REACH',`You reach out and touch ${res.label}${res.material?`; it is ${res.material}`:''}.`,res):receipt('MATRIX_REFUSED',`Out of reach: ${res.error}.`,res)}
- if((m=/^approach__(.+)$/.exec(v))){const res=op('approach',{target:m[1]});return receipt('MATRIX_MOVE',res.ok?`You walk toward ${res.entity_label}${res.arrived?' and stop beside it':res.blocked_by?`; ${M.entities()[res.blocked_by]?.label||'something'} is in the way`:''}. ${res.distance_m!=null?res.distance_m+' m away now.':''}`.trim():`You cannot approach that: ${res.error}.`,res)}
+ if((m=/^reach__(.+)$/.exec(v))){const res=reach(m[1]);return res.ok?receipt('MATRIX_REACH',`You reach out and touch ${res.label}${res.material?`; it is ${MATERIAL_WORDS[res.material]||res.material}`:''}.`,res):receipt('MATRIX_REFUSED',`Out of reach: ${res.error}.`,res)}
+ if((m=/^approach__(.+)$/.exec(v))){const res=op('approach',{target:m[1]});return receipt('MATRIX_MOVE',res.ok?`You walk toward ${res.entity_label}${res.arrived?' and stop beside it':res.blocked_by?`; ${M.entities()[res.blocked_by]?.label||'something'} is in the way`:''}. ${res.distance_m!=null&&window.REALITI_MEASURE_V1?.on()?res.distance_m+' m away now.':''}`.trim():`You cannot approach that: ${res.error}.`,res)}
  if((m=/^through__(.+)$/.exec(v))){const res=op('through',{portal:m[1]});return receipt('MATRIX_PORTAL',res.ok?(res.traversed?`You step through. You are in ${title(res.chart)} now.`:`You walk to the doorway but do not cross it${res.blocked_by?'; something is in the way':''}.`):`There is no such doorway here: ${res.error}.`,res)}
  return false}
 function receipt(type,narrative,data){C9.b4=C9.b4||{};C9.b4.lastReceipt={type,room:room(),narrative,...data,law:'spatial facts are world state; rendering and private state cannot move them'};try{c9save()}catch(e){};return true}

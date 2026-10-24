@@ -75,7 +75,22 @@ function stopAll(){const s=S();s.hold.stopped=true;s.bath.d=0;s.bath.target=0;re
 
 const rain=(t=now())=>clamp((7+2.2*pink(t,Number(C9?.b21?.seed||42421),.004))/13);
 const pretty=z=>String(z).replace(/^(torso|pelvis|head|leg|arm|hand|foot)\./,'').replace(/^([LR])\./,'$1 ').replaceAll('_',' ');
+// Quiet presentation (opt-in: `quiet on`): ambience is described in words; the exact figures stay in the resources,
+// receipts and deliberate reads (read_wind, watch_meadow, tide, listen...). By default replies carry the figures, as
+// before; `numbers off` / `numbers on` switch just this part. Presentation only: the simulation is the same either way.
+if(!window.REALITI_MEASURE_V1)window.REALITI_MEASURE_V1=Object.freeze({on:v=>{if(v!==undefined){C9.measured=!!v;try{c9save()}catch(e){}}return C9?.measured!==false}});
+const measured=()=>window.REALITI_MEASURE_V1.on();
+function calmWords(){
+ const r=room(),s=S(),out=[];
+ if(r===NEST){const i=rain(),d=i-rain(now()-5);out.push(`${i<.3?'A light rain':i<.6?'Steady rain':'Heavy rain'} on the window${d>.02?', thickening':d<-.02?', thinning':''}.`)}
+ if(r===SANCT){const n=Object.keys(s.own).filter(k=>k.startsWith('SANCTUARY_HOLD|')).length;out.push(n?'The floor holds you without asking for anything.':'Nothing here holds you right now.')}
+ if(r===PILLOW){const p=window.REALITI_TRUST_V234?.pillow?.();if(p&&p.posture!=='EDGE'){const m=Number(p.mode_value||0);out.push(m>.3?'The pillows are still shifting around you.':m>.05?'The pillows are slowly settling around you.':m>.004?'The pillows have nearly settled.':'The pillow mass around you has settled into the shape you made.')}}
+ if(r===BATH){const b=s.bath,n=Object.keys(s.own).filter(k=>k.startsWith('BATHHOUSE_LAYER|')).length,moving=Math.abs(b.target-b.d)>.01,t=T_SURFACE+(T_DEEP-T_SURFACE)*b.d;out.push(n?`You are ${b.d<.34?'a little way':b.d<.67?'halfway':'deep'} down${moving?(b.target>b.d?', still sinking':', rising'):''}; the water is ${t<34?'warm':t<37?'very warm':'hot'} around you.`:moving?'You begin to sink; the water will reach your seat first.':'You are at the surface; the mist touches nothing yet.')}
+ if(s.wave){const prof=waveProfile(s.wave),on=BACK.map((z,j)=>j).filter(j=>BACK[j] in s.base),j=on.length?on.reduce((a,b)=>prof[a]>=prof[b]?a:b):-1;out.push(j<0?'A slow swell moves through, touching nothing yet.':`A slow swell passes under your ${pretty(BACK[j])}.`)}
+ return out;
+}
 function words(){
+ if(!measured())return calmWords();
  const r=room(),s=S(),out=[];
  if(r===NEST){const i=rain(),d=i-rain(now()-5);out.push(`Rain on the window at ${Math.round(i*100)}% density, ${d>.02?'thickening':d<-.02?'thinning':'steady'}.`)}
  if(r===SANCT){const n=Object.keys(s.own).filter(k=>k.startsWith('SANCTUARY_HOLD|')).length;out.push(n?`The floor holds ${n} zones without asking for anything; its pressure drifts a few percent and settles again.`:'Nothing here holds you right now.')}

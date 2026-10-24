@@ -161,6 +161,10 @@ async function openResident(options={}){
     harness=options.verify===false?null:verifyPublicEntry(Realiti,ready,{requireMechanisms:options.requireMechanisms!==false});
     verifiedDoor=verifyAgentDoor(dom.window);
   }catch(e){try{dom.window.close()}catch{}throw e}
+  // presentation:'quiet' (or REALITI_PRESENTATION=quiet): rooms described in words, finds kept without announcements,
+  // lab benches out of the action lists, for this resident. Presentation only; the resident can switch back with
+  // `quiet off`. Anything else leaves the resident's own setting as it is (figures, announcements and benches by default).
+  if((options.presentation??process.env.REALITI_PRESENTATION)==='quiet')await dom.window.REALITI_AGENT_DOOR.run('quiet on');
   let closed=false;
 
   const door={
