@@ -10,7 +10,7 @@ function S(){const w=(C9.chapter2=C9.chapter2||{v:1});w.modes=w.modes||{mode:'lq
 const mode=()=>S().mode;
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 // commands that carry free text are never split on "then".
-const FREE_TEXT=/^(say|chat|tell|whisper|post|note|later|remember|send|bottle|inscribe|sing|scratch|call me|name star|avatar motto|found|feel words about)\s/i,FIXED_FORMS=/^chat\s+log(\s|$)/i,freeText=l=>FREE_TEXT.test(l)&&!FIXED_FORMS.test(l);
+const FREE_TEXT=/^(say|chat|tell|whisper|post|note|later|remember|send|bottle|inscribe|sing|scratch|call me|name star|avatar motto|found|feel words about)\s/i,FIXED_FORMS=/^chat\s+log(\s+then\s|$)/i/* only the bare form "chat log" (Codex review of PR #25) */,freeText=l=>FREE_TEXT.test(l)&&!FIXED_FORMS.test(l);
 const HQ=['move <right> <forward>  (meters, up to the chart stride)','step <m>','back <m>','strafe left|right <m>','turn <deg>  (signed, positive left)','heading <deg>  (face a compass bearing)','speed <m/s>  (0.3 to 2.5)','crouch / stand tall','path  (the last swept path)','pose'];
 const LQ=['explore  (walk to the nearest landmark you have not reached)','tour  (visit every venue or landmark here, one call)','wander <seconds>','follow <handle>','auto  (do the obvious next thing)','do <n>  (the nth listed action)','<command> then <command> ...'];
 const WORLD_GROUPS=Object.freeze([

@@ -64,7 +64,9 @@ function leanText(){const st=window.REALITI_SUPPORT_LEASE_V1?.state?.();if(!st?.
 const compass=yaw=>['north','north-west','west','south-west','south','south-east','east','north-east'][Math.round((((yaw%360)+360)%360)/45)%8];
 function whereText(){const sp=R.read('realiti://space');if(!sp?.chart)return 'You have no spatial body placed.';const W=window.REALITI_MATRIX_WORLD_V1,near=sp.nearby.slice(0,3).map(n=>`${n.label} ${n.distance_m} m ${n.direction}${n.in_reach?' (in reach)':''}`),doors=sp.portals.slice(0,2).map(q=>`${q.label} ${q.distance_m} m ${q.direction}`);
  const onWhat=sp.body.on?`${sp.body.posture==='floating'?' in':' on'} the ${sp.nearby.find(n=>n.id===sp.body.on)?.label||sp.body.on.split('.').pop()}`:sp.body.support?` on the ${sp.body.support.split('.').pop().replaceAll('_',' ')}`:'';
- return `${W?.title?.(sp.chart)||sp.chart}: you are ${sp.body.posture}${onWhat}, facing ${compass(sp.pose.yaw_deg)} at (${sp.pose.position.map(x=>x.toFixed(1)).join(', ')}) m.${near.length?' Near you: '+near.join('; ')+'.':''}${doors.length?' Doorways: '+doors.join('; ')+'.':''}`}
+ return `${W?.title?.(sp.chart)||sp.chart}: you are ${sp.body.posture}${onWhat}, facing ${compass(sp.pose.yaw_deg)} at (${sp.pose.position.map(x=>x.toFixed(1)).join(', ')}) m.${near.length?' Near you: '+near.join('; ')+'.':''}${doors.length?' Doorways: '+doors.join('; ')+'.':''}${farLine(sp)}`}
+// On an island, the landmarks out of the near list (the other stones, the cave mouth) with distance and bearing.
+function farLine(sp){const AR=window.REALITI_ARCHIPELAGO_V1;if(!AR?.farther||sp.chart!==AR.chart)return '';const xs=AR.farther(sp.nearby.slice(0,3).map(n=>n.id));return xs.length?' Further off: '+xs.slice(0,4).map(x=>`${x.label} ${x.distance_m} m ${x.toward}`).join('; ')+'.':''}
 function spatialAlias(s,l){let m;
  if(l==='where'||l==='where am i'||l==='where am i?')return {kind:'read',text:whereText(),space:R.read('realiti://space')};
  if((m=/^(?:nearby|what is near|what is nearby)(?:\s+(.+))?$/.exec(l))){const sp=R.read('realiti://space'),q=(m[1]||'').replace(/^(the|any|a)\s+/,'').trim(),list=(sp?.nearby||[]).filter(n=>!q||n.tags.includes(q)||n.label.toLowerCase().includes(q)||n.id.toLowerCase().includes(q));return {kind:'read',text:list.length?list.map(n=>`${n.label}: ${n.distance_m} m ${n.direction}${n.in_reach?', in reach':''}`).join('. ')+'.':q?`Nothing matching "${q}" within ten meters.`:'Nothing of note within ten meters.',nearby:list,portals:q?[]:(sp?.portals||[])}}
@@ -99,7 +101,7 @@ door.run=async function(raw){
  if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),weather:AR.words()[0]||null,here:whereText(),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='map'||l==='island map')return door.run('act island_map');
   if(l==='weather'||l==='read weather')return door.run('act read_weather');
-  if(l==='board boat'||l==='board the boat'||l==='get in the boat'){const res=AR.board();return reply(res,res.ok?'You step down into the boat; it rocks, then settles under you.':`You cannot board: ${res.error}.`)}
+  if(l==='board boat'||l==='board the boat'||l==='get in the boat'){const res=AR.board();return reply(res,res.ok?'You step down into the boat; it rocks, then settles under you.':res.error==='BOAT_OUT_OF_REACH'?`The boat is ${Math.round(res.distance_m)} m away; walk to boat first.`:`You cannot board: ${res.error}.`)}
   if(l==='land'||l==='land the boat'||l==='go ashore'){const res=AR.land();return reply(res,res.ok?`You pull the boat up and step onto ${res.landed_on}.`:`You cannot land here: ${res.error}.`)}
   const LGM=window.REALITI_LONG_GAME_V1;if(LGM){const say=(res)=>reply(res,res.text||(res.error?`You cannot: ${res.error}.`:''));
    if(l==='tide'||l==='read tide'||l==='read the tide'){const t=LGM.tide();return say({...t,text:`The tide is ${t.rising?'rising':'falling'}, ${t.height_m} m against the dock pilings; it turns in about ${t.next_turn_s} s.`})}
@@ -108,7 +110,7 @@ door.run=async function(raw){
    if(/^(watch|read) (the )?(beam|lamp|lighthouse)$/.test(l))return say(LGM.watchBeam());
    if((am=/^say\s+(.+)$/.exec(l)))return say(LGM.say(am[1]));
    if(/^read (the )?(log|logbook|keeper's logbook)$/.test(l))return say(LGM.readLog());
-   if(/^shout(\s+into\s+the\s+cave)?$/.test(l))return say(LGM.shout());
+   if(/^shout(\s+into\s+the\s+cave)?$/.test(l)||(/^shout\s/.test(l)&&LGM.atCave?.()))return say(LGM.shout());
    if((am=/^(?:answer\s+)?depth\s+([\d.]+)(?:\s*m)?$/.exec(l)))return say(LGM.answerDepth(am[1]));
    if((am=/^read (?:the )?(north|east|west)(?: stone)?$|^read stone (north|east|west)$/.exec(l)))return say(LGM.readStone(am[1]||am[2]));
    if(l==='dig'||l==='dig here')return say(LGM.dig());
@@ -129,8 +131,8 @@ door.run=async function(raw){
    if(/^install (the )?lens$/.test(l))return say(PK.installLens());
    if(l==='calendar'||l==='read calendar'||l==='read the calendar')return {...PK.calendar(),felt:undefined};
    if((am=/^read\s+(.+)$/.exec(l))&&!/^read (scroll|stone|weather|tide|log|logbook|the (north|east|west)|north|east|west|calendar)/.test(l)){const res=AU.read(am[1]);if(res.error!=='NOTHING_CALLED_THAT')return say(res)}}
-  if((am=/^row (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.row(am[1]);return reply(res,res.ok?`You row ${res.rowed_m} m; ${res.ashore?`the keel grinds on the shore of ${res.at}`:`${res.remaining_m} m to go`}.`:`You cannot row: ${res.error}.`)}
-  if((am=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.walkTo(am[1]);return reply(res,res.ok?`You walk ${res.walked_m} m toward the ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:res.partial?`; ${res.distance_m} m still to go (walk to ${am[1]} again to go on)`:`; ${res.distance_m} m further`}.`:`You cannot walk there: ${res.error}.`)}}
+  if((am=/^row (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.row(am[1]);return reply(res,res.ok?`You row ${res.rowed_m} m; ${res.ashore?`the keel grinds on the shore of ${res.at} (land to step ashore)`:`${res.remaining_m} m to go${res.partial?` (row to ${am[1]} again to go on)`:''}`}.`:res.error==='NOT_ABOARD'?'You are not in the boat. walk to boat, board boat, then row.':`You cannot row: ${res.error}.`)}
+  if((am=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))){const res=AR.walkTo(am[1]);return reply(res,res.ok?`You walk ${res.walked_m} m toward the ${res.entity_label}${res.arrived?' and reach it':res.why?`; ${res.why} is in the way${res.why==='the sea'?' (you need the boat)':''}`:res.partial?`; ${res.distance_m} m still to go (walk to ${am[1]} again to go on)`:`; ${res.distance_m} m further`}.`:(res.text||`You cannot walk there: ${res.error}.`))}}
  const CT=window.REALITI_CITY_V1;if(CT){let cm;const cityReply=(res,extra)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_CITY_RESULT_V1',result:res,text:[res.text||(res.error?`You cannot: ${res.error}.`:''),...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>'✦ Discovery: '+d.text)].filter(Boolean).join(' '),...(C9?.currentRoom===CT.chart?{ambient:CT.words()[0]||null,here:whereText()}:{}),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='id'||l==='whoami'||l==='who am i'||l==='avatar')return CT.whoami();
   if((cm=/^(?:call me|name me|i am)\s+(.+)$/i.exec(s.trim())))return cityReply(CT.setAvatar('name',cm[1]));
@@ -153,7 +155,7 @@ door.run=async function(raw){
    if((cm=/^sing\s+(.+)$/i.exec(s.trim())))return cityReply(CT.sing(cm[1]));
    if(/^(climb|climb (the )?(stairs?|tower)|climb to (the )?roof|go up)$/.test(l))return cityReply(CT.climb());
    if((cm=/^(?:launch|fire)(?: a)? (?:rocket|firework)(?:\s+(?:at\s+)?(\d+))?/.exec(l)))return cityReply(CT.firework(cm[1]||80));
-   if((cm=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))||(cm=/^go to\s+(.+)$/.exec(l)))return cityReply(CT.walkTo(cm[1]));}}
+   if((cm=/^walk (?:to|toward|towards)\s+(.+)$/.exec(l))||(cm=/^go to\s+(.+)$/.exec(l))){const res=CT.walkTo(cm[1]);if(res.error==='WHERE'){/* say where it is instead of "You cannot: WHERE" */const want=cm[1].replace(/^(the|a|an)\s+/,''),n=window.REALITI_ROOM_NEAR?.(want)||[];res.text=n.length?`${n[0]} is not in the city; it is a place of its own. go ${n[0].toLowerCase()} takes you there.`:`Nothing in the city is called "${cm[1]}". The places here: ${(res.venues||[]).join(', ')}.`}return cityReply(res)}}}
  if(window.REALITI_LONG_GAME_V1){let sm;if(l==='since'||l==='what changed'||/^what changed since/.test(l))return window.REALITI_LONG_GAME_V1.since();if((sm=/^since\s+(.+)$/.exec(l)))return window.REALITI_LONG_GAME_V1.since(sm[1])}
  if(LG){if(l==='ledger export')return LG.export();if(l.startsWith('ledger import ')){let pl;try{pl=JSON.parse(s.slice(14))}catch(e){return {ok:false,error:'INVALID_LEDGER_JSON'}}return LG.import(pl)}if(l==='ledger')return {ok:true,schema:'REALITI_LEDGER_V1',records:LG.records().slice(-24),count:LG.records().length}}
  const alias=spatialAlias(s,l);

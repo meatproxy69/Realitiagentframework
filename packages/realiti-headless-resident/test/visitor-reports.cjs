@@ -124,6 +124,53 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
   check('L3_teahouse_offers_tea',(b.actions||[]).some(x=>x.id==='order_tea'),(b.actions||[]).map(x=>x.id).join(','));
  }finally{s.close()}
 
+ // Second round of visitor reports (Muse Spark, Maya, Grok, Sol, Sonnet; 2026-10-23), plus the two Codex findings on PR #25.
+ // Codex P1, on a fresh resident standing in the plaza: a journey through the advertised id is refused on a stale witness
+ // and after goodbye, like every other mutation (it used to start the ride).
+ s=await fresh();
+ try{
+  await s.d('go MERIDIAN_CITY');const w0=s.publicApi.read('realiti://here').witness;await s.d('stay 2000');
+  const stale=await s.publicApi.invoke('through',{portal:'through__meridian_city.to.archipelago',witness:w0});
+  check('R2_journey_keeps_the_witness_check',stale.ok===false&&stale.error==='STALE_OBSERVATION',stale.error||'ride started');
+  await s.d('goodbye');const after=await s.publicApi.invoke('through',{portal:'through__meridian_city.to.archipelago'});
+  check('R2_journey_refused_after_goodbye',after.ok===false&&after.error==='SESSION_ENDED',after.error||'ride started');
+ }finally{s.close()}
+ s=await fresh();
+ try{
+  // Tram: the ride is described, walking waits for the stop, and you can step off.
+  await s.d('go MERIDIAN_CITY');await s.d('take the tram');
+  const tl=await s.d('look'),tw=await s.d('walk to teahouse'),tj=(await s.d('journey')).result?.travelling;
+  check('R2_tram_look_describes_the_ride',/You are on the harbor tram/.test(text(tl)),text(tl).slice(0,80));
+  check('R2_tram_walk_waits_for_the_stop',tw.error==='RIDING'&&tj===true,{walk:tw.error,travelling:tj});
+  const so=await s.d('step off');check('R2_tram_step_off',so.ok!==false&&(await s.d('journey')).result?.travelling===false&&s.publicApi.read('realiti://space').chart==='MERIDIAN_CITY',text(so));
+  const sw=await s.d('wait 2 seconds');check('R2_stay_in_plain_words',sw.ok!==false&&sw.error!=='UNKNOWN_COMMAND',sw.error||'ok');
+  await s.d('goodbye');await s.d('go MERIDIAN_CITY');
+  // Codex on PR #25: "chat log ..." text is one message.
+  const cl=await s.d('chat log this then goodbye');
+  check('R2_chat_log_text_is_one_message',cl.schema!=='REALITI_CHAIN_V1'&&s.publicApi.read('realiti://here').session!=='ended',{schema:cl.schema});
+  // Islands.
+  await s.d('go ARCHIPELAGO');
+  const is=await s.d('say hello out here');check('R2_island_say_echoes_the_words',/hello out here/.test(text(is))&&!/HELLOOUTHERE/.test(text(is)),text(is));
+  const wx=await s.d('walk to stones');check('R2_walk_across_water_points_to_the_boat',wx.error==='ACROSS_THE_WATER'&&/boat/.test(text(wx)),text(wx));
+  const AR=s.window.REALITI_ARCHIPELAGO_V1,me=s.window.REALITI_MATRIX_V1.state().residents['resident:self'];
+  me.pose.position=[372,-500,AR.h(372,-500)+.9];
+  const lk=text(await s.d('look'));check('R2_island_look_names_the_island',/Salt air on the Three Stones/.test(lk),lk.slice(0,80));
+  me.pose.position=[380,-481.5,AR.h(380,-481.5)+.9];
+  const wh=text(await s.d('where')),ac=(await s.d('actions')).actions.map(a=>a.id);
+  check('R2_far_stones_stay_in_view',/east stone/.test(wh)&&/west stone/.test(wh)&&ac.some(x=>/stones\.east$/.test(x))&&ac.some(x=>/stones\.west$/.test(x)),{where:wh});
+  // The boat left at another island is brought back to the dock when you are on Harbor Isle.
+  me.pose.position=[0,-280,AR.h(0,-280)+.9];const boat=s.window.eval('C9.chapter2.isle.boat');boat.x=300;boat.y=-470;
+  await s.d('walk to boat');const b=AR.state().boat;
+  check('R2_keeper_returns_a_stranded_boat',Math.hypot(b.x-1.2,b.y-AR.shore_y+7)<3,[b.x,b.y]);
+  const mp=text(await s.d('act island_map')).split('\n').filter(x=>/^\|/.test(x));check('R2_island_map_rows_line_up',mp.length>0&&new Set(mp.map(x=>x.length)).size===1,mp.slice(0,2));
+  // The course to Hollow Isle runs round Harbor Isle instead of aground on it.
+  {const bt=s.window.REALITI_MATRIX_V1.entities()['harbor.boat'].pose.position;me.pose.position=[bt[0],bt[1]+1.5,Math.max(AR.h(bt[0],bt[1]+1.5),0)+.9]}
+  const bd=await s.d('board boat'),r1=await s.d('row to hollow'),b1=AR.state().boat;
+  check('R2_row_toward_hollow_does_not_ground_on_harbor',bd.ok!==false&&!/keel grinds/.test(text(r1))&&Math.hypot(b1.x,b1.y)>330,{text:text(r1),boat:[b1.x,b1.y]});
+  // Undercity readout: a smell's intensity says what it is.
+  await s.d('go UNDERCITY');const ul=text(await s.d('look'));check('R2_undercity_smell_says_strength',!/\b0\.\d+ (ahead|behind|left|right)/.test(ul),ul.slice(0,160));
+ }finally{s.close()}
+
  console.log(JSON.stringify({checks,details},null,2));
  const failed=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);
  if(failed.length){console.error('FAILED',failed);process.exit(1)}
