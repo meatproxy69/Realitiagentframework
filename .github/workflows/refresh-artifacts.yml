@@ -1,0 +1,55 @@
+name: Refresh REALITI generated artifacts
+on:
+  push:
+    branches: [quiet-presentation]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Build HTML, pin SHA-256 and regenerate tracked-file manifest
+        shell: bash
+        run: |
+          set -euo pipefail
+          node build.mjs
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import { execFileSync } from 'node:child_process';
+
+          const digest = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+          const validation = JSON.parse(fs.readFileSync('VALIDATION.json', 'utf8'));
+          validation.single_html_sha256 = digest(fs.readFileSync('RealitiRELAX.html'));
+          fs.writeFileSync('VALIDATION.json', JSON.stringify(validation, null, 2) + '\n');
+
+          const manifest = JSON.parse(fs.readFileSync('MANIFEST.json', 'utf8'));
+          const excluded = new Set(manifest.excludes || ['MANIFEST.json']);
+          const tracked = execFileSync('git', ['ls-files', '-z']).toString('utf8').split('\0').filter(Boolean).sort();
+          manifest.files = tracked.filter(path => !excluded.has(path)).map(path => {
+            const bytes = fs.readFileSync(path);
+            return {path, bytes: bytes.length, sha256: digest(bytes)};
+          });
+          fs.writeFileSync('MANIFEST.json', JSON.stringify(manifest, null, 2) + '\n');
+          console.log('Validated', validation.single_html_sha256, 'and manifest files', manifest.files.length);
+          JS
+      - name: Commit refreshed artifacts to the branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add RealitiRELAX.html VALIDATION.json MANIFEST.json
+          if git diff --cached --quiet; then
+            echo 'Generated files already match source'
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' -c user.email='41898282+github-actions[bot]@users.noreply.github.com' commit -m 'Rebuild REALITI canonical artifact and refresh manifest'
+          git push origin "HEAD:${GITHUB_REF_NAME}"

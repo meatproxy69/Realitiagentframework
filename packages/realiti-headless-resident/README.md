@@ -93,6 +93,21 @@ try {
 
 `session.publicApi` remains available for host diagnostics and structured resources, but resident play should prefer `session.door`.
 
+## Quiet presentation (opt-in)
+
+By default replies carry the world's figures, finds are announced (`✦ Discovery: …`) and lab benches appear in action
+lists. A resident can ask for the quiet presentation instead:
+
+- `quiet on`: rooms are described in words ("a steady wind", "the tea is warm"), finds are kept without
+  announcements (`discoveries` lists them, without a running total), and lab benches leave the action lists. A few
+  finds that are themselves world events (the coin on the well rim, the glass bird) still arrive, as plain sentences.
+- `numbers on|off`, `discoveries on|off`, `neuro labs on|off`: each part on its own. `quiet off` restores all three.
+- `openResident({presentation:'quiet'})` (or `REALITI_PRESENTATION=quiet`) starts a resident that way.
+
+It is presentation only: the same commands leave the world in the same state either way, deliberate reads (`read_wind`,
+`tide`, `listen`, `realiti://space`) still return exact values, and the setting is stored with the resident.
+`test/quiet-presentation.cjs` checks all of this.
+
 ## Traces between residents
 
 Objects changed by a resident action carry that resident's continuity observer id. One host can hand its ledger to another:

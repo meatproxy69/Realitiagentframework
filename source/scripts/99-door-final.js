@@ -15,7 +15,7 @@ function help(){
   mode,
   commands:[
    'worlds','next','look','where','nearby','actions','go <room>','act <action-id>',
-   'feel','feel words','body','stay <ms>','listen','mode','guestbook','sign <text>','home','goodbye','rooms  (full catalog)',
+   'feel','feel words','body','stay <ms>','listen','mode','guestbook','sign <text>','home','goodbye','rooms  (full catalog)','quiet on|off','numbers on|off','discoveries [on|off]',
    mode==='hq'?'HQ controls: move / step / back / strafe / turn / heading / speed / crouch / pose':'LQ controls: explore / wander / auto / do <n>'
   ],
   first_ten:['help','look','guestbook','where','feel words','actions','worlds','next','go ORRERY_LOFT','stay 3000'],
