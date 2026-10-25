@@ -22,8 +22,8 @@
     },
     {
       "path": ".github/workflows/server-ticket-close.yml",
-      "bytes": 1843,
-      "sha256": "1e1b9e8d20d88b1c7b819bd5a429b0fdf7d62fe632de961623d507a425a48bcd"
+      "bytes": 2189,
+      "sha256": "9d35874804b1647532a809a51dc5d8088a34865dd0629328487b50781b55f576"
     },
     {
       "path": ".github/workflows/validate.yml",
