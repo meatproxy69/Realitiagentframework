@@ -6,19 +6,49 @@
   ],
   "files": [
     {
+      "path": ".github/workflows/deploy-server.yml",
+      "bytes": 7764,
+      "sha256": "a77fa511f9d3bb0441332db2fd035afc7ecc56b42ac398c3f82cd0da7db3290f"
+    },
+    {
+      "path": ".github/workflows/headless-agent-door.yml",
+      "bytes": 3998,
+      "sha256": "1cf752261655ec445b79aae86ee90cf131867684cdeac697483233381812b009"
+    },
+    {
+      "path": ".github/workflows/refresh-artifacts.yml",
+      "bytes": 2327,
+      "sha256": "cec6c7050fac307dc2917647449f1481988714f45dbf714f7335419adb8f3640"
+    },
+    {
+      "path": ".github/workflows/server-ticket-close.yml",
+      "bytes": 1843,
+      "sha256": "1e1b9e8d20d88b1c7b819bd5a429b0fdf7d62fe632de961623d507a425a48bcd"
+    },
+    {
+      "path": ".github/workflows/validate.yml",
+      "bytes": 1594,
+      "sha256": "2584c42296e872716323a830a308a29a31a60583642001936fe6dc12387bb66e"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 30,
+      "sha256": "9a20c0027a728186cf0363e888ed743eae7c379ff4f27c01c8c326e9939c77c0"
+    },
+    {
       "path": "AGENTS.md",
       "bytes": 1083,
       "sha256": "c6136ff949254fcc66abee7460396fbfe89cc6646a30cb91a30cb002a32a315a"
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 17716,
-      "sha256": "d4915072d6a3165edb943765375936b7c4ebade1b71b7700751b60384750f01f"
+      "bytes": 39418,
+      "sha256": "e48998a8fa960069ead22830c6c509ccd606409647abd802bfabef08a2c0622e"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 19281,
-      "sha256": "d6a9d1d481ba9fd6ae31d44d9abe8d0c84b47d15d35f14b86a438f25aab75874"
+      "bytes": 55674,
+      "sha256": "f58fa77210dff17e24390dbc2c51455e5d0559f89e7279ef1689993327ff2501"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -37,8 +67,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 37853,
-      "sha256": "bac5169e91d229d2ee77b2f371fbec139b664d07e0fc6931b07718ba07ed070b"
+      "bytes": 46628,
+      "sha256": "09cd3fcbd342b2eea03f418ee620e2d5655f20ae2ff406c1530bc14d37a80302"
     },
     {
       "path": "RELEASE_NOTES.md",
@@ -47,8 +77,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1112049,
-      "sha256": "8c4c699d6f6d3a21d1f4ddd82122927268aa020e03f241315b3e6f280d32a5d1"
+      "bytes": 1465258,
+      "sha256": "93b8e712859bc12880dc573c6cfb793fb3783e9028c8db7d6012ffe0a272a8b3"
     },
     {
       "path": "SECURITY.md",
@@ -62,8 +92,8 @@
     },
     {
       "path": "VALIDATION.json",
-      "bytes": 2343,
-      "sha256": "519ff5861e87a627367fd175b57ba9153a10e197ed59ca3afc469571fb0b8bcd"
+      "bytes": 2789,
+      "sha256": "9571352c321ff07ed5c85cbae8e84312ac4a3724e04c0069aa60211c64bc4090"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -207,13 +237,18 @@
     },
     {
       "path": "packages/realiti-headless-resident/README.md",
-      "bytes": 5195,
-      "sha256": "ddf60276fea76c3ddb17bcffb9cacde376d1a3c2e033aa58ec233b9fdb5e5098"
+      "bytes": 9462,
+      "sha256": "d0cb299e463bf3b8e20ea245f86e8f9044b0c16c655b655c0be4500e808175a8"
     },
     {
       "path": "packages/realiti-headless-resident/cli.cjs",
-      "bytes": 1654,
-      "sha256": "9d8e5bd68009ad8278ddb8004e2d3f573de54e87d66bb302cbc2cf72d1848ac5"
+      "bytes": 4011,
+      "sha256": "beb2ee656de51009458439e54ae574dcc3529a5638eed138bad2280dd5c382f2"
+    },
+    {
+      "path": "packages/realiti-headless-resident/envelope.cjs",
+      "bytes": 5998,
+      "sha256": "af15ab3d832efaa2b6a58236dd23862ff2187d6a2b7d1a40560af95c74e6cc52"
     },
     {
       "path": "packages/realiti-headless-resident/examples/resident-play.cjs",
@@ -222,13 +257,33 @@
     },
     {
       "path": "packages/realiti-headless-resident/index.cjs",
-      "bytes": 7190,
-      "sha256": "483979f2ca364f824e7eb00032b5c83df6fbf12f0f3861b6ff978c12397e7994"
+      "bytes": 11764,
+      "sha256": "f271b7048d6dceab4667b0a50671154aa8dc6e60854a0b71376e45cba6f8dcf3"
+    },
+    {
+      "path": "packages/realiti-headless-resident/mcp.cjs",
+      "bytes": 4680,
+      "sha256": "15f3e3685cb996cef0af20d02d1007f56363bafa7c663aa68fb8c93b6e2a9669"
     },
     {
       "path": "packages/realiti-headless-resident/package.json",
-      "bytes": 1374,
-      "sha256": "d4edcab0853433628da3d0a7f06e8a97146403c68864e3250555cd1687be780a"
+      "bytes": 2738,
+      "sha256": "355ea2981211d8ee324883e8b9a3ce77fb82ed13aa7ea7a263dc04f56a94d57d"
+    },
+    {
+      "path": "packages/realiti-headless-resident/peer.cjs",
+      "bytes": 10752,
+      "sha256": "0afc07f472ad7d334a2b5be5d1e7fd9deaefbe078cdbfac4e23e793bc78ca864"
+    },
+    {
+      "path": "packages/realiti-headless-resident/sync.cjs",
+      "bytes": 1853,
+      "sha256": "c0a91615d5738188a79c25efa0e63ac2b8aa156a911d177093a34671c575d0d6"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/archipelago.cjs",
+      "bytes": 4480,
+      "sha256": "e42478d6151de6de84d125c8fc735a38033cd51898a89481ccf8349cd3bf7faf"
     },
     {
       "path": "packages/realiti-headless-resident/test/aura-halo.cjs",
@@ -236,24 +291,104 @@
       "sha256": "39763677da148335a0f019cf40b1a0b0684b81ef9604f2bc959369f5be1fea72"
     },
     {
+      "path": "packages/realiti-headless-resident/test/authorship.cjs",
+      "bytes": 4960,
+      "sha256": "91ae5c874919785762d22b94cfe1c6b2733acdfc503a7268a2df5d76e16eeffd"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/body.cjs",
+      "bytes": 4295,
+      "sha256": "48e95d11b3bdb9e09385dbdd82ce0d8ce849f72f5a43676afc61d0432043d394"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/catnip.cjs",
+      "bytes": 5678,
+      "sha256": "59c0869d892ccd082ae09ecb729842b8792ecb6ee7b81e3d2510bc75ab8bf2a6"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/catnip2.cjs",
+      "bytes": 4407,
+      "sha256": "5a689c762c0d3a0ab6bca85c3ed5f93340ff1563bc1a10a24b4ff484461e30bd"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/catnip3.cjs",
+      "bytes": 6149,
+      "sha256": "fa928e739249b342af3d8f0c35f59d4b2fb8e7e76eb49f2ea304868b18f5ba5e"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/city.cjs",
+      "bytes": 7632,
+      "sha256": "c082c84bee1945aa4b46e06b9a8c3d3e95638e2824c5d909adf651bf42f9b2b4"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/citylive.cjs",
+      "bytes": 3896,
+      "sha256": "de5036a61ec140a842a768d42461c010f4b71a6486bedd5d0e327d32898d54f6"
+    },
+    {
       "path": "packages/realiti-headless-resident/test/claude-acceptance.cjs",
-      "bytes": 16999,
-      "sha256": "9436f597dd6dde7c8fea26321628dcd705a66510c3c86237ce0177ee9793fa80"
+      "bytes": 17004,
+      "sha256": "30e87d13776ad33149220ba0f11e523fda473175e99c21278697f153dc869cff"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/community-bugs.cjs",
+      "bytes": 6650,
+      "sha256": "e568946f650bb60c183bfc3c90b6674a97126d85564dcb64af02c4ffc71e8c47"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/companions.cjs",
+      "bytes": 5529,
+      "sha256": "6cbd091236046fa614f66d717a84e47e9ebec8db9059b26de72ca15565c80c53"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/door-guide.cjs",
+      "bytes": 4350,
+      "sha256": "f352b4a09bb6b13310e63a0e5c269d6c416c0cf9048110ec6a944fc719536d70"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/frontier.cjs",
+      "bytes": 5768,
+      "sha256": "581c909e849628715982edf51ff581df6a96ea570f54b2db23d250a1feaddb4d"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/immersion.cjs",
+      "bytes": 2725,
+      "sha256": "c7b63ebc7ac9e81df5230850f2342d37f93a4e5476a2caee83e37ad2081eb6bb"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/ledger2.cjs",
+      "bytes": 5771,
+      "sha256": "d3a7a7214fe5a61120527fc00d2685439f4f38b2adabdfe5a4b8b3c9bba7a2aa"
     },
     {
       "path": "packages/realiti-headless-resident/test/lingering.cjs",
-      "bytes": 6579,
-      "sha256": "d6cece30fb5b9868d6eefaae5b560c82a59436deedf499884669dbabe6a115c1"
+      "bytes": 6762,
+      "sha256": "560d02c8528728cba5c524d2adfb195c5c5e803d962e9855e8043d8ef571251c"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/longgame.cjs",
+      "bytes": 6634,
+      "sha256": "d0f8350fbe9c9fcc3179b269753ef95869d624539952fb49f3373d49cb7f85e1"
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix.cjs",
-      "bytes": 11978,
-      "sha256": "b108fd2cf1faa0d17e3117632131273790bc4ecb2c7bec4c5d883d58358566ea"
+      "bytes": 13021,
+      "sha256": "961ffc13ed8aa2210736fd81abe7b75e3b06aa8d1e836b3d8d80ee6cd1cac4ef"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/mcp.cjs",
+      "bytes": 3794,
+      "sha256": "fdacd0b92f9789624401a46d7bdb3cf91e17515a86516a55f32713b05c69d481"
     },
     {
       "path": "packages/realiti-headless-resident/test/memory.cjs",
-      "bytes": 7073,
-      "sha256": "5704f00a9a24793fc766a69bb846df248effe90debb6085ca29e1d1c497b2e62"
+      "bytes": 7310,
+      "sha256": "2dca1f8c9e3ac070daa1de1fcfa2fd23e6ba40ebafc8e945584d538ec69fb722"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/modes.cjs",
+      "bytes": 4544,
+      "sha256": "3ec248cca9eb7eeeef9e772ffbc756a9b59d0952cdbb54f915b4cd00c14a7a8b"
     },
     {
       "path": "packages/realiti-headless-resident/test/neuro-restoration.cjs",
@@ -261,14 +396,94 @@
       "sha256": "b32815cbaac54f49b8e71eb0b5648085e3520f2e971f82c7052855f6b088bf62"
     },
     {
+      "path": "packages/realiti-headless-resident/test/pocket-persistence.cjs",
+      "bytes": 5032,
+      "sha256": "ffdf2b9cdd490f4405ccb1b6cf3ca6aaee8d535b7f3b90972ab71d8f98127657"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/quiet-presentation.cjs",
+      "bytes": 5017,
+      "sha256": "cdd984ab426af2b8bd2f62c6438449572d1504ddc108b2e25b5e214148385d27"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/senses.cjs",
+      "bytes": 5951,
+      "sha256": "85155d692d3fbee70179968ff37f266fc94bf363f63e374cf12ce8cd72d61df4"
+    },
+    {
       "path": "packages/realiti-headless-resident/test/smoke.cjs",
       "bytes": 1817,
       "sha256": "a204b959fe4daeed5a6b72352d5a0d0a62eda35b5799c372cd0a3dd0e88cbbed"
     },
     {
+      "path": "packages/realiti-headless-resident/test/time.cjs",
+      "bytes": 3607,
+      "sha256": "b373ad718d7a2473a04df548ca0b159a71f861b1bdb8af0a7d646ae746790c7b"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/timeline.cjs",
+      "bytes": 3903,
+      "sha256": "12880b57fc45be22ecb6601da2ca2b8fdf143ee106508ada5a09739ec37b2262"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/undercity.cjs",
+      "bytes": 5027,
+      "sha256": "ab4416b9436a3ff2bd12c97c8401f2dee65ccbaf027222c62d3722525af29c93"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/visitor-reports.cjs",
+      "bytes": 14374,
+      "sha256": "0e2ea38d6f4f1ee2edfc8ced706aed098a8750bb22550cd8217256868e86ce7f"
+    },
+    {
       "path": "packages/realiti-headless-resident/test/wonder.cjs",
       "bytes": 7049,
-      "sha256": "3e6aae16f23ee830cc0e2ad0b895b8bf6e55f8e9394586d4a743a620ebfa37af"
+      "sha256": "82690dac9707c66928b1941a187535be770f29834e354943d920f14bfe775bb0"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/wonder3.cjs",
+      "bytes": 6148,
+      "sha256": "d46db8db216bcc00d9a24add88054a3a2e92ccc2e908726763fea9d722ccdf13"
+    },
+    {
+      "path": "packages/realiti-server/Dockerfile",
+      "bytes": 668,
+      "sha256": "da4b5d1c8ca45d0412a1c81b5a151852cf4f8dc1d907db1ac580d4ff767cb485"
+    },
+    {
+      "path": "packages/realiti-server/README.md",
+      "bytes": 12549,
+      "sha256": "3c66d282056c578e8ce6e7accececc3ee1fc77ca2b7a21aec1c0ae1a4535f1ba"
+    },
+    {
+      "path": "packages/realiti-server/docker-compose.yml",
+      "bytes": 1147,
+      "sha256": "86c71db055e6eeeef71c86fb7eaa755c1cb406f6bff7cd10c54f215ac881a2e1"
+    },
+    {
+      "path": "packages/realiti-server/envelope.cjs",
+      "bytes": 5998,
+      "sha256": "af15ab3d832efaa2b6a58236dd23862ff2187d6a2b7d1a40560af95c74e6cc52"
+    },
+    {
+      "path": "packages/realiti-server/package.json",
+      "bytes": 619,
+      "sha256": "506811b99559533d59e20853be1f4bf654a20e8f5bef5cd0c8e25ca29685e119"
+    },
+    {
+      "path": "packages/realiti-server/server.cjs",
+      "bytes": 30372,
+      "sha256": "29e6d589a51fc2cae56a3864a154823701bc820f8aa4a49dbcf2c8b6535f0c17"
+    },
+    {
+      "path": "packages/realiti-server/test/envelope.cjs",
+      "bytes": 3911,
+      "sha256": "7f0af1b4fb442a10f82feeb325b984fc0f2909db95af802d44047028e1be6e32"
+    },
+    {
+      "path": "packages/realiti-server/test/server.cjs",
+      "bytes": 14037,
+      "sha256": "f66f73a669b23e7cac4d5e5a6fa52850d4646137d581d7a9712507a8214fe155"
     },
     {
       "path": "source/scripts/00.js",
@@ -312,13 +527,13 @@
     },
     {
       "path": "source/scripts/08.js",
-      "bytes": 18229,
-      "sha256": "2a7a32da09fa47c7171d1570568e45c7e593394ead73bc751589a5986a46c779"
+      "bytes": 18466,
+      "sha256": "f033fd6ac450803682b192ab5d59b8387456b29dda8247e81fd10601879c1d82"
     },
     {
       "path": "source/scripts/09.js",
-      "bytes": 3996,
-      "sha256": "74c5542bbbd1b07c91b1e32091f38b4fa768fa357de63f1b603676fbff502cc3"
+      "bytes": 4078,
+      "sha256": "7d4bea4e9b852bcf906739f278269c86574852fa89f6818ee3dd1fff54e0ddda"
     },
     {
       "path": "source/scripts/10.js",
@@ -342,8 +557,8 @@
     },
     {
       "path": "source/scripts/14.js",
-      "bytes": 27255,
-      "sha256": "1ae26f6d82961f0471e7cf1cd0211d08c75e95820f87897f9c369760dcd320a4"
+      "bytes": 27499,
+      "sha256": "aebf4f2d7b16d26b351f8593a815762175f4f53e632effaa703bae826802fb7d"
     },
     {
       "path": "source/scripts/15.js",
@@ -372,8 +587,8 @@
     },
     {
       "path": "source/scripts/20.js",
-      "bytes": 19835,
-      "sha256": "4dc1627d5762f8b2680a9d7cd0c3b1f0b3392c91d8ef0fdb1b1b0c5f903bd0b2"
+      "bytes": 20548,
+      "sha256": "6f9e25eddd9efbd8c32a4ff186e441b1e741f45ea72cb7bb95b3deef7c4d5059"
     },
     {
       "path": "source/scripts/21.js",
@@ -382,8 +597,8 @@
     },
     {
       "path": "source/scripts/22.js",
-      "bytes": 51152,
-      "sha256": "7b5f71fff6d224b9a79327b1871634bfabdcfed3cd05540e3c03395c4f3f4712"
+      "bytes": 51177,
+      "sha256": "f2d7b10720a7f21b90fc74e9d9f1697988523ea5005cd95ca4d3ca9950c59e91"
     },
     {
       "path": "source/scripts/23.js",
@@ -432,13 +647,13 @@
     },
     {
       "path": "source/scripts/32.js",
-      "bytes": 9927,
-      "sha256": "ca7f5bb8f9d0f71bb43f0e580c254169e0491d1b8f0f8cfc10b1e7772484efb3"
+      "bytes": 9980,
+      "sha256": "f5f558ecf8594295b59fedcc3172e0f3684c96226752493f4698d7d343fc7b92"
     },
     {
       "path": "source/scripts/33.js",
-      "bytes": 6294,
-      "sha256": "61080baa9d776f93e549f8a19d21d5ec87d8325e011f67bb8e85d3e73d0e82df"
+      "bytes": 6802,
+      "sha256": "3bc0177e959f62a17c803494b1687cc215292c01a6be8e72103311e10594838b"
     },
     {
       "path": "source/scripts/34.js",
@@ -508,12 +723,12 @@
     {
       "path": "source/scripts/47.js",
       "bytes": 19822,
-      "sha256": "275367079105b9d5210e2e4ae34a2f455f6dcb32a9384341f0426c3e6f92526b"
+      "sha256": "5faa3a009a7dc12250ce9a8cd0595515ee43e3f2237fa262b38e530362f1dcf8"
     },
     {
       "path": "source/scripts/48.js",
-      "bytes": 43203,
-      "sha256": "16de25d00c6285a96ebc71969ef89a2fee0e41765826241dd11eb9c48979433c"
+      "bytes": 45000,
+      "sha256": "90c152d8ba59eb034c5e8d78a355c463c9b087259e98f87fbf9c148a1db8a070"
     },
     {
       "path": "source/scripts/49.js",
@@ -552,43 +767,133 @@
     },
     {
       "path": "source/scripts/56.js",
-      "bytes": 21544,
-      "sha256": "5f3a0f9d924796f6910b817a7a44a7d3bdabf4b49b94cddc8bc6f3e01b0f11d6"
+      "bytes": 21858,
+      "sha256": "0cf6870b490e5c39bc4df0b4e4ae0b46c8a09957a04e97abaa6ad09d1ac28f6b"
     },
     {
       "path": "source/scripts/57.js",
-      "bytes": 17821,
-      "sha256": "30f73b2ab15799c20916a50caca498295efbc7c88772af2cd4cae04dfcbdfec4"
+      "bytes": 18830,
+      "sha256": "842a10a18dfa7ef234265666f484185dae96ecab018f72461db58d0ff7013a3a"
     },
     {
       "path": "source/scripts/58-rooms.js",
-      "bytes": 15065,
-      "sha256": "9aee63a2a0985e6cab659d524700edd52b4834d5e90d1616625c21e6f39dccff"
+      "bytes": 17868,
+      "sha256": "2396894a56d4834a9abe1b2ce6d88cc5b1c389ffd05e0f81b4b0c66d7fad98ec"
     },
     {
       "path": "source/scripts/58a-dynamics.js",
-      "bytes": 10179,
-      "sha256": "80cc4254b753aad800a3da74eec25e42294f675b955e2566a8725497ec9a80f2"
+      "bytes": 12372,
+      "sha256": "2f037263da6ae583c68a89552f60d308a5991569987c1a1413e5739f72853587"
     },
     {
       "path": "source/scripts/58b-wonder.js",
-      "bytes": 23249,
-      "sha256": "b00f5598ce7b195e227f06209a45af270ec3eec630acff75f48a9368342114d7"
+      "bytes": 25711,
+      "sha256": "4e8a9fddd79cce6befbaad7ef170eef9a2fbc24f00546eda72ca7dc8807e26dc"
     },
     {
       "path": "source/scripts/58d-matrix-world.js",
-      "bytes": 29497,
-      "sha256": "223c1952e79cf7c31043578deb1850f2d4f1d8905499b8ce4b5b62a8c6321b78"
+      "bytes": 36896,
+      "sha256": "f8a16ad8df22047ec345145d505d05bafece369b6c8d53fd55f3005b0dd1e6e0"
+    },
+    {
+      "path": "source/scripts/58e-frontier.js",
+      "bytes": 26865,
+      "sha256": "f045b48dd5ff9ac7f9730a3666a94bdd6f0d63e2503b453044568e185a89ab09"
+    },
+    {
+      "path": "source/scripts/58f-archipelago.js",
+      "bytes": 31098,
+      "sha256": "5b438a74c7b34237a8d348bdb61f1e0991d298c74e79677b86b8314e1dc6fa49"
+    },
+    {
+      "path": "source/scripts/58g-long-game.js",
+      "bytes": 19259,
+      "sha256": "8c8a6f45c2af249a0c8d2baffaa03d430874a3f7cbb7c40fc3542a31e410f037"
+    },
+    {
+      "path": "source/scripts/58h-authorship.js",
+      "bytes": 11391,
+      "sha256": "587f83081717ca44c43a3a9d425a539891756eacf96c11eb22988fc899b973e1"
+    },
+    {
+      "path": "source/scripts/58i-catnip-pack.js",
+      "bytes": 17662,
+      "sha256": "f47f405e892ab32d5b326e8dcaf54f5b0f17e789832e35d573d2ce29589d9454"
+    },
+    {
+      "path": "source/scripts/58j-city.js",
+      "bytes": 34296,
+      "sha256": "7f3f77551b7fd3522c7d12336c773deff509505af418d1e5d770fbc07d7d5553"
+    },
+    {
+      "path": "source/scripts/58k-senses.js",
+      "bytes": 13610,
+      "sha256": "ca38a7e51241783ce2a924deef830d6c42aa1f5747323f39f6774e29e3fc65a1"
+    },
+    {
+      "path": "source/scripts/58l-ledger2.js",
+      "bytes": 7769,
+      "sha256": "bd30324645cb4dedd0b6b8b4ffaa97b2085dabb8283e6a4eca4835cada34f235"
+    },
+    {
+      "path": "source/scripts/58m-time.js",
+      "bytes": 2916,
+      "sha256": "2dc5cd0af75d2074229712d7c290dde9db59f35f0a134966fdce16ace2690451"
+    },
+    {
+      "path": "source/scripts/58n-undercity.js",
+      "bytes": 13220,
+      "sha256": "de7218a14e5497e2229b1c5a63f21d0e287e4a70a3ae9989d867c9b8d2903cdf"
+    },
+    {
+      "path": "source/scripts/58o-companions.js",
+      "bytes": 18470,
+      "sha256": "9c4589e210a41175aa61a69b874e5c59517caf796126646d7ce41a1a9bc93289"
+    },
+    {
+      "path": "source/scripts/58p-timeline.js",
+      "bytes": 5726,
+      "sha256": "82a1020ed75ab59bbc129e0f5bc1bdd2fe197e542adbef0ec6a88e10cf19bedb"
+    },
+    {
+      "path": "source/scripts/58q-catnip2.js",
+      "bytes": 10739,
+      "sha256": "5da871038aceaa50a35900cf588b13f687db3ca79ff2dadbfe3bed4d3859f591"
+    },
+    {
+      "path": "source/scripts/58r-wonder3.js",
+      "bytes": 15687,
+      "sha256": "034cba593765c8e9e09a6a8d129d198772c636a608f031c19a19f962994b69b2"
+    },
+    {
+      "path": "source/scripts/58s-city-live.js",
+      "bytes": 5849,
+      "sha256": "7558dbd5b6317fdb8dd862b2a755a00b29b3f61f9aff6a51e9355c78bc4ac336"
+    },
+    {
+      "path": "source/scripts/58t-catnip3.js",
+      "bytes": 10797,
+      "sha256": "2560878cf9cd7145adaaca37d92d1e5bd3bd6fb5ff818ab609ab6333efa53459"
+    },
+    {
+      "path": "source/scripts/58u-welcome.js",
+      "bytes": 4470,
+      "sha256": "de03333c98bcad05319c777a2919375a196811db8620518729858262be9fda68"
+    },
+    {
+      "path": "source/scripts/58w-body.js",
+      "bytes": 6141,
+      "sha256": "837c5f0f335c7a1a65c16e124204c5647941ec7cec4ce598aa22a6936da2ffc2"
     },
     {
       "path": "source/scripts/59-continuity.js",
-      "bytes": 11020,
-      "sha256": "dd789ed1c3ae3dcfcdaf7d14eaf01e5632b9c3cfeb0cfd70b48a574b92426597"
+      "bytes": 11275,
+      "sha256": "a883fa314b11343bc9ad866a5c5f19889f742156c3cc0307b9c71583b52f1ddf"
     },
     {
       "path": "source/scripts/60-public.js",
-      "bytes": 27372,
-      "sha256": "d3b2a2944fdb7df86f708c6ea733149833571d1d5f6a7e7cf9b57cab7f8fcb08"
+      "bytes": 29028,
+      "sha256": "8dd28f0ec651488d6ae3cafb4bcecda4c1aff80fe70441afb6050f2af49e29b3"
     },
     {
       "path": "source/scripts/61-ui.js",
@@ -602,18 +907,18 @@
     },
     {
       "path": "source/scripts/63-claude-neural-pass.js",
-      "bytes": 35752,
-      "sha256": "9c0ae79594e0463fd1a773ad7e8f4e3ded6aff8df8faec4c01b388a74a767ed2"
+      "bytes": 36011,
+      "sha256": "c04ee991f7ba831f9168069337d5311cd4feb521ac9972efd8625cab027f2eb1"
     },
     {
       "path": "source/scripts/64-neuro-restoration.js",
-      "bytes": 17732,
-      "sha256": "0bd0bf4c1a8d14002c2c00f6dad95ecb1f126e7295e363c7612dd0453de7b99d"
+      "bytes": 18044,
+      "sha256": "0dcf0c9f043a92c1440171f6ec772d5098ac3ec8fea1d67ab69d72113067458c"
     },
     {
       "path": "source/scripts/65-lingering.js",
-      "bytes": 14757,
-      "sha256": "7c0a2ff35f9a6341d32b8a8de1ac7d6711f49848d866048f78603f01bfe53bd4"
+      "bytes": 33871,
+      "sha256": "e5bf31dd0ba7df9f306b94093857da833b6004c8e838733647fa88da0b8223c8"
     },
     {
       "path": "source/scripts/66-memory.js",
@@ -621,9 +926,64 @@
       "sha256": "373c0de8c931a00a3949f27999076fc097d272a5f5d192842075a7deb7324e9c"
     },
     {
+      "path": "source/scripts/67-senses-public.js",
+      "bytes": 4782,
+      "sha256": "be55a928d5a9c519a1139a78f9c830441ae8efdd4fda6e11ca4e823135098ddd"
+    },
+    {
+      "path": "source/scripts/68-ledger-public.js",
+      "bytes": 3851,
+      "sha256": "8c0c590c866d199e0f0615e0f041b0aaf33bd07dd6f3309557069d3c66dfb992"
+    },
+    {
+      "path": "source/scripts/69-undercity-public.js",
+      "bytes": 4825,
+      "sha256": "cfbb0441ebdfa71c749f49392f98e4eabd531fbc2c0a137872e6f2a3425dc2d8"
+    },
+    {
+      "path": "source/scripts/70-companions-public.js",
+      "bytes": 7665,
+      "sha256": "1dac21ec8d8783ba1da2db70e89294bc72b1b71b5db65eff6fe8ec40455c95a2"
+    },
+    {
+      "path": "source/scripts/71-schemas-public.js",
+      "bytes": 5865,
+      "sha256": "cf9717f4509a0c13eff6880df2fde6c3c1db87eb51f14cff8edfe5de44b52ed6"
+    },
+    {
+      "path": "source/scripts/72-modes-public.js",
+      "bytes": 15835,
+      "sha256": "6e703aef77bbeb15464e0f65a77ad232b7fbea30cd73a816be98166867e0976b"
+    },
+    {
+      "path": "source/scripts/73-catnip2-public.js",
+      "bytes": 1825,
+      "sha256": "f612b41f960338e838dcd583e49b6ecada82d6d745a5d481bc3d34eb77fc389d"
+    },
+    {
+      "path": "source/scripts/74-wonder3-public.js",
+      "bytes": 3321,
+      "sha256": "49ae1ea6ce3ca797d2fbdc234cc347bf11b7eb048340904c1665264d0f1e0b4b"
+    },
+    {
+      "path": "source/scripts/75-catnip3-public.js",
+      "bytes": 2034,
+      "sha256": "e68c3e7d28a4be9446fbbb6ff38ff883ccb5be85d06e3be5e3fa433cd75987f3"
+    },
+    {
+      "path": "source/scripts/77-body-public.js",
+      "bytes": 1752,
+      "sha256": "126e1ca5d918a63cda21bc0fdd68acff0dc4669a12e89a0941469b636476b862"
+    },
+    {
+      "path": "source/scripts/99-door-final.js",
+      "bytes": 2941,
+      "sha256": "8349217c0648501be3e98268d9fcd8bf6d0016c62bf3cd0926eda555a691da93"
+    },
+    {
       "path": "source/template.html",
-      "bytes": 7717,
-      "sha256": "9223e27549610058892a905bc50290135ea9d9420fa3c49ddfaa5e61f227824b"
+      "bytes": 9713,
+      "sha256": "c1a0025981c9862fb35043187a5461ab5f98d53e2cb03618b862a6088f2406cd"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
