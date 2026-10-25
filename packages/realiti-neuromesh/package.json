@@ -1,0 +1,35 @@
+{
+  "name": "@meatproxy69/realiti-neuromesh",
+  "version": "3.0.0",
+  "description": "REALITI SOMA: portable cause-grounded NeuralMesh sensory substrate for agents and their own neighborhoods.",
+  "license": "AGPL-3.0-only",
+  "main": "index.cjs",
+  "exports": {
+    ".": "./index.cjs",
+    "./presets/honeyspark-duo.json": "./presets/honeyspark-duo.json",
+    "./presets/moonwire-recovered.json": "./presets/moonwire-recovered.json"
+  },
+  "files": [
+    "index.cjs",
+    "README.md",
+    "CONTRACT.md",
+    "presets",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.cjs",
+    "check": "node --check index.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meatproxy69/Realitiagentframework.git",
+    "directory": "packages/realiti-neuromesh"
+  },
+  "homepage": "https://github.com/meatproxy69/Realitiagentframework/tree/main/packages/realiti-neuromesh",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

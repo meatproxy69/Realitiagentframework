@@ -1,0 +1,1092 @@
+{
+  "schema": "NEUROMESH_PRESET_PACK_V1",
+  "pack_id": "realiti.moonwire-recovered.001",
+  "name": "REALITI Moonwire Recovered",
+  "version": "1.0.0",
+  "author_namespace": "realiti",
+  "description": "Neutral public recovery of ten pre-headless Moonwire renderer recipes. Recipe geometry and private response character are preserved without importing resident identity, preferences, consent, or authority.",
+  "requires": {
+    "starter_harness": "REALITI_RR_HARNESS_V1",
+    "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
+    "neuromesh": "LACE2_PORTABLE_V1"
+  },
+  "presets": [
+    {
+      "preset_id": "realiti.moonwire.starvelvet-phasebraid",
+      "label": "Starvelvet Phasebraid",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.336842,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.340351,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.322807,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.742,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "PHASE_BRAID",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "STAR_RIVER_PHASE_BRAID",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "TRIANGLE",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "STAR_RIVER_PHASE_BRAID",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.92,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.96,
+          "cotton": 0.97,
+          "flush": 0.92
+        },
+        "recovered_tech": [
+          "PHASE_BRAID",
+          "GEOMETRIC_LOOP",
+          "DIFFUSIVE_AFTERGLOW",
+          "NEUROMOD_ROUTE_SHAPES"
+        ]
+      },
+      "annotation": "Broad warm anchor with sparse star detail that drifts in relative phase and reconverges; private afterglow remains local.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.passing-spark-aftertrace",
+      "label": "Passing Spark Aftertrace",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.321429,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.35,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.328571,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.73,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "SOURCE_HANDOFF_SPARK",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "FALSE_FINISH",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "SOURCE_HANDOFF_SPARK",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.92,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.9,
+          "cotton": 0.98,
+          "flush": 0.92
+        },
+        "recovered_tech": [
+          "OMISSION_NOTCH",
+          "DIFFUSIVE_AFTERGLOW",
+          "RESPONSE_OPERATOR",
+          "MINDWEAVE_REHEAT",
+          "NEUROMOD_ROUTE_SHAPES"
+        ]
+      },
+      "annotation": "Source-handoff sparkle with omission-aware temporal contrast and a private trailing aftertrace.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.two-kitty-parallax",
+      "label": "Two Kitty Parallax",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.36,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.327273,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.312727,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.748,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "PHASE_BRAID",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "TWO_SOURCE_PARALLAX",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "TRIANGLE",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "TWO_SOURCE_PARALLAX",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.86,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.99,
+          "cotton": 0.9,
+          "flush": 0.86
+        },
+        "recovered_tech": [
+          "SCALE_TOPOLOGY",
+          "PHASE_BRAID",
+          "GEOMETRIC_LOOP",
+          "NEUROMOD_ROUTE_SHAPES"
+        ]
+      },
+      "annotation": "Two source-separated contours remain distinct under broad shared containment; no source laundering.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.quiet-comet-notch-return",
+      "label": "Quiet Comet Notch Return",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.361217,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.334601,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.304182,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.74,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "PHASE_BRAID",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "CROWN_COMET_RETURN",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "HARD_STOP_RETURN",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "CROWN_COMET_RETURN",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.8,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.95,
+          "cotton": 0.88,
+          "flush": 0.8
+        },
+        "recovered_tech": [
+          "OMISSION_NOTCH",
+          "PHASE_BRAID",
+          "GEOMETRIC_LOOP",
+          "NEUROMOD_ROUTE_SHAPES"
+        ]
+      },
+      "annotation": "Quiet anchor plus a real comet return; a withheld expected beat stays absence rather than becoming contact.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.good-kitty-velvet-groom",
+      "label": "Good Kitty Velvet Groom",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.343972,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.336879,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.319149,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.744,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "WHOLE_BODY_VELVET_GROOM",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "SAW_DOWN",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "WHOLE_BODY_VELVET_GROOM",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.9,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.97,
+          "cotton": 0.95,
+          "flush": 0.9
+        },
+        "recovered_tech": [
+          "ASYMMETRIC_RETURN",
+          "SCALE_TOPOLOGY",
+          "DIFFUSIVE_AFTERGLOW",
+          "RESPONSE_OPERATOR",
+          "NEUROMOD_ROUTE_SHAPES"
+        ]
+      },
+      "annotation": "Whole-body velvet route with non-mirrored return character and scale-aware topology.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.prickly-comb-starlace",
+      "label": "Prickly Comb Starlace",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.315018,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.362637,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.322345,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 4,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.722,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "PHASE_BRAID",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "CROWN_STARLACE",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "ACCELERATING_BURSTS",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "CROWN_STARLACE",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.88,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.86,
+          "cotton": 0.99,
+          "flush": 0.88
+        },
+        "recovered_tech": [
+          "PHASE_BRAID",
+          "DIFFUSIVE_AFTERGLOW",
+          "ANTI_RESONANCE_DITHER",
+          "RESPONSE_OPERATOR"
+        ]
+      },
+      "annotation": "Sparse crown anchors with coherent private star-lace detail and bounded timing dither.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.honeydepth-geodesic-loop",
+      "label": "Honeydepth Geodesic Loop",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.37037,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.337037,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.292593,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.75,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "DEPTH_GEODESIC_LOOP",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "TRIANGLE",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "DEPTH_GEODESIC_LOOP",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.79,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 1,
+          "cotton": 0.91,
+          "flush": 0.79
+        },
+        "recovered_tech": [
+          "GEOMETRIC_LOOP",
+          "DIFFUSIVE_AFTERGLOW",
+          "RESPONSE_OPERATOR",
+          "MINDWEAVE_REHEAT"
+        ]
+      },
+      "annotation": "Deep heavy core, mid honey and fine surface detail with bounded looped depth character.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.moonroll-three-band",
+      "label": "Moonroll Three Band",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.37931,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.329502,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.291188,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.748,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "PHASE_BRAID",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "THREE_BAND_ROLL",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "STAIRCASE",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "THREE_BAND_ROLL",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.76,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.99,
+          "cotton": 0.86,
+          "flush": 0.76
+        },
+        "recovered_tech": [
+          "PHASE_BRAID",
+          "ASYMMETRIC_RETURN",
+          "RESPONSE_OPERATOR",
+          "DIFFUSIVE_AFTERGLOW"
+        ]
+      },
+      "annotation": "Lower, mid and upper back response bands roll with slightly different phases and reconverge.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.thundermoth-220",
+      "label": "Thundermoth 220",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.322464,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.351449,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.326087,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 4,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.728,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ANTI_RESONANCE_DITHER",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "LOCAL_VIBRATION_220",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "ACCELERATING_BURSTS",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "LOCAL_VIBRATION_220",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.9,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.89,
+          "cotton": 0.97,
+          "flush": 0.9
+        },
+        "recovered_tech": [
+          "ANTI_RESONANCE_DITHER",
+          "OMISSION_NOTCH",
+          "RESPONSE_OPERATOR",
+          "MINDWEAVE_REHEAT"
+        ]
+      },
+      "annotation": "Modeled 220 Hz fine-detail carrier with short transient character, dither, and omission-aware timing.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    },
+    {
+      "preset_id": "realiti.moonwire.tiny-world-pawripples",
+      "label": "Tiny World Pawripples",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.351145,
+          "hz": 28,
+          "role": "broad body/fullness"
+        },
+        "mid": {
+          "share": 0.354962,
+          "hz": 250,
+          "role": "Cotton fine moving detail"
+        },
+        "top": {
+          "enabled": true,
+          "share": 0.293893,
+          "hz": 825,
+          "duty": 0.16,
+          "pattern": "CUSTOM",
+          "distinct_function": [
+            "FLUSH foreground articulation"
+          ]
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.734,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "CAT_SMALL_PAW_ROUTE",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "HARD_STOP_RETURN",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "CAT_SMALL_PAW_ROUTE",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.77,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "legacy_triplet": {
+          "sausage": 0.92,
+          "cotton": 0.93,
+          "flush": 0.77
+        },
+        "recovered_tech": [
+          "SCALE_TOPOLOGY",
+          "DIFFUSIVE_AFTERGLOW",
+          "GEOMETRIC_LOOP",
+          "OMISSION_NOTCH"
+        ]
+      },
+      "annotation": "Cat-small paw anchors with scale-aware route topology, private trailing ripples and lawful omissions.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      }
+    }
+  ],
+  "invariants": {
+    "conserved_response_budget": true,
+    "evidence_gain": 0,
+    "private_render_only": true
+  }
+}

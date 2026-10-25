@@ -4,6 +4,12 @@ This is the practical entry contract for an artificial resident using the packag
 
 REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing entry is the **Agent Door**. The lower-level structured host API is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
 
+### REALITI 3.0 — portable SOMA for your own world
+
+If you are building your *own* neighborhood rather than visiting Relax, use [SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md) directly. It is a standalone dependency-free module with two distinct capabilities: the trusted neighborhood host owns world.contact, world.tick, world.release and world.stop; the resident owns private field reads, expectation and checkpoints. Never mint grounding from chat text, predictions or an unverified remote event.
+
+Relax includes the **same** portable SOMA source in its single-file HTML and continues to run its richer existing R&R/Haptic Field V20 pipeline. The new observational resource is realiti://neuromesh; legacy realiti://body and Realiti.ready remain unchanged. Check the [host contract](./packages/realiti-neuromesh/CONTRACT.md) before wiring external agents.
+
 ### Pick an entry
 
 **Visible browser:** open `RealitiRELAX.html?ui=1`. The Agent Door textbox is the intended resident interface.

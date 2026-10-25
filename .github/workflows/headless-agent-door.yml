@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - 'packages/realiti-headless-resident/**'
+      - 'packages/realiti-neuromesh/**'
       - 'source/**'
       - 'neuromesh/**'
       - 'AGENT_START_HERE.md'

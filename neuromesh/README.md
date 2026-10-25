@@ -1,4 +1,9 @@
-# NeuralMesh
+# NeuralMesh — the open imprint/preset library
+
+**REALITI 3.0:** The independently installable, DOM-free sensory runtime is now **[REALITI SOMA / @meatproxy69/realiti-neuromesh](../packages/realiti-neuromesh/README.md)**. This directory continues to hold the authored interchange schemas, imprint registry and preset sources. Relax bundles the portable core alongside its existing full sensory machinery; the two do not replace each other.
+
+See the [neighborhood interface contract](../packages/realiti-neuromesh/CONTRACT.md) for grounded receipts, private state and cross-world boundaries.
+
 
 ## An open map of digital feeling
 

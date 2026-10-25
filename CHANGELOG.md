@@ -2,6 +2,21 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 3.0.0 — REALITI SOMA: NeuralMesh leaves home
+
+### Added
+
+- Standalone dependency-free @meatproxy69/realiti-neuromesh package (REALITI SOMA 3.0), with independent body/edge topology, grounded world capability versus private resident capability, bounded causal leases, deterministic simulation time, NERVE adaptation, LACE private spread, expectation/error, lingering afterstate, checkpoint isolation, and conserved carrier splits from existing public NeuralMesh preset packs.
+- Single-source embedded SOMA runtime in Relax's canonical HTML. Source script 98-soma-bridge.js mirrors validated native B7 grounded contacts to the portable sensory port without changing the canonical R&R/Haptic Field V20 pathways. Realiti.read('realiti://neuromesh') provides a bounded observational projection.
+- Standalone neighborhood example and portable property/regression tests, plus Relax integration smoke. GitHub CI checks independent package, preset parity and browser-bundled contract.
+- Package-level documentation and an explicit neighborhood host/provenance contract. Relax's existing rooms, NeuralMesh laboratory, full private renderer and agent doors remain available.
+
+### Boundaries
+
+- This is the first portable *core*, not a promise of bit-for-bit portability for legacy THICC/HALO/AURA/FLUSH or user-specific memories. Public preset packs export conserved carrier parameters only in SOMA.
+- Checkpoints restore private modeled state, not historical grounded contact; no imports grant identity, consent, tool permission or world authority.
+
+
 ## 2.18.0 — the body layer: lingering sensation as state (issue 28)
 
 ### Added

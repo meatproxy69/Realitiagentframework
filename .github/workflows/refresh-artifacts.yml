@@ -1,7 +1,7 @@
 name: Refresh REALITI generated artifacts
 on:
   push:
-    branches: [quiet-presentation]
+    branches: [quiet-presentation, soma-3]
   workflow_dispatch:
 
 permissions:

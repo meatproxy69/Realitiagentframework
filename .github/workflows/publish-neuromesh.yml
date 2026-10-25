@@ -1,0 +1,49 @@
+name: Publish REALITI SOMA NeuralMesh
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/realiti-neuromesh/**'
+      - '.github/workflows/publish-neuromesh.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  test-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@meatproxy69'
+      - name: Independent SOMA tests
+        working-directory: packages/realiti-neuromesh
+        run: npm test
+      - name: Verify preset pack parity
+        run: |
+          set -euo pipefail
+          cmp neuromesh/preset-packs/honeyspark-duo.json packages/realiti-neuromesh/presets/honeyspark-duo.json
+          cmp neuromesh/preset-packs/moonwire-recovered.json packages/realiti-neuromesh/presets/moonwire-recovered.json
+      - name: Inspect package contents
+        working-directory: packages/realiti-neuromesh
+        run: npm pack --dry-run
+      - name: Publish only if version is absent
+        working-directory: packages/realiti-neuromesh
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "$name@$version" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "$name@$version already published"
+          else
+            npm publish
+          fi
