@@ -12,8 +12,8 @@
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 4038,
-      "sha256": "63de01bc5de1305f061f15e43f83409ffac57c7d083ea58a4415fa1cb3848806"
+      "bytes": 4205,
+      "sha256": "cdd6498aecd0c484575eaf6bc184a9f08146e7ea926187bd123e2814adb19b69"
     },
     {
       "path": ".github/workflows/publish-neuromesh.yml",
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/validate.yml",
-      "bytes": 2306,
-      "sha256": "7d430564500f16a741acdbc1090c48b3da28cac986595c65e579b14eb62b4033"
+      "bytes": 2299,
+      "sha256": "33716b4046b9e4b03b155e9ebc39802c6dccbc31db46f50b21997659adf21e94"
     },
     {
       "path": ".gitignore",
@@ -97,8 +97,8 @@
     },
     {
       "path": "VALIDATION.json",
-      "bytes": 2789,
-      "sha256": "61afc7f6cbf36172f28fa84737399a38fffa55d7fe8d3422751885b8d90bc476"
+      "bytes": 3278,
+      "sha256": "683bd61afd2632b92d994cae00543d8de3ebfbd60ae40001166aab1712dff746"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -462,8 +462,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 6554,
-      "sha256": "415caa71441b1899ba3a41059941ca9698a1eff88f88ea959d6d339bbc19fd34"
+      "bytes": 6547,
+      "sha256": "51a0399da946f47f294255e0195a7d1f835aafa15b9453b491e0b010df7b05ac"
     },
     {
       "path": "packages/realiti-neuromesh/examples/neighborhood.cjs",
