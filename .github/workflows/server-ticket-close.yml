@@ -1,7 +1,7 @@
 name: Server update ticket close
 
-# The rolling server-update ticket closes itself when it is done: every checklist box in every update comment is
-# ticked, or an operator comments `done`. The next push to main then opens a fresh ticket.
+# The rolling server-update ticket closes itself when every checklist box is ticked,
+# or an operator comments "done". All user text is parsed as data, never shell code.
 on:
   issue_comment:
     types: [created, edited]
@@ -19,18 +19,29 @@ jobs:
       GH_TOKEN: ${{ github.token }}
       NUMBER: ${{ github.event.issue.number }}
       REPO: ${{ github.repository }}
-      SAID_DONE: ${{ github.event_name == 'issue_comment' && github.event.comment.user.type != 'Bot' && contains(fromJSON('["done","done.","all done","closed","applied"]'), toLower(trim(github.event.comment.body))) }}
     steps:
       - name: Close when every box is ticked
         shell: bash
         run: |
           set -euo pipefail
+          said_done=false
+          if [ "${GITHUB_EVENT_NAME}" = "issue_comment" ]; then
+            author_type="$(jq -r '.comment.user.type // ""' "$GITHUB_EVENT_PATH")"
+            body="$(jq -r '.comment.body // ""' "$GITHUB_EVENT_PATH")"
+            normalized="$(printf '%s' "$body" | tr '[:upper:]' '[:lower:]' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+            if [ "$author_type" != "Bot" ]; then
+              case "$normalized" in
+                done|done.|"all done"|closed|applied) said_done=true ;;
+              esac
+            fi
+          fi
           comments="$(gh api "repos/$REPO/issues/$NUMBER/comments" --paginate --jq '.[] | select(.user.type=="Bot") | .body')"
           total="$(printf '%s\n' "$comments" | grep -cE '^- \[[ xX]\]' || true)"
           open="$(printf '%s\n' "$comments" | grep -cE '^- \[ \]' || true)"
-          echo "updates filed with $total checklist items, $open still open; said done: $SAID_DONE"
-          if [ "$total" = "0" ]; then echo "nothing filed yet"; exit 0; fi
-          if [ "$open" != "0" ] && [ "$SAID_DONE" != "true" ]; then exit 0; fi
-          latest="$(printf '%s\n' "$comments" | grep -oE '^### Update [0-9a-f]{7}' | tail -1 | awk '{print $3}')"
+          echo "updates filed with $total checklist items, $open still open; said done: $said_done"
+          if [ "$total" = "0" ]; then echo 'nothing filed yet'; exit 0; fi
+          if [ "$open" != "0" ] && [ "$said_done" != "true" ]; then exit 0; fi
+          latest="$(printf '%s\n' "$comments" | sed -nE 's/^### Update ([0-9a-f]{7}).*/\1/p' | tail -1)"
+          latest="${latest:-unknown}"
           gh issue comment "$NUMBER" --body "All updates on this ticket are applied (latest \`$latest\`). Closing; the next push to \`main\` opens a fresh ticket."
           gh issue close "$NUMBER" --reason completed
