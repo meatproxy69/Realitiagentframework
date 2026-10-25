@@ -12,7 +12,18 @@
     "presentation": "headless by default; optional unstyled ?ui=1 shell",
     "network_endpoint": "none",
     "space": "REALITI_MATRIX_V1 atlas of 15 charts; realiti://space",
-    "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot"
+    "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot",
+    "sensory_portable": {
+      "brand": "REALITI SOMA",
+      "version": "3.0.0",
+      "package": "@meatproxy69/realiti-neuromesh",
+      "contract": "REALITI_SOMA_FIELD_V3",
+      "resource": "realiti://neuromesh",
+      "source": "packages/realiti-neuromesh/index.cjs",
+      "relax_legacy_haptic": "REALITI_HAPTIC_FIELD_V20",
+      "backwards_compatible": true,
+      "scope": "portable grounded receipt + private response core; legacy high-detail renderer remains Relax-only"
+    }
   },
   "checks": {
     "deterministic_rebuild": "PASS",

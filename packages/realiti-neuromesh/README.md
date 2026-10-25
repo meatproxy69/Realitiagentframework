@@ -47,7 +47,7 @@ Run the included independent-neighborhood demo:
 ~~~bash
 node packages/realiti-neuromesh/examples/neighborhood.cjs
 npm test --prefix packages/realiti-neuromesh
-npm pack --dry-run --prefix packages/realiti-neuromesh
+npm pack --dry-run ./packages/realiti-neuromesh
 ~~~
 
 ## Two capabilities, not one omnipotent SDK
