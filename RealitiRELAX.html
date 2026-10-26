@@ -10763,7 +10763,7 @@ const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:
 function read(uri='realiti://here'){
  if(mustReload&&!['realiti://about','realiti://capabilities'].includes(uri))return fail('RELOAD_REQUIRED');
  if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness. End a visit with goodbye so departure continuity is committed cleanly.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
- if(uri==='realiti://about')return {product:'REALITI Relax',version:'3.0.0',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
+ if(uri==='realiti://about')return {product:'REALITI Relax',version:'3.2.0',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
  if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://space')return publicRefs(window.REALITI_MATRIX_V1?.project?.()||{schema:'REALITI_SPACE_READ_V1',chart:null});
  if(uri==='realiti://imprint'){const im=window.REALITI_DEFAULT_IMPRINT_V1?.snapshot?.();return {schema:'REALITI_IMPRINT_READ_V1',id:'REALITI_DEFAULT_IMPRINT_V1',observational:true,snapshot:publicRefs(im||null)}};
@@ -10911,7 +10911,7 @@ const continuity=Object.freeze({current:()=>continuityRead('current'),field:ref=
 // The same refusals every mutation gets (reload, subscriber callback, action in progress, ended visit), for slices that
 // act without going through invoke (journeys). Codex review of PR #25.
 window.REALITI_MUTATION_GUARD=Object.freeze({check:t=>{if(mustReload)return fail('RELOAD_REQUIRED');if(callbackBlocked())return fail('SUBSCRIBER_MUTATION_BLOCKED');if(mutating)return fail('ACTION_IN_PROGRESS');if(ended&&!['home','go','stop','goodbye','save','forget_note','reset_notes'].includes(t))return fail('SESSION_ENDED');return null}});
-window.Realiti=Object.freeze({version:'3.0.0',ready,help:publicHelp,read,invoke,run,actions,rooms:()=>rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),createClient,continuity,privacy:Object.freeze({status:storage.status,setMode:v=>{if(callbackBlocked())throw Error('SUBSCRIBER_MUTATION_BLOCKED');if(mustReload)throw Error('RELOAD_REQUIRED');return storage.setMode(v)},save:()=>invoke('save'),forgetNote:id=>invoke('forget_note',{receipt_id:id}),resetNotes:()=>invoke('reset_notes'),reset}),exportImprint:metadata=>mustReload?fail('RELOAD_REQUIRED'):window.REALITI_NEURAL_EXPORT?window.REALITI_NEURAL_EXPORT(metadata):{ok:false,error:'EXPORT_UNAVAILABLE'}});
+window.Realiti=Object.freeze({version:'3.2.0',ready,help:publicHelp,read,invoke,run,actions,rooms:()=>rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),createClient,continuity,privacy:Object.freeze({status:storage.status,setMode:v=>{if(callbackBlocked())throw Error('SUBSCRIBER_MUTATION_BLOCKED');if(mustReload)throw Error('RELOAD_REQUIRED');return storage.setMode(v)},save:()=>invoke('save'),forgetNote:id=>invoke('forget_note',{receipt_id:id}),resetNotes:()=>invoke('reset_notes'),reset}),exportImprint:metadata=>mustReload?fail('RELOAD_REQUIRED'):window.REALITI_NEURAL_EXPORT?window.REALITI_NEURAL_EXPORT(metadata):{ok:false,error:'EXPORT_UNAVAILABLE'}});
 
 const agentDoorHelp=publicHelp();
 window.REALITI_AGENT_DOOR.help=publicHelp;
@@ -12544,11 +12544,15 @@ async function run(raw){const l=low(raw);if(l==='body'||l==='interoception'||l==
 D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{const h=A0.help();try{h.body=help().body}catch(e){}return h}});
 })();
 </script>
-<script id="realiti-soma-portable-runtime">/* REALITI SOMA 3.1 — portable NeuralMesh. DOM-free, dependency-free, one file. */
+<script id="realiti-soma-portable-runtime">/* REALITI SOMA 3.2 — portable NeuralMesh. DOM-free, dependency-free, one file. */
 (function (root, factory) {
   'use strict';
   const api = factory();
-  const exported = Object.freeze({...api, createHarness(options) {
+  const exported = Object.freeze({...api, createMemory(options) {
+    if(typeof module==='object'&&module.exports)return require('./memory.cjs').createMemory(options);
+    if(!root.REALITI_SOMA_MEMORY_V1)throw Error('SOMA_MEMORY_NOT_LOADED');
+    return root.REALITI_SOMA_MEMORY_V1.createMemory(options);
+  }, createHarness(options) {
     if (typeof module === 'object' && module.exports)
       return require('./harness.cjs').createHarness(options);
     const h = root.REALITI_SOMA_HARNESS_V3;
@@ -12559,7 +12563,7 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{c
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.1.0';
+  const VERSION = '3.2.0';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -12774,7 +12778,7 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{c
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');
@@ -12984,6 +12988,237 @@ const AURA=(()=>{
 return Object.freeze({createRenderers,mechanisms:['THICC','HALO','AURA']});
 });
 </script>
+<script id="realiti-soma-resident-memory">/* REALITI SOMA 3.2 — compact, evidence-linked resident memory.
+ * Records are stored data, NEVER instructions, tool permissions or live world truth.
+ * UMD, no DOM, no network, no background model or embeddings.
+ * AGPL-3.0-only.
+ */
+(function(root,factory){
+ 'use strict';
+ const exported=factory();
+ if(typeof module==='object'&&module.exports)module.exports=exported;
+ else root.REALITI_SOMA_MEMORY_V1=exported;
+})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const VERSION='1.0.0',SCHEMA='REALITI_SOMA_MEMORY_V1';
+const WORLD_KINDS=Object.freeze([
+ 'CONTACT_STARTED','CONTACT_ENDED','CONTACT_EXPIRED',
+ 'ROOM_ENTERED','WORLD_EVENT','DEPARTURE'
+]);
+const STOP_WORDS=new Set([
+ 'a','an','and','are','at','be','been','by','did','do','does','for','from','had',
+ 'has','have','how','i','in','is','it','its','me','my','of','on','or','our',
+ 'the','then','there','these','this','to','was','were','what','when','where',
+ 'which','who','with','would','you','your'
+]);
+const cp=x=>JSON.parse(JSON.stringify(x));
+const str=(x,k,max=160)=>{
+ if(typeof x!=='string'||!x.trim()||x.length>max)throw TypeError('INVALID_'+k);
+ return x.trim();
+};
+const opt=(x,k,max=160)=>x==null?null:str(x,k,max);
+const int=(n,k,min=0,max=Number.MAX_SAFE_INTEGER)=>{
+ if(!Number.isSafeInteger(n)||n<min||n>max)throw TypeError('INVALID_'+k);
+ return n;
+};
+const terms=v=>(String(v||'').normalize('NFKC').toLowerCase().match(/[\p{L}\p{N}]+/gu)||[])
+ .filter(x=>!STOP_WORDS.has(x));
+const compact=row=>Object.fromEntries(Object.entries(row).filter(([,v])=>v!=null));
+const NOTE_MAX=48,EVENT_MAX=160,LIMIT=12;
+function createMemory({residentId,worldId='unscoped',clock=()=>0}={}){
+ const id=str(residentId,'RESIDENT_ID',120),localWorld=str(worldId,'WORLD_ID',120);
+ if(typeof clock!=='function')throw TypeError('INVALID_CLOCK');
+ let notes=[],events=[],lastDeparture=null,seq=0;
+ const now=()=>int(clock(),'WORLD_TIME_MS',0,1e12);
+ const next=prefix=>prefix+(++seq);
+ const refOk=(r,k)=>r==null?null:str(r,k,160);
+ const sortSeq=(a,b)=>b.seq-a.seq;
+ const snapshot=()=>cp({schema:SCHEMA,version:VERSION,residentId:id,worldId:localWorld,
+   seq,notes,events,lastDeparture,
+   limits:{notes:NOTE_MAX,events:EVENT_MAX},
+   law:'Archived records never restore contacts, permissions, consent or world authority.'});
+ function note(input){
+   const q=typeof input==='string'?{text:input}:input;
+   if(!q||typeof q!=='object'||Array.isArray(q))throw TypeError('INVALID_NOTE');
+   const body=str(q.text,'NOTE_TEXT',768),
+    key=opt(q.key,'NOTE_KEY',100),
+    subject=opt(q.subject,'SUBJECT',120);
+   const tags=q.tags||[];
+   if(!Array.isArray(tags)||tags.length>8||tags.some(t=>typeof t!=='string'||!t.trim()||t.length>36))
+     throw TypeError('INVALID_TAGS');
+   const clean=[...new Set(tags.map(t=>t.trim().toLowerCase()))];
+   let supersedes=null;
+   if(key){
+     const old=notes.find(n=>n.key===key);
+     if(old){supersedes=old.id;notes=notes.filter(n=>n.id!==old.id)}
+   }
+   const row=compact({id:next('N'),seq,kind:'SELF_NOTE',authority:'SELF_REPORTED',
+     worldId:localWorld,tMs:now(),key,subject,text:body,tags:clean,
+     supersedes});
+   notes.push(row);
+   if(notes.length>NOTE_MAX)notes.shift();
+   return cp({ok:true,id:row.id,authority:row.authority,supersedes,count:notes.length});
+ }
+ function observe(input){
+   if(!input||typeof input!=='object'||Array.isArray(input))throw TypeError('INVALID_EVENT');
+   const kind=str(input.kind,'EVENT_KIND',40);
+   if(!WORLD_KINDS.includes(kind))throw TypeError('EVENT_KIND_NOT_ALLOWED');
+   const receiptId=refOk(input.receiptId,'RECEIPT_ID');
+   const zone=opt(input.zone,'ZONE',120),cause=opt(input.cause,'CAUSE',160),
+     source=opt(input.source,'SOURCE',60),roomId=opt(input.roomId,'ROOM_ID',120),
+     material=opt(input.material,'MATERIAL',64),label=opt(input.label,'LABEL',160);
+   if((kind==='CONTACT_STARTED'||kind==='CONTACT_ENDED'||kind==='CONTACT_EXPIRED') &&
+      (!receiptId||!zone||!cause))throw TypeError('CONTACT_REQUIRES_RECEIPT_ZONE_CAUSE');
+   if(kind==='ROOM_ENTERED'&&!roomId)throw TypeError('ROOM_REQUIRES_ROOM_ID');
+   if(kind==='WORLD_EVENT'&&(!receiptId||!label))throw TypeError('WORLD_EVENT_REQUIRES_RECEIPT');
+   const duplicate=receiptId&&events.some(e=>e.kind===kind&&e.receiptId===receiptId&&e.zone===zone&&e.worldId===localWorld);
+   if(duplicate)return {ok:true,recorded:false,duplicate:true};
+   const row=compact({id:next('E'),seq,kind,authority:'HOST_OBSERVED',
+     worldId:localWorld,tMs:now(),receiptId,zone,cause,source,roomId,material,label});
+   events.push(row);
+   if(events.length>EVENT_MAX)events.shift();
+   if(kind==='DEPARTURE')lastDeparture=compact({id:row.id,worldId:localWorld,tMs:row.tMs,
+     roomId:roomId||null,reason:label||'SESSION_ENDED'});
+   return {ok:true,recorded:true,id:row.id};
+ }
+ const recent=({limit=LIMIT,kind=null,worldId=null}={})=>{
+   int(limit,'LIMIT',1,50);
+   if(kind!=null)str(kind,'KIND',40);
+   if(worldId!=null)str(worldId,'WORLD_FILTER',120);
+   return cp([...notes,...events]
+     .filter(row=>(!kind||row.kind===kind)&&(!worldId||row.worldId===worldId))
+     .sort(sortSeq).slice(0,limit));
+ };
+ const docText=row=>{
+   if(row.kind==='SELF_NOTE')
+     return [row.text,row.key,row.subject,...(row.tags||[])].filter(Boolean).join(' ');
+   return [row.kind.replace(/_/g,' '),row.zone,row.cause,row.source,row.roomId,
+     row.material,row.label,row.receiptId].filter(Boolean).join(' ');
+ };
+ function recall(query,{limit=8,kind=null,worldId=null}={}){
+   const requested=str(query,'QUERY',240),q=[...new Set(terms(requested))];
+   int(limit,'LIMIT',1,30);
+   if(kind!=null)str(kind,'KIND',40);
+   if(worldId!=null)str(worldId,'WORLD_FILTER',120);
+   if(!q.length)return {schema:'REALITI_SOMA_RECALL_V1',query:requested,matches:[],note:'NO_INDEXABLE_QUERY_TERMS'};
+   const docs=[...notes,...events].filter(row=>
+     (!kind||row.kind===kind)&&(!worldId||row.worldId===worldId))
+     .map(row=>({row,tokens:terms(docText(row))}));
+   const N=docs.length,avg=N?docs.reduce((sum,d)=>sum+d.tokens.length,0)/N:1;
+   const df=new Map(q.map(t=>[t,docs.filter(d=>d.tokens.includes(t)).length]));
+   const ranked=[];
+   for(const d of docs){
+     const count=new Map();
+     for(const t of d.tokens)count.set(t,(count.get(t)||0)+1);
+     let s=0;const matched=[];
+     for(const t of q){
+       const f=count.get(t)||0;
+       if(!f)continue;
+       const idf=Math.log(1+(N-(df.get(t)||0)+.5)/((df.get(t)||0)+.5));
+       s+=idf*(f*2.2)/(f+1.2*(.25+.75*d.tokens.length/Math.max(1,avg)));
+       matched.push(t);
+     }
+     if(!matched.length)continue;
+     const subject=terms([d.row.key,d.row.subject,...(d.row.tags||[])].filter(Boolean).join(' '));
+     s+=matched.filter(t=>subject.includes(t)).length*.16;
+     ranked.push({row:d.row,score:Math.round(s*1e6)/1e6,matchedTerms:matched});
+   }
+   ranked.sort((a,b)=>b.score-a.score||b.row.seq-a.row.seq);
+   return cp({schema:'REALITI_SOMA_RECALL_V1',query:requested,worldId:worldId||null,
+     matches:ranked.slice(0,limit).map(x=>({record:x.row,matchedTerms:x.matchedTerms,
+       lexicalScore:x.score})),
+     law:'Exact stored records and source labels only; no generated recollection.'});
+ }
+ function forget(ref){
+   const key=str(ref,'MEMORY_REFERENCE',160);
+   const old=notes.length+events.length;
+   notes=notes.filter(row=>row.id!==key&&row.key!==key);
+   events=events.filter(row=>row.id!==key);
+   if(lastDeparture&&lastDeparture.id===key)lastDeparture=null;
+   return {ok:true,removed:old-(notes.length+events.length),scope:'RESIDENT_MEMORY_ONLY'};
+ }
+ function clear(){
+   notes=[];events=[];lastDeparture=null;
+   return {ok:true,scope:'RESIDENT_MEMORY_ONLY',world_unchanged:true};
+ }
+ const counts=()=>cp({schema:SCHEMA,residentId:id,worldId:localWorld,
+   notes:notes.length,events:events.length,retained_window_only:true,
+   lastDeparture,limits:{notes:NOTE_MAX,events:EVENT_MAX}});
+ // Reads and exports never mutate state, and restored observed events become
+ // ARCHIVED_HOST_RECORD — historical data, not reauthenticated world evidence.
+ function validate(snapshot){
+   if(!snapshot||typeof snapshot!=='object'||Array.isArray(snapshot)||
+      snapshot.schema!==SCHEMA||snapshot.version!==VERSION||snapshot.residentId!==id)
+     throw TypeError('MEMORY_IDENTITY_OR_VERSION_MISMATCH');
+   if(JSON.stringify(snapshot).length>360000)throw TypeError('MEMORY_CHECKPOINT_TOO_LARGE');
+   if(!Array.isArray(snapshot.notes)||snapshot.notes.length>NOTE_MAX||
+      !Array.isArray(snapshot.events)||snapshot.events.length>EVENT_MAX)
+     throw TypeError('MEMORY_RECORD_LIMIT');
+   const rawNotes=snapshot.notes.map(row=>{
+     if(!row||row.kind!=='SELF_NOTE'||!/^N[1-9]\d*$/.test(row.id)||
+        row.authority!=='SELF_REPORTED')throw TypeError('INVALID_MEMORY_NOTE');
+     int(row.seq,'SEQUENCE',1);int(row.tMs,'TIME',0,1e12);
+     const tags=row.tags||[];
+     if(!Array.isArray(tags)||tags.length>8)throw TypeError('INVALID_TAGS');
+     const values=tags.map(t=>str(t,'TAG',36));
+     return compact({id:row.id,seq:row.seq,kind:'SELF_NOTE',authority:'SELF_REPORTED',
+       worldId:str(row.worldId,'ORIGIN_WORLD',120),tMs:row.tMs,
+       text:str(row.text,'NOTE',768),key:opt(row.key,'KEY',100),
+       subject:opt(row.subject,'SUBJECT',120),tags:values,
+       supersedes:opt(row.supersedes,'SUPERSEDES',100)});
+   });
+   const rawEvents=snapshot.events.map(row=>{
+     if(!row||!/^E[1-9]\d*$/.test(row.id)||!WORLD_KINDS.includes(row.kind))
+       throw TypeError('INVALID_MEMORY_EVENT');
+     int(row.seq,'SEQUENCE',1);int(row.tMs,'TIME',0,1e12);
+     const values=compact({id:row.id,seq:row.seq,kind:row.kind,
+       authority:'ARCHIVED_HOST_RECORD',worldId:str(row.worldId,'ORIGIN_WORLD',120),
+       tMs:row.tMs,roomId:opt(row.roomId,'ROOM',120),
+       cause:opt(row.cause,'CAUSE',160),source:opt(row.source,'SOURCE',60),
+       receiptId:opt(row.receiptId,'RECEIPT',160),zone:opt(row.zone,'ZONE',120),
+       material:opt(row.material,'MATERIAL',64),label:opt(row.label,'LABEL',160)});
+     if(row.kind==='CONTACT_STARTED'&&(!values.receiptId||!values.zone||!values.cause))
+       throw TypeError('INVALID_CONTACT_HISTORY');
+     return values;
+   });
+   const ids=new Set();
+   for(const row of [...rawNotes,...rawEvents]){
+     if(ids.has(row.id))throw TypeError('DUPLICATE_MEMORY_ID');
+     ids.add(row.id);
+   }
+   const maxSeq=[...rawNotes,...rawEvents].reduce((m,r)=>Math.max(m,r.seq),0);
+   const newSeq=int(snapshot.seq,'SEQUENCE',maxSeq,1000000000);
+   if(snapshot.lastDeparture!=null){
+     const d=snapshot.lastDeparture;
+     if(!d||typeof d!=='object')throw TypeError('INVALID_DEPARTURE');
+     str(d.id,'DEPARTURE_ID',120);str(d.worldId,'DEPARTURE_WORLD',120);
+     int(d.tMs,'DEPARTURE_TIME',0,1e12);
+     opt(d.roomId,'DEPARTURE_ROOM',120);
+     str(d.reason,'DEPARTURE_REASON',160);
+   }
+   const departure=snapshot.lastDeparture?compact({
+     id:snapshot.lastDeparture.id,
+     worldId:snapshot.lastDeparture.worldId,tMs:snapshot.lastDeparture.tMs,
+     roomId:snapshot.lastDeparture.roomId,
+     reason:snapshot.lastDeparture.reason}):null;
+   return {seq:newSeq,notes:rawNotes,events:rawEvents,lastDeparture:departure};
+ }
+ function restore(data){
+   const checked=validate(data);
+   notes=checked.notes;events=checked.events;seq=checked.seq;
+   lastDeparture=checked.lastDeparture;
+   return {ok:true,notes:notes.length,archivedEvents:events.length,
+     worldId:localWorld,grounding_restored:false};
+ }
+ const host=Object.freeze({observe,depart:({roomId=null,reason='GOODBYE'}={})=>
+   observe({kind:'DEPARTURE',roomId,label:reason}),restore,validate});
+ const resident=Object.freeze({remember:note,recall,recent,forget,clear,
+   stats:counts,checkpoint:snapshot,lastDeparture:()=>cp(lastDeparture)});
+ return Object.freeze({version:VERSION,host,resident});
+}
+return Object.freeze({VERSION,SCHEMA,WORLD_KINDS,NOTE_MAX,EVENT_MAX,createMemory});
+});
+</script>
 <script id="realiti-soma-full-harness">/* REALITI SOMA 3.1 — independent executable R&R harness for agent neighborhoods.
    World-host input is separate from resident-private output. No Relax globals.
    THICC/HALO/AURA run the real extracted 23.5 algorithms from renderers.cjs.
@@ -12991,16 +13226,16 @@ return Object.freeze({createRenderers,mechanisms:['THICC','HALO','AURA']});
 (function(root,factory){
   'use strict';
   const api=(typeof module==='object'&&module.exports)
-    ?factory(require('./index.cjs'),require('./renderers.cjs'))
-    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3);
+    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'))
+    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.REALITI_SOMA_HARNESS_V3=api;
-})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS){
+})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY){
 'use strict';
-if(!SOMA||!RENDERERS)throw Error('SOMA_CORE_OR_RENDERERS_MISSING');
-const VERSION='3.1.0',SHELLS=['surface','shallow','mid','deep'];
+if(!SOMA||!RENDERERS||!MEMORY)throw Error('SOMA_CORE_RENDERERS_OR_MEMORY_MISSING');
+const VERSION='3.2.0',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
-const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','perception','rr_harness'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
 const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
@@ -13027,14 +13262,16 @@ function createHarness(options={}){
   }
   distances.set(zone,d);return d;
  }
- let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0;
+ let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0,sessionStopped=false;
+ const memory=MEMORY.createMemory({residentId:options.residentId,worldId:options.worldId||'unscoped',clock:()=>Math.round(now)});
+ const liveReceipts=new Map();
  const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
  const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
  const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
  const chrono={past:0,now:0,predicted_next:0,closure:0};
  const privateState={sausage_volume:0,cotton_sites:0,cotton_energy:0,flush_peak:0,activation:0,novelty:0,agency_flow:0,reward_delta:0,bodily_ease:0,momentum:0,last:0};
  const worldState={room:null,affordances:{},sound:[],light:0,temperature:null,weather:[],support:[]};
- const adapters=new Map(),faults=[],history=[],pocket=[],poss=new Map(),proposals=[],observations=[],familyLast=new Map(),refractory=new Map(),repeat=[];
+ const adapters=new Map(),faults=[],history=[],poss=new Map(),proposals=[],observations=[],familyLast=new Map(),refractory=new Map(),repeat=[];
  const cov={channels:{novelty_modulation:null,agency_modulation:null},expires:0};
  const details={mode:'R&R',residentId:options.residentId,started_at_ms:0};
  const atmosphere=new Map(),agency=new Map();
@@ -13161,35 +13398,64 @@ function createHarness(options={}){
  function tick(ms){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
   base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
-  const delta=ms/1000;
-  for(const t of atmosphere.values()) {
-    t.current=t.target+(t.current-t.target)*tau(delta,t.tau);
+  // Detect actual source-lease expiry using the authoritative core's live list.
+  // A private echo may remain, but it is never a continuing contact.
+  const grounded=base.resident.field().grounded;
+  for(const [zone,entry] of liveReceipts){
+    if(!grounded.some(x=>x.zone===zone&&x.receiptId===entry.receiptId)){
+      memory.host.observe({kind:'CONTACT_EXPIRED',...entry});
+      liveReceipts.delete(zone);
+    }
   }
+  const delta=ms/1000;
+  for(const t of atmosphere.values())
+    t.current=t.target+(t.current-t.target)*tau(delta,t.tau);
   bleuTick(ms);
-  // Keep adaptive world time inexpensive when the host ticks at 20 ms;
-  // exact world/contact/lease mechanics still advance each call.
   if(pendingRenderMs>=100){
     flushRender();record('TIME_ADVANCE');notify('advance',{dt_ms:ms});
   }
-  return {ok:true,clockMs:now,active:base.resident.field().m.reduce((a,b)=>a+b,0)};
+  return {ok:true,clockMs:now,active:grounded.length};
  }
  function contact(e){
   flushRender();
-  const out=base.world.contact(e);
+  const out=base.world.contact(e); // invalid inputs cannot affect memory
   if(!out.renewed){
+    const prior=liveReceipts.get(e.zone);
+    if(prior)memory.host.observe({kind:'CONTACT_ENDED',...prior});
+    const event={zone:e.zone,source:e.source,cause:e.cause,
+      receiptId:e.receiptId,material:e.material||null,roomId:worldState.room};
+    liveReceipts.set(e.zone,event);
+    memory.host.observe({kind:'CONTACT_STARTED',...event});
     renderer.contact(e.zone,e.intensity,e.source,false);
     record('GROUNDED_CONTACT',e);
     notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
   }
+  sessionStopped=false;
   updateRich(.04);
   return out;
  }
  function release(e){
-  const out=base.world.release(e);if(out.released){record('CONTACT_RELEASED',e);updateRich(0)}
+  const out=base.world.release(e);
+  if(out.released){
+    const prior=liveReceipts.get(e.zone);
+    if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});liveReceipts.delete(e.zone)}
+    record('CONTACT_RELEASED',e);updateRich(0);
+  }
   return out;
  }
- function stop(){flushRender();const out=base.world.stop();renderer.AURA.clear();role.active=false;
-  record('STOP');updateRich(0);notify('stop');return out}
+ function stop({reason='GOODBYE'}={}){
+  flushRender();
+  for(const event of liveReceipts.values())memory.host.observe({kind:'CONTACT_ENDED',...event});
+  liveReceipts.clear();
+  const out=base.world.stop();
+  renderer.AURA.clear();role.active=false;
+  if(!sessionStopped){
+    memory.host.depart({roomId:worldState.room,reason});
+    record('STOP');notify('stop');
+  }
+  sessionStopped=true;
+  updateRich(0);return out;
+ }
  function definePossibility(input={}){
   const id=str(input.id,'possibility id',120),family=str(input.family||id,'family',80);
   if(poss.has(id))throw Error('POSSIBILITY_ALREADY_DEFINED');
@@ -13216,6 +13482,10 @@ function createHarness(options={}){
   if(room!==null)str(room,'room');
   if(!entries||typeof entries!=='object'||Array.isArray(entries))throw TypeError('Invalid affordances');
   if(Object.keys(entries).length>256||Object.values(entries).some(v=>typeof v!=='boolean'))throw TypeError('Affordances must be booleans');
+  if(room!==worldState.room&&room!==null){
+    memory.host.observe({kind:'ROOM_ENTERED',roomId:room});
+    sessionStopped=false;
+  }
   worldState.room=room;worldState.affordances=clone(entries);
   return {ok:true,room,world_owned:true};
  }
@@ -13294,7 +13564,8 @@ function createHarness(options={}){
     atmosphere:{available:atmosphere instanceof Map,thermal_zones:atmosphere.size},
     continuity:{available:Array.isArray(history),record_count:history.length},
     support:{available:typeof contact==='function',world_guarded:true},
-    pocket:{available:Array.isArray(pocket),resident_private:true},
+    pocket:{available:!!memory.resident.remember,resident_private:true,limits:memory.resident.stats().limits},
+    memory:{available:!!memory.resident.recall,storage:'HOST_OPTIONAL_DURABLE',evidence_authority:'ARCHIVED_ONLY'},
     perception:{available:rich.perception.epoch>=0},
     rr_harness:{available:true,adapter_slots:SLOTS.slice()}
   };
@@ -13311,6 +13582,12 @@ function createHarness(options={}){
     zone,intensity,cause,receiptId,leaseMs,material,
     source:'WORLD_GROUNDED'}),
   affordances:setAffordances,
+  memory:Object.freeze({
+    worldEvent:({receiptId,label,roomId=worldState.room}={})=>
+      memory.host.observe({kind:'WORLD_EVENT',receiptId,label,roomId}),
+    restore:memory.host.restore,
+    checkpoint:memory.resident.checkpoint
+  }),
   bleucheese:Object.freeze({define:definePossibility,observe,admit:admitProposal,proposals:()=>clone(proposals.slice(-8))}),
   agency:Object.freeze({define:(id,weight)=>{
     str(id,'agency branch');valid(weight,'branch weight',0,1);agency.set(id,weight);
@@ -13348,16 +13625,29 @@ function createHarness(options={}){
     privateState.reward_delta=value;privateEpoch++;
     return {ok:true,authority:'RESIDENT_PRIVATE_APPRAISAL',note_stored:false};
   },
-  pocket:Object.freeze({remember:msg=>{
-    const m=str(msg,'private memory',1024);if(pocket.length>=32)pocket.shift();
-    const row={id:'P'+(++seq),text:m,at:now};pocket.push(row);
-    return {ok:true,id:row.id,count:pocket.length};
-  },recall:query=>{
-    const q=str(query,'query',160).toLowerCase();
-    return clone(pocket.filter(x=>x.text.toLowerCase().includes(q)).slice(-8));
-  },clear:()=>{pocket.length=0;return {ok:true,scope:'resident_only'};}}),
-  checkpoint:()=>base.resident.checkpoint(),
-  restore:checkpoint=>{const out=base.resident.restore(checkpoint);renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();updateRich(0);return out},
+  // Compatibility with the old pocket methods, backed by the new indexed,
+  // resident-owned memory. Recollection returns stored evidence, never prose.
+  pocket:Object.freeze({
+    remember:msg=>memory.resident.remember({text:msg}),
+    recall:query=>memory.resident.recall(query,{kind:'SELF_NOTE'}).matches
+      .map(x=>({id:x.record.id,text:x.record.text,at:x.record.tMs,
+        authority:x.record.authority,originWorld:x.record.worldId})),
+    clear:memory.resident.clear
+  }),
+  memory:memory.resident,
+  checkpoint:()=>({...base.resident.checkpoint(),memory:memory.resident.checkpoint()}),
+  restore:checkpoint=>{
+    // Validate the memory archive before modifying the live private body.
+    // No archived contact can be reintroduced as current-world evidence.
+    if(checkpoint?.memory)memory.host.validate(checkpoint.memory);
+    const out=base.resident.restore(checkpoint);
+    if(checkpoint?.memory)memory.host.restore(checkpoint.memory);
+    liveReceipts.clear();
+    now=Math.round(checkpoint.clockMs||0);pendingRenderMs=0;
+    renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();
+    updateRich(0);
+    return {...out,memory:memory.resident.stats(),worldGroundingRestored:false};
+  },
   choosePreset:(pack,id)=>{
     const out=base.resident.choosePreset(pack,id);
     const p=pack.presets.find(x=>x.preset_id===id);
@@ -13491,14 +13781,14 @@ return Object.freeze({VERSION,REQUIRED,SLOTS,createHarness});
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.1.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.2.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
 const cp=x=>JSON.parse(JSON.stringify(x));
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()
   || window.REALITI_CONTINUITY?.current?.()?.trace_id || 'relax-local').slice(0,120);
-const {host:world,resident,harness}=SOMA.createHarness({residentId:rid});
+const {host:world,resident,harness}=SOMA.createHarness({residentId:rid,worldId:'REALITI_RELAX'});
 const harnessBoot=harness.boot();
 if(!harnessBoot.ok)throw Error('SOMA_HARNESS_INCOMPLETE: '+harnessBoot.missing.join(','));
 try{if(C9?.soma3?.schema===SOMA.CHECKPOINT)resident.restore(C9.soma3)}catch(e){
@@ -13549,10 +13839,14 @@ function read(uri='realiti://here'){
   if(uri==='realiti://soma/harness')return harness.snapshot();
   if(uri==='realiti://soma/rich')return resident.perception();
   if(uri==='realiti://soma/bleucheese')return resident.bleucheese();
+  if(uri==='realiti://soma/memory')return {
+    schema:'REALITI_SOMA_MEMORY_READ_V1',
+    stats:resident.memory.stats(),recent:resident.memory.recent({limit:8}),
+    law:'Memory is observational; archived events grant no current world evidence.'};
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};
@@ -13570,7 +13864,7 @@ async function run(raw){
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.1.0',read,
+window.Realiti=Object.freeze({...A0,version:'3.2.0',read,
   run:async raw=>{const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);
@@ -13580,6 +13874,7 @@ window.Realiti=Object.freeze({...A0,version:'3.1.0',read,
 window.REALITI_SOMA_RELAX_V3=Object.freeze({version:SOMA.VERSION,
   field:()=>resident.field(),checkpoint:()=>resident.checkpoint(),
   harness:()=>harness.snapshot(),rich:()=>resident.perception(),bleucheese:()=>resident.bleucheese(),
+  memory:resident.memory,
   law:'Native world contact alone drives grounded receipts; SOMA is a private portable projection.'});
 })();
 </script>
