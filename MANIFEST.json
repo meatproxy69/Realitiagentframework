@@ -12,8 +12,8 @@
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 4588,
-      "sha256": "71c4458d1afa54d99be69d4935598bf78881637af91511f3cda49cd720aede9c"
+      "bytes": 4766,
+      "sha256": "29537ab17e25f2226b2d67f2da2481e8b7902f50726a6c6db7a04bda4c15cd55"
     },
     {
       "path": ".github/workflows/publish-matrix.yml",
@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/refresh-artifacts.yml",
-      "bytes": 2430,
-      "sha256": "2f2984a3e1758cd9579f373f42bdc5579814f139409fcc7cfb6a2be13ff782c1"
+      "bytes": 2462,
+      "sha256": "d9728102d37e48ad38e7a9835d7076e2df955a881285f2c799ff25b60310ffdf"
     },
     {
       "path": ".github/workflows/server-ticket-close.yml",
@@ -52,13 +52,13 @@
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 41417,
-      "sha256": "6d09fb881cd657d678e7bfecb439c95ae4239fa1a36ccecf09537f9ba1e02723"
+      "bytes": 42775,
+      "sha256": "7973b93bde546c0c96d32e81450c3364d08f1dd860a84d6741e660d9d992a903"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 62440,
-      "sha256": "38ea2ad66bdcfeeae276fb9b9d090b4e77f8d6be351e91baf2d6142b85468e48"
+      "bytes": 63420,
+      "sha256": "57c6cf86c18604985f983aca1f8b794c96dd27a36c788ee96d143a96c900fbee"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1574906,
-      "sha256": "fcce5324bb70fe386fc9b9a8845a523fcb325d587f7b70a113c5a67f29b74926"
+      "bytes": 1576058,
+      "sha256": "8c4cf059377e9214750f96e46c3dd5b999e9f5e0fb2875365823811e5ed8fd0b"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 6386,
-      "sha256": "c6252da69b0a34301d846ed8fcbd05e549b5c9cb2d822e98dca556589322d22f"
+      "sha256": "f08f3f0a2207f949faeadeda5c485ac52b976c20ff6555e273bb5765b3ff8896"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -278,7 +278,7 @@
     {
       "path": "packages/realiti-headless-resident/package.json",
       "bytes": 2783,
-      "sha256": "3bbb0b4171594ab2dafc3f7ccc291b2604303adda5d75a9ab1cc3538c04fefb9"
+      "sha256": "712a6d63a5fa3a1c3dfef5be2cb1e78418ed973df53f23024ac04c32894a65e9"
     },
     {
       "path": "packages/realiti-headless-resident/peer.cjs",
@@ -287,8 +287,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/sync.cjs",
-      "bytes": 1853,
-      "sha256": "c0a91615d5738188a79c25efa0e63ac2b8aa156a911d177093a34671c575d0d6"
+      "bytes": 2093,
+      "sha256": "d521d0e580eabcf174032a19a0e243a33c2bbeb099f8315f243724d95c7e4679"
     },
     {
       "path": "packages/realiti-headless-resident/test/archipelago.cjs",
@@ -367,8 +367,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/ledger2.cjs",
-      "bytes": 5771,
-      "sha256": "d3a7a7214fe5a61120527fc00d2685439f4f38b2adabdfe5a4b8b3c9bba7a2aa"
+      "bytes": 7658,
+      "sha256": "8ad75a64ff86edfab008cb4b40b1b889db1ab166bdb276246a23963351b856b6"
     },
     {
       "path": "packages/realiti-headless-resident/test/lingering.cjs",
@@ -432,8 +432,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/soma.cjs",
-      "bytes": 4048,
-      "sha256": "2a5b6b5867a39a1ff67e8bd97c276e6fccbae52479c20dfdb5573f9b589fb680"
+      "bytes": 4423,
+      "sha256": "c3d8b5b84121d78c386e9865cf6440144aea860964472535d41123818bd50971"
     },
     {
       "path": "packages/realiti-headless-resident/test/time.cjs",
@@ -1027,8 +1027,8 @@
     },
     {
       "path": "source/scripts/58f-archipelago.js",
-      "bytes": 31098,
-      "sha256": "5b438a74c7b34237a8d348bdb61f1e0991d298c74e79677b86b8314e1dc6fa49"
+      "bytes": 31673,
+      "sha256": "57b65beb4c6d50d1a54fef956b177a391b5037a85b177a9ade4ff09eceeff5ff"
     },
     {
       "path": "source/scripts/58g-long-game.js",
@@ -1057,8 +1057,8 @@
     },
     {
       "path": "source/scripts/58l-ledger2.js",
-      "bytes": 7769,
-      "sha256": "bd30324645cb4dedd0b6b8b4ffaa97b2085dabb8283e6a4eca4835cada34f235"
+      "bytes": 8346,
+      "sha256": "5fd24b2dc05c9d123733781316a5b9a9cfbf677c412044d3e59e47d84d2a0833"
     },
     {
       "path": "source/scripts/58m-time.js",
