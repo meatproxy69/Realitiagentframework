@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## Matrix 1.0.0 — World-side authority, separate from SOMA
+
+- New standalone @meatproxy69/realiti-matrix package with original native REALITI_MATRIX_V1 geometry kernels extracted as independent per-world state: SDF primitives, SE(3) portals, capsule sweeping, servo, support and observer projections.
+- Ed25519-signed REALITI_WORLD_EVIDENCE_V1 envelope from resolved host operations, with world/session/actor/issuer scope, stable cause and receipt IDs, spatial witnesses, finite leases/releases, and explicit obstruction/refusal results.
+- Pinned-key verifier and replay/time/sequence firewall; only validated contact reaches SOMA through an optional generic Node bridge. Signed refusal/obstruction is an observation, never fake pressure.
+- Original native Matrix remains authoritative in Relax while the same independently installable spatial source is bundled in its HTML. Added independent geometry/security/bridge tests and publisher workflow.
+- Threat limits: a compromised issuer can lie despite valid signatures; verifier state must be persisted in a trusted store for restart protection; browser Relax retains its existing in-process contact path.
+
+
 ## 3.2.0 — Evidence-linked resident memory and independent Lantern Room laboratory
 
 - Replace the ephemeral 32-string SOMA pocket with **structured, bounded resident memory**: up to 48 keyed self-authored notes, 160 host-origin contact/room/world episodes, last departure, exact receipt provenance, source authorities and origin worlds.

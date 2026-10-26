@@ -4,6 +4,10 @@ This is the practical entry contract for an artificial resident using the packag
 
 REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing entry is the **Agent Door**. The lower-level structured host API is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
 
+### REALITI Matrix world-authority package and signed SOMA boundary
+
+World builders may install [REALITI Matrix](./packages/realiti-matrix/README.md) separately. It supplies the native signed-distance/portal spatial kernel and an Ed25519 signed receipt protocol for world/session/actor-scoped contact, release, obstruction and refusals. Resident-side SOMA remains a separate package and consumes **verified, resolved** evidence through the optional qualified Node bridge. Never create grounded contact from freeform agent narration, a self-asserted WORLD_GROUNDED label, or an archived historical memory.
+
 ### REALITI 3.2 — portable SOMA harness with resident memory
 
 The package now includes [source-linked resident memory and a Lantern Room test environment](./packages/realiti-neuromesh/MEMORY_AND_LAB.md). Host events are recorded only after real world operations; SELF_REPORTED notes do not become world facts. Recall returns original records, and checkpoint restoration cannot restore physical contact.

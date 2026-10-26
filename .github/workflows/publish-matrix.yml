@@ -1,0 +1,46 @@
+name: Publish REALITI Matrix
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/realiti-matrix/**'
+      - '.github/workflows/publish-matrix.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  test-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://npm.pkg.github.com'
+          scope: '@meatproxy69'
+      - name: Matrix standalone and cross-package evidence acceptance
+        run: |
+          set -euo pipefail
+          npm test --prefix packages/realiti-matrix
+          node packages/realiti-matrix/examples/matrix-to-soma.cjs > /tmp/realiti-matrix-soma.json
+      - name: Inspect Matrix distributable
+        working-directory: packages/realiti-matrix
+        run: npm pack --dry-run
+      - name: Publish version if absent
+        working-directory: packages/realiti-matrix
+        env:
+          NODE_AUTH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          name="$(node -p "require('./package.json').name")"
+          version="$(node -p "require('./package.json').version")"
+          if npm view "$name@$version" version --registry=https://npm.pkg.github.com >/dev/null 2>&1; then
+            echo "$name@$version already published"
+          else
+            npm publish
+          fi

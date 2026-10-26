@@ -12,6 +12,12 @@ const cssForbidden=[
 ];
 function assertCssFree(label,text){for(const [re,kind] of cssForbidden)if(re.test(text))throw Error(`CSS_FREE_VIOLATION ${label}: ${kind}`)}
 assertCssFree('source/template.html',html);
+const matrixMarker='/*__REALITI_MATRIX_PORTABLE_V1__*/';
+if(html.split(matrixMarker).length!==2)throw Error('Matrix portable marker missing or duplicated');
+const matrixSource=await fs.readFile(new URL('packages/realiti-matrix/spatial.cjs',root),'utf8');
+assertCssFree('packages/realiti-matrix/spatial.cjs',matrixSource);
+html=html.replace(matrixMarker,()=>matrixSource+(matrixSource.endsWith('\n')?'':'\n'));
+
 const somaMarker='/*__REALITI_SOMA_PACKAGE_V3__*/';
 if(html.split(somaMarker).length!==2)throw Error('SOMA package marker missing or duplicated');
 const somaSource=await fs.readFile(new URL('packages/realiti-neuromesh/index.cjs',root),'utf8');

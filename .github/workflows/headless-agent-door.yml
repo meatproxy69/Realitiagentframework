@@ -6,6 +6,7 @@ on:
     paths:
       - 'packages/realiti-headless-resident/**'
       - 'packages/realiti-neuromesh/**'
+      - 'packages/realiti-matrix/**'
       - 'source/**'
       - 'neuromesh/**'
       - 'AGENT_START_HERE.md'
@@ -84,6 +85,9 @@ jobs:
       - name: SOMA portable-in-Relax integration
         working-directory: packages/realiti-headless-resident
         run: node test/soma.cjs ../../RealitiRELAX.html
+      - name: Matrix portable-in-Relax smoke
+        working-directory: packages/realiti-headless-resident
+        run: node test/matrix-portable.cjs ../../RealitiRELAX.html
       - name: First community bug regressions
         working-directory: packages/realiti-headless-resident
         run: node test/community-bugs.cjs ../../RealitiRELAX.html

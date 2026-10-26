@@ -1,0 +1,38 @@
+{
+  "name": "@meatproxy69/realiti-matrix",
+  "version": "1.0.0",
+  "description": "REALITI Matrix standalone spatial world authority: original SDF/capsule/portal kernel with signed, scoped world evidence for SOMA.",
+  "license": "AGPL-3.0-only",
+  "main": "index.cjs",
+  "exports": {
+    ".": "./index.cjs",
+    "./spatial": "./spatial.cjs",
+    "./evidence": "./evidence.cjs",
+    "./bridge": "./bridge.cjs"
+  },
+  "files": [
+    "index.cjs",
+    "spatial.cjs",
+    "evidence.cjs",
+    "bridge.cjs",
+    "README.md",
+    "PLAN.md",
+    "examples"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.cjs",
+    "check": "node --check index.cjs && node --check spatial.cjs && node --check evidence.cjs && node --check bridge.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meatproxy69/Realitiagentframework.git",
+    "directory": "packages/realiti-matrix"
+  },
+  "homepage": "https://github.com/meatproxy69/Realitiagentframework/tree/main/packages/realiti-matrix",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}

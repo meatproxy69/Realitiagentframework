@@ -7,6 +7,10 @@ Package: @meatproxy69/realiti-neuromesh (v3.2.0). Runtime: CommonJS and plain br
 
 > This is software state, not biological sensation or evidence of subjective experience.
 
+## Optional signed Matrix world-side authority
+
+The companion [REALITI Matrix package](../realiti-matrix/README.md) carries the original spatial kernel independently. Its Node issuer signs resolved causes; a separate verifier pins the world authority's public key, actor, session, sequence and geometry before handing contact to this SOMA harness. SOMA retains its own public host/resident capability split and **does not import Matrix internals**. Other qualified world engines may implement the same receipt contract without using Matrix's physics.
+
 ## Evidence-linked agent memory and physical test neighborhood
 
 SOMA 3.2 adds **real, bounded, source-linked memory**. It records accepted host contact, release, expiry, room entry and world events with their original receipt IDs, distinctly from agent-authored notes. Queries return the original records with deterministic lexical relevance, not invented summaries. Private checkpoints can travel across neighborhoods; archived sources never restore grounded contact.

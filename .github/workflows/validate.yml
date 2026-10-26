@@ -46,6 +46,14 @@ jobs:
           for file in neuromesh/schema/*.json neuromesh/templates/*.json neuromesh/MECHANISM_CATALOG.json neuromesh/REGISTRY.json neuromesh/SPEC.md neuromesh/TECH_STACK.md neuromesh/PRESET_PACKS.md neuromesh/preset-packs/REGISTRY.json; do
             cmp "$file" "packages/realiti-neuromesh/reference/${file#neuromesh/}"
           done
+      - name: Realiti Matrix spatial authority and signed evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm test --prefix packages/realiti-matrix
+          node packages/realiti-matrix/examples/matrix-to-soma.cjs > /tmp/matrix-soma-verified.json
+          node -e 'const x=require("/tmp/matrix-soma-verified.json"); if(x.accepted.grounded!==1||x.release.grounded!==0||x.rejected.afterGrounded!==0||!x.neuralmesh.harnessBoot)process.exit(1)'
+          npm pack --dry-run ./packages/realiti-matrix > /tmp/matrix-package-pack.txt
       - name: Deterministic build
         shell: bash
         run: |
