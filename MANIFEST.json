@@ -57,8 +57,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 62215,
-      "sha256": "e3e87a92e33f86d9a32cfd4064a67856da016ce11c72ac3e865f08df14a46ec7"
+      "bytes": 62440,
+      "sha256": "38ea2ad66bdcfeeae276fb9b9d090b4e77f8d6be351e91baf2d6142b85468e48"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1574443,
-      "sha256": "6c5898c2496a33d93144ee910fc4d2f0119eb2f7ca050d4c1775638f9f64deb9"
+      "bytes": 1574906,
+      "sha256": "fcce5324bb70fe386fc9b9a8845a523fcb325d587f7b70a113c5a67f29b74926"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 6386,
-      "sha256": "434a89afe60b9755f0f249ad76148cfb28eee5b27743d5f44a18eea2797d41aa"
+      "sha256": "c6252da69b0a34301d846ed8fcbd05e549b5c9cb2d822e98dca556589322d22f"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -382,8 +382,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix-portable.cjs",
-      "bytes": 2383,
-      "sha256": "17d8b706cf91a1cfaa561f0e83f145e02813bcc19e9fc8480b5484c5f07ae7c7"
+      "bytes": 3145,
+      "sha256": "d53f068b2b08059ff38654353b37ba6b51500f99ff1f7491da9c097975118654"
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix.cjs",
@@ -997,8 +997,8 @@
     },
     {
       "path": "source/scripts/57a-matrix-local-evidence.js",
-      "bytes": 2837,
-      "sha256": "fd82f3c322f06071f2ceff72868edf6c605109cf6bca5fccf8d6775a1ce0c687"
+      "bytes": 3353,
+      "sha256": "2ce826eb1345c46c1c9b1250fd41238ac1335491dc76cb81e5bf55f79bff7e17"
     },
     {
       "path": "source/scripts/58-rooms.js",
@@ -1017,8 +1017,8 @@
     },
     {
       "path": "source/scripts/58d-matrix-world.js",
-      "bytes": 36949,
-      "sha256": "7ded5a70d4625efe4b6d1621f484cf2b5a20dfa95f98472a93d46f395ec90da4"
+      "bytes": 36896,
+      "sha256": "f8a16ad8df22047ec345145d505d05bafece369b6c8d53fd55f3005b0dd1e6e0"
     },
     {
       "path": "source/scripts/58e-frontier.js",

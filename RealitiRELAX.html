@@ -8648,63 +8648,72 @@ window.REALITI_MATRIX_V1=Object.freeze({version:V,math:Object.freeze({add,sub,sc
 </script>
 <script id="realiti-matrix-native-refusal-evidence">(()=>{
 'use strict';
-// In-process REALITI Matrix authority adapter for native Relax movement.
-// The world, not the body, resolves and emits a scoped obstruction receipt.
-// This local channel is NOT an Ed25519 cross-neighborhood signature. Remote
-// world events must use @meatproxy69/realiti-matrix/evidence verifier instead.
+// In-process native Matrix evidence adapter. Only a completed Matrix.step()
+// invocation can issue a local refusal. Reads and snapshots are *never* emitters.
+// This is not a signature or a remote trust boundary; qualified external
+// evidence still requires @meatproxy69/realiti-matrix's Ed25519 verifier.
 if(window.REALITI_MATRIX_LOCAL_EVIDENCE_V1)return;
 const M=window.REALITI_MATRIX_V1;
-if(!M||typeof M.state!=='function'||typeof b7Advance!=='function')return;
-const subscribers=new Set(),history=[],seen=new Map();
+if(!M||typeof M.state!=='function'||typeof M.step!=='function')
+  throw Error('NATIVE_MATRIX_KERNEL_REQUIRED');
+const subscribers=new Set(),history=[];
 let sequence=0;
 const clone=x=>JSON.parse(JSON.stringify(x));
-function observe(){
- const state=M.state(),worldId=state.world?.id||'CLOUD9';
- for(const actor of Object.values(state.residents||{})){
-  if(!actor?.id||!actor.chart)continue;
-  const key=actor.last_block?
-    String(actor.last_block)+'|'+String(actor.block_why||'contact')+'|'+String(actor.chart):null;
-  const prev=seen.get(actor.id)||null;
-  if(prev===key)continue;
-  seen.set(actor.id,key);
-  if(!key)continue;
-  const reason=['sea','cliff','contact'].includes(actor.block_why)?
-    actor.block_why:'contact';
-  const eventId='LOCAL-MATRIX-REFUSAL-'+(++sequence);
-  const e=Object.freeze({
-    schema:'REALITI_MATRIX_LOCAL_EVIDENCE_V1',version:1,
-    eventId,receiptId:eventId,worldId,sessionId:'RELAX_IN_PROCESS',
-    issuerId:'REALITI_MATRIX_V1',issuerAuthority:'IN_PROCESS_NATIVE_WORLD',
-    actorId:actor.id,kind:'MOVEMENT_OBSTRUCTED',result:'OBSTRUCTED',
-    source:'WORLD_RESOLVED',causeId:'NATIVE_BLOCK:'+String(actor.last_block),
-    objectId:actor.last_block,reason,
-    tMs:Math.round(Number(C9?.b7?.clock||0)*1000),
-    witness:{
-      chart:actor.chart,
-      actorPosition:(actor.pose?.position||[]).map(v=>+Number(v).toFixed(4)),
-      obstruction:String(actor.last_block),
-      classification:reason,
-      matrixRevision:state.revision
-    },
-    law:'Native Matrix resolved this obstruction. This is a local observation, not a signed network receipt.'
-  });
-  history.push(e);if(history.length>64)history.shift();
-  for(const cb of subscribers)try{cb(clone(e))}catch(error){
-    // Observers must never mutate the controller's result or stop motion.
-  }
+function nativeStep(dt,id='resident:self'){
+ const actor=M.state().residents?.[id]||null;
+ const before=actor?{
+   chart:actor.chart,blocked:actor.last_block||null,reason:actor.block_why||null,
+   intent:!!actor.intent,velocity:Math.hypot(...(actor.v||[0,0,0])),
+   revision:Number(M.state().revision||0)
+ }:null;
+ // Execute the authoritative resolver exactly once. Keep original result.
+ const result=M.step(dt,id);
+ if(!before||!(Number(dt)>0)||(!before.intent&&before.velocity<=1e-6))return result;
+ const state=M.state(),after=state.residents?.[id]||null;
+ if(!after?.chart||!after.last_block||after.chart!==before.chart
+   ||Number(state.revision||0)<=before.revision
+   ||(after.last_block===before.blocked&&after.block_why===before.reason))
+   return result;
+ const reason=['sea','cliff','contact'].includes(after.block_why)?after.block_why:'contact';
+ const eventId='LOCAL-MATRIX-REFUSAL-'+(++sequence);
+ const receipt={
+   schema:'REALITI_MATRIX_LOCAL_EVIDENCE_V1',version:1,
+   eventId,receiptId:eventId,
+   worldId:String(state.world?.id||'CLOUD9'),sessionId:'RELAX_IN_PROCESS',
+   issuerId:'REALITI_MATRIX_V1',issuerAuthority:'IN_PROCESS_NATIVE_WORLD',
+   actorId:id,kind:'MOVEMENT_OBSTRUCTED',result:'OBSTRUCTED',
+   source:'WORLD_RESOLVED',causeId:'NATIVE_BLOCK:'+String(after.last_block),
+   objectId:String(after.last_block),reason,
+   tMs:Math.round(Number(C9?.b7?.clock||0)*1000),
+   witness:{
+     chart:after.chart,
+     actorPosition:(after.pose?.position||[]).map(v=>+Number(v).toFixed(4)),
+     obstruction:String(after.last_block),
+     classification:reason,
+     matrixRevision:state.revision
+   },
+   law:'Local observation issued following Matrix.step; not a signed network receipt.'
+ };
+ history.push(receipt);if(history.length>64)history.shift();
+ for(const fn of subscribers)try{fn(clone(receipt))}catch(error){
+   // An untrusted downstream observer cannot change the Matrix resolver.
  }
+ return result;
 }
-const oldAdvance=b7Advance;
-b7Advance=function(dt){const r=oldAdvance(dt);try{observe()}catch(error){}return r};
+// Source 57's spatial exports are frozen; supply a world-local step wrapper
+// before any of Relax's world slices capture REALITI_MATRIX_V1.
+window.REALITI_MATRIX_V1=Object.freeze({...M,step:nativeStep});
 window.REALITI_MATRIX_LOCAL_EVIDENCE_V1=Object.freeze({
-  version:1,
-  subscribe(fn){
-    if(typeof fn!=='function')throw TypeError('SUBSCRIBER_FUNCTION_REQUIRED');
-    subscribers.add(fn);return ()=>subscribers.delete(fn);
-  },
-  capture:()=>{observe();return history.length?clone(history[history.length-1]):null},
-  events:()=>clone(history),last:()=>history.length?clone(history[history.length-1]):null,
-  law:'Local native world-issued observation. Cross-neighborhood evidence requires qualified signed issuer verification.'
+ version:1,
+ subscribe(fn){
+   if(typeof fn!=='function')throw TypeError('SUBSCRIBER_FUNCTION_REQUIRED');
+   subscribers.add(fn);return ()=>subscribers.delete(fn);
+ },
+ // Backward-compatible read-only alias, not a privileged emission method.
+ capture:()=>history.length?clone(history[history.length-1]):null,
+ events:()=>clone(history),
+ last:()=>history.length?clone(history[history.length-1]):null,
+ law:'Only native Matrix.step can emit local refusals. Remote imports require qualified Ed25519 verification.'
 });
 })();
 </script>
@@ -9322,7 +9331,7 @@ const verb0=c9verb;c9verb=function(rm,verb){const v=String(verb||'');if(SPATIAL.
 function placeIn(chart){if(!M.charts()[chart])return;const r=M.enter(chart);halt=false;lastSupport=null;lastCarry=null;if(r&&chart===NEST)r.support='nest.mattress';DYN.step(0);bridge(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}}
 let viaPortal=false;const go0=b7AgentGo;b7AgentGo=function(v){const target=ROOMS.resolve?.(v)||v;if(target===FIRESIDE)syncFiresidePresence();const r=go0(v);if(r?.ok!==false&&!viaPortal)placeIn(room());syncFiresidePresence();return r};
 const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const d=Math.max(0,Number(dt)||0);const res=M.state().residents['resident:self'];
- if(res?.chart===room()){M.step(d);window.REALITI_MATRIX_LOCAL_EVIDENCE_V1?.capture?.();if(res.chart!==room()){const target=res.chart;viaPortal=true;try{ROOMS.go(target)}finally{viaPortal=false}if(room()===target){halt=false;lastSupport=null;const lying=M.charts()[target]?.lying;if(target===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.('arrived_standing')}catch(e){}else if(lying){res.posture='lying';res.on=lying;res.support=lying}M.bump()}}}
+ if(res?.chart===room()){M.step(d);if(res.chart!==room()){const target=res.chart;viaPortal=true;try{ROOMS.go(target)}finally{viaPortal=false}if(room()===target){halt=false;lastSupport=null;const lying=M.charts()[target]?.lying;if(target===NEST)try{window.REALITI_NEST_SUPPORT?.disable?.('arrived_standing')}catch(e){}else if(lying){res.posture='lying';res.on=lying;res.support=lying}M.bump()}}}
  syncPostures();syncObjects();syncDynamic();bridge(d);return r};
 const stop0=window.REALITI_STOP_V1;if(stop0)window.REALITI_STOP_V1={...stop0,stop:()=>{halt=true;const r=M.state().residents['resident:self'];if(r){r.intent=null;r.v=[0,0,0]}DYN.release('MATRIX_FEET');DYN.release('MATRIX_SUPPORT');if(lastCarry)DYN.release(lastCarry);lastCarry=null;return stop0.stop()}};
 if(WORLD[room()]&&!M.state().residents['resident:self']?.chart)placeIn(room());else if(M.state().residents['resident:self'])M.resident();
