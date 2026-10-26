@@ -482,8 +482,8 @@
     },
     {
       "path": "packages/realiti-matrix/evidence.cjs",
-      "bytes": 10188,
-      "sha256": "86f0d06e451869148ee82df320d847a6fede9a6c1e43931af8b862d69157dbf3"
+      "bytes": 10230,
+      "sha256": "2c490eb1f6838eecfbc4c62ee23bc509bff06f25b1ef9e835f345b32590ecc91"
     },
     {
       "path": "packages/realiti-matrix/examples/matrix-to-soma.cjs",
