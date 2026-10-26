@@ -29,11 +29,13 @@ function canonical(value){
  if(Array.isArray(value))return '['+value.map(canonical).join(',')+']';
  return '{'+Object.keys(value).sort().map(k=>JSON.stringify(k)+':'+canonical(value[k])).join(',')+'}';
 }
+function asPublicKey(key){return key?.type==='public'&&key.asymmetricKeyType?key:crypto.createPublicKey(key)}
+function asPrivateKey(key){return key?.type==='private'&&key.asymmetricKeyType?key:crypto.createPrivateKey(key)}
 function fingerprint(key){
- const pub=crypto.createPublicKey(key),bytes=pub.export({type:'spki',format:'der'});
+ const pub=asPublicKey(key),bytes=pub.export({type:'spki',format:'der'});
  return crypto.createHash('sha256').update(bytes).digest('hex');
 }
-function publicKeyOf(privateKey){return crypto.createPublicKey(privateKey)}
+function publicKeyOf(privateKey){return asPublicKey(privateKey)}
 function validate(payload){
  if(!payload||typeof payload!=='object'||Array.isArray(payload)||payload.schema!==SCHEMA)
    throw Error('BAD_EVIDENCE_SCHEMA');
@@ -95,7 +97,7 @@ function validate(payload){
 }
 function createIssuer({issuerId,keyId,worldId,sessionId,actorId,privateKey}={}){
  for(const [key,value] of Object.entries({issuerId,keyId,worldId,sessionId,actorId}))id(value,key);
- const k=crypto.createPrivateKey(privateKey);
+ const k=asPrivateKey(privateKey);
  if(k.asymmetricKeyType!=='ed25519')throw TypeError('ED25519_REQUIRED');
  let seq=0;
  const pub=crypto.createPublicKey(k),keyFingerprint=fingerprint(pub);
@@ -136,7 +138,7 @@ function createVerifier({trustedIssuers=[],worldId,sessionId,actorId,maxAgeMs=12
   const issuerId=id(entry.issuerId,'ISSUER_ID'),keyId=id(entry.keyId,'KEY_ID');
   id(entry.worldId,'TRUSTED_WORLD_ID');
   if(entry.worldId!==worldId)throw Error('TRUSTED_WORLD_SCOPE_MISMATCH');
-  const pub=crypto.createPublicKey(entry.publicKey);
+  const pub=asPublicKey(entry.publicKey);
   if(pub.asymmetricKeyType!=='ed25519')throw Error('TRUSTED_KEY_NOT_ED25519');
   const k=issuerId+'|'+keyId;
   if(keys.has(k))throw Error('DUPLICATE_TRUST_KEY');
