@@ -42,7 +42,8 @@ function validate(payload){
  const p=payload;
  for(const k of ['worldId','sessionId','actorId','issuerId','keyId','eventId','receiptId','causeId'])
    id(p[k],k);
- natural(p.seq,'SEQ',1,Number.MAX_SAFE_INTEGER);
+ natural(p.seq,'SEQ',Number.MAX_SAFE_INTEGER);
+ if(p.seq<1)throw TypeError('INVALID_SEQ');
  natural(p.tMs,'TIME_MS');
  if(!KINDS.has(p.kind))throw Error('UNKNOWN_EVIDENCE_KIND');
  if(!SOURCES.has(p.source))throw Error('INVALID_EVIDENCE_SOURCE');
