@@ -17,8 +17,8 @@
     },
     {
       "path": ".github/workflows/publish-neuromesh.yml",
-      "bytes": 1623,
-      "sha256": "840980af4d88245cc97d4627704dad912a2565a34447d09cf74238f3faa924c0"
+      "bytes": 1959,
+      "sha256": "3ccdc4ce59291ec93172b4817177c3034a14a59b7034e6eac68e246335975893"
     },
     {
       "path": ".github/workflows/refresh-artifacts.yml",
@@ -32,8 +32,8 @@
     },
     {
       "path": ".github/workflows/validate.yml",
-      "bytes": 2506,
-      "sha256": "47ea181b5555f952b3857b36d8985e435a47ab666c9574e95820ddb28d71a96f"
+      "bytes": 2842,
+      "sha256": "8d5962b09df849ae08f39fabeee21d2e42bcba718e0ed3550c5ed0be930c8676"
     },
     {
       "path": ".gitignore",
@@ -462,13 +462,13 @@
     },
     {
       "path": "packages/realiti-neuromesh/HARNESS_STACK.md",
-      "bytes": 5559,
-      "sha256": "ecf46e56923361fed9d814e6ade669e2ccfce0dceabad961540e35571e2495d9"
+      "bytes": 5792,
+      "sha256": "7e3f32d813514d35740448c186e4a57cfe804a53e39c4d52909bf1acc32946d5"
     },
     {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 9256,
-      "sha256": "b0c962a3e7ad347a4bfb5d1ff458a4db9d5f1ed3fa0b3e148df4c48ae275ea0d"
+      "bytes": 10001,
+      "sha256": "9528e530087d12a9c27df857c96c0aa1f1fc5d950588f90e53f451774cb885d9"
     },
     {
       "path": "packages/realiti-neuromesh/examples/neighborhood.cjs",
@@ -487,8 +487,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/package.json",
-      "bytes": 1195,
-      "sha256": "61194177b89938bc8a41614e5ff5d8f7121551bb5f82592b203b747be7b4c95b"
+      "bytes": 1250,
+      "sha256": "7f4e3232c994300ee6d1285f91303cd75f76edd221efb6ea30d3e0de6cfdddea"
     },
     {
       "path": "packages/realiti-neuromesh/presets/honeyspark-duo.json",
@@ -499,6 +499,66 @@
       "path": "packages/realiti-neuromesh/presets/moonwire-recovered.json",
       "bytes": 31617,
       "sha256": "43b6e7337a055a2cae5c4a25ccdb63f06be2d31e71b56b9c023551e59351bb24"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/MECHANISM_CATALOG.json",
+      "bytes": 7220,
+      "sha256": "145f6ab90a3d667d9798e41e4f210ff4f9e18fabb2798c104341e81cfc148553"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/PRESET_PACKS.md",
+      "bytes": 1972,
+      "sha256": "6dfdacb80dcb6880430a4246c6f796fe02bf196f807672356cc6be013110a9b8"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/REGISTRY.json",
+      "bytes": 586,
+      "sha256": "438409b0f945bc65128d75edcdd03193b22282d45be209b57159ba2f4087954c"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/SPEC.md",
+      "bytes": 5425,
+      "sha256": "bc1d6a62e71a7b181c2e25ca1f36f0e2e7f9d97d5c0cadb78ab10a29225116a8"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/TECH_STACK.md",
+      "bytes": 4226,
+      "sha256": "5b4ba315ef8843bd574ed5d5212e5a0da6cefde23d0066cd4d954fab617d9248"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/preset-packs/REGISTRY.json",
+      "bytes": 1835,
+      "sha256": "07839c0815d184ff675c42e91997067d76848e45b1c705d83dd4ef9a849358f1"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/schema/dendrite-manifest.schema.json",
+      "bytes": 4053,
+      "sha256": "336633930f4627bb2f3dc11b9a60f0a126b13c851ffdd416e26b0c1dd960011e"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/schema/neural-imprint.schema.json",
+      "bytes": 17462,
+      "sha256": "a1b45bbd7ea86a721d0892f850dca7d7a16264a1cf3919ac31fd1b0e57e51690"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/schema/preset-pack.schema.json",
+      "bytes": 14391,
+      "sha256": "21e42d4ef9649f9841def62753a727b55adcc313f767c40fd5377ad2e06f7190"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/templates/dendrite-manifest.example.json",
+      "bytes": 1587,
+      "sha256": "bd1be7670404f18df6091bfe5f7649500895f17db24816451981d39608670852"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/templates/neural-imprint.example.json",
+      "bytes": 5403,
+      "sha256": "fe1a275c1794159845056ba028c7e13c90fbe12d454eaabe54cb05bff4e6a1a1"
+    },
+    {
+      "path": "packages/realiti-neuromesh/reference/templates/preset-pack.example.json",
+      "bytes": 2062,
+      "sha256": "96ff76337c7c15639b9298c465de3f1c6960b8ca2d10119081f8e70ed343b418"
     },
     {
       "path": "packages/realiti-neuromesh/renderers.cjs",
