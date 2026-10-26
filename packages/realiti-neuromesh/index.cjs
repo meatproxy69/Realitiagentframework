@@ -1,8 +1,12 @@
-/* REALITI SOMA 3.1 — portable NeuralMesh. DOM-free, dependency-free, one file. */
+/* REALITI SOMA 3.2 — portable NeuralMesh. DOM-free, dependency-free, one file. */
 (function (root, factory) {
   'use strict';
   const api = factory();
-  const exported = Object.freeze({...api, createHarness(options) {
+  const exported = Object.freeze({...api, createMemory(options) {
+    if(typeof module==='object'&&module.exports)return require('./memory.cjs').createMemory(options);
+    if(!root.REALITI_SOMA_MEMORY_V1)throw Error('SOMA_MEMORY_NOT_LOADED');
+    return root.REALITI_SOMA_MEMORY_V1.createMemory(options);
+  }, createHarness(options) {
     if (typeof module === 'object' && module.exports)
       return require('./harness.cjs').createHarness(options);
     const h = root.REALITI_SOMA_HARNESS_V3;
@@ -13,7 +17,7 @@
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.1.0';
+  const VERSION = '3.2.0';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -228,7 +232,7 @@
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');

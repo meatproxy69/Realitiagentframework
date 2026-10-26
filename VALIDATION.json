@@ -15,7 +15,7 @@
     "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot",
     "sensory_portable": {
       "brand": "REALITI SOMA",
-      "version": "3.1.0",
+      "version": "3.2.0",
       "package": "@meatproxy69/realiti-neuromesh",
       "contract": "REALITI_SOMA_FIELD_V3",
       "resource": "realiti://neuromesh",
@@ -44,7 +44,10 @@
         "support",
         "pocket",
         "perception",
-        "role_reversion"
+        "role_reversion",
+        "memory",
+        "resident_checkpoint",
+        "lantern_test_room"
       ],
       "imported_exact_algorithms": [
         "THICC",
@@ -59,7 +62,17 @@
         "FLUSH",
         "atmosphere",
         "pocket"
-      ]
+      ],
+      "memory_schema": "REALITI_SOMA_MEMORY_V1",
+      "memory_model": "bounded explicit notes + host-observed causal episodes; exact lexical recall; archive provenance",
+      "memory_limits": {
+        "self_notes": 48,
+        "episodes": 160
+      },
+      "persistence": "optional Node atomic file adapter; not encrypted or authenticated",
+      "independent_test_room": "LANTERN_ROOM 6m x 4m swept movement / reach / support / BleuCheese",
+      "source_memory": "packages/realiti-neuromesh/memory.cjs",
+      "memory_resident_scoped": true
     }
   },
   "checks": {
@@ -88,7 +101,9 @@
     "headset / physical haptic acceptance remains unverified",
     "subjective experience claims are not asserted",
     "standalone MCP/network endpoint is not included",
-    "native/browserless REALITI runtime is a separate project lineage"
+    "native/browserless REALITI runtime is a separate project lineage",
+    "portable memory disk adapter has no encryption, authentication, or secure erase",
+    "test room is a deterministic software simulation, not physical haptic hardware qualification"
   ],
   "harness_entry_contract": {
     "status": "PASS",

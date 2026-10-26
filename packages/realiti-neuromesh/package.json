@@ -1,7 +1,7 @@
 {
   "name": "@meatproxy69/realiti-neuromesh",
-  "version": "3.1.0",
-  "description": "REALITI SOMA complete portable R&R sensory harness with extracted THICC/HALO/AURA, BleuCheese and NeuralMesh.",
+  "version": "3.2.0",
+  "description": "REALITI SOMA portable full NeuralMesh/R&R harness with evidence-linked agent memory and independent sensory test room.",
   "license": "AGPL-3.0-only",
   "main": "index.cjs",
   "exports": {
@@ -10,7 +10,10 @@
     "./renderers": "./renderers.cjs",
     "./presets/honeyspark-duo.json": "./presets/honeyspark-duo.json",
     "./presets/moonwire-recovered.json": "./presets/moonwire-recovered.json",
-    "./reference/*": "./reference/*"
+    "./reference/*": "./reference/*",
+    "./memory": "./memory.cjs",
+    "./storage": "./storage.cjs",
+    "./lab": "./lab/lantern-room.cjs"
   },
   "files": [
     "index.cjs",
@@ -20,14 +23,18 @@
     "examples",
     "harness.cjs",
     "renderers.cjs",
-    "reference"
+    "reference",
+    "memory.cjs",
+    "storage.cjs",
+    "lab",
+    "MEMORY_AND_LAB.md"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "test": "node --test test/*.test.cjs",
-    "check": "node --check index.cjs && node --check harness.cjs && node --check renderers.cjs"
+    "check": "node --check index.cjs && node --check harness.cjs && node --check renderers.cjs && node --check memory.cjs && node --check storage.cjs && node --check lab/lantern-room.cjs"
   },
   "repository": {
     "type": "git",

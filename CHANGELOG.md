@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 3.2.0 — Evidence-linked resident memory and independent Lantern Room laboratory
+
+- Replace the ephemeral 32-string SOMA pocket with **structured, bounded resident memory**: up to 48 keyed self-authored notes, 160 host-origin contact/room/world episodes, last departure, exact receipt provenance, source authorities and origin worlds.
+- Explicit note supersession, deterministic Unicode/BM25-like lexical recall, unmatched queries return empty, no generated recollections or prompt-driven contact, explicit forgetting and contact-expiry recording.
+- Private checkpoints now retain memory while reclassifying prior host observations as archived historical data. Live contact is never restored. Optional Node file storage uses atomic owner-only files and checksum corruption detection; **not encryption**.
+- Standalone collision-checked 6×4 m Lantern Room tests reach, pressure, seated support, contact expiry, real host-controlled window latch, BleuCheese admission, environment, high-detail private renderers and cross-neighborhood durable recall.
+- All prior NeuralMesh schemas, mechanism catalogs and preset packs remain included in the separately installable package and Relax bundle.
+
+
 ## 3.1.0 — Full portable SOMA R&R harness
 
 ### Added

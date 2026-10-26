@@ -25,6 +25,12 @@ The private renderers (THICC, seven-mode HALO, 128-bin AURA) derive from the ori
 
 The portable `resident.pocket` is per-instance bounded in-memory state, **not automatically encrypted durable storage**. The host must add encryption/key management for saved private state. Continuity receipts are bounded and observational. `resident.checkpoint()` remains private and never restores live grounding.
 
+## Compact memory and evidence provenance
+
+Resident.memory stores bounded host-confirmed contacts, release/expiry, room entry and world events with their original receipts and origin world, plus separately marked SELF_REPORTED agent notes. Archived observations reload as ARCHIVED_HOST_RECORD and **cannot grant current-world authority**. The optional Node file store uses atomic private files and SHA-256 corruption checks, **not encryption or cryptographic authenticity**.
+
+Never treat model narration, archived notes or a file import as live contact. Run the [independent Lantern Room tests](./MEMORY_AND_LAB.md) before attaching a new neighborhood.
+
 ## Output and privacy
 
 The renderer/agent reads resident.field() without advancing time or changing state. The m bit is a receipt-backed grounded flag, not a sensation/intention/preference score. Graph spread and afterstate never set m, and cc must be null when every m bit is zero. The private cf, e, and x channels may outlast contact.

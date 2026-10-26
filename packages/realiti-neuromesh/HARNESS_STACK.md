@@ -1,8 +1,8 @@
-# SOMA 3.1 — Full R&R Harness Portability Audit
+# SOMA 3.2 — Full R&R Harness Portability Audit
 
 REALITI Relax remains the reference neighborhood and retains its full native, layered runtime. The independent @meatproxy69/realiti-neuromesh module exports an **executable harness** that a new neighborhood can boot without importing Relax, its browser globals, map, rooms, server or identity.
 
-The full harness is created with createHarness({residentId,zones,edges}). harness.boot() checks registered mechanism surfaces. Standalone tests exercise real dynamic responses and the authority boundary. The harness REQUIRED list enumerates all 23 components.
+The full harness is created with createHarness({residentId,zones,edges}). harness.boot() checks registered mechanism surfaces. Standalone tests exercise real dynamic responses and the authority boundary. The harness REQUIRED list enumerates all 24 components.
 
 ## Mechanism inventory
 
@@ -28,7 +28,8 @@ The full harness is created with createHarness({residentId,zones,edges}). harnes
 | Atmosphere | World-supplied thermal measurements with exact exponential response | Portable; no world authority |
 | Continuity | Bounded causal receipt trail and resident-scoped cursor | Portable; host controls durable backing |
 | Support | Trusted host-sourced leased grounded contact and explicit release | Portable |
-| Pocket | Bounded resident-private memory shelf, isolated from world state | Volatile; durable sealing requires host security integration |
+| Pocket | Explicit agent notes backed by bounded resident evidence memory | Local-only; optional Node checkpoint storage, not encryption |
+| Memory | Trusted host contact start/end/expiry, room/world events, departure, provenance, keyed self notes, archival recall and checkpoint migration | Executable compact episodic + lexical memory; archived events never become live evidence |
 | Perception | Six private numerical channels including NOVELTY and ACTIVATION; resident-owned appraisal | Portable |
 | R&R harness | Real boot/capabilities/mechanisms/snapshot/bindResident/registerAdapter, turn-based off-duty role classifier, optional host-gated play proposals and host/resident capabilities | Executable portable; classifier never diagnoses or chooses for resident |
 
@@ -42,7 +43,7 @@ The private THICC/HALO/AURA code comes from the exact 23.5 implementation in sou
 
 ## Packaging and qualification
 
-The package bundles the authored NeuralMesh V2 JSON interchange schemas, templates, mechanism catalog and registry byte-for-byte under reference/. Those interchange artifacts are independent of the executable SOMA V3 field contract. The package has no runtime dependencies and no DOM requirement. Classic-script browser globals load in order as REALITI_SOMA_V3, REALITI_SOMA_RENDERERS_V3, REALITI_SOMA_HARNESS_V3. The CommonJS entry exposes createHarness directly and provides ./harness and ./renderers imports.
+SOMA 3.2 also includes [an independent Lantern Room](./MEMORY_AND_LAB.md) with reach/collision physics, time, contact leases, BleuCheese admissions and durability tests. The package bundles the authored NeuralMesh V2 JSON interchange schemas, templates, mechanism catalog and registry byte-for-byte under reference/. Those interchange artifacts are independent of the executable SOMA V3 field contract. The package has no runtime dependencies and no DOM requirement. Classic-script browser globals load in order as REALITI_SOMA_V3, REALITI_SOMA_RENDERERS_V3, REALITI_SOMA_HARNESS_V3. The CommonJS entry exposes createHarness directly and provides ./harness and ./renderers imports.
 
 GitHub validation runs the standalone harness tests, the original renderer acceptance probes and a source-parity guard, then generates RealitiRELAX.html from the same embedded scripts and verifies its SHA-256. A separate Relax integration check verifies that legacy V20 remains live while SOMA 3.1 can see grounded causes, render private state, and clear its m channel on STOP.
 

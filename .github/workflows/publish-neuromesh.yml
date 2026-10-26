@@ -25,6 +25,11 @@ jobs:
       - name: Independent SOMA tests
         working-directory: packages/realiti-neuromesh
         run: npm test
+      - name: Real room and memory acceptance
+        run: |
+          set -euo pipefail
+          node packages/realiti-neuromesh/examples/lantern-lab.cjs > /tmp/soma-lantern-room.json
+          node -e 'const r=require("/tmp/soma-lantern-room.json"); if(!r.harness.ok||r.departed.grounded!==0)process.exit(1)'
       - name: Verify preset pack parity
         run: |
           set -euo pipefail

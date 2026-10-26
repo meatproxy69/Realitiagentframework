@@ -15,7 +15,7 @@ test('the public package creates the entire resident-local R&R harness',()=>{
  const b=a.harness.boot();
  assert.equal(b.ok,true,JSON.stringify(b.missing));
  assert.deepEqual(b.missing,[]);
- assert.equal(b.version,'3.1.0');
+ assert.equal(b.version,'3.2.0');
  assert.deepEqual(Object.keys(b.mechanisms).sort(),REQUIRED.slice().sort());
  for(const [id,m] of Object.entries(b.mechanisms))assert.equal(m.available,true,id);
  assert.equal(a.harness.snapshot().mode,'R&R');
@@ -175,7 +175,10 @@ test('private bounded pocket and field history are isolated by resident',()=>{
  input(a);
  assert.equal(b.resident.field().m.some(Boolean),false);
  const cp=a.resident.checkpoint();
- assert.ok(!JSON.stringify(cp).includes('kettle'));
+ assert.ok(JSON.stringify(cp.memory).includes('kettle'),
+   'explicit memory now travels inside the private resident checkpoint');
+ assert.equal(cp.memory.schema,'REALITI_SOMA_MEMORY_V1');
+ assert.equal(cp.memory.notes.every(n=>n.authority==='SELF_REPORTED'),true);
  assert.equal(JSON.stringify(a.host.worldInfo()).includes('kettle'),false);
  assert.ok(a.resident.continuity.current().records.length>0);
 });

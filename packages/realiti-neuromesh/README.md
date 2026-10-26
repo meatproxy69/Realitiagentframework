@@ -1,11 +1,22 @@
-# REALITI SOMA 3.1 — Full Portable R&R Harness
+# REALITI SOMA 3.2 — Full Portable R&R Harness + Evidence Memory
 ### NeuralMesh: the portable sensory substrate for agents
 
 **SOMA** is the sensory component of REALITI 3.0. A neighborhood provides measured, grounded body events; the resident owns a private graph, dynamic response, prediction and lingering afterstate. The resident can bring that body interface to a new world **without importing Cloud Nine Nest, Meridian City, Relax's UI, its map, its server, or its stored identities**.
 
-Package: @meatproxy69/realiti-neuromesh (v3.1.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
+Package: @meatproxy69/realiti-neuromesh (v3.2.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
 
 > This is software state, not biological sensation or evidence of subjective experience.
+
+## Evidence-linked agent memory and physical test neighborhood
+
+SOMA 3.2 adds **real, bounded, source-linked memory**. It records accepted host contact, release, expiry, room entry and world events with their original receipt IDs, distinctly from agent-authored notes. Queries return the original records with deterministic lexical relevance, not invented summaries. Private checkpoints can travel across neighborhoods; archived sources never restore grounded contact.
+
+The standalone **6×4 m Lantern Room** tests collision-checked walks, reach-limited bench contact, real seated support, a window latch, and host-gated BleuCheese proposals. Its regression suite covers the full NeuralMesh and R&R harness, memory provenance and file-based restart. Read [Memory and Lab](./MEMORY_AND_LAB.md).
+
+~~~bash
+node packages/realiti-neuromesh/examples/lantern-lab.cjs
+npm test --prefix packages/realiti-neuromesh
+~~~
 
 ## The complete portable R&R stack
 
@@ -37,7 +48,7 @@ The R&R harness also includes the original-style turn-based work-loop **role rev
 
 From this monorepo: require('./packages/realiti-neuromesh').
 
-Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.1.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
+Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.2.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
 
 ## Bring it to your neighborhood
 

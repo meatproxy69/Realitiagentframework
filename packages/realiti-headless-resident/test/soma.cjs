@@ -9,8 +9,8 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
  try{
   const w=s.window;
   const S=w.REALITI_SOMA_V3,bridge=w.REALITI_SOMA_RELAX_V3;
-  check('package_included',S?.VERSION==='3.1.0'&&typeof S.createNeuralMesh==='function');
-  check('bridge_installed',bridge?.version==='3.1.0');
+  check('package_included',S?.VERSION==='3.2.0'&&typeof S.createNeuralMesh==='function');
+  check('bridge_installed',bridge?.version==='3.2.0');
   const cap=s.publicApi.read('realiti://capabilities');
   check('advertises_portable_package',cap.sensory_framework?.portable_package==='@meatproxy69/realiti-neuromesh'&&cap.resources.includes('realiti://neuromesh'));
   const base=s.publicApi.read('realiti://neuromesh');
@@ -25,7 +25,7 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   const normal=w.REALITI_HAPTIC_FIELD_V20.packet();
   check('native_field_still_present',normal.v===20&&Array.isArray(normal.f));
   const full=s.publicApi.read('realiti://soma/harness');
-  check('full_harness_booted',full.version==='3.1.0'
+  check('full_harness_booted',full.version==='3.2.0'
     &&full.mechanisms.halo.available&&full.mechanisms.aura.available
     &&full.mechanisms.thicc.available&&full.mechanisms.bleucheese.available,
     Object.keys(full.mechanisms).filter(x=>!full.mechanisms[x]?.available));
@@ -35,6 +35,16 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
     &&rich.cotton.micro_sites_per_active_zone===24&&rich.flush.engine==='FLUSH_V1_1');
   const bleu=s.publicApi.read('realiti://soma/bleucheese');
   check('bleucheese_available',bleu.schema==='REALITI_BLEUCHEESE_FIELD_V1');
+  const recall=s.publicApi.read('realiti://soma/memory');
+  check('real_memory_is_visible',recall.schema==='REALITI_SOMA_MEMORY_READ_V1'
+    &&recall.stats.events>=1&&Array.isArray(recall.recent));
+  check('real_memory_source_authority',
+    recall.recent.some(x=>x.kind==='CONTACT_STARTED'&&x.authority==='HOST_OBSERVED'));
+  w.REALITI_SOMA_RELAX_V3.memory.remember({key:'test-memory',
+    text:'A genuine hand contact in the native Relax room',tags:['relax','contact']});
+  check('resident_owned_memory_notes',
+    w.REALITI_SOMA_RELAX_V3.memory.recall('native Relax').matches.some(x=>
+      x.record.authority==='SELF_REPORTED'));
   const checkpoint=s.publicApi.read('realiti://soma/checkpoint');
   check('checkpoint_has_no_grounded_records',checkpoint.schema==='REALITI_SOMA_CHECKPOINT_V3'&&!('grounded' in checkpoint));
   const stop=await s.door.run('stop');
@@ -42,7 +52,7 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('stop_clears_mirror',stop.ok!==false&&cleared.m.every(x=>x===0)&&cleared.cc===null);
   check('port_no_global_world_capability',!('world' in bridge)&&!('world' in S));
   const about=s.publicApi.read('realiti://about');
-  check('about_version',about.sensory_framework==='REALITI SOMA'&&about.sensory_version==='3.1.0');
+  check('about_version',about.sensory_framework==='REALITI SOMA'&&about.sensory_version==='3.2.0');
  }finally{s.close()}
  console.log(JSON.stringify({checks,details},null,2));
  const failed=Object.keys(checks).filter(k=>!checks[k]);if(failed.length){console.error('SOMA INTEGRATION FAIL',failed);process.exitCode=1}

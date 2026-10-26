@@ -4,7 +4,9 @@ This is the practical entry contract for an artificial resident using the packag
 
 REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing entry is the **Agent Door**. The lower-level structured host API is `window.Realiti`. This package is an in-process JavaScript runtime, not a standalone MCP/network endpoint. Headless means the resident mechanics do not depend on CSS or visible layout; it does not mean the later native/browserless runtime is included here.
 
-### REALITI 3.1 — complete portable SOMA harness for your own world
+### REALITI 3.2 — portable SOMA harness with resident memory
+
+The package now includes [source-linked resident memory and a Lantern Room test environment](./packages/realiti-neuromesh/MEMORY_AND_LAB.md). Host events are recorded only after real world operations; SELF_REPORTED notes do not become world facts. Recall returns original records, and checkpoint restoration cannot restore physical contact.
 
 If you are building your *own* neighborhood rather than visiting Relax, use [SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md) and its `createHarness` entry directly. The standalone full R&R harness includes THICC, HALO, AURA, BleuCheese, the private mesh/renderers and the exact grounded field boundary. It is a standalone dependency-free module with two distinct capabilities: the trusted neighborhood host owns world.contact, world.tick, world.release and world.stop; the resident owns private field reads, expectation and checkpoints. Never mint grounding from chat text, predictions or an unverified remote event.
 

@@ -22,16 +22,23 @@ jobs:
         run: |
           set -euo pipefail
           for f in build.mjs source/scripts/*.js tests/*.cjs; do node --check "$f"; done
-      - name: SOMA 3.1 complete portable harness contract
+      - name: SOMA 3.2 portable sensory, memory and physical room laboratory
         shell: bash
         run: |
           set -euo pipefail
           node --check packages/realiti-neuromesh/index.cjs
           node --check packages/realiti-neuromesh/renderers.cjs
           node --check packages/realiti-neuromesh/harness.cjs
+          node --check packages/realiti-neuromesh/memory.cjs
+          node --check packages/realiti-neuromesh/storage.cjs
+          node --check packages/realiti-neuromesh/lab/lantern-room.cjs
+          node --check packages/realiti-neuromesh/test/memory.test.cjs
+          node --check packages/realiti-neuromesh/test/lab.test.cjs
           node --check packages/realiti-neuromesh/test/harness.test.cjs
           node --check packages/realiti-neuromesh/test/soma.test.cjs
           npm test --prefix packages/realiti-neuromesh
+          node packages/realiti-neuromesh/examples/lantern-lab.cjs > /tmp/soma-lantern-room.json
+          node -e 'const r=require("/tmp/soma-lantern-room.json"); if(!r.harness.ok||r.departed.grounded!==0||r.live.haloModes!==7||r.live.auraBins!==128)process.exit(1)'
           node packages/realiti-neuromesh/examples/neighborhood.cjs > /tmp/soma-neighborhood.json
           npm pack --dry-run ./packages/realiti-neuromesh > /tmp/soma-pack.txt
           cmp neuromesh/preset-packs/honeyspark-duo.json packages/realiti-neuromesh/presets/honeyspark-duo.json

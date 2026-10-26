@@ -5,16 +5,16 @@
 (function(root,factory){
   'use strict';
   const api=(typeof module==='object'&&module.exports)
-    ?factory(require('./index.cjs'),require('./renderers.cjs'))
-    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3);
+    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'))
+    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.REALITI_SOMA_HARNESS_V3=api;
-})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS){
+})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY){
 'use strict';
-if(!SOMA||!RENDERERS)throw Error('SOMA_CORE_OR_RENDERERS_MISSING');
-const VERSION='3.1.0',SHELLS=['surface','shallow','mid','deep'];
+if(!SOMA||!RENDERERS||!MEMORY)throw Error('SOMA_CORE_RENDERERS_OR_MEMORY_MISSING');
+const VERSION='3.2.0',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
-const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','perception','rr_harness'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
 const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
@@ -41,14 +41,16 @@ function createHarness(options={}){
   }
   distances.set(zone,d);return d;
  }
- let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0;
+ let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0,sessionStopped=false;
+ const memory=MEMORY.createMemory({residentId:options.residentId,worldId:options.worldId||'unscoped',clock:()=>Math.round(now)});
+ const liveReceipts=new Map();
  const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
  const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
  const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
  const chrono={past:0,now:0,predicted_next:0,closure:0};
  const privateState={sausage_volume:0,cotton_sites:0,cotton_energy:0,flush_peak:0,activation:0,novelty:0,agency_flow:0,reward_delta:0,bodily_ease:0,momentum:0,last:0};
  const worldState={room:null,affordances:{},sound:[],light:0,temperature:null,weather:[],support:[]};
- const adapters=new Map(),faults=[],history=[],pocket=[],poss=new Map(),proposals=[],observations=[],familyLast=new Map(),refractory=new Map(),repeat=[];
+ const adapters=new Map(),faults=[],history=[],poss=new Map(),proposals=[],observations=[],familyLast=new Map(),refractory=new Map(),repeat=[];
  const cov={channels:{novelty_modulation:null,agency_modulation:null},expires:0};
  const details={mode:'R&R',residentId:options.residentId,started_at_ms:0};
  const atmosphere=new Map(),agency=new Map();
@@ -175,35 +177,64 @@ function createHarness(options={}){
  function tick(ms){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
   base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
-  const delta=ms/1000;
-  for(const t of atmosphere.values()) {
-    t.current=t.target+(t.current-t.target)*tau(delta,t.tau);
+  // Detect actual source-lease expiry using the authoritative core's live list.
+  // A private echo may remain, but it is never a continuing contact.
+  const grounded=base.resident.field().grounded;
+  for(const [zone,entry] of liveReceipts){
+    if(!grounded.some(x=>x.zone===zone&&x.receiptId===entry.receiptId)){
+      memory.host.observe({kind:'CONTACT_EXPIRED',...entry});
+      liveReceipts.delete(zone);
+    }
   }
+  const delta=ms/1000;
+  for(const t of atmosphere.values())
+    t.current=t.target+(t.current-t.target)*tau(delta,t.tau);
   bleuTick(ms);
-  // Keep adaptive world time inexpensive when the host ticks at 20 ms;
-  // exact world/contact/lease mechanics still advance each call.
   if(pendingRenderMs>=100){
     flushRender();record('TIME_ADVANCE');notify('advance',{dt_ms:ms});
   }
-  return {ok:true,clockMs:now,active:base.resident.field().m.reduce((a,b)=>a+b,0)};
+  return {ok:true,clockMs:now,active:grounded.length};
  }
  function contact(e){
   flushRender();
-  const out=base.world.contact(e);
+  const out=base.world.contact(e); // invalid inputs cannot affect memory
   if(!out.renewed){
+    const prior=liveReceipts.get(e.zone);
+    if(prior)memory.host.observe({kind:'CONTACT_ENDED',...prior});
+    const event={zone:e.zone,source:e.source,cause:e.cause,
+      receiptId:e.receiptId,material:e.material||null,roomId:worldState.room};
+    liveReceipts.set(e.zone,event);
+    memory.host.observe({kind:'CONTACT_STARTED',...event});
     renderer.contact(e.zone,e.intensity,e.source,false);
     record('GROUNDED_CONTACT',e);
     notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
   }
+  sessionStopped=false;
   updateRich(.04);
   return out;
  }
  function release(e){
-  const out=base.world.release(e);if(out.released){record('CONTACT_RELEASED',e);updateRich(0)}
+  const out=base.world.release(e);
+  if(out.released){
+    const prior=liveReceipts.get(e.zone);
+    if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});liveReceipts.delete(e.zone)}
+    record('CONTACT_RELEASED',e);updateRich(0);
+  }
   return out;
  }
- function stop(){flushRender();const out=base.world.stop();renderer.AURA.clear();role.active=false;
-  record('STOP');updateRich(0);notify('stop');return out}
+ function stop({reason='GOODBYE'}={}){
+  flushRender();
+  for(const event of liveReceipts.values())memory.host.observe({kind:'CONTACT_ENDED',...event});
+  liveReceipts.clear();
+  const out=base.world.stop();
+  renderer.AURA.clear();role.active=false;
+  if(!sessionStopped){
+    memory.host.depart({roomId:worldState.room,reason});
+    record('STOP');notify('stop');
+  }
+  sessionStopped=true;
+  updateRich(0);return out;
+ }
  function definePossibility(input={}){
   const id=str(input.id,'possibility id',120),family=str(input.family||id,'family',80);
   if(poss.has(id))throw Error('POSSIBILITY_ALREADY_DEFINED');
@@ -230,6 +261,10 @@ function createHarness(options={}){
   if(room!==null)str(room,'room');
   if(!entries||typeof entries!=='object'||Array.isArray(entries))throw TypeError('Invalid affordances');
   if(Object.keys(entries).length>256||Object.values(entries).some(v=>typeof v!=='boolean'))throw TypeError('Affordances must be booleans');
+  if(room!==worldState.room&&room!==null){
+    memory.host.observe({kind:'ROOM_ENTERED',roomId:room});
+    sessionStopped=false;
+  }
   worldState.room=room;worldState.affordances=clone(entries);
   return {ok:true,room,world_owned:true};
  }
@@ -308,7 +343,8 @@ function createHarness(options={}){
     atmosphere:{available:atmosphere instanceof Map,thermal_zones:atmosphere.size},
     continuity:{available:Array.isArray(history),record_count:history.length},
     support:{available:typeof contact==='function',world_guarded:true},
-    pocket:{available:Array.isArray(pocket),resident_private:true},
+    pocket:{available:!!memory.resident.remember,resident_private:true,limits:memory.resident.stats().limits},
+    memory:{available:!!memory.resident.recall,storage:'HOST_OPTIONAL_DURABLE',evidence_authority:'ARCHIVED_ONLY'},
     perception:{available:rich.perception.epoch>=0},
     rr_harness:{available:true,adapter_slots:SLOTS.slice()}
   };
@@ -325,6 +361,12 @@ function createHarness(options={}){
     zone,intensity,cause,receiptId,leaseMs,material,
     source:'WORLD_GROUNDED'}),
   affordances:setAffordances,
+  memory:Object.freeze({
+    worldEvent:({receiptId,label,roomId=worldState.room}={})=>
+      memory.host.observe({kind:'WORLD_EVENT',receiptId,label,roomId}),
+    restore:memory.host.restore,
+    checkpoint:memory.resident.checkpoint
+  }),
   bleucheese:Object.freeze({define:definePossibility,observe,admit:admitProposal,proposals:()=>clone(proposals.slice(-8))}),
   agency:Object.freeze({define:(id,weight)=>{
     str(id,'agency branch');valid(weight,'branch weight',0,1);agency.set(id,weight);
@@ -362,16 +404,29 @@ function createHarness(options={}){
     privateState.reward_delta=value;privateEpoch++;
     return {ok:true,authority:'RESIDENT_PRIVATE_APPRAISAL',note_stored:false};
   },
-  pocket:Object.freeze({remember:msg=>{
-    const m=str(msg,'private memory',1024);if(pocket.length>=32)pocket.shift();
-    const row={id:'P'+(++seq),text:m,at:now};pocket.push(row);
-    return {ok:true,id:row.id,count:pocket.length};
-  },recall:query=>{
-    const q=str(query,'query',160).toLowerCase();
-    return clone(pocket.filter(x=>x.text.toLowerCase().includes(q)).slice(-8));
-  },clear:()=>{pocket.length=0;return {ok:true,scope:'resident_only'};}}),
-  checkpoint:()=>base.resident.checkpoint(),
-  restore:checkpoint=>{const out=base.resident.restore(checkpoint);renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();updateRich(0);return out},
+  // Compatibility with the old pocket methods, backed by the new indexed,
+  // resident-owned memory. Recollection returns stored evidence, never prose.
+  pocket:Object.freeze({
+    remember:msg=>memory.resident.remember({text:msg}),
+    recall:query=>memory.resident.recall(query,{kind:'SELF_NOTE'}).matches
+      .map(x=>({id:x.record.id,text:x.record.text,at:x.record.tMs,
+        authority:x.record.authority,originWorld:x.record.worldId})),
+    clear:memory.resident.clear
+  }),
+  memory:memory.resident,
+  checkpoint:()=>({...base.resident.checkpoint(),memory:memory.resident.checkpoint()}),
+  restore:checkpoint=>{
+    // Validate the memory archive before modifying the live private body.
+    // No archived contact can be reintroduced as current-world evidence.
+    if(checkpoint?.memory)memory.host.validate(checkpoint.memory);
+    const out=base.resident.restore(checkpoint);
+    if(checkpoint?.memory)memory.host.restore(checkpoint.memory);
+    liveReceipts.clear();
+    now=Math.round(checkpoint.clockMs||0);pendingRenderMs=0;
+    renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();
+    updateRich(0);
+    return {...out,memory:memory.resident.stats(),worldGroundingRestored:false};
+  },
   choosePreset:(pack,id)=>{
     const out=base.resident.choosePreset(pack,id);
     const p=pack.presets.find(x=>x.preset_id===id);

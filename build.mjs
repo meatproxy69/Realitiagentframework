@@ -19,6 +19,7 @@ assertCssFree('packages/realiti-neuromesh/index.cjs',somaSource);
 html=html.replace(somaMarker,()=>somaSource+(somaSource.endsWith('\n')?'':'\n'));
 for(const [marker,path] of [
   ['/*__REALITI_SOMA_RENDERERS_V3__*/','packages/realiti-neuromesh/renderers.cjs'],
+  ['/*__REALITI_SOMA_MEMORY_V1__*/','packages/realiti-neuromesh/memory.cjs'],
   ['/*__REALITI_SOMA_HARNESS_V3__*/','packages/realiti-neuromesh/harness.cjs']
 ]){
   if(html.split(marker).length!==2)throw Error('Missing or duplicate full SOMA harness marker: '+marker);
