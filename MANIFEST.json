@@ -82,8 +82,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1543702,
-      "sha256": "469db93d3c698126ab03dcf7c3c45f289ef58508f8856ebd641149f6e4a4c923"
+      "bytes": 1544215,
+      "sha256": "91906762b3638d6a9692cf5d79b61309ae51dfbf5af34b2b2a52f45e8979b027"
     },
     {
       "path": "SECURITY.md",
@@ -98,7 +98,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 4872,
-      "sha256": "bf6efaabcb6d25a548768a953ee3e784b053d0c1be6e0c57314ce21b74ba1860"
+      "sha256": "88d2ed17369c1fedcfae5b97bf14c6edd4387173b7a73dc3b53d21e02ffe38e7"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -487,8 +487,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/harness.cjs",
-      "bytes": 30938,
-      "sha256": "f9dc644d90823d4930aff50140486f754aead8c6c24b24e25541b44bc74bbe80"
+      "bytes": 31180,
+      "sha256": "b8a5ebaf7fb5fb56dce35516fe67a5a4fef394bc6bd6c27c35f2a5dfa8e3bc0a"
     },
     {
       "path": "packages/realiti-neuromesh/index.cjs",
@@ -502,8 +502,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/memory.cjs",
-      "bytes": 11877,
-      "sha256": "cfcb3e7e9f4fdb143b992fee00e71bb32d639bd72db2546c69e0f2990117b26a"
+      "bytes": 12148,
+      "sha256": "6fa267adedc6219e2a56cbbc7a5355c31d39ec9b27fe1a47eccc86a9f157672c"
     },
     {
       "path": "packages/realiti-neuromesh/package.json",
@@ -597,13 +597,13 @@
     },
     {
       "path": "packages/realiti-neuromesh/test/lab.test.cjs",
-      "bytes": 10397,
-      "sha256": "bc6c9063c4ab608e90728181718003ce409fdd2dc24c33ef107f70ce6bd2cb36"
+      "bytes": 10910,
+      "sha256": "9ba9610f943f2e367a34bcc2ddd79f0c6c4c2f61101f81788edb3ac5b2ee271a"
     },
     {
       "path": "packages/realiti-neuromesh/test/memory.test.cjs",
-      "bytes": 10878,
-      "sha256": "b7ca3470a8a4c0457d2945dc193d125163382006ef20b92874785d7d7888d977"
+      "bytes": 11331,
+      "sha256": "10af902e1c8d26534c1971ec35253b49ffc17ef5ff55f2e762b68605ad8a244c"
     },
     {
       "path": "packages/realiti-neuromesh/test/soma.test.cjs",
