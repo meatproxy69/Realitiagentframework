@@ -72,6 +72,17 @@ test('a leased touch expires and memory records absence without erasing aftersta
  const records=room.resident.memory.recent();
  assert.ok(records.some(x=>x.kind==='CONTACT_EXPIRED'&&x.receiptId===result.receiptId));
 });
+test('coarse time steps preserve the exact receipt lease-expiry timestamp',()=>{
+ const room=new LanternRoom();room.walkTo(1.8,1.5);
+ const stamped=room.snapshot().t_ms;
+ const touched=room.touch('bench');
+ room.wait(9500);
+ const events=room.resident.memory.recent({limit:40});
+ const expiry=events.find(x=>x.kind==='CONTACT_EXPIRED'&&x.receiptId===touched.receiptId);
+ assert.ok(expiry);
+ assert.equal(expiry.tMs,stamped+FIXTURES.bench.leaseMs);
+ assert.equal(room.snapshot().field.m.every(Boolean),false);
+});
 test('sitting on bench gives a real support relation; standing ends it',()=>{
  const room=new LanternRoom();room.walkTo(1.8,1.5);
  const sit=room.sit();

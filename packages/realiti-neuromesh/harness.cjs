@@ -182,7 +182,8 @@ function createHarness(options={}){
   const grounded=base.resident.field().grounded;
   for(const [zone,entry] of liveReceipts){
     if(!grounded.some(x=>x.zone===zone&&x.receiptId===entry.receiptId)){
-      memory.host.observe({kind:'CONTACT_EXPIRED',...entry});
+      memory.host.observe({kind:'CONTACT_EXPIRED',...entry,
+        tMs:Math.min(Math.round(now),entry.expiresAtMs)});
       liveReceipts.delete(zone);
     }
   }
@@ -202,12 +203,16 @@ function createHarness(options={}){
     const prior=liveReceipts.get(e.zone);
     if(prior)memory.host.observe({kind:'CONTACT_ENDED',...prior});
     const event={zone:e.zone,source:e.source,cause:e.cause,
-      receiptId:e.receiptId,material:e.material||null,roomId:worldState.room};
+      receiptId:e.receiptId,material:e.material||null,roomId:worldState.room,
+      expiresAtMs:Math.round(now+e.leaseMs)};
     liveReceipts.set(e.zone,event);
     memory.host.observe({kind:'CONTACT_STARTED',...event});
     renderer.contact(e.zone,e.intensity,e.source,false);
     record('GROUNDED_CONTACT',e);
     notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
+  }else{
+    const prior=liveReceipts.get(e.zone);
+    if(prior&&prior.receiptId===e.receiptId)prior.expiresAtMs=Math.round(now+e.leaseMs);
   }
   sessionStopped=false;
   updateRich(.04);

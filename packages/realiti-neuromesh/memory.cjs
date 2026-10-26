@@ -83,8 +83,12 @@ function createMemory({residentId,worldId='unscoped',clock=()=>0}={}){
    if(kind==='WORLD_EVENT'&&(!receiptId||!label))throw TypeError('WORLD_EVENT_REQUIRES_RECEIPT');
    const duplicate=receiptId&&events.some(e=>e.kind===kind&&e.receiptId===receiptId&&e.zone===zone&&e.worldId===localWorld);
    if(duplicate)return {ok:true,recorded:false,duplicate:true};
+   // Host-only source time may be the exact lease boundary inside a coarse tick.
+   const hostTime=now();
+   const observedAt=input.tMs===undefined?hostTime:int(input.tMs,'EVENT_TIME_MS',0,1e12);
+   if(observedAt>hostTime)throw TypeError('FUTURE_EVENT_TIMESTAMP');
    const row=compact({id:next('E'),seq,kind,authority:'HOST_OBSERVED',
-     worldId:localWorld,tMs:now(),receiptId,zone,cause,source,roomId,material,label});
+     worldId:localWorld,tMs:observedAt,receiptId,zone,cause,source,roomId,material,label});
    events.push(row);
    if(events.length>EVENT_MAX)events.shift();
    if(kind==='DEPARTURE')lastDeparture=compact({id:row.id,worldId:localWorld,tMs:row.tMs,

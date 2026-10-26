@@ -74,6 +74,15 @@ test('stored hostile text is inert and never turns into an instruction',()=>{
  assert.equal(mem.resident.recall('instructions').matches[0].record.authority,'SELF_REPORTED');
  assert.deepEqual(mem.resident.recall('world touch').matches.map(x=>x.record.kind),['SELF_NOTE']);
 });
+test('event timestamps are bounded by the trusted host clock',()=>{
+ const {mem,advance}=make();
+ advance(500);
+ const event={kind:'WORLD_EVENT',receiptId:'latch-1',label:'WINDOW_OPENED',tMs:200};
+ assert.equal(mem.host.observe(event).recorded,true);
+ assert.equal(mem.resident.recent()[0].tMs,200);
+ assert.throws(()=>mem.host.observe({...event,receiptId:'latch-2',tMs:600}),/FUTURE_EVENT_TIMESTAMP/);
+ assert.equal(mem.resident.stats().events,1);
+});
 test('host-origin event requires evidence IDs; prediction cannot become contact',()=>{
  const {mem}=make();
  assert.throws(()=>mem.host.observe({kind:'CONTACT_STARTED',zone:'hand.R.palm'}),/RECEIPT/);
