@@ -12,8 +12,8 @@
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 4416,
-      "sha256": "9c181c8ec4128648706039b5944229f89606f711d51bba012a75c94e01c62d3a"
+      "bytes": 4588,
+      "sha256": "71c4458d1afa54d99be69d4935598bf78881637af91511f3cda49cd720aede9c"
     },
     {
       "path": ".github/workflows/publish-matrix.yml",
@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/refresh-artifacts.yml",
-      "bytes": 2399,
-      "sha256": "30fa598e1c103b9d2eddea78d34346f5d77756bf246b3b4cecb81808e9a39c92"
+      "bytes": 2430,
+      "sha256": "2f2984a3e1758cd9579f373f42bdc5579814f139409fcc7cfb6a2be13ff782c1"
     },
     {
       "path": ".github/workflows/server-ticket-close.yml",
@@ -57,8 +57,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 61530,
-      "sha256": "3e6199afbf7b87898767f63c4d180f5b78ef701098e0ad2d9ad3e29e1a3f8ac4"
+      "bytes": 62215,
+      "sha256": "e3e87a92e33f86d9a32cfd4064a67856da016ce11c72ac3e865f08df14a46ec7"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 49096,
-      "sha256": "372f919eaac5ff8832196176fa300a52949b6e52040e2052690f5e4a010c256e"
+      "bytes": 49434,
+      "sha256": "66a65fb303631e7572e1401a67351a20d05626d0f07c768bff22578047003294"
     },
     {
       "path": "RELEASE_NOTES.md",
@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1571296,
-      "sha256": "05e3b433ad989b81e68ac3addd3935a17b150015520d7e13229a01d3dd167810"
+      "bytes": 1574443,
+      "sha256": "6c5898c2496a33d93144ee910fc4d2f0119eb2f7ca050d4c1775638f9f64deb9"
     },
     {
       "path": "SECURITY.md",
@@ -102,8 +102,8 @@
     },
     {
       "path": "VALIDATION.json",
-      "bytes": 6050,
-      "sha256": "8d46f58b36d5e4736224b89744f7e218c2d81016c274c14e244fb25df7a559e4"
+      "bytes": 6386,
+      "sha256": "434a89afe60b9755f0f249ad76148cfb28eee5b27743d5f44a18eea2797d41aa"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -307,8 +307,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/body.cjs",
-      "bytes": 4295,
-      "sha256": "48e95d11b3bdb9e09385dbdd82ce0d8ce849f72f5a43676afc61d0432043d394"
+      "bytes": 4647,
+      "sha256": "7644e0c2cac9f77b662d98e2d1087ab7ca4a8a28b0eea7e7a44032fdffbcdbde"
     },
     {
       "path": "packages/realiti-headless-resident/test/catnip.cjs",
@@ -382,8 +382,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix-portable.cjs",
-      "bytes": 2141,
-      "sha256": "724a226359bae23857e4d69b367f0a03aba55d80e12ef38f921d15e6a24913f1"
+      "bytes": 2383,
+      "sha256": "17d8b706cf91a1cfaa561f0e83f145e02813bcc19e9fc8480b5484c5f07ae7c7"
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix.cjs",
@@ -996,6 +996,11 @@
       "sha256": "842a10a18dfa7ef234265666f484185dae96ecab018f72461db58d0ff7013a3a"
     },
     {
+      "path": "source/scripts/57a-matrix-local-evidence.js",
+      "bytes": 2837,
+      "sha256": "fd82f3c322f06071f2ceff72868edf6c605109cf6bca5fccf8d6775a1ce0c687"
+    },
+    {
       "path": "source/scripts/58-rooms.js",
       "bytes": 17868,
       "sha256": "2396894a56d4834a9abe1b2ce6d88cc5b1c389ffd05e0f81b4b0c66d7fad98ec"
@@ -1012,8 +1017,8 @@
     },
     {
       "path": "source/scripts/58d-matrix-world.js",
-      "bytes": 36896,
-      "sha256": "f8a16ad8df22047ec345145d505d05bafece369b6c8d53fd55f3005b0dd1e6e0"
+      "bytes": 36949,
+      "sha256": "7ded5a70d4625efe4b6d1621f484cf2b5a20dfa95f98472a93d46f395ec90da4"
     },
     {
       "path": "source/scripts/58e-frontier.js",
@@ -1102,8 +1107,8 @@
     },
     {
       "path": "source/scripts/58w-body.js",
-      "bytes": 6141,
-      "sha256": "837c5f0f335c7a1a65c16e124204c5647941ec7cec4ce598aa22a6936da2ffc2"
+      "bytes": 6336,
+      "sha256": "b567a7fc4ed9483bc0488e599976680f1c8d056733991104783291d53f89ffb1"
     },
     {
       "path": "source/scripts/59-continuity.js",
@@ -1207,8 +1212,8 @@
     },
     {
       "path": "source/template.html",
-      "bytes": 10181,
-      "sha256": "47e6ba0b7435628d9b9a2196a01779625e098b7a11f4bc3dc0a1512f66fedbd8"
+      "bytes": 10285,
+      "sha256": "8aea8bbb4d80939daa688b7e461d151779110ad60ea91d24b838d1996a5bf766"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
