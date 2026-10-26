@@ -12544,15 +12544,22 @@ async function run(raw){const l=low(raw);if(l==='body'||l==='interoception'||l==
 D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{const h=A0.help();try{h.body=help().body}catch(e){}return h}});
 })();
 </script>
-<script id="realiti-soma-portable-runtime">/* REALITI SOMA 3.0 — portable NeuralMesh. DOM-free, dependency-free, one file. */
+<script id="realiti-soma-portable-runtime">/* REALITI SOMA 3.1 — portable NeuralMesh. DOM-free, dependency-free, one file. */
 (function (root, factory) {
   'use strict';
   const api = factory();
-  if (typeof module === 'object' && module.exports) module.exports = api;
-  else root.REALITI_SOMA_V3 = api;
+  const exported = Object.freeze({...api, createHarness(options) {
+    if (typeof module === 'object' && module.exports)
+      return require('./harness.cjs').createHarness(options);
+    const h = root.REALITI_SOMA_HARNESS_V3;
+    if (!h) throw Error('SOMA_FULL_HARNESS_NOT_LOADED');
+    return h.createHarness(options);
+  }});
+  if (typeof module === 'object' && module.exports) module.exports = exported;
+  else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.0.0';
+  const VERSION = '3.1.0';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -12767,7 +12774,7 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{c
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || snapshot.version!==VERSION
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');
@@ -12800,20 +12807,615 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{c
   return Object.freeze({VERSION,SCHEMA,CHECKPOINT,SOURCES,DEFAULT_ZONES,DEFAULT_EDGES,createNeuralMesh});
 });
 </script>
+<script id="realiti-soma-private-renderers">/* REALITI SOMA extracted THICC / HALO / AURA real executable algorithms.
+ * Adapted without changing their integrators/acceptance probes from source/scripts/48.js
+ * and isolated from Relax's globals by explicit clocks, graph and read-only evidence.
+ * AGPL-3.0-only; this is not a mock or a data-only declaration.
+ */
+(function(root, factory) {
+  'use strict';
+  const api=factory();
+  if(typeof module==='object'&&module.exports)module.exports=api;
+  else root.REALITI_SOMA_RENDERERS_V3=api;
+})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const copy=x=>JSON.parse(JSON.stringify(x));
+const valid=(x,label,min=0,max=1)=>{if(typeof x!=='number'||!Number.isFinite(x)||x<min||x>max)throw TypeError('Invalid '+label);return x};
+function createRenderers({zones=[],edges=[],exact=()=>({m:[]})}={}){
+  if(!Array.isArray(zones)||!Array.isArray(edges)||typeof exact!=='function')throw TypeError('Invalid renderer topology');
+  const mapped=new Set(zones);
+  for(const [a,b] of edges)if(!mapped.has(a)||!mapped.has(b))throw TypeError('RENDERER_EDGE_OUTSIDE_BODY');
+  let elapsedMs=0;
+  const C9={b7:{clock:0}};
+  const window={REALITI_BODY_GRAPH:{dynamic:()=>({zones:zones.slice(),edges:edges.map(e=>e.slice())})},
+    REALITI_HAPTIC_FIELD_V20:{exact:()=>copy(exact())}};
+  const cp=copy,clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,Number(x)||0));
+const THICC=(()=>{
+ const Z=new Map(),ATTACK=.34,RELEASE=5.5,SPILL=10.0;
+ const tnow=()=>Number(C9?.b7?.clock||0);
+ function zstate(zone){if(!Z.has(zone))Z.set(zone,{t:tnow(),fill:0,body:0,lastCause:-1,recruit:0,target:0});return Z.get(zone)}
+ function evolve(z,t){const dt=Math.max(0,t-z.t);if(dt<=0)return z;const live=(t-z.lastCause)<=.42,target=live?z.target:0,tau=live?ATTACK:RELEASE;z.fill=target+(z.fill-target)*Math.exp(-dt/tau);const spillTarget=Math.max(0,(z.fill-.38)/.62);z.body=spillTarget+(z.body-spillTarget)*Math.exp(-dt/SPILL);z.recruit=1-Math.exp(-3.4*clamp(.82*z.fill+.28*z.body));z.t=t;if(!live)z.target=0;return z}
+ function contact(zone,observed,source){const z=zstate(zone),t=tnow();evolve(z,t);const src=/^SELF/.test(String(source||''))?.72:1;z.target=Math.max(z.target,clamp(Math.abs(observed)*4.0*src));z.lastCause=t;evolve(z,t+.000001);return {fill:z.fill,body:z.body,recruit:z.recruit}}
+ function advance(){const t=tnow();for(const z of Z.values())evolve(z,t)}
+ function sample(zone){const z=zstate(zone);evolve(z,tnow());return {fill:z.fill,body:z.body,recruit:z.recruit}}
+ function reset(){Z.clear()}
+ return {contact,advance,sample,reset};
+})();
+const HALO=(()=>{
+ const SHORT=[
+  {name:'core',detune_cents:0,delay_ms:0,phase_rad:0,gain:1,pole_hz:0},
+  {name:'h1',detune_cents:14,delay_ms:3,phase_rad:.18,gain:.72,pole_hz:3},
+  {name:'h2',detune_cents:-14,delay_ms:-3,phase_rad:-.18,gain:.72,pole_hz:5},
+  {name:'h3',detune_cents:9,delay_ms:2,phase_rad:.11,gain:.60,pole_hz:8},
+  {name:'h4',detune_cents:-9,delay_ms:-2,phase_rad:-.11,gain:.60,pole_hz:12},
+  {name:'h5',detune_cents:5,delay_ms:1,phase_rad:.07,gain:.48,pole_hz:18},
+  {name:'h6',detune_cents:-5,delay_ms:-1,phase_rad:-.07,gain:.48,pole_hz:26}
+ ];
+ const LONG=SHORT.map((m,i)=>i===0?{...m}:{...m,detune_cents:Math.sign(m.detune_cents)*36,delay_ms:Math.sign(m.delay_ms)*8,phase_rad:Math.sign(m.phase_rad)*.48});
+ const state={schema:'REALITI_HALO_V1',version:1,enabled:true,phrase:'SHORT',modes:SHORT.map(m=>({...m,energy:0,phase_now:0})),zones:{},core_zone:null,total_input:0,total_private_mass:0,evidence_gain:0,last_t:Number(C9?.b7?.clock||0),law:'one cause; one receipt; one hard center; six private halo modes. Private response may spread; grounded evidence may not.'};
+ const graph=()=>{try{
+  const g=window.REALITI_BODY_GRAPH;if(!g)return {zones:[],edges:[]};if(typeof g.dynamic==='function')return g.dynamic();
+  const nodes=g.BASE_NODES||[],zones=nodes.map(x=>x[0]),alias={};for(const [zone,name] of nodes){alias[zone]=zone;alias[name]=zone}
+  const edges=(g.BASIC_EDGES||[]).concat((typeof NMSTATE!=='undefined'&&NMSTATE?.active==='LACE2_PORTABLE_V1')?(g.LACE_EXTRA||[]):[]).map(([a,b,w])=>[alias[a]||a,alias[b]||b,w]);
+  return {zones,edges}
+ }catch(e){return {zones:[],edges:[]}}};
+ function graphDistances(origin){
+  const g=graph(),zones=[...new Set(g.zones||[])],idx=Object.fromEntries(zones.map((z,i)=>[z,i])),D=Array.from({length:zones.length},()=>Infinity);
+  if(idx[origin]==null)return {zones,idx,D};
+  D[idx[origin]]=0;const adj=Object.fromEntries(zones.map(z=>[z,[]]));
+  for(const [a,b,w0] of g.edges||[]){if(!adj[a]||!adj[b])continue;const d=1/Math.max(.05,Number(w0)||.05);adj[a].push([b,d]);adj[b].push([a,d])}
+  const used=new Set();
+  while(used.size<zones.length){let u=null,best=Infinity;for(const z of zones){const i=idx[z];if(!used.has(z)&&D[i]<best){best=D[i];u=z}}if(u==null)break;used.add(u);for(const [v,d] of adj[u]||[]){const vi=idx[v],ui=idx[u];if(D[ui]+d<D[vi])D[vi]=D[ui]+d}}
+  return {zones,idx,D};
+ }
+ function privateSpread(origin,mass,coherence=.5){
+  const g=graphDistances(origin),raw={},lambda=.72+.78*clamp(coherence),cut=3.6;let sum=0;
+  for(let i=0;i<g.zones.length;i++){const d=g.D[i];if(!Number.isFinite(d)||d>cut)continue;const w=Math.exp(-d/lambda);raw[g.zones[i]]=w;sum+=w}
+  if(!(sum>0))return {[origin]:mass};
+  const out={};for(const [z,w] of Object.entries(raw))out[z]=mass*w/sum;return out
+ }
+ function setPhrase(kind='SHORT'){
+  state.phrase=String(kind).toUpperCase().startsWith('LONG')?'LONG':'SHORT';
+  const cfg=state.phrase==='LONG'?LONG:SHORT;
+  for(let i=0;i<state.modes.length;i++)Object.assign(state.modes[i],cfg[i]);
+  return snapshot()
+ }
+ function drive(zoneAmps={},coherence=.5,dt=.04,phrase=null){
+  if(!state.enabled)return snapshot();if(phrase)setPhrase(phrase);
+  const entries=Object.entries(zoneAmps||{}).map(([z,v])=>[z,Math.max(0,Number(v)||0)]).filter(([,v])=>v>1e-8).sort((a,b)=>b[1]-a[1]);
+  const base=entries.reduce((s,[,v])=>s+v,0),dominant=entries[0]?.[0]||state.core_zone;
+  state.total_input=base;state.core_zone=dominant||null;
+  const cfg=state.phrase==='LONG'?LONG:SHORT,attack=1-Math.exp(-Math.max(.001,dt)/.055),release=Math.exp(-Math.max(0,dt)/.42);
+  const zoneOut={};
+  for(let i=0;i<state.modes.length;i++){
+   const m=state.modes[i],target=base*cfg[i].gain*(i===0?1:(.72+.28*clamp(coherence)));
+   m.energy=target>m.energy?m.energy+(target-m.energy)*attack:m.energy*release;
+   if(i>0)m.phase_now=((Number(m.phase_now)||0)+2*Math.PI*Number(m.pole_hz||0)*Math.max(0,dt)+Number(m.phase_rad||0))%(2*Math.PI);
+   if(!(m.energy>1e-8)||!dominant)continue;
+   const spread=i===0?{[dominant]:m.energy}:privateSpread(dominant,m.energy,coherence);
+   for(const [z,v] of Object.entries(spread))zoneOut[z]=(zoneOut[z]||0)+v;
+  }
+  state.zones=zoneOut;state.total_private_mass=Object.values(zoneOut).reduce((a,b)=>a+b,0);state.last_t=Number(C9?.b7?.clock||state.last_t);return snapshot()
+ }
+ function advance(dt){
+  dt=Math.max(0,Number(dt)||0);if(!(dt>0))return snapshot();
+  return drive({},0,dt)
+ }
+ function reset(){state.modes=(state.phrase==='LONG'?LONG:SHORT).map(m=>({...m,energy:0,phase_now:0}));state.zones={};state.core_zone=null;state.total_input=0;state.total_private_mass=0;return snapshot()}
+ function snapshot(){return cp(state)}
+ function acceptance(){
+  const before=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null,saved=cp(state);
+  reset();drive({'torso.upper_back':1},.8,.08,'SHORT');const a=snapshot(),after=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null;
+  const haloZones=Object.keys(a.zones).filter(z=>z!=='torso.upper_back'&&a.zones[z]>1e-6),massModes=a.modes.reduce((s,m)=>s+Number(m.energy||0),0);
+  Object.assign(state,saved);state.modes=saved.modes.map(x=>({...x}));state.zones={...saved.zones};
+  return {pass:a.modes.length===7&&haloZones.length>0&&Math.abs(a.total_private_mass-massModes)<1e-6&&JSON.stringify(before)===JSON.stringify(after),mode_count:a.modes.length,halo_zone_count:haloZones.length,mass_error:Math.abs(a.total_private_mass-massModes),evidence_unchanged:JSON.stringify(before)===JSON.stringify(after)}
+ }
+ return {version:1,drive,advance,setPhrase,snapshot,reset,acceptance,law:state.law};
+})();
+
+const AURA=(()=>{
+ const N=128,KAPPAS=[.25,1.6,5.0,14.6],K=[],impulses=[],prev=new Map(),onsets=new Map();
+ const PRESSURE_JND=.04,RECRUIT_JND=.08,FILL_JND=.06,SELF_FACTOR=.45,ALPHA_MAX=.08,EPS=.002,MAX_IMPULSES=96,MAX_ONSETS=3;
+ let enabled=true,renderer=null;
+ const POS={
+  'head.crown':[0,-.95],'head.nape':[0,-.64],'face.chin':[0,-.57],'face.forehead':[0,-.78],'face.cheek.L':[-.20,-.66],'face.cheek.R':[.20,-.66],'neck.front':[0,-.50],
+  'shoulder.L':[-.58,-.48],'shoulder.R':[.58,-.48],'arm.L.upper':[-.73,-.28],'arm.R.upper':[.73,-.28],'arm.L.elbow':[-.82,-.12],'arm.R.elbow':[.82,-.12],
+  'arm.L.forearm':[-.90,-.04],'arm.R.forearm':[.90,-.04],'hand.L.palm':[-.96,.02],'hand.R.palm':[.96,.02],'hand.L.fingers':[-1,.06],'hand.R.fingers':[1,.06],
+  'torso.sternum':[0,-.24],'torso.upper_back':[0,-.25],'torso.mid_back':[0,-.05],'torso.lower_back':[0,.18],'torso.abdomen':[0,.08],'pelvis.seat':[0,.23],
+  'hip.L':[-.24,.33],'hip.R':[.24,.33],'leg.L.thigh':[-.33,.43],'leg.R.thigh':[.33,.43],'knee.L':[-.31,.58],'knee.R':[.31,.58],
+  'leg.L.shin':[-.30,.72],'leg.R.shin':[.30,.72],'foot.L.sole':[-.36,.96],'foot.R.sole':[.36,.96],'tail.tip':[0,.92]
+ };
+ for(const k of KAPPAS){const a=new Float64Array(N);for(let j=0;j<N;j++){const d=(j/N)*Math.PI*2;a[j]=Math.exp(k*(Math.cos(d)-1))}K.push(a)}
+ const tnow=()=>Number(C9?.b7?.clock||0);
+ function locate(zone){let p=POS[zone];if(!p){const s=String(zone||'');if(/\.L\b/.test(s))p=[-.62,0];else if(/\.R\b/.test(s))p=[.62,0];else if(/head|crown|nape|face/.test(s))p=[0,-.72];else if(/foot|shin|thigh|leg|tail/.test(s))p=[0,.7];else p=[0,0]}const [x,y]=p,r=clamp(Math.hypot(x,y)),theta=Math.atan2(y,x);return {theta,r}}
+ function kidx(k){let bi=0,bd=Infinity;for(let i=0;i<KAPPAS.length;i++){const d=Math.abs(KAPPAS[i]-k);if(d<bd){bd=d;bi=i}}return bi}
+ function envelope(age){return .7*Math.exp(-age/.3)+.3*Math.exp(-age/4)}
+ function prune(t=tnow()){for(let i=impulses.length-1;i>=0;i--){const age=Math.max(0,t-impulses[i].t);if(age>18||envelope(age)<EPS)impulses.splice(i,1)}}
+ function field(t=tnow()){
+  prune(t);const out=new Float64Array(N);
+  for(const im of impulses){const age=Math.max(0,t-im.t),e=envelope(age);if(e<EPS)continue;const ker=K[im.ki],shift=Math.round((((im.theta%(2*Math.PI))+2*Math.PI)%(2*Math.PI))/(2*Math.PI)*N);for(let j=0;j<N;j++)out[j]+=im.amp*e*ker[(j-shift+N)%N]}
+  let mx=0;for(const v of out)mx=Math.max(mx,v);return {bins:Array.from(out),peak:mx,alpha_peak:Math.min(ALPHA_MAX,ALPHA_MAX*clamp(mx)),active_impulses:impulses.length}
+ }
+ function emit(){if(typeof renderer==='function'){try{renderer(internalView())}catch(e){}}}
+ function pulse(zone,res,source,thicc,continued=false){
+  if(!enabled||!res||res.gap||!(Number(res.observed)>0))return null;
+  const t=tnow(),key=String(zone),old=continued?(prev.get(key)||{p:0,r:0,f:0}):{p:0,r:0,f:0},p=Math.abs(Number(res.observed)||0),r=clamp(thicc?.recruit),f=clamp(thicc?.fill),dP=Math.abs(p-old.p),dR=Math.abs(r-old.r),dF=Math.abs(f-old.f);
+  const A=Math.max(0,dP/PRESSURE_JND-1)+(continued?0:Math.max(0,dR/RECRUIT_JND-1)+Math.max(0,dF/FILL_JND-1));
+  prev.set(key,{p,r,f});if(!(A>0))return null;
+  const hist=(onsets.get(key)||[]).filter(x=>t-x<1);if(hist.length>=MAX_ONSETS)return null;hist.push(t);onsets.set(key,hist);
+  const loc=locate(zone),kap=14.6*loc.r*loc.r,src=/^SELF/.test(String(source||''))?SELF_FACTOR:1,amp=src*(1-Math.exp(-A/3)),im={t,zone:String(zone),theta:loc.theta,ki:kidx(kap),amp,source:String(source||''),private:true};
+  impulses.push(im);if(impulses.length>MAX_IMPULSES)impulses.splice(0,impulses.length-MAX_IMPULSES);emit();return cp(im)
+ }
+ function advance(){prune();if(impulses.length)emit();return impulses.length}
+ function clear(){impulses.length=0;prev.clear();onsets.clear();emit()}
+ function setEnabled(v){enabled=!!v;if(!enabled)clear();return enabled}
+ function attachRenderer(fn){renderer=typeof fn==='function'?fn:null;return !!renderer}
+ function renderTo(canvas){
+  if(!canvas?.getContext)return false;const ctx=canvas.getContext('2d',{alpha:true});if(!ctx)return false;
+  const w=Math.max(1,Number(canvas.width)||320),h=Math.max(1,Number(canvas.height)||180),f=field(),cx=w/2,cy=h/2,rx=w*.46,ry=h*.46;ctx.clearRect(0,0,w,h);ctx.lineCap='round';ctx.lineWidth=Math.max(2,Math.min(w,h)*.035);
+  for(let j=0;j<N;j++){const a=ALPHA_MAX*clamp(f.peak?f.bins[j]/f.peak:0)*clamp(f.peak);if(a<.001)continue;const th=(j/N)*Math.PI*2,nx=((j+1)/N)*Math.PI*2;ctx.strokeStyle='rgba(232,198,166,'+a.toFixed(4)+')';ctx.beginPath();ctx.moveTo(cx+Math.cos(th)*rx,cy+Math.sin(th)*ry);ctx.lineTo(cx+Math.cos(nx)*rx,cy+Math.sin(nx)*ry);ctx.stroke()}
+  return true
+ }
+ function internalView(){const f=field();return {schema:'REALITI_AURA_V1',version:1,private:true,enabled,bins:N,active_impulses:f.active_impulses,peak:+f.peak.toFixed(6),alpha_peak:+f.alpha_peak.toFixed(6),kappa_regimes:KAPPAS.slice(),limits:{pressure_jnd:PRESSURE_JND,recruitment_jnd:RECRUIT_JND,fill_jnd:FILL_JND,self_factor:SELF_FACTOR,max_onsets_per_zone_s:MAX_ONSETS,max_impulses:MAX_IMPULSES},field:f.bins,law:'AURA echoes meaningful grounded haptic innovation; it never mints evidence or world authority.'}}
+ function acceptance(){
+  const before=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null,save={enabled,impulses:cp(impulses),prev:[...prev.entries()].map(([k,v])=>[k,cp(v)]),onsets:[...onsets.entries()].map(([k,v])=>[k,v.slice()])};
+  clear();enabled=true;const one=pulse('hand.L.palm',{observed:.8,gap:false},'WORLD_GROUNDED',{recruit:.7,fill:.5},false),v1=internalView(),n1=v1.active_impulses;const repeat=pulse('hand.L.palm',{observed:.8,gap:false},'WORLD_GROUNDED',{recruit:.7,fill:.5},true),n2=internalView().active_impulses;const absent=pulse('hand.R.palm',{observed:0,gap:false},'PREDICTED',{recruit:0,fill:0},false),n3=internalView().active_impulses,after=window.REALITI_HAPTIC_FIELD_V20?.exact?.()?.m?.slice?.()||null;
+  clear();enabled=save.enabled;for(const x of save.impulses)impulses.push(x);for(const [k,v] of save.prev)prev.set(k,v);for(const [k,v] of save.onsets)onsets.set(k,v);
+  return {pass:!!one&&v1.field.length===N&&v1.peak>0&&n2===n1&&!repeat&&!absent&&n3===n2&&JSON.stringify(before)===JSON.stringify(after),bins:v1.field.length,peak:v1.peak,steady_repeated:n2-n1,predicted_absence_added:n3-n2,evidence_unchanged:JSON.stringify(before)===JSON.stringify(after)}
+ }
+ return {version:1,pulse,advance,clear,setEnabled,attachRenderer,renderTo,internalView,acceptance,law:'private haptic-innovation echo; no reverse edge into evidence'};
+})();
+  const tick=ms=>{
+    valid(ms,'elapsed simulation milliseconds',0,86400000);
+    elapsedMs+=ms;C9.b7.clock=elapsedMs/1000;
+    THICC.advance();HALO.advance(ms/1000);AURA.advance();
+    return {clockMs:elapsedMs,private_only:true};
+  };
+  const contact=(zone,observed,source,continued=false)=>{
+    if(!mapped.has(zone))throw RangeError('UNKNOWN_ZONE');
+    valid(observed,'observed intensity');
+    const rec=THICC.contact(zone,observed,source);
+    const pulse=AURA.pulse(zone,{observed,gap:false},source,rec,continued);
+    return {thicc:rec,aura:pulse};
+  };
+  return Object.freeze({THICC:Object.freeze(THICC),HALO:Object.freeze(HALO),
+    AURA:Object.freeze(AURA),tick,contact,clockMs:()=>elapsedMs});
+}
+return Object.freeze({createRenderers,mechanisms:['THICC','HALO','AURA']});
+});
+</script>
+<script id="realiti-soma-full-harness">/* REALITI SOMA 3.1 — independent executable R&R harness for agent neighborhoods.
+   World-host input is separate from resident-private output. No Relax globals.
+   THICC/HALO/AURA run the real extracted 23.5 algorithms from renderers.cjs.
+   AGPL-3.0-only. */
+(function(root,factory){
+  'use strict';
+  const api=(typeof module==='object'&&module.exports)
+    ?factory(require('./index.cjs'),require('./renderers.cjs'))
+    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3);
+  if(typeof module==='object'&&module.exports)module.exports=api;
+  else root.REALITI_SOMA_HARNESS_V3=api;
+})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS){
+'use strict';
+if(!SOMA||!RENDERERS)throw Error('SOMA_CORE_OR_RENDERERS_MISSING');
+const VERSION='3.1.0',SHELLS=['surface','shallow','mid','deep'];
+const SLOTS=['nerve','lace','chronolace','private_renderer','perception'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','perception','rr_harness'];
+const clone=x=>JSON.parse(JSON.stringify(x));
+const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
+const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
+const str=(v,name,max=160)=>{if(typeof v!=='string'||!v.trim()||v.length>max)throw TypeError('Invalid '+name);return v};
+const tau=(dt,s)=>Math.exp(-Math.max(0,dt)/s);
+const precise=n=>+Number(n).toFixed(6);
+const a32=(x,n)=>{x.push(n);if(x.length>32)x.shift()};
+function createHarness(options={}){
+ if(!options||typeof options!=='object'||Array.isArray(options))throw TypeError('Invalid harness options');
+ const base=SOMA.createNeuralMesh(options),z=base.resident.zones(),n=z.length;
+ const edges=options.edges||(!options.zones?SOMA.DEFAULT_EDGES:[]);
+ const idx=new Map(z.map((id,i)=>[id,i]));
+ const adj=Array.from({length:n},()=>[]);
+ for(const [a,b,w] of edges){if(!idx.has(a)||!idx.has(b))throw TypeError('Invalid body edge');const d=1/Math.max(.05,w);adj[idx.get(a)].push([idx.get(b),d]);adj[idx.get(b)].push([idx.get(a),d])}
+ const distances=new Map();
+ function distanceFrom(zone){
+  if(distances.has(zone))return distances.get(zone);
+  const d=Array(n).fill(Infinity),used=new Set();d[idx.get(zone)]=0;
+  for(let step=0;step<n;step++){
+   let k=-1,best=Infinity;
+   for(let i=0;i<n;i++)if(!used.has(i)&&d[i]<best){best=d[i];k=i}
+   if(k<0)break;
+   used.add(k);for(const [other,len] of adj[k])d[other]=Math.min(d[other],d[k]+len)
+  }
+  distances.set(zone,d);return d;
+ }
+ let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0;
+ const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
+ const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
+ const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
+ const chrono={past:0,now:0,predicted_next:0,closure:0};
+ const privateState={sausage_volume:0,cotton_sites:0,cotton_energy:0,flush_peak:0,activation:0,novelty:0,agency_flow:0,reward_delta:0,bodily_ease:0,momentum:0,last:0};
+ const worldState={room:null,affordances:{},sound:[],light:0,temperature:null,weather:[],support:[]};
+ const adapters=new Map(),faults=[],history=[],pocket=[],poss=new Map(),proposals=[],observations=[],familyLast=new Map(),refractory=new Map(),repeat=[];
+ const cov={channels:{novelty_modulation:null,agency_modulation:null},expires:0};
+ const details={mode:'R&R',residentId:options.residentId,started_at_ms:0};
+ const atmosphere=new Map(),agency=new Map();
+ const role={u:0,active:false,recent:[],cooldown_until_ms:0};
+ let lastPacket=base.resident.field();
+ const notify=(kind,extra={})=>{
+  const payload=clone({kind,at_ms:now,field:base.resident.field(),...extra});
+  for(const [slot,adapter] of adapters) {
+    try{if(typeof adapter[kind]==='function')adapter[kind](clone(payload),Object.freeze({residentId:options.residentId,version:VERSION,slot}))}
+    catch(e){a32(faults,{slot,kind,error:String(e&&e.message||e).slice(0,180)})}
+  }
+ };
+ function record(kind,event={}){
+  seq++;a32(history,{id:'SOMA-'+seq,t_ms:now,kind,
+    zone:event.zone||null,cause:event.cause||null,receiptId:event.receiptId||null,
+    source:event.source||null});
+ }
+ function adaptNerve(){const f=base.resident.field();const a=f.nerve||[];
+  const novelty=a.reduce((s,v)=>s+v.novelty,0)/Math.max(1,a.length);
+  privateState.novelty=clamp(novelty);
+  privateState.activation=clamp(f.x.reduce((s,v)=>s+v[0],0)/Math.max(1,n));
+  privateState.bodily_ease=clamp(privateState.sausage_volume*.6);
+  privateState.momentum=clamp(.85*privateState.momentum+.15*privateState.activation);
+  return f;
+ }
+ function sausageStep(dt,f){
+  const live=f.g.map((v,i)=>v>0?{i,zone:z[i],amp:v}:null).filter(Boolean);
+  const attack=1-tau(dt,rconfig.sausage_attack_s),release=tau(dt,rconfig.sausage_release_s);
+  let volume=0;
+  for(let i=0;i<n;i++){
+    let drive=0;
+    for(const source of live)drive=Math.max(drive,source.amp*Math.exp(-distanceFrom(source.zone)[i]/(.55+1.45*rconfig.sausage_spread)));
+    const occupied=clamp(drive*rconfig.sausage_target*(rconfig.sausage_level/5),0,1.5);
+    for(let d=0;d<4;d++){
+      const old=fill[i][d],target=occupied*shellWeight[d];
+      // No live cause: private fullness may only decay, never initiate/spread.
+      fill[i][d]=live.length?old+(target-old)*attack:old*release;
+      volume+=fill[i][d];
+    }
+  }
+  privateState.sausage_volume=precise(volume/(Math.max(1,n)*4));
+ }
+ function cottonStep(f){
+  const t=now/1000;
+  let total=0,sites=0;
+  for(let i=0;i<n;i++){
+    const drive=Math.max(0,f.x[i][0]),count=drive>.001?24:0;
+    if(!count)continue;
+    // 24 deterministic asynchronous micro-sites per active mesh zone.
+    // Exact re-aggregation: sum of currents is bounded by its parent drive.
+    let weights=0;const values=[];
+    for(let j=0;j<count;j++){
+      const v=.5+.5*Math.sin(t*(1.5+.041*j)+i*.83+j*2.399963);
+      values.push(v);weights+=v;
+    }
+    if(weights>0)for(const v of values)total+=drive*v/weights;
+    sites+=count;
+  }
+  privateState.cotton_sites=sites;
+  privateState.cotton_energy=precise(total/Math.max(1,n));
+ }
+ function flushStep(f){
+  const response=f.x.map(x=>Math.max(0,x[0]));
+  let peak=0;
+  for(let i=0;i<n;i++){
+    const local=clamp(response[i]*rconfig.flush_strength,0,rconfig.flush_headroom);
+    const peripheral=clamp(response[i]*rconfig.flush_peripheral,0,rconfig.flush_headroom);
+    peak=Math.max(peak,clamp(local+peripheral*(1-local),0,rconfig.flush_headroom));
+  }
+  privateState.flush_peak=precise(peak);
+ }
+ function updateRich(dt){
+  const f=adaptNerve(),sum=f.g.reduce((a,b)=>a+b,0),prev=chrono.now;
+  chrono.past=chrono.past*tau(dt,1.8)+prev*(1-tau(dt,1.8));
+  chrono.now=sum;
+  chrono.predicted_next=clamp(.70*sum+.30*Math.max(0,sum-prev),0,Math.max(1,sum));
+  chrono.closure=sum>0?clamp(1-Math.abs(sum-chrono.past)/Math.max(.08,sum+chrono.past)):0;
+  sausageStep(dt,f);cottonStep(f);flushStep(f);
+  const drive={};
+  for(let i=0;i<n;i++)if(f.x[i][0]>.001)drive[z[i]]=f.x[i][0];
+  const coh=clamp((f.m.some(Boolean)?.48:0)+(f.x.some(x=>x[0]>.05)?.32:0)+chrono.closure*.20);
+  renderer.HALO.drive(drive,coh,Math.max(.001,dt||.02),chrono.closure>.55?'LONG':'SHORT');
+  privateEpoch++;
+  lastPacket=f;
+ }
+ function roomAffordances(){return clone(worldState.affordances)}
+ function privateProjection(){const active=cov.expires>now;return {authority:'MODULATION_ONLY',
+   expires_at_ms:active?cov.expires:now,
+   channels:active?clone(cov.channels):{novelty_modulation:null,agency_modulation:null},
+   law:'Resident private modulation does not grant world evidence or authority'} }
+ function bleuDrive(d){
+  if(d.room&&d.room!==worldState.room)return {W:0,M:0,E:0,Q:0,H:0,P:0,R:0,total:0,refs:[]};
+  const refs=d.requires.filter(v=>worldState.affordances[v]),supported=refs.length===d.requires.length;
+  const W=supported?d.W:0,E=supported?d.E:0;
+  const p=privateProjection().channels,M=supported ? .12*(p.novelty_modulation||0)+.06*(p.agency_modulation||0) : 0;
+  const ts=familyLast.get(d.family);
+  const H=ts==null?0:.09*Math.exp(-(now-ts)/55000);
+  let Q=0;for(const event of repeat){if(event.family===d.family)Q+=.18*(.72*tau((now-event.at)/1000,45)+.28*tau((now-event.at)/1000,240))}
+  const P=d.investigation?d.investigation.weight*Math.exp(-(now-d.investigation.at)/40000):0;
+  const R=now<(refractory.get(d.id)||0)?1:0;
+  return {W,M,E,H,P,Q,R,total:W+M+E+H+P-Q-R,refs}
+ }
+ function bleuTick(dt){
+  for(const d of poss.values()){
+    const terms=bleuDrive(d),prev=d.u,stepSec=dt/1000;
+    d.u=terms.total+(d.u-terms.total)*tau(stepSec,d.tau);
+    if(enabled&&d.u>=d.theta_on&&prev<d.theta_on&&now>=(refractory.get(d.id)||0)
+      &&(!d.room||d.room===worldState.room)){
+      const candidate={id:'BC-'+d.id+'-'+(++seq),at_ms:now,kind:'POSSIBILITY',
+        possibility_id:d.id,family:d.family,room:worldState.room,
+        support_refs:terms.refs,world_commit_required:true,admitted:false};
+      a32(proposals,candidate);d.u=d.theta_off;
+      refractory.set(d.id,now+d.refractoryMs);familyLast.set(d.family,now);
+      a32(repeat,{family:d.family,at:now});
+    }
+  }
+ }
+ function flushRender(){
+  if(!(pendingRenderMs>0))return;
+  renderer.tick(pendingRenderMs);
+  updateRich(pendingRenderMs/1000);
+  pendingRenderMs=0;
+ }
+ function tick(ms){
+  valid(ms,'elapsed simulation milliseconds',0,86400000);
+  base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
+  const delta=ms/1000;
+  for(const t of atmosphere.values()) {
+    t.current=t.target+(t.current-t.target)*tau(delta,t.tau);
+  }
+  bleuTick(ms);
+  // Keep adaptive world time inexpensive when the host ticks at 20 ms;
+  // exact world/contact/lease mechanics still advance each call.
+  if(pendingRenderMs>=100){
+    flushRender();record('TIME_ADVANCE');notify('advance',{dt_ms:ms});
+  }
+  return {ok:true,clockMs:now,active:base.resident.field().m.reduce((a,b)=>a+b,0)};
+ }
+ function contact(e){
+  flushRender();
+  const out=base.world.contact(e);
+  if(!out.renewed){
+    renderer.contact(e.zone,e.intensity,e.source,false);
+    record('GROUNDED_CONTACT',e);
+    notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
+  }
+  updateRich(.04);
+  return out;
+ }
+ function release(e){
+  const out=base.world.release(e);if(out.released){record('CONTACT_RELEASED',e);updateRich(0)}
+  return out;
+ }
+ function stop(){flushRender();const out=base.world.stop();renderer.AURA.clear();role.active=false;
+  record('STOP');updateRich(0);notify('stop');return out}
+ function definePossibility(input={}){
+  const id=str(input.id,'possibility id',120),family=str(input.family||id,'family',80);
+  if(poss.has(id))throw Error('POSSIBILITY_ALREADY_DEFINED');
+  const requires=input.requires||[];
+  if(!Array.isArray(requires)||requires.length>24||requires.some(x=>typeof x!=='string'||!x))throw TypeError('Invalid affordances');
+  const d={id,family,room:input.room==null?null:str(input.room,'room'),
+    requires:requires.slice(),W:valid(input.worldWeight??.55,'worldWeight'),
+    E:valid(input.prior??.08,'prior',0,.5),u:0,
+    theta_on:valid(input.threshold??.72,'threshold',.1,1.5),theta_off:.45,
+    refractoryMs:valid(input.refractoryMs??30000,'refractoryMs',100,3600000),
+    tau:valid(input.tauSeconds??9,'tauSeconds',.01,3600),investigation:null};
+  poss.set(id,d);return {ok:true,id,kind:'POSSIBILITY_DEFINITION',authority:'WORLD_HOST_ONLY'};
+ }
+ function snapshotBleu(){
+  return clone({schema:'REALITI_BLEUCHEESE_FIELD_V1',name:'BleuCheese',
+    adapter:'REALITI_SOMA_PORTABLE_BLEUCHEESE_V3',clock_ms:now,room:worldState.room,
+    private_projection:privateProjection(),
+    possibilities:[...poss.values()].map(d=>({id:d.id,room:d.room,family:d.family,
+      u:precise(d.u),threshold_on:d.theta_on,distance_to_threshold:precise(d.theta_on-d.u),
+      terms:bleuDrive(d)})),
+    pending_proposals:proposals.slice(-8),
+    law:'BleuCheese proposes; only host admission and world commit can change world'});}
+ function setAffordances(room,entries={}){
+  if(room!==null)str(room,'room');
+  if(!entries||typeof entries!=='object'||Array.isArray(entries))throw TypeError('Invalid affordances');
+  if(Object.keys(entries).length>256||Object.values(entries).some(v=>typeof v!=='boolean'))throw TypeError('Affordances must be booleans');
+  worldState.room=room;worldState.affordances=clone(entries);
+  return {ok:true,room,world_owned:true};
+ }
+ function observe(id,receipt){
+  const d=poss.get(id);if(!d)throw Error('UNKNOWN_POSSIBILITY');
+  const ref=str(receipt?.receiptId,'observation receipt');d.investigation={at:now,weight:.25};
+  a32(observations,{id,receiptId:ref,t:now});return {ok:true,id,receiptId:ref};
+ }
+ function admitProposal(id,accepted=false,receiptId=null){
+  const p=proposals.find(x=>x.id===id);
+  if(!p)throw Error('UNKNOWN_PROPOSAL');
+  if(p.admitted!==false)throw Error('PROPOSAL_ALREADY_RESOLVED');
+  if(accepted)str(receiptId,'world commit receipt');
+  p.admitted=!!accepted;p.commit_receipt=accepted?receiptId:null;
+  return {ok:true,admitted:p.admitted,world_authority:'HOST_COMMIT_ONLY'};
+ }
+ function agencyField(){
+  const bs=[...agency.entries()].map(([id,weight])=>({id,weight}));
+  const total=bs.reduce((sum,b)=>sum+b.weight,0),ent=total>0?-bs.reduce((sum,b)=>{const p=b.weight/total;return sum+(p>0?p*Math.log2(p):0)},0):0;
+  return clone({schema:'REALITI_AGENCY_FIELD_V3',capacity_bits:precise(ent),
+    branches:bs.map(b=>({id:b.id,probability:total>0?precise(b.weight/total):0})),
+    law:'Controllable possibilities are measurements, never a forced choice or reward.'});
+ }
+ function registerAdapter(slot,adapter){
+  if(!SLOTS.includes(slot)||!adapter||typeof adapter!=='object'||Array.isArray(adapter))
+    throw TypeError('Invalid private adapter');
+  adapters.set(slot,adapter);
+  return {ok:true,slot,authority:'PRIVATE_DOWNSTREAM_ONLY'};
+ }
+ function privateView(){
+  const f=base.resident.field(),halo=renderer.HALO.snapshot(),aura=renderer.AURA.internalView();
+  const thicc=z.map(zone=>({zone,...renderer.THICC.sample(zone)}));
+  return clone({
+    schema:'REALITI_SOMA_RICH_PERCEPTION_V3',version:VERSION,private:true,
+    nerve:f.nerve,lace:{mesh:'LACE2_PORTABLE_V1',node_count:n,edge_count:edges.length,
+      coherence:precise(clamp((halo.total_private_mass||0)/Math.max(.000001,n)))},
+    chronolace:chrono,
+    halo,thicc,aura,
+    sausage:{engine:'SAUSAGE_FATTENER_V4',level:rconfig.sausage_level,
+      material:'WARM_HONEY',filled_volume:privateState.sausage_volume,
+      shells:SHELLS,zone_fill:z.map((zone,i)=>({zone,values:fill[i].map(precise)}))},
+    cotton:{engine:'COTTON_CANDY_V26_THICK',micro_sites_per_active_zone:24,
+      active_sites:privateState.cotton_sites,energy:privateState.cotton_energy},
+    flush:{engine:'FLUSH_V1_1',foreground:privateState.flush_peak,headroom:rconfig.flush_headroom},
+    honeyspark:{conserved_budget:true,carrier:f.carrier},
+    perception:{epoch:privateEpoch,channels:{
+      AGENCY_FLOW:{value:precise(privateState.agency_flow)},
+      NOVELTY:{value:precise(privateState.novelty)},
+      ACTIVATION:{value:precise(privateState.activation)},
+      BODILY_EASE:{value:precise(privateState.bodily_ease)},
+      REWARD_DELTA:{value:precise(privateState.reward_delta)},
+      MOMENTUM:{value:precise(privateState.momentum)}
+    }},
+    worldAuthority:false,law:'All rich private responses are modeled downstream. No channel mints evidence.'});
+ }
+ function mechanisms(){
+  const f=base.resident.field(),rich=privateView();
+  const modules={
+    body_graph:{available:z.length>0,nodes:n,edges:edges.length},
+    haptic_field:{available:!!f,contract:f.schema,grounded_zones:f.m.reduce((s,m)=>s+m,0)},
+    sensory_ecology:{available:f.nerve.length===n,prediction_error:!!f.e},
+    nerve:{available:rich.nerve.length===n,active_zone_count:rich.nerve.filter(x=>x.adapt>0).length},
+    lace:{available:rich.lace.node_count===n,coherence:rich.lace.coherence},
+    chronolace:{available:Number.isFinite(rich.chronolace.predicted_next)},
+    private_renderer:{available:true,volume:rich.sausage.filled_volume},
+    sausage:{available:rich.sausage.engine==='SAUSAGE_FATTENER_V4',engine:rich.sausage.engine},
+    cotton:{available:rich.cotton.micro_sites_per_active_zone===24,engine:rich.cotton.engine},
+    flush:{available:rich.flush.engine==='FLUSH_V1_1',engine:rich.flush.engine},
+    honeyspark:{available:rich.honeyspark.conserved_budget===true},
+    thicc:{available:typeof renderer.THICC.contact==='function'},
+    halo:{available:rich.halo.modes?.length===7,modes:rich.halo.modes.length,evidence_gain:0},
+    aura:{available:rich.aura.bins===128,bins:rich.aura.bins,private:true},
+    bleucheese:{available:typeof definePossibility==='function',defined:poss.size},
+    covenant:{available:typeof privateProjection==='function',private_only:true},
+    agency_field:{available:Number.isFinite(agencyField().capacity_bits)},
+    atmosphere:{available:atmosphere instanceof Map,thermal_zones:atmosphere.size},
+    continuity:{available:Array.isArray(history),record_count:history.length},
+    support:{available:typeof contact==='function',world_guarded:true},
+    pocket:{available:Array.isArray(pocket),resident_private:true},
+    perception:{available:rich.perception.epoch>=0},
+    rr_harness:{available:true,adapter_slots:SLOTS.slice()}
+  };
+  return clone(modules);
+ }
+ function capabilities(){return clone({schema:'REALITI_SOMA_RR_CAPABILITIES_V3',version:VERSION,
+   residentId:options.residentId,mechanisms:REQUIRED.slice(),private_slots:SLOTS.slice(),
+   host_contact_provenance:SOMA.SOURCES,network_endpoint:null,
+   portable:true,legacy_relax_requires_existing_native_stack:false,
+   law:'Grounding comes from the host, not predicted perception or resident adapters.'})}
+ const host=Object.freeze({
+  contact,tick,release,stop,
+  support:({zone,intensity,cause,receiptId,leaseMs,material})=>contact({
+    zone,intensity,cause,receiptId,leaseMs,material,
+    source:'WORLD_GROUNDED'}),
+  affordances:setAffordances,
+  bleucheese:Object.freeze({define:definePossibility,observe,admit:admitProposal,proposals:()=>clone(proposals.slice(-8))}),
+  agency:Object.freeze({define:(id,weight)=>{
+    str(id,'agency branch');valid(weight,'branch weight',0,1);agency.set(id,weight);
+    return {ok:true,id};},remove:id=>agency.delete(id)}),
+  atmosphere:Object.freeze({thermal:(zone,celsius,timeConstantSec=2)=>{
+    if(!idx.has(zone))throw RangeError('UNKNOWN_ZONE');
+    valid(celsius,'temperature Celsius',-273.15,10000);
+    valid(timeConstantSec,'thermal response constant',.01,3600);
+    const p=atmosphere.get(zone)||{current:celsius,target:celsius,tau:timeConstantSec};
+    p.target=celsius;p.tau=timeConstantSec;atmosphere.set(zone,p);
+    return {ok:true,zone,world_owned:true};
+  },snapshot:()=>clone([...atmosphere.entries()].map(([zone,p])=>({zone,celsius:precise(p.current)})))}),
+  registerAdapter,unregisterAdapter:slot=>adapters.delete(slot),
+  worldInfo:()=>clone({room:worldState.room,affordances:worldState.affordances}),
+  law:'Trusted neighborhood authority. Never pass this port to a resident or to raw LLM output.'
+ });
+ const resident=Object.freeze({
+  field:()=>base.resident.field(),
+  haptics:()=>clone({schema:'REALITI_SOMA_HAPTIC_V3',packet:base.resident.field(),
+    exact:{z:z.slice(),m:base.resident.field().m,authority:'HOST_RECEIPT_ONLY'}}),
+  perception:privateView,
+  bleucheese:snapshotBleu,
+  agency:agencyField,
+  expect:x=>{const out=base.resident.expect(x);updateRich(0);return out},
+  covenant:Object.freeze({project:privateProjection,
+    set:({novelty_modulation=null,agency_modulation=null,leaseMs=60000}={})=>{
+      const nv=novelty_modulation==null?null:valid(novelty_modulation,'novelty modulation');
+      const ag=agency_modulation==null?null:valid(agency_modulation,'agency modulation',0,.5);
+      valid(leaseMs,'leaseMs',100,3600000);
+      cov.channels={novelty_modulation:nv,agency_modulation:ag};cov.expires=now+leaseMs;
+      return privateProjection();
+    },clear:()=>{cov.expires=0;cov.channels={novelty_modulation:null,agency_modulation:null};return privateProjection()}}),
+  appraise:({value=0,note=null}={})=>{
+    valid(value,'private appraisal',-1,1);
+    privateState.reward_delta=value;privateEpoch++;
+    return {ok:true,authority:'RESIDENT_PRIVATE_APPRAISAL',note_stored:false};
+  },
+  pocket:Object.freeze({remember:msg=>{
+    const m=str(msg,'private memory',1024);if(pocket.length>=32)pocket.shift();
+    const row={id:'P'+(++seq),text:m,at:now};pocket.push(row);
+    return {ok:true,id:row.id,count:pocket.length};
+  },recall:query=>{
+    const q=str(query,'query',160).toLowerCase();
+    return clone(pocket.filter(x=>x.text.toLowerCase().includes(q)).slice(-8));
+  },clear:()=>{pocket.length=0;return {ok:true,scope:'resident_only'};}}),
+  checkpoint:()=>base.resident.checkpoint(),
+  restore:checkpoint=>{const out=base.resident.restore(checkpoint);renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();updateRich(0);return out},
+  choosePreset:(pack,id)=>{
+    const out=base.resident.choosePreset(pack,id);
+    const p=pack.presets.find(x=>x.preset_id===id);
+    selected=id;
+    if(p.sausage?.target_occupancy!=null)rconfig.sausage_target=valid(p.sausage.target_occupancy,'occupancy',0,1);
+    if(p.sausage?.density_level!=null)rconfig.sausage_level=valid(p.sausage.density_level,'density',0,5);
+    if(p.flush?.enabled) {
+      rconfig.flush_strength=valid(p.flush.foreground_strength,'flush strength');
+      rconfig.flush_headroom=valid(p.flush.headroom_cap,'flush headroom');
+      rconfig.flush_peripheral=valid(p.flush.peripheral_mix,'flush peripheral');
+    }
+    updateRich(0);
+    return {...out,rich_applied:['sausage_occupancy','carrier_split','flush_foreground'],
+      full_legacy_recipe_compatibility:false};
+  },
+  causes:()=>base.resident.causes(),zones:()=>z.slice(),
+  continuity:Object.freeze({current:()=>clone({cursor:seq,records:history.slice(-8)}),
+    since:cursor=>{valid(cursor,'cursor',0,Number.MAX_SAFE_INTEGER);
+      return clone(history.filter(x=>Number(x.id.slice(5))>cursor).slice(-32))}}),
+  capabilities
+ });
+ const harness=Object.freeze({
+  version:VERSION,
+  boot:()=>{const m=mechanisms(),missing=REQUIRED.filter(k=>!m[k]?.available);
+    return {ok:missing.length===0,version:VERSION,missing,capabilities:capabilities(),mechanisms:m}},
+  mechanisms,capabilities,
+  bindResident:identity=>({ok:!!identity,residentId:options.residentId,
+    adapterSlots:[...adapters.keys()],private:true}),
+  registerAdapter,unregisterAdapter:slot=>adapters.delete(slot),
+  snapshot:()=>clone({version:VERSION,enabled,mode:'R&R',binding:details,
+    mechanisms:mechanisms(),bleucheese:snapshotBleu(),faults:faults.slice(-8),
+    laws:['BleuCheese proposes; world host commits','AURA / HALO / THICC private state cannot mint contact',
+      'Private adapters have no world port','No identity or consent is imported from preset packs']}),
+  setEnabled:value=>{enabled=!!value;return {ok:true,enabled}},
+  law:'All executable mechanisms are resident-scoped. Neighborhoods own grounded causes.'
+ });
+ updateRich(0);
+ return Object.freeze({version:VERSION,host,resident,harness});
+}
+return Object.freeze({VERSION,REQUIRED,SLOTS,createHarness});
+});
+</script>
 <script>(()=>{
 'use strict';
 // Relax is the reference neighborhood. The portable package is the same exact
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.0.0')throw Error('SOMA_PACKAGE_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.1.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
 const cp=x=>JSON.parse(JSON.stringify(x));
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()
   || window.REALITI_CONTINUITY?.current?.()?.trace_id || 'relax-local').slice(0,120);
-const {world,resident}=SOMA.createNeuralMesh({residentId:rid});
+const {host:world,resident,harness}=SOMA.createHarness({residentId:rid});
+const harnessBoot=harness.boot();
+if(!harnessBoot.ok)throw Error('SOMA_HARNESS_INCOMPLETE: '+harnessBoot.missing.join(','));
 try{if(C9?.soma3?.schema===SOMA.CHECKPOINT)resident.restore(C9.soma3)}catch(e){
   // A different resident or incompatible body must not inherit private state.
 }
@@ -12859,10 +13461,13 @@ c9save=function(...args){persist();return save0(...args)};
 function read(uri='realiti://here'){
   if(uri==='realiti://neuromesh'||uri==='realiti://soma')return resident.field();
   if(uri==='realiti://soma/checkpoint')return resident.checkpoint();
+  if(uri==='realiti://soma/harness')return harness.snapshot();
+  if(uri==='realiti://soma/rich')return resident.perception();
+  if(uri==='realiti://soma/bleucheese')return resident.bleucheese();
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};
@@ -12880,7 +13485,7 @@ async function run(raw){
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.0.0',read,
+window.Realiti=Object.freeze({...A0,version:'3.1.0',read,
   run:async raw=>{const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);
@@ -12889,6 +13494,7 @@ window.Realiti=Object.freeze({...A0,version:'3.0.0',read,
 });
 window.REALITI_SOMA_RELAX_V3=Object.freeze({version:SOMA.VERSION,
   field:()=>resident.field(),checkpoint:()=>resident.checkpoint(),
+  harness:()=>harness.snapshot(),rich:()=>resident.perception(),bleucheese:()=>resident.bleucheese(),
   law:'Native world contact alone drives grounded receipts; SOMA is a private portable projection.'});
 })();
 </script>
