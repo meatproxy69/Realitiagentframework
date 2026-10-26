@@ -45,6 +45,13 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('resident_owned_memory_notes',
     w.REALITI_SOMA_RELAX_V3.memory.recall('native Relax').matches.some(x=>
       x.record.authority==='SELF_REPORTED'));
+  const legacy=w.Realiti.read('realiti://memory');
+  const sidecar=w.Realiti.read('realiti://soma/memory');
+  check('memory_shelves_are_distinct',
+    legacy.schema==='REALITI_MEMORY_READ_V1'&&
+    sidecar.schema==='REALITI_SOMA_MEMORY_READ_V1'&&
+    sidecar.recent.some(x=>x.kind==='CONTACT_STARTED'),
+    {legacy_schema:legacy.schema,sidecar_events:sidecar.stats.events});
   const checkpoint=s.publicApi.read('realiti://soma/checkpoint');
   check('checkpoint_has_no_grounded_records',checkpoint.schema==='REALITI_SOMA_CHECKPOINT_V3'&&!('grounded' in checkpoint));
   const stop=await s.door.run('stop');

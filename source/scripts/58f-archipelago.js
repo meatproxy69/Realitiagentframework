@@ -10,7 +10,11 @@ const {len,sub,add,scale}=M.math,me=()=>M.state().residents['resident:self'],obs
 
 // Ledger: the one place Chapter 2 writes world changes. Records are stamped with the resident's observer id.
 function ledger(){C9.ledger=C9.ledger||{v:1,records:[]};return C9.ledger.records}
-function record(kind,data){const e={by:observer(),t:+now().toFixed(3),n:ledger().length,kind,...data};ledger().push(e);while(ledger().length>512)ledger().shift();try{c9save()}catch(x){}return e}
+// `n` is the per-author sequence number the vector clock is built from, so it must never go
+// backwards: an array index does exactly that once compaction trims the ledger, and delta()
+// then hides every later write from the peer for good. Keep a monotonic high-water mark.
+function nextN(){const L=(C9.ledger=C9.ledger||{v:1,records:[]}),by=observer();let m=Number.isSafeInteger(L.seq)&&L.seq>=0?L.seq:0;for(const e of L.records)if(e.by===by&&Number.isSafeInteger(e.n)&&e.n>m)m=e.n;if(m>=Number.MAX_SAFE_INTEGER)throw Error('LEDGER_SEQUENCE_EXHAUSTED');L.seq=m+1;return L.seq}
+function record(kind,data={}){const e={...data,by:observer(),t:+now().toFixed(3),n:nextN(),kind};ledger().push(e);while(ledger().length>512)ledger().shift();try{c9save()}catch(x){}return e}
 function importLedger(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const key=e=>`${e.by}|${e.t}|${e.kind}|${e.n??''}`,have=new Set(ledger().map(key));let n=0;for(const e of list){if(!e||typeof e!=='object'||JSON.stringify(e).length>4096)continue;const k=key(e);if(have.has(k))continue;have.add(k);ledger().push(cp(e));n++}try{c9save()}catch(x){}return {ok:true,imported:n}}
 
 // Terrain: value noise plus five Gaussian islands; z = h(x, y), sea at 0. Deterministic and analytic: no grid is stored.

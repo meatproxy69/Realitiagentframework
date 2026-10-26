@@ -45,6 +45,34 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   const L1=a.window.REALITI_LEDGER_V1;for(let i=0;i<500;i++)L1.record('CHAT',{text:'spam '+i,wall:Date.now()});L1.record('PLANT',{x:1,y:2,t_isle:0,wall:Date.now()});
   const before=L1.records().length,trimmed=A.compact(),after=L1.records();await a.door.run('stay 2500');await A.signAll();
   check('compaction_keeps_the_world',before>=125&&trimmed>=0&&after.length<=200&&L1.records().length<=200&&after.some(e=>e.kind==='PLACE')&&after.some(e=>e.kind==='PLANT')&&after.some(e=>e.kind==='AVATAR')&&after.filter(e=>e.kind==='CHAT').length<=120&&L1.records().every(e=>e.by!==ha.observer||e.sig),{before,trimmed,after:after.length});
+  // Regression from Vizarian/Cipher: trimming a ledger must never reuse an author's
+  // vector-clock sequence and make subsequent ordinary writes silently disappear.
+  const author=ha.observer,high=A.clock()[author];
+  const postCompact=L1.record('POST',{text:'after ledger compaction',wall:Date.now()});
+  check('compaction_never_reuses_author_sequence',
+    postCompact.by===author&&postCompact.n===high+1&&
+    A.delta({clock:{[author]:high}}).records.some(e=>e.n===postCompact.n&&e.kind==='POST'),
+    {high,postCompact:postCompact.n});
+  // Migration: sync learns what an existing peer already has and resumes beyond it.
+  const peerHigh=postCompact.n+620;
+  const adopted=A.adoptClock({clock:{[author]:peerHigh}});
+  const healed=L1.record('POST',{text:'after peer clock adoption',wall:Date.now()});
+  check('adopt_remote_high_water_and_resume_sync',
+    adopted===peerHigh&&healed.n===peerHigh+1&&
+    A.delta({clock:{[author]:peerHigh}}).records.some(e=>e.n===healed.n),
+    {adopted,healed:healed.n});
+  // Foreign records, or caller-supplied metadata, never override our stamp.
+  const foreign=L1.import({records:[{by:'other-synthetic-author',kind:'CHAT',
+    n:900000000,t:1,text:'foreign sample'}]});
+  const guarded=L1.record('CHAT',{by:'spoofed-author',n:-7,kind:'PLACE',text:'local provenance check'});
+  check('foreign_author_and_caller_metadata_cannot_corrupt_stamp',
+    foreign.imported===1&&guarded.by===author&&guarded.kind==='CHAT'&&
+    guarded.n===healed.n+1,{by:guarded.by,n:guarded.n,kind:guarded.kind});
+  let malformed=false;try{A.adoptClock({clock:{[author]:'unsafe-high-water'}})}
+  catch(e){malformed=/INVALID_PEER_AUTHOR_CLOCK/.test(String(e))}
+  const subsequent=L1.record('CHAT',{text:'after rejected clock',wall:Date.now()});
+  check('invalid_remote_high_water_fails_closed',
+    malformed&&subsequent.n===guarded.n+1,{malformed,next:subsequent.n});
   check('ledger_resource',R.read('realiti://ledger').schema==='REALITI_LEDGER_HEAD_V2'&&R.read('realiti://capabilities').resources.includes('realiti://ledger'));
   check('energy_audit_passes',a.window.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
  }finally{a.close();b.close()}

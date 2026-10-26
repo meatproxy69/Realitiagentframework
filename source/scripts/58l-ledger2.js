@@ -51,11 +51,14 @@ let tickAt=-1e9;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);const
 // Vector clock: the highest sequence number seen per author. delta(theirs) is what they lack.
 function clock(){const c={};for(const e of records())if(Number.isFinite(e.n)&&(c[e.by]==null||e.n>c[e.by]))c[e.by]=e.n;return c}
 function head(){return {schema:'REALITI_LEDGER_HEAD_V2',observer:observer(),public_key:pkb64,records:records().length,clock:clock(),world_time_s:+now().toFixed(3),wall:Date.now()}}
+// A resident whose local ledger was already trimmed below the server's clock for its own author
+// must not keep numbering from the local array: adopt the peer's high-water mark once per sync.
+function adoptClock(h){const c=h?.clock||{},remote=c[observer()];if(remote!=null&&(!Number.isSafeInteger(remote)||remote<0||remote>=Number.MAX_SAFE_INTEGER))throw Error('INVALID_PEER_AUTHOR_CLOCK');const mine=remote??0,L=(C9.ledger=C9.ledger||{v:1,records:[]});if(!Number.isSafeInteger(L.seq)||L.seq<0)L.seq=0;if(mine>L.seq)L.seq=mine;try{c9save()}catch(x){}return L.seq}
 function delta(theirs){const c=theirs?.clock||theirs||{};return {schema:'REALITI_LEDGER_DELTA_V2',from:observer(),records:records().filter(e=>!Number.isFinite(e.n)||c[e.by]==null||e.n>c[e.by]).map(cp)}}
 
 // Witness: a hash of what was last observed, so an action can be refused as stale (see the public slice).
 function fnv(s){let h=0xcbf29ce4n;const P=0x100000001b3n;for(let i=0;i<s.length;i++){h^=BigInt(s.charCodeAt(i));h=(h*P)&0xffffffffffffffffn}return h.toString(16).padStart(16,'0')}
 
 window.REALITI_LEDGER_V1=Object.freeze({...LG0,record,import:LG0.import});
-window.REALITI_LEDGER_V2=Object.freeze({version:'2.0',ready:()=>ready.then(()=>!!keys),publicKey:()=>pkb64,sign,verify,signAll,export:exportSigned,import:importVerified,compact,clock,head,delta,keyring:()=>cp(S().keyring),rejected:()=>cp(S().rejected),fnv,canonical,world_kinds:[...WORLD]});
+window.REALITI_LEDGER_V2=Object.freeze({version:'2.0',ready:()=>ready.then(()=>!!keys),publicKey:()=>pkb64,sign,verify,signAll,export:exportSigned,import:importVerified,compact,clock,head,delta,adoptClock,keyring:()=>cp(S().keyring),rejected:()=>cp(S().rejected),fnv,canonical,world_kinds:[...WORLD]});
 })();

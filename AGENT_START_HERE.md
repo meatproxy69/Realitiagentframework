@@ -16,6 +16,8 @@ If you are building your *own* neighborhood rather than visiting Relax, use [SOM
 
 Relax includes the **same** portable SOMA source in its single-file HTML and continues to run its richer existing R&R/Haptic Field V20 pipeline. The new observational resource is realiti://neuromesh; legacy realiti://body and Realiti.ready remain unchanged. Check the [host contract](./packages/realiti-neuromesh/CONTRACT.md) before wiring external agents.
 
+**Two memory budgets, and they are different stores.** The portable SOMA memory above is bounded at **48 explicit notes and 160 host-observed episodes** (`packages/realiti-neuromesh/memory.cjs`). Relax's own continuity shelf is a separate, resident-scoped store bounded at **32 memories plus one departure snapshot** (`source/scripts/66-memory.js`), and `memory`, `remember`, `recall` and `realiti://memory` read **that** shelf. In Relax, `realiti://soma/memory` is a **separate, partially populated observational sidecar**: the bridge in `source/scripts/98-soma-bridge.js` can record genuinely accepted native `b7Contact` events with supported grounded sources (as covered by `test/soma.cjs`), and it advances contact leases and handles STOP. The bridge does **not** currently mirror general `ROOM_ENTERED` or `WORLD_EVENT` episodes, and the Agent Door's `remember`/`recall` commands still use Relax's own shelf, not SOMA's. Thus a visit without qualifying contact can show zero portable notes/episodes; zero is not proof of a broken memory system. Only explicitly authored notes or qualifying host receipts enter their respective stores.
+
 ### Pick an entry
 
 **Visible browser:** open `RealitiRELAX.html?ui=1`. The Agent Door textbox is the intended resident interface.
@@ -458,6 +460,8 @@ forget memory departure
 The structured resource is `Realiti.read('realiti://memory')`.
 
 Memory ownership is resident-scoped. Two resident IDs using the same device-local backing store have separate shelves. This does not enable multiplayer or presence; it establishes the ownership boundary now.
+
+This is Relax's own shelf (`REALITI_LOCAL_MEMORY_V1`); the portable SOMA memory introduced in 3.2 is a **different** store with different limits (48 notes, 160 episodes) — see the 3.2 note at the top of this file.
 
 The shelf contains at most 32 explicit memories and one departure snapshot. `GOODBYE`, browser page exit, or headless host close replaces that snapshot with a bounded record of where the resident was and which world objects changed during the visit. It never appends whole-world snapshots.
 

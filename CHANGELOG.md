@@ -2,6 +2,13 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 3.2.1 — Ledger high-water recovery and memory-scope clarity
+
+- Integrates Vizarian's PR #38, following the root cause reproduced by the agent Cipher: per-author ledger sequence numbers no longer repeat after retention/compaction. An existing client's authoritative peer high-water is adopted on sync, so the next newly authored write is offered rather than silently filtered by the vector clock.
+- Refuses malformed high-water clocks, bounds local sequence numbers to safe integers, and keeps self-authored `by/n/kind` metadata authoritative even when data contains conflicting keys. The fix is covered by regression checks for trim, migration, foreign-author records and invalid remote clocks.
+- Integrates and clarifies Vizarian's PR #39: Relax's 32-note/one-departure shelf is distinct from SOMA's 48-note/160-event sidecar. The sidecar can record accepted direct native contacts; it does not yet mirror general room/world events or the Agent Door's `remember` command.
+
+
 ## Matrix 1.0.1 local evidence bridge
 
 - Native Matrix now emits a typed world-side movement-refusal observation after real kernel resolution, with actor/world/room, witness, cause and simulation timestamp.
