@@ -26,6 +26,11 @@ const checks={},details={};const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)
   check('time_decays_primary_faster_than_counter',b4.result.routes.bond.level<lvl&&b5.result.routes.bond.level<b4.result.routes.bond.level&&b5.result.routes.bond.level<0&&/below quiet/.test(b5.text),{after_30min:b4.result.routes.bond.level,after_2h:b5.result.routes.bond.level});
   await d('go ARCHIPELAGO');await d('walk to boathouse');const M=w.REALITI_MATRIX_V1,me=M.state().residents['resident:self'];M.moveTo([me.pose.position[0],me.pose.position[1]-40,me.pose.position[2]]);await d('stay 20000');const b6=await d('body');
   check('the_sea_is_a_stress_cause',b6.result.routes.stress.level>0&&b6.result.causes.some(c=>c.route==='stress'&&/sea/.test(c.cause)),{stress:b6.result.routes.stress,causes:b6.result.causes.slice(0,2)});
+  const refusals=w.REALITI_MATRIX_LOCAL_EVIDENCE_V1?.events?.()||[];
+  check('matrix_issues_real_refusal_receipts',refusals.some(e=>
+    e.kind==='MOVEMENT_OBSTRUCTED'&&e.issuerAuthority==='IN_PROCESS_NATIVE_WORLD'&&
+    e.reason==='sea'&&e.actorId==='resident:self'&&typeof e.witness?.chart==='string'&&e.witness.chart.length>0),refusals.slice(-3));
+
   const saved=await d('save');check('save_ok',saved.ok);
  }finally{s.close()}
  s=await openResident({htmlPath:html,residentId:'body-a',storagePath:sp});

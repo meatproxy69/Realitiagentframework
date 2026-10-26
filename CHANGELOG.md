@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## Matrix 1.0.1 local evidence bridge
+
+- Native Matrix now emits a typed world-side movement-refusal observation after real kernel resolution, with actor/world/room, witness, cause and simulation timestamp.
+- REALITI_BODY_V1 listens for Matrix evidence instead of reading the resident's last_block/block_why directly. The bond/stress opponent-process formulas and native Matrix numerical controller are unchanged.
+- The local bridge is explicitly in-process/unsigned. All cross-neighborhood imports still use the pinned-key Ed25519 Matrix verifier.
+- Headless body regression checks that the sea's world-issued refusal is present and still drives stress through an authorized cause.
+
+
 ## Matrix 1.0.0 — World-side authority, separate from SOMA
 
 - New standalone @meatproxy69/realiti-matrix package with original native REALITI_MATRIX_V1 geometry kernels extracted as independent per-world state: SDF primitives, SE(3) portals, capsule sweeping, servo, support and observer projections.

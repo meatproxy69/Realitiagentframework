@@ -26,7 +26,19 @@ const BOND=/PET|PURR|COMPANION|CAT|HELD|HUG|LOAF/i,HOLD=/SUPPORT|BLANKET|PILLOW|
 const c0=b7Contact;b7Contact=function(zone,input,opts={}){const rec=c0(zone,input,opts);try{const src=opts.source||'WORLD_GROUNDED',cause=String(opts.cause||'');if(rec&&!rec.gap&&GROUNDED.has(src)&&cause){if(BOND.test(cause))spike('bond',clamp(.12+Number(input)*.4,.05,.3),cause.toLowerCase().replace(/_/g,' '));else if(HOLD.test(cause)&&!/MAINTAIN/.test(cause)){const r=B().routes.bond;if(now()-(r.hold_t||-1e9)>=30){r.hold_t=now();spike('bond',.04,cause.toLowerCase().replace(/_/g,' '))}}}}catch(e){}return rec};
 // The thermal law: cold on the skin from the world (rain, the sea) is a stress cause; warmth is not a reward.
 const AT=window.REALITI_ATMOSPHERE_V21;if(AT&&typeof AT.setThermal==='function'){const t0=AT.setThermal;AT.setThermal=function(z,material,objC,duration,cause,source){const r=t0.apply(this,arguments);try{if((source||'WORLD_GROUNDED')==='WORLD_GROUNDED'&&Number(objC)<16){const s=B().routes.stress;if(now()-(s.cold_t||-1e9)>=20){s.cold_t=now();spike('stress',.06,`cold ${String(material||'')} at ${Math.round(objC)} °C (${String(cause||'thermal').toLowerCase().replace(/_/g,' ')})`)}}}catch(e){}return r}}
-// A refusal by the world (the sea, a cliff) is a stress cause: measured by the kernel, labeled here.
-const M=window.REALITI_MATRIX_V1;let lastBlock=null;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);try{const me=M?.state().residents['resident:self'];const key=me&&me.last_block?`${me.last_block}|${me.block_why}|${me.chart}`:null;if(key&&key!==lastBlock&&(me.block_why==='sea'||me.block_why==='cliff'))spike('stress',.08,me.block_why==='sea'?'the sea stopped you':'a cliff stopped you');lastBlock=key}catch(e){}return r};
+// Refusal is issued by Matrix's world-side local evidence bridge, never
+// inferred by the resident body from Matrix's mutable last_block fields.
+const RE=window.REALITI_MATRIX_LOCAL_EVIDENCE_V1;
+if(!RE||typeof RE.subscribe!=='function')throw Error('MATRIX_WORLD_REFUSAL_BRIDGE_MISSING');
+RE.subscribe(receipt=>{
+ try{
+  if(receipt?.schema!=='REALITI_MATRIX_LOCAL_EVIDENCE_V1'||
+     receipt.kind!=='MOVEMENT_OBSTRUCTED'||receipt.result!=='OBSTRUCTED'||
+     receipt.issuerAuthority!=='IN_PROCESS_NATIVE_WORLD'||
+     receipt.actorId!=='resident:self')return;
+  if(receipt.reason==='sea')spike('stress',.08,'the sea stopped you');
+  else if(receipt.reason==='cliff')spike('stress',.08,'a cliff stopped you');
+ }catch(error){}
+});
 window.REALITI_BODY_V1=Object.freeze({version:'1.0',routes:Object.keys(ROUTES),state,words,level,log:()=>cp(B().log)});
 })();

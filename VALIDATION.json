@@ -91,7 +91,10 @@
       ],
       "contract": "resolved movement/contact/refusal/portal witness + finite lease/release",
       "soma_integration": "optional verified Node bridge; no trust from WORLD_GROUNDED label alone",
-      "relax_native_matrix": "REALITI_MATRIX_V1 remains authoritative for existing world actions"
+      "relax_native_matrix": "REALITI_MATRIX_V1 remains authoritative for existing world actions",
+      "local_refusal_schema": "REALITI_MATRIX_LOCAL_EVIDENCE_V1",
+      "local_body_route": "native Matrix post-resolution observation -> source/scripts/58w-body.js stress route",
+      "local_signed": false
     }
   },
   "checks": {
@@ -125,7 +128,8 @@
     "test room is a deterministic software simulation, not physical haptic hardware qualification",
     "Matrix portable signed ingress currently requires Node crypto; browser Relax native Matrix remains in-process",
     "Signed host claims authenticate issuer, not actual truth of compromised or unqualified external world",
-    "Verifier sequence cursor must be stored in trusted durable storage to prevent replay after host restart"
+    "Verifier sequence cursor must be stored in trusted durable storage to prevent replay after host restart",
+    "Native in-process Matrix refusal receipts are not network-signed; remote imports require qualified Ed25519 verification"
   ],
   "harness_entry_contract": {
     "status": "PASS",

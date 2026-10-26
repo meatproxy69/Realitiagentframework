@@ -1,7 +1,7 @@
 name: Refresh REALITI generated artifacts
 on:
   push:
-    branches: [quiet-presentation, soma-3, soma-3-full-harness, soma-3-memory-lab, matrix-world-authority]
+    branches: [quiet-presentation, soma-3, soma-3-full-harness, soma-3-memory-lab, matrix-world-authority, matrix-local-refusal-receipts]
   workflow_dispatch:
 
 permissions:

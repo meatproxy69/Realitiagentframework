@@ -23,6 +23,10 @@ try{
  check('one_time_resolution',consumed.kind==='CONTACT_ACCEPTED');
  let refused=false;try{world.host.takeResolution(res)}catch(e){refused=/UNAUTHORED/.test(String(e.message))}
  check('resolution_consume_only_once',refused);
+ check('native_local_evidence_listener_installed',
+   w.REALITI_MATRIX_LOCAL_EVIDENCE_V1?.version===1&&
+   typeof w.REALITI_MATRIX_LOCAL_EVIDENCE_V1.subscribe==='function'&&
+   typeof w.REALITI_MATRIX_LOCAL_EVIDENCE_V1.capture==='function');
  const here=world.observer.view();
  check('separate_world_scope',here.worldId==='MATRIX_COMPAT_TEST'&&here.frame.chart==='TEST');
  check('somatic_harness_preserved',w.REALITI_SOMA_V3?.VERSION==='3.2.0'&&
