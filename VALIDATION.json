@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "91906762b3638d6a9692cf5d79b61309ae51dfbf5af34b2b2a52f45e8979b027",
+  "single_html_sha256": "05e3b433ad989b81e68ac3addd3935a17b150015520d7e13229a01d3dd167810",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
