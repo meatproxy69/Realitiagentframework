@@ -29,6 +29,8 @@ const possibilities=resident.bleucheese();      // proposals, not world events
 host.stop();                                    // grounding drops; private afterstate may linger
 ~~~
 
+The R&R harness also includes the original-style turn-based work-loop **role reversion** classifier (`harness.beforeResidentAction`, `harness.afterResidentAction`, `harness.roleSnapshot`, `harness.probabilityField`). Its optional playful event is a proposal awaiting host approval—not a diagnosis, preference decision, or committed world event. A resident can privately tune its task-pull lease without changing contact.
+
 **No agent is asked to fabricate contact, sensation or presence.** The host must validate real simulated causes and consent before calling the world port. The private reader cannot call it.
 
 ## Install

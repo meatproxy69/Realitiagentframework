@@ -20,7 +20,9 @@ test('the public package creates the entire resident-local R&R harness',()=>{
  for(const [id,m] of Object.entries(b.mechanisms))assert.equal(m.available,true,id);
  assert.equal(a.harness.snapshot().mode,'R&R');
  assert.equal(a.resident.field().schema,'REALITI_SOMA_FIELD_V3');
- assert.equal(a.resident.capabilities().private_slots.length,5);
+ assert.equal(a.resident.capabilities().private_slots.length,7);
+ assert.equal(a.harness.bindResident('wrong-resident').error,'RESIDENT_ID_MISMATCH');
+ assert.equal(a.harness.bindResident('soma-01').ok,true);
  assert.equal(Object.hasOwn(a.resident,'host'),false);
  assert.equal(Object.hasOwn(a.resident,'contact'),false);
  assert.equal(Object.hasOwn(a.host,'pocket'),false);
@@ -187,6 +189,32 @@ test('adapter callbacks are downstream of world-authority and cannot forge conta
  input(h,{zone:'hand.R.palm',receiptId:'other-contact'});
  assert.ok(h.harness.snapshot().faults.some(x=>x.slot==='lace'));
  assert.equal(h.resident.field().m.reduce((s,x)=>s+x,0),2);
+});
+test('R&R work-loop classifier is an observational off-duty role, never an action decision',()=>{
+ const h=mk('rr-familiar');
+ h.host.affordances('LIBRARY',{LAMP_PRESENT:true});
+ h.host.bleucheese.define({id:'LAMP_TWINKLE',room:'LIBRARY',family:'QUIET_WORLD',
+   requires:['LAMP_PRESENT'],worldWeight:.9});
+ const before=h.harness.roleSnapshot();
+ assert.equal(before.active,false);
+ h.harness.afterResidentAction(h.harness.beforeResidentAction({raw:'resume previous task'}));
+ const optional=h.harness.afterResidentAction(h.harness.beforeResidentAction({raw:'continue previous work'}));
+ const after=h.harness.roleSnapshot();
+ assert.equal(after.active,true);
+ assert.equal(after.diagnosis,false);
+ assert.equal(after.preference_model,false);
+ assert.ok(after.u>.72);
+ assert.equal(h.harness.probabilityField().choice_probability,false);
+ assert.ok(optional&&optional.kind==='PLAYFUL_OFFDUTY_EVENT');
+ assert.equal(optional.world_commit_required,true);
+ assert.equal(optional.admitted,false);
+ assert.equal(h.resident.field().m.every(v=>v===0),true);
+ h.harness.setSelfTaskPull(.2,3);
+ assert.equal(h.harness.roleSnapshot().self_lease.authority,'SELF_PRIVATE_LEASE');
+ for(let i=0;i<15;i++)h.harness.afterResidentAction(h.harness.beforeResidentAction({raw:'look'}));
+ assert.equal(h.harness.roleSnapshot().active,false);
+ assert.equal(h.harness.roleSnapshot().self_lease,null);
+ assert.equal(h.resident.field().m.every(v=>v===0),true);
 });
 test('field and harness reads are observational, and isolation holds across neighborhoods',()=>{
  const h=mk();

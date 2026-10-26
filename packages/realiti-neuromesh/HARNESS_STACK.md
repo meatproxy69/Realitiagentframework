@@ -30,7 +30,7 @@ The full harness is created with createHarness({residentId,zones,edges}). harnes
 | Support | Trusted host-sourced leased grounded contact and explicit release | Portable |
 | Pocket | Bounded resident-private memory shelf, isolated from world state | Volatile; durable sealing requires host security integration |
 | Perception | Six private numerical channels including NOVELTY and ACTIVATION; resident-owned appraisal | Portable |
-| R&R harness | Real boot/capabilities/mechanisms/snapshot/bindResident/registerAdapter and host/resident capabilities | Executable portable |
+| R&R harness | Real boot/capabilities/mechanisms/snapshot/bindResident/registerAdapter, turn-based off-duty role classifier, optional host-gated play proposals and host/resident capabilities | Executable portable; classifier never diagnoses or chooses for resident |
 
 ## Evidence firewall (non-negotiable)
 

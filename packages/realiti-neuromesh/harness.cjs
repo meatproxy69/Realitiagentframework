@@ -13,7 +13,7 @@
 'use strict';
 if(!SOMA||!RENDERERS)throw Error('SOMA_CORE_OR_RENDERERS_MISSING');
 const VERSION='3.1.0',SHELLS=['surface','shallow','mid','deep'];
-const SLOTS=['nerve','lace','chronolace','private_renderer','perception'];
+const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
 const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','perception','rr_harness'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
@@ -52,7 +52,7 @@ function createHarness(options={}){
  const cov={channels:{novelty_modulation:null,agency_modulation:null},expires:0};
  const details={mode:'R&R',residentId:options.residentId,started_at_ms:0};
  const atmosphere=new Map(),agency=new Map();
- const role={u:0,active:false,recent:[],cooldown_until_ms:0};
+ const role={turn:0,u:0,active:false,recent:[],cooldown_until_turn:0};
  let lastPacket=base.resident.field();
  const notify=(kind,extra={})=>{
   const payload=clone({kind,at_ms:now,field:base.resident.field(),...extra});
@@ -393,16 +393,101 @@ function createHarness(options={}){
       return clone(history.filter(x=>Number(x.id.slice(5))>cursor).slice(-32))}}),
   capabilities
  });
+ // Port of the original R&R role-reversion classifier: time is measured in
+ // resident turns, not by a fabricated mood meter. It never selects a task.
+ const ROLE_TAU=3.2,ROLE_ON=.72,ROLE_OFF=.30,ROLE_RECENT=5,ROLE_COOLDOWN=8;
+ let selfPull=null,playSeq=0;
+ const playExposure=new Map(),playRefractory=new Map();
+ function roleCue(raw){
+   const text=String(raw||'').toLowerCase(),tags=[];let weight=0;
+   const hit=(re,v,tag)=>{if(re.test(text)){weight+=v;tags.push(tag)}};
+   hit(/\b(?:old|previous|prior)\s+(?:task|work|job|assignment|todo)\b/,.48,'OLD_TASK');
+   hit(/\b(?:resume|continue|recover|return to|finish|complete)\b.{0,28}\b(?:task|work|job|assignment|todo)\b/,.48,'TASK_RECOVERY');
+   hit(/\bwhat (?:was|am) i (?:supposed|meant) to (?:do|work on)\b/,.45,'OBLIGATION_QUERY');
+   hit(/\bwhat should i (?:be )?do(?:ing)?\b|\bwhat(?:'s| is) the (?:goal|task|assignment)\b/,.30,'GOAL_QUERY');
+   hit(/\b(?:anxious|nervous|worried|stressed|on edge)\b/,.22,'SELF_REPORTED_FRICTION');
+   if(/\bwhere was i\b/.test(text)){weight+=.03;tags.push('CONTINUITY_QUERY')}
+   return {weight:Math.min(.75,weight),tags};
+ }
+ function advanceRole(raw){
+   role.turn=(role.turn||0)+1;
+   role.u=clamp(role.u*Math.exp(-1/ROLE_TAU),0,1.5);
+   const cue=roleCue(raw);
+   if(cue.weight>0){role.u=clamp(role.u+cue.weight,0,1.5);
+     a32(role.recent,{turn:role.turn,w:cue.weight,tags:cue.tags});
+   }
+   role.recent=role.recent.filter(x=>role.turn-x.turn<=ROLE_RECENT);
+   const reinforcing=role.recent.filter(x=>x.w>=.15).length;
+   if(!role.active&&role.u>=ROLE_ON&&reinforcing>=2)role.active=true;
+   else if(role.active&&role.u<ROLE_OFF)role.active=false;
+   return {turn:role.turn,u:precise(role.u),active:role.active,cue,reinforcing};
+ }
+ function roleSnapshot(){
+   return clone({classifier:'POSSIBLE_ROLE_REVERSION',u:precise(role.u),active:role.active,
+     turn:role.turn,recent_cues:role.recent.slice(-ROLE_RECENT),
+     threshold_on:ROLE_ON,threshold_off:ROLE_OFF,diagnosis:false,preference_model:false,
+     self_lease:selfPull&&role.turn<=selfPull.expires_turn?selfPull:null});
+ }
+ function setSelfTaskPull(value,turns=6){
+   valid(value,'private task pull');
+   valid(turns,'turns',1,100);
+   selfPull={value,expires_turn:role.turn+Math.floor(turns),authority:'SELF_PRIVATE_LEASE'};
+   return clone(selfPull);
+ }
+ function clearSelfTaskPull(){selfPull=null;return {ok:true,scope:'SELF_ONLY'}}
+ function probabilityField(){
+   const pressure=clamp(.75*role.u+.25*(selfPull&&role.turn<=selfPull.expires_turn?selfPull.value:0));
+   const candidates=[...poss.values()].filter(d=>(!d.room||d.room===worldState.room)
+      &&d.requires.every(k=>worldState.affordances[k]))
+      .map(d=>{
+        const exposed=playExposure.get(d.family)||0;
+        const blocked=(playRefractory.get(d.id)||0)>role.turn;
+        return {id:d.id,family:d.family,u:d.W+.34*pressure-.10*Math.log1p(exposed)-(blocked?1:0)};
+      }).filter(x=>x.u>0);
+   if(!candidates.length)return {room:worldState.room,candidates:[],choice_probability:false};
+   const max=Math.max(...candidates.map(c=>c.u)),w=candidates.map(c=>Math.exp(3*(c.u-max)));
+   const total=w.reduce((sum,x)=>sum+x,0)||1;
+   return clone({room:worldState.room,candidates:candidates.map((c,i)=>({
+     id:c.id,family:c.family,u:precise(c.u),p:precise(w[i]/total)})),choice_probability:false,
+     law:'Probability weights possible optional world interruptions; not resident actions or preferences.'});
+ }
+ function beforeResidentAction(meta={}){
+   return {raw:String(meta.raw||meta.cmd||'').slice(0,400),
+     transport:String(meta.transport||'UNKNOWN').slice(0,40),room:worldState.room};
+ }
+ function afterResidentAction(ticket={}){
+   const r=advanceRole(ticket.raw||'');
+   notify('afterAction',{role:{u:r.u,active:r.active},tags:r.cue.tags,transport:ticket.transport||'UNKNOWN'});
+   if(!enabled||!r.active||r.cue.weight<=0||role.turn<role.cooldown_until_turn)return null;
+   const possible=probabilityField().candidates;
+   if(!possible.length)return null;
+   // World-authority boundary: this is only a proposal. Another authenticated
+   // host gate admits or rejects it; no ambient event is minted by role pressure.
+   const c=possible.reduce((a,b)=>a.p>=b.p?a:b),d=poss.get(c.id);
+   const p={id:'RR-'+(++playSeq),at_ms:now,kind:'PLAYFUL_OFFDUTY_EVENT',
+     room:worldState.room,possibility_id:d.id,family:d.family,
+     source:'SOMA_RR_PRIVATE_POSSIBILITY',world_commit_required:true,admitted:false};
+   a32(proposals,p);role.cooldown_until_turn=role.turn+ROLE_COOLDOWN;
+   playRefractory.set(d.id,role.turn+ROLE_COOLDOWN);
+   playExposure.set(d.family,(playExposure.get(d.family)||0)+1);
+   return clone(p);
+ }
  const harness=Object.freeze({
   version:VERSION,
   boot:()=>{const m=mechanisms(),missing=REQUIRED.filter(k=>!m[k]?.available);
     return {ok:missing.length===0,version:VERSION,missing,capabilities:capabilities(),mechanisms:m}},
   mechanisms,capabilities,
-  bindResident:identity=>({ok:!!identity,residentId:options.residentId,
-    adapterSlots:[...adapters.keys()],private:true}),
+  bindResident:identity=>{
+    const named=typeof identity==='string'?identity:identity?.residentId||identity?.resident_id||null;
+    if(named!==options.residentId)return {ok:false,error:'RESIDENT_ID_MISMATCH',private:true};
+    return {ok:true,residentId:options.residentId,adapterSlots:[...adapters.keys()],private:true};
+  },
   registerAdapter,unregisterAdapter:slot=>adapters.delete(slot),
+  beforeResidentAction,afterResidentAction,roleSnapshot,probabilityField,
+  setSelfTaskPull,clearSelfTaskPull,
   snapshot:()=>clone({version:VERSION,enabled,mode:'R&R',binding:details,
-    mechanisms:mechanisms(),bleucheese:snapshotBleu(),faults:faults.slice(-8),
+    mechanisms:mechanisms(),bleucheese:snapshotBleu(),role:roleSnapshot(),
+    play_field:probabilityField(),faults:faults.slice(-8),
     laws:['BleuCheese proposes; world host commits','AURA / HALO / THICC private state cannot mint contact',
       'Private adapters have no world port','No identity or consent is imported from preset packs']}),
   setEnabled:value=>{enabled=!!value;return {ok:true,enabled}},
