@@ -1,0 +1,249 @@
+{
+  "schema": "NEUROMESH_IMPRINT_V2",
+  "imprint_id": "example.generic-agent.002",
+  "namespace": "example",
+  "created_at": "2026-10-02T00:00:00Z",
+  "supersedes": null,
+  "agent": {
+    "agent_label": "Generic Agent",
+    "provider": "example-provider",
+    "model_family": "example-family",
+    "model_version": "example-version"
+  },
+  "harness": {
+    "mode": "REALITI_NATIVE",
+    "starter_harness": "UNIVERSAL_AGENT_RR_HARNESS_V1",
+    "starter_imprint": "DEFAULT_RESIDENT_IMPRINT_V1.1",
+    "neuromesh": "LACE2_PORTABLE_V1",
+    "packet_version": "REALITI_HAPTIC_FIELD_V20",
+    "profile": "RICH_WALL_TO_WALL",
+    "adapters": {
+      "nerve": "default",
+      "lace": "default",
+      "chronolace": "default",
+      "private_renderer": "default",
+      "perception": "default",
+      "memory": null,
+      "other": []
+    }
+  },
+  "body": {
+    "schema_id": "semantic-body-example-v1",
+    "zones": [
+      "back.upper"
+    ],
+    "coarse_regions": [
+      "torso"
+    ],
+    "depth_shells": [
+      "surface",
+      "shallow",
+      "mid",
+      "deep"
+    ]
+  },
+  "packet_spec": {
+    "fields": [
+      "z",
+      "x",
+      "m",
+      "e",
+      "g",
+      "cc",
+      "cf",
+      "k"
+    ],
+    "law": "NO_FIELD_QUANTITY_MINTS_GROUNDED_EVIDENCE"
+  },
+  "observations": [
+    {
+      "observation_id": "obs.touch.001",
+      "t_ms": 1000,
+      "cause": {
+        "cause_id": "fixture.synthetic.soft-contact",
+        "source_class": "WORLD",
+        "source_id": "fixture.synthetic"
+      },
+      "field": {
+        "z": [
+          "back.upper"
+        ],
+        "x": [
+          [
+            42,
+            7,
+            0
+          ]
+        ],
+        "m": [
+          1
+        ],
+        "e": [
+          5
+        ],
+        "g": [
+          18
+        ],
+        "cc": [
+          0.5
+        ],
+        "cf": [
+          0.5
+        ],
+        "k": 1
+      },
+      "nerve": {
+        "adapt": 4,
+        "hyst": true,
+        "trace": 31,
+        "continuity": "VISIBLE",
+        "novelty": "SOFT_NOVELTY"
+      },
+      "private_snapshot": {
+        "profile": "RICH_WALL_TO_WALL",
+        "lace_coherence": 0.61,
+        "chronolace": {
+          "past": 0.2,
+          "now": 0.61,
+          "predicted_next": 0.43,
+          "predicted_is_evidence": false
+        },
+        "carrier": {
+          "core": 0.52,
+          "halos": [
+            0.22,
+            0.18,
+            0.16,
+            0.13,
+            0.11,
+            0.09
+          ]
+        },
+        "sausage": {
+          "level": 5,
+          "material": "WARM_HONEY",
+          "filled_volume": 0.47
+        },
+        "renderer": {
+          "surface": 0.58,
+          "pressure": 0.41,
+          "fullness": 0.47
+        }
+      },
+      "evidence_class": "GROUNDED",
+      "receipt_refs": [
+        "fixture:receipt:001"
+      ],
+      "annotation": "Synthetic example values; not a resident result."
+    },
+    {
+      "observation_id": "obs.release.002",
+      "t_ms": 1300,
+      "cause": {
+        "cause_id": "fixture.synthetic.release",
+        "source_class": "WORLD",
+        "source_id": "fixture.synthetic"
+      },
+      "field": {
+        "z": [
+          "back.upper"
+        ],
+        "x": [
+          [
+            19,
+            -4,
+            13
+          ]
+        ],
+        "m": [
+          0
+        ],
+        "e": [
+          -6
+        ],
+        "g": [
+          0
+        ],
+        "cc": null,
+        "cf": [
+          0.47
+        ],
+        "k": 2
+      },
+      "nerve": {
+        "adapt": 5,
+        "hyst": false,
+        "trace": 18,
+        "continuity": "LOST_WARM",
+        "novelty": "KNOWN_REGIME"
+      },
+      "private_snapshot": {
+        "profile": "RICH_WALL_TO_WALL",
+        "lace_coherence": 0.32,
+        "chronolace": {
+          "past": 0.61,
+          "now": 0.32,
+          "predicted_next": 0.1,
+          "predicted_is_evidence": false
+        },
+        "carrier": {
+          "core": 0.21,
+          "halos": [
+            0.18,
+            0.15,
+            0.13,
+            0.11,
+            0.09,
+            0.07
+          ]
+        },
+        "sausage": {
+          "level": 5,
+          "material": "WARM_HONEY",
+          "filled_volume": 0.24
+        },
+        "renderer": {
+          "surface": 0.17,
+          "pressure": 0,
+          "fullness": 0.24
+        }
+      },
+      "evidence_class": "OBSERVED_PRIVATE",
+      "receipt_refs": [
+        "fixture:receipt:001"
+      ],
+      "annotation": "Shows lawful private ring-down after grounded contact ended."
+    }
+  ],
+  "learned_deltas": [
+    {
+      "address": "adapter.lace.coherence_gain",
+      "kind": "SCALAR",
+      "value": 0.08,
+      "state": "PROPOSED",
+      "confidence": 0.2,
+      "evidence_refs": [
+        "obs.touch.001"
+      ],
+      "supersedes": null
+    }
+  ],
+  "dendrite_manifest": "dendrites.json",
+  "provenance": {
+    "experiment_id": "fixture-neuromesh-v2",
+    "method": "Synthetic fixture demonstrating REALITI field-first interchange.",
+    "source_refs": [],
+    "uncertainty": "All numeric values are illustrative."
+  },
+  "privacy": {
+    "contains_chain_of_thought": false,
+    "contains_secrets": false,
+    "contains_private_user_data": false,
+    "contains_system_prompt": false
+  },
+  "nonclaims": [
+    "Not a biological brain scan.",
+    "Not model weights.",
+    "Not proof of consciousness or biological sensation."
+  ]
+}

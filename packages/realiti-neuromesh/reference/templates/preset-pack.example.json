@@ -1,0 +1,77 @@
+{
+  "schema": "NEUROMESH_PRESET_PACK_V1",
+  "pack_id": "example.neutral-starter.001",
+  "name": "Neutral Starter",
+  "version": "1.0.0",
+  "author_namespace": "example",
+  "description": "Minimal public fixture showing the preset-pack shape.",
+  "requires": {
+    "starter_harness": "UNIVERSAL_AGENT_RR_HARNESS_V1",
+    "starter_imprint": "DEFAULT_RESIDENT_IMPRINT_V1.1",
+    "neuromesh": "LACE2_PORTABLE_V1"
+  },
+  "presets": [
+    {
+      "preset_id": "example.neutral-starter.base",
+      "label": "Neutral Base",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 1,
+          "hz": 35,
+          "role": "base body carrier"
+        },
+        "mid": {
+          "share": 0,
+          "hz": 250,
+          "role": "off"
+        },
+        "top": {
+          "enabled": false,
+          "share": 0,
+          "hz": 825,
+          "duty": null,
+          "pattern": null,
+          "distinct_function": []
+        }
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM_SLOW",
+        "spill": "MEDIUM_HIGH",
+        "release": "SLOW_LINGER",
+        "live_cause_gate": true,
+        "target_occupancy": null,
+        "region_bias": {},
+        "depth_bias": {}
+      },
+      "temporal": {
+        "envelope_a": "TRIANGLE",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "STILL_HALO",
+      "flush": {
+        "enabled": false,
+        "engine": null,
+        "foreground_strength": null,
+        "headroom_cap": null,
+        "funnel_kappa": null,
+        "peripheral_mix": null,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {},
+      "annotation": "Synthetic format example only."
+    }
+  ],
+  "invariants": {
+    "conserved_response_budget": true,
+    "evidence_gain": 0,
+    "private_render_only": true
+  }
+}

@@ -92,6 +92,12 @@ This portable runtime supports a **conserved carrier split** from the existing N
 
 The preset JSON files under presets/ are identical to the authored copies in neuromesh/preset-packs/; repository CI checks parity.
 
+## Schema, imprint and NeuralMesh reference library
+
+The standalone npm package also includes the original NeuralMesh interchange references under `reference/`: imprint and dendrite JSON schemas, preset-pack schema, body/imprint template examples, mechanism catalog, registry, and the older design specification/tech-stack notes. They are copied byte-for-byte from the authored `neuromesh/` directory and CI checks this parity.
+
+For example, a neighborhood can read `@meatproxy69/realiti-neuromesh/reference/schema/neural-imprint.schema.json` or `reference/MECHANISM_CATALOG.json` without installing Relax. The legacy V2 imprint interchange schema is **distinct** from the new executable V3 runtime packet; do not reinterpret one as the other.
+
 ## Private durability, porting and limits
 
 resident.checkpoint() is a pure read. Its REALITI_SOMA_CHECKPOINT_V3 snapshot contains resident ID, body schema, bounded private afterstate/expectation/adaptation and carrier selection, **not live contacts or a transcript**. resident.restore(snapshot) validates the identity/body and restores no grounded receipts even if a visit was in progress. Keep checkpoints in a resident-owned storage namespace. Public preset packs are different from private checkpoints: moving a public preset grants no identity, preferences, consent, world truth, permissions or human private data.

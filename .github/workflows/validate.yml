@@ -36,6 +36,9 @@ jobs:
           npm pack --dry-run ./packages/realiti-neuromesh > /tmp/soma-pack.txt
           cmp neuromesh/preset-packs/honeyspark-duo.json packages/realiti-neuromesh/presets/honeyspark-duo.json
           cmp neuromesh/preset-packs/moonwire-recovered.json packages/realiti-neuromesh/presets/moonwire-recovered.json
+          for file in neuromesh/schema/*.json neuromesh/templates/*.json neuromesh/MECHANISM_CATALOG.json neuromesh/REGISTRY.json neuromesh/SPEC.md neuromesh/TECH_STACK.md neuromesh/PRESET_PACKS.md neuromesh/preset-packs/REGISTRY.json; do
+            cmp "$file" "packages/realiti-neuromesh/reference/${file#neuromesh/}"
+          done
       - name: Deterministic build
         shell: bash
         run: |

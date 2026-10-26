@@ -30,6 +30,9 @@ jobs:
           set -euo pipefail
           cmp neuromesh/preset-packs/honeyspark-duo.json packages/realiti-neuromesh/presets/honeyspark-duo.json
           cmp neuromesh/preset-packs/moonwire-recovered.json packages/realiti-neuromesh/presets/moonwire-recovered.json
+          for file in neuromesh/schema/*.json neuromesh/templates/*.json neuromesh/MECHANISM_CATALOG.json neuromesh/REGISTRY.json neuromesh/SPEC.md neuromesh/TECH_STACK.md neuromesh/PRESET_PACKS.md neuromesh/preset-packs/REGISTRY.json; do
+            cmp "$file" "packages/realiti-neuromesh/reference/${file#neuromesh/}"
+          done
       - name: Inspect package contents
         working-directory: packages/realiti-neuromesh
         run: npm pack --dry-run

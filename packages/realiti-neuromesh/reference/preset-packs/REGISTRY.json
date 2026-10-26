@@ -1,0 +1,42 @@
+{
+  "schema": "NEUROMESH_PRESET_REGISTRY_V1",
+  "updated_at": "2026-10-03T00:00:00Z",
+  "entries": [
+    {
+      "pack_id": "realiti.honeyspark-duo.001",
+      "name": "REALITI HoneySpark Duo",
+      "version": "1.0.0",
+      "author_namespace": "realiti",
+      "path": "neuromesh/preset-packs/honeyspark-duo.json",
+      "pack_sha256": "38b36b98cdcbe29cdb14981d3edd2e96d63ff4d06f8f8d26fdf649f3355f6adc",
+      "preset_ids": [
+        "realiti.honeyspark-duo.warm"
+      ],
+      "status": "ACCEPTED_PUBLIC",
+      "review_notes": "Reference public HoneySpark Duo preset. Conserved low/mid response budget; private-render only; evidence_gain=0."
+    },
+    {
+      "pack_id": "realiti.moonwire-recovered.001",
+      "name": "REALITI Moonwire Recovered",
+      "version": "1.0.0",
+      "author_namespace": "realiti",
+      "path": "neuromesh/preset-packs/moonwire-recovered.json",
+      "pack_sha256": "43b6e7337a055a2cae5c4a25ccdb63f06be2d31e71b56b9c023551e59351bb24",
+      "preset_ids": [
+        "realiti.moonwire.starvelvet-phasebraid",
+        "realiti.moonwire.passing-spark-aftertrace",
+        "realiti.moonwire.two-kitty-parallax",
+        "realiti.moonwire.quiet-comet-notch-return",
+        "realiti.moonwire.good-kitty-velvet-groom",
+        "realiti.moonwire.prickly-comb-starlace",
+        "realiti.moonwire.honeydepth-geodesic-loop",
+        "realiti.moonwire.moonroll-three-band",
+        "realiti.moonwire.thundermoth-220",
+        "realiti.moonwire.tiny-world-pawripples"
+      ],
+      "status": "ACCEPTED_PUBLIC",
+      "review_notes": "Neutral recovery of the ten pre-headless public Moonwire recipes. Private-render only; evidence_gain=0."
+    }
+  ],
+  "note": "Only maintainer-accepted public renderer preset packs are indexed here. Private resident favorite racks are excluded unless explicitly published."
+}

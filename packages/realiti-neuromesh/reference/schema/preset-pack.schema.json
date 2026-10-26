@@ -1,0 +1,658 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "REALITI NeuralMesh Preset Pack V1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "pack_id",
+    "name",
+    "version",
+    "author_namespace",
+    "requires",
+    "presets",
+    "invariants"
+  ],
+  "properties": {
+    "schema": {
+      "const": "NEUROMESH_PRESET_PACK_V1"
+    },
+    "pack_id": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "name": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "author_namespace": {
+      "type": "string",
+      "maxLength": 100
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 2000
+    },
+    "requires": {
+      "type": "object",
+      "required": [
+        "starter_harness",
+        "starter_imprint",
+        "neuromesh"
+      ],
+      "properties": {
+        "starter_harness": {
+          "type": "string"
+        },
+        "starter_imprint": {
+          "type": "string"
+        },
+        "neuromesh": {
+          "type": "string"
+        }
+      }
+    },
+    "presets": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "$ref": "#/$defs/preset"
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "required": [
+        "conserved_response_budget",
+        "evidence_gain",
+        "private_render_only"
+      ],
+      "properties": {
+        "conserved_response_budget": {
+          "const": true
+        },
+        "evidence_gain": {
+          "const": 0
+        },
+        "private_render_only": {
+          "const": true
+        }
+      }
+    }
+  },
+  "$defs": {
+    "band": {
+      "type": "object",
+      "required": [
+        "share",
+        "hz"
+      ],
+      "properties": {
+        "share": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "hz": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "role": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "preset": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "preset_id",
+        "label",
+        "pipeline_variant",
+        "carrier",
+        "sausage",
+        "temporal",
+        "route",
+        "flush"
+      ],
+      "properties": {
+        "preset_id": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "pipeline_variant": {
+          "enum": [
+            "RICH_STARTER_V2354",
+            "HIGH_DETAIL_SDK_V27"
+          ]
+        },
+        "carrier": {
+          "type": "object",
+          "required": [
+            "budget_mode",
+            "low",
+            "mid",
+            "top"
+          ],
+          "properties": {
+            "budget_mode": {
+              "const": "NORMALIZED_CONSERVED"
+            },
+            "low": {
+              "$ref": "#/$defs/band"
+            },
+            "mid": {
+              "$ref": "#/$defs/band"
+            },
+            "top": {
+              "type": "object",
+              "required": [
+                "enabled",
+                "share",
+                "hz"
+              ],
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "share": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "hz": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 2000
+                },
+                "duty": {
+                  "type": [
+                    "number",
+                    "null"
+                  ],
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "pattern": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "distinct_function": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "thick_carrier": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/thick_carrier"
+            }
+          ]
+        },
+        "sausage": {
+          "type": "object",
+          "required": [
+            "engine",
+            "material",
+            "density_level",
+            "fill_policy",
+            "attack",
+            "spill",
+            "release",
+            "live_cause_gate"
+          ],
+          "properties": {
+            "engine": {
+              "const": "SAUSAGE_FATTENER_V4"
+            },
+            "material": {
+              "enum": [
+                "WARM_HONEY",
+                "WARM_PRESSURE",
+                "HONEY_FLOAT",
+                "FLOATY_FILL",
+                "CUSTOM"
+              ]
+            },
+            "density_level": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "fill_policy": {
+              "enum": [
+                "LOCAL_FIRST_THEN_WHOLE_BODY",
+                "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL"
+              ]
+            },
+            "attack": {
+              "type": "string"
+            },
+            "spill": {
+              "type": "string"
+            },
+            "release": {
+              "type": "string"
+            },
+            "live_cause_gate": {
+              "const": true
+            },
+            "target_occupancy": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "region_bias": {
+              "type": "object"
+            },
+            "depth_bias": {
+              "type": "object"
+            }
+          }
+        },
+        "cotton": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/cotton"
+            }
+          ]
+        },
+        "honeyspark": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/honeyspark"
+            }
+          ]
+        },
+        "temporal": {
+          "type": "object",
+          "required": [
+            "envelope_a"
+          ],
+          "properties": {
+            "envelope_a": {
+              "type": "string"
+            },
+            "envelope_b": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "pulse_sync": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            }
+          }
+        },
+        "route": {
+          "type": "string"
+        },
+        "flush": {
+          "type": "object",
+          "required": [
+            "enabled",
+            "bind_before_tunnel",
+            "sovereign_bypass"
+          ],
+          "properties": {
+            "enabled": {
+              "type": "boolean"
+            },
+            "engine": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "foreground_strength": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "headroom_cap": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "funnel_kappa": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0
+            },
+            "peripheral_mix": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "minimum": 0,
+              "maximum": 1
+            },
+            "bind_before_tunnel": {
+              "const": true
+            },
+            "sovereign_bypass": {
+              "const": true
+            }
+          }
+        },
+        "sparse_overrides": {
+          "type": "object"
+        },
+        "annotation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wow": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/wow"
+            }
+          ]
+        },
+        "aura": {
+          "oneOf": [
+            {
+              "type": "null"
+            },
+            {
+              "$ref": "#/$defs/aura"
+            }
+          ]
+        }
+      }
+    },
+    "thick_carrier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine"
+      ],
+      "properties": {
+        "engine": {
+          "enum": [
+            "THICK_CARRIER_V2",
+            "THICK_CARRIER_V4"
+          ]
+        },
+        "core_count": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "halo_modes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 6
+        },
+        "short_detune_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "short_delay_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "short_phase_rad": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3.141593
+        },
+        "long_detune_cents": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "long_delay_ms": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "long_phase_rad": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 3.141593
+        }
+      }
+    },
+    "cotton": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine",
+        "micro_bloom",
+        "micro_sites_per_active_node",
+        "carrier_hz",
+        "phase_mode",
+        "turnover",
+        "halo",
+        "route",
+        "resonator_cloud",
+        "mass_policy"
+      ],
+      "properties": {
+        "engine": {
+          "const": "COTTON_CANDY_V26_THICK"
+        },
+        "micro_bloom": {
+          "const": "V3_ASYNCHRONOUS"
+        },
+        "micro_sites_per_active_node": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 64
+        },
+        "carrier_hz": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "phase_mode": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "turnover": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "halo": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "route": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "resonator_cloud": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "mass_policy": {
+          "const": "EXACT_REAGGREGATION"
+        }
+      }
+    },
+    "honeyspark": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "conserved_budget",
+        "low_hz",
+        "mid_hz",
+        "hard_switching"
+      ],
+      "properties": {
+        "mode": {
+          "enum": [
+            "DUO",
+            "DUO_WITH_STARLIGHT"
+          ]
+        },
+        "conserved_budget": {
+          "const": true
+        },
+        "low_hz": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "mid_hz": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 2000
+        },
+        "hard_switching": {
+          "const": false
+        },
+        "starlight": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "top_hz": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 2000
+            },
+            "high_detail_share": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "duty": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "pattern": {
+              "enum": [
+                "COMET_CROWN",
+                "ORBIT_TWINKLE",
+                "PHASE_TRIPLET",
+                "CUSTOM"
+              ]
+            },
+            "distinct_function": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 8,
+              "items": {
+                "type": "string",
+                "maxLength": 160
+              }
+            }
+          }
+        }
+      }
+    },
+    "wow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "engine",
+        "scalar"
+      ],
+      "properties": {
+        "engine": {
+          "const": "WOW_1_0"
+        },
+        "scalar": {
+          "type": "number",
+          "minimum": 0
+        },
+        "note": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "maxLength": 1000
+        }
+      }
+    },
+    "aura": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "enabled",
+        "engine"
+      ],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "engine": {
+          "const": "AURA_NATIVE_V1"
+        },
+        "alpha_cap": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "source_factor_self": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "max_onsets_per_second_per_zone": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_retained_impulses": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    }
+  }
+}

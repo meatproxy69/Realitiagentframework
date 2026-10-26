@@ -9,7 +9,8 @@
     "./harness": "./harness.cjs",
     "./renderers": "./renderers.cjs",
     "./presets/honeyspark-duo.json": "./presets/honeyspark-duo.json",
-    "./presets/moonwire-recovered.json": "./presets/moonwire-recovered.json"
+    "./presets/moonwire-recovered.json": "./presets/moonwire-recovered.json",
+    "./reference/*": "./reference/*"
   },
   "files": [
     "index.cjs",
@@ -18,7 +19,8 @@
     "presets",
     "examples",
     "harness.cjs",
-    "renderers.cjs"
+    "renderers.cjs",
+    "reference"
   ],
   "engines": {
     "node": ">=20"
