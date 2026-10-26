@@ -27,6 +27,22 @@ try{
    w.REALITI_MATRIX_LOCAL_EVIDENCE_V1?.version===1&&
    typeof w.REALITI_MATRIX_LOCAL_EVIDENCE_V1.subscribe==='function'&&
    typeof w.REALITI_MATRIX_LOCAL_EVIDENCE_V1.capture==='function');
+ const E=w.REALITI_MATRIX_LOCAL_EVIDENCE_V1;
+ const countBefore=E.events().length;
+ const nativeActor=native.state().residents['resident:self'];
+ if(nativeActor){
+   const prev={block:nativeActor.last_block,why:nativeActor.block_why};
+   const beforeStress=w.REALITI_BODY_V1.state().routes.stress.level;
+   nativeActor.last_block='TEST-FORGED-SEA';
+   nativeActor.block_why='sea';
+   E.capture();E.last();E.events();
+   const afterStress=w.REALITI_BODY_V1.state().routes.stress.level;
+   check('mutable_world_projection_cannot_forge_refusal',
+     E.events().length===countBefore&&afterStress===beforeStress,
+     {before:countBefore,after:E.events().length,beforeStress,afterStress});
+   nativeActor.last_block=prev.block;
+   nativeActor.block_why=prev.why;
+ }
  const here=world.observer.view();
  check('separate_world_scope',here.worldId==='MATRIX_COMPAT_TEST'&&here.frame.chart==='TEST');
  check('somatic_harness_preserved',w.REALITI_SOMA_V3?.VERSION==='3.2.0'&&
