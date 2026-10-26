@@ -22,11 +22,14 @@ jobs:
         run: |
           set -euo pipefail
           for f in build.mjs source/scripts/*.js tests/*.cjs; do node --check "$f"; done
-      - name: SOMA 3.0 portable package contract
+      - name: SOMA 3.1 complete portable harness contract
         shell: bash
         run: |
           set -euo pipefail
           node --check packages/realiti-neuromesh/index.cjs
+          node --check packages/realiti-neuromesh/renderers.cjs
+          node --check packages/realiti-neuromesh/harness.cjs
+          node --check packages/realiti-neuromesh/test/harness.test.cjs
           node --check packages/realiti-neuromesh/test/soma.test.cjs
           npm test --prefix packages/realiti-neuromesh
           node packages/realiti-neuromesh/examples/neighborhood.cjs > /tmp/soma-neighborhood.json

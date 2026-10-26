@@ -17,6 +17,14 @@ Advance: world.tick(elapsedMs). This is **simulation time**, not Date.now/wall t
 
 There is no REST endpoint, MCP server, chat instruction or generic plugin capability that may assert these inputs by default. The surrounding host must implement grounding checks and consent gates for its own world.
 
+## Complete R&R harness contract
+
+`createHarness({residentId,zones,edges})` returns `{host,resident,harness}`. Only the trusted neighborhood receives `host`. The resident's private interface has no mutation methods for grounded contact, support or world possibility admission. Use `harness.boot()` and inspect `harness.mechanisms()` before accepting resident sensory input.
+
+The private renderers (THICC, seven-mode HALO, 128-bin AURA) derive from the original Relax numerical algorithms. BleuCheese produces structured candidate events, but the world host must explicitly admit/commit one with its own authenticated receipt; no private modulation, novelty or narrative can do this.
+
+The portable `resident.pocket` is per-instance bounded in-memory state, **not automatically encrypted durable storage**. The host must add encryption/key management for saved private state. Continuity receipts are bounded and observational. `resident.checkpoint()` remains private and never restores live grounding.
+
 ## Output and privacy
 
 The renderer/agent reads resident.field() without advancing time or changing state. The m bit is a receipt-backed grounded flag, not a sensation/intention/preference score. Graph spread and afterstate never set m, and cc must be null when every m bit is zero. The private cf, e, and x channels may outlast contact.

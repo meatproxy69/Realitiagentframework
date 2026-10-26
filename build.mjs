@@ -17,6 +17,16 @@ if(html.split(somaMarker).length!==2)throw Error('SOMA package marker missing or
 const somaSource=await fs.readFile(new URL('packages/realiti-neuromesh/index.cjs',root),'utf8');
 assertCssFree('packages/realiti-neuromesh/index.cjs',somaSource);
 html=html.replace(somaMarker,()=>somaSource+(somaSource.endsWith('\n')?'':'\n'));
+for(const [marker,path] of [
+  ['/*__REALITI_SOMA_RENDERERS_V3__*/','packages/realiti-neuromesh/renderers.cjs'],
+  ['/*__REALITI_SOMA_HARNESS_V3__*/','packages/realiti-neuromesh/harness.cjs']
+]){
+  if(html.split(marker).length!==2)throw Error('Missing or duplicate full SOMA harness marker: '+marker);
+  const source=await fs.readFile(new URL(path,root),'utf8');
+  assertCssFree(path,source);
+  html=html.replace(marker,()=>source+(source.endsWith('\n')?'':'\n'));
+}
+
 
 for(const name of (await fs.readdir(new URL('source/scripts/',root))).filter(x=>x.endsWith('.js')).sort()){const marker=/^\d\d\.js$/.test(name)?'/*__REALITI_CORE_SCRIPT_'+Number(name.slice(0,2))+'__*/':'/*__SLICE_'+name+'__*/';if(html.split(marker).length!==2)throw Error('Invalid marker: '+name);const raw=await fs.readFile(new URL('source/scripts/'+name,root),'utf8');const body=raw&& !raw.endsWith('\n')?raw+'\n':raw;assertCssFree('source/scripts/'+name,body);html=html.replace(marker,()=>body)}
 assertCssFree('RealitiRELAX.html',html);

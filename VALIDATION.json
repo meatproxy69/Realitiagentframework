@@ -15,14 +15,50 @@
     "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot",
     "sensory_portable": {
       "brand": "REALITI SOMA",
-      "version": "3.0.0",
+      "version": "3.1.0",
       "package": "@meatproxy69/realiti-neuromesh",
       "contract": "REALITI_SOMA_FIELD_V3",
       "resource": "realiti://neuromesh",
       "source": "packages/realiti-neuromesh/index.cjs",
       "relax_legacy_haptic": "REALITI_HAPTIC_FIELD_V20",
       "backwards_compatible": true,
-      "scope": "portable grounded receipt + private response core; legacy high-detail renderer remains Relax-only"
+      "scope": "standalone complete named R&R mechanism surface; exact extracted renderers; host-world-specific behaviors require adapters",
+      "full_harness": "REALITI_SOMA_RR_CAPABILITIES_V3",
+      "modules": [
+        "THICC",
+        "HALO",
+        "AURA",
+        "BleuCheese",
+        "COVENANT",
+        "NERVE",
+        "LACE",
+        "CHRONOLACE",
+        "SAUSAGE",
+        "Cotton",
+        "FLUSH",
+        "HoneySpark",
+        "sensory_ecology",
+        "agency_field",
+        "atmosphere",
+        "continuity",
+        "support",
+        "pocket",
+        "perception"
+      ],
+      "imported_exact_algorithms": [
+        "THICC",
+        "HALO",
+        "AURA"
+      ],
+      "portable_adaptations": [
+        "BleuCheese",
+        "COVENANT",
+        "SAUSAGE",
+        "Cotton",
+        "FLUSH",
+        "atmosphere",
+        "pocket"
+      ]
     }
   },
   "checks": {

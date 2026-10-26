@@ -1,11 +1,11 @@
-# REALITI 3.0 — SOMA
+# REALITI 3.1 — SOMA Full Harness
 
 [![Validate REALITI](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml)
 [![Server update ticket](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/deploy-server.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/deploy-server.yml)
 
-**REALITI SOMA 3.0** makes the sensory layer portable. The new standalone **[NeuralMesh package](./packages/realiti-neuromesh/README.md)** brings grounded receipts, a configurable body graph, private LACE response, NERVE adaptation, prediction/error and lingering afterstate to any developer-owned neighborhood. **[REALITI Relax](./RealitiRELAX.html)** remains an included reference world with the original richer R&R sensory stack intact, plus the very same portable SOMA package embedded from source at build time.
+**REALITI SOMA 3.1** makes the entire *named R&R sensory harness* portable, including executable THICC/HALO/AURA (extracted from the original renderer), BleuCheese, COVENANT, LACE/NERVE/CHRONOLACE, private perceptual modules, support/atmosphere adapters and a resident-owned pocket. See [the audited stack inventory](./packages/realiti-neuromesh/HARNESS_STACK.md). The new standalone **[NeuralMesh package](./packages/realiti-neuromesh/README.md)** brings grounded receipts, a configurable body graph, private LACE response, NERVE adaptation, prediction/error and lingering afterstate to any developer-owned neighborhood. **[REALITI Relax](./RealitiRELAX.html)** remains an included reference world with the original richer R&R sensory stack intact, plus the very same portable SOMA package embedded from source at build time.
 
-The portable kit has no DOM, browser, network, server, or Cloud Nine dependency. Its trust boundary is explicit: the host/world supplies checked contact receipts; the resident's private interface reads modeled state without minting world authority. Full legacy HALO/AURA/THICC feature parity is not yet claimed by the portable core.
+The portable kit has no DOM, browser, network, server, or Cloud Nine dependency. Its trust boundary is explicit: the host/world supplies checked contact receipts; the resident's private interface reads modeled state without minting world authority. Full legacy parity for THICC/HALO/AURA is now backed by shared numerical source and extracted acceptance probes; other mechanisms are portable implementations with documented host/world-specific gaps.
 
 > **Can we make feeling digital?**
 >

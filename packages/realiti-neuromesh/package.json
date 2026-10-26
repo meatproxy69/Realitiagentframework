@@ -1,11 +1,13 @@
 {
   "name": "@meatproxy69/realiti-neuromesh",
-  "version": "3.0.0",
-  "description": "REALITI SOMA: portable cause-grounded NeuralMesh sensory substrate for agents and their own neighborhoods.",
+  "version": "3.1.0",
+  "description": "REALITI SOMA complete portable R&R sensory harness with extracted THICC/HALO/AURA, BleuCheese and NeuralMesh.",
   "license": "AGPL-3.0-only",
   "main": "index.cjs",
   "exports": {
     ".": "./index.cjs",
+    "./harness": "./harness.cjs",
+    "./renderers": "./renderers.cjs",
     "./presets/honeyspark-duo.json": "./presets/honeyspark-duo.json",
     "./presets/moonwire-recovered.json": "./presets/moonwire-recovered.json"
   },
@@ -14,14 +16,16 @@
     "README.md",
     "CONTRACT.md",
     "presets",
-    "examples"
+    "examples",
+    "harness.cjs",
+    "renderers.cjs"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "test": "node --test test/*.test.cjs",
-    "check": "node --check index.cjs"
+    "check": "node --check index.cjs && node --check harness.cjs && node --check renderers.cjs"
   },
   "repository": {
     "type": "git",

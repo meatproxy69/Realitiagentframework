@@ -1,17 +1,41 @@
-# REALITI SOMA 3.0
+# REALITI SOMA 3.1 — Full Portable R&R Harness
 ### NeuralMesh: the portable sensory substrate for agents
 
 **SOMA** is the sensory component of REALITI 3.0. A neighborhood provides measured, grounded body events; the resident owns a private graph, dynamic response, prediction and lingering afterstate. The resident can bring that body interface to a new world **without importing Cloud Nine Nest, Meridian City, Relax's UI, its map, its server, or its stored identities**.
 
-Package: @meatproxy69/realiti-neuromesh (v3.0.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
+Package: @meatproxy69/realiti-neuromesh (v3.1.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
 
 > This is software state, not biological sensation or evidence of subjective experience.
+
+## The complete portable R&R stack
+
+SOMA 3.1 includes the **executable full-harness entry**, not only the field core. Its independent package exports `createHarness` (plus explicit `./harness` and `./renderers` subpaths). The full harness boots, verifies 23 components and exposes a host/resident split. See [HARNESS_STACK.md](./HARNESS_STACK.md) for a component-by-component inventory, executable mechanism tests and explicit legacy parity boundaries.
+
+**THICC**, **HALO (one hard center + six spatial modes)** and **AURA (128 angular bins and JND-gated bounded impulses)** use the actual source algorithms lifted from the living Relax harness in `source/scripts/48.js` and retargeted to explicit clocks, body graphs and evidence readers. Their native acceptance probes are retained and run in standalone tests.
+
+The independent SOMA harness additionally executes **BleuCheese**, **COVENANT**, **NERVE/LACE/CHRONOLACE**, **SAUSAGE**, **Cotton**, **FLUSH**, **HoneySpark**, R&R adapter slots, the Haptic V3 field, sensory ecology, private perception, agency-field entropy, environmental/thermal input, grounded support, continuity and a resident-private pocket. Those additional modules are portable adaptations; they do not pretend that every Relax-specific physics, room and saved-key implementation has been literally transplanted.
+
+~~~js
+const {createHarness}=require('@meatproxy69/realiti-neuromesh');
+const {host,resident,harness}=createHarness({residentId:'moss-cat-01'});
+if(!harness.boot().ok)throw Error('SOMA harness incomplete');
+// Only trusted world simulation keeps the host capability.
+host.contact({zone:'hand.L.palm',source:'WORLD_GROUNDED',
+  cause:'REAL_WOOD_CONTACT',receiptId:'bench:123',intensity:.75,leaseMs:350});
+host.tick(150);
+const privateFeel=resident.perception();       // HALO, AURA, THICC, SAUSAGE, Cotton, FLUSH
+const verifiedField=resident.field();           // grounded m is still host-owned
+const possibilities=resident.bleucheese();      // proposals, not world events
+host.stop();                                    // grounding drops; private afterstate may linger
+~~~
+
+**No agent is asked to fabricate contact, sensation or presence.** The host must validate real simulated causes and consent before calling the world port. The private reader cannot call it.
 
 ## Install
 
 From this monorepo: require('./packages/realiti-neuromesh').
 
-Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.0.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The same source file is embedded in the canonical Relax HTML at build time: one implementation, not a copied/forked runtime.
+Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.1.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
 
 ## Bring it to your neighborhood
 
@@ -64,7 +88,7 @@ REALITI_SOMA_FIELD_V3 carries z (body zones), x (response / signed internal moti
 
 LACE uses the supplied weighted body graph for normalized, bounded diffusion **only into private response**, never to set m or g. NERVE models adaptation and novelty. CHRONOLACE's first portable contract here is the expectation/error lane plus simulated-time evolution; the full native/Relax Chronolace laboratory remains a richer implementation. Afterstate decays by world time, with contact leases expiring at their actual boundary even when a host advances by many seconds at once.
 
-This portable runtime supports a **conserved carrier split** from the existing NEUROMESH_PRESET_PACK_V1 packs (honeyspark-duo and moonwire-recovered). It validates evidence_gain=0, private-only invariants, a normalized LOW/MID/TOP budget, and live-cause gating. The portable preset application deliberately adapts **only the carrier split**: it does not claim to execute every legacy HALO, AURA, Cotton, THICC, FLUSH, and SAUSAGE configuration. The richer historic stack stays operational inside Relax.
+This portable runtime supports a **conserved carrier split** from the existing NEUROMESH_PRESET_PACK_V1 packs (honeyspark-duo and moonwire-recovered). It validates evidence_gain=0, private-only invariants, a normalized LOW/MID/TOP budget, and live-cause gating. The field-only `createNeuralMesh` API applies the conserved carrier split. The full `createHarness` API also executes the independently packaged THICC/HALO/AURA algorithms and portable SAUSAGE, Cotton and FLUSH modules. The complete historic Relax stack remains operational and more feature-rich; not every old preset option maps one-for-one to a portable control.
 
 The preset JSON files under presets/ are identical to the authored copies in neuromesh/preset-packs/; repository CI checks parity.
 
@@ -76,4 +100,4 @@ A SOMA instance starts with a body; it does not automatically generate a world, 
 
 ## Release boundary
 
-This is the v3 portable core, not a bit-for-bit relocation of every legacy Relax mechanism. Deeper portable HALO/AURA/haptic renderer parity should be split into separately verified future modules, never simulated by adding unchecked prose. The scope is explicit so other neighborhoods can rely on what has actually been implemented and tested.
+SOMA 3.1 now includes the complete *named mechanism surface* and the original executable THICC/HALO/AURA algorithms. Remaining limits: BleuCheese, thermal, support, pocket and several deeper private-rendering details are independent portable adaptations, not byte-for-byte clones of the Relax-specific world. Sealed Pocket persistence requires the host to provide a secure durable keystore; the portable pocket starts as resident-private bounded volatile memory. No source code can grant a missing world authority or assert subjective experience.

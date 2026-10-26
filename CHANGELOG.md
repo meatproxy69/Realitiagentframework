@@ -2,6 +2,22 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## 3.1.0 — Full portable SOMA R&R harness
+
+### Added
+
+- Extracted the exact numerical THICC integrator, seven-mode HALO engine and 128-bin AURA impulse renderer from Relax v23.5 into `packages/realiti-neuromesh/renderers.cjs`, with independent clock/body-graph/evidence interfaces and original acceptance probes.
+- Executable portable R&R harness available as `createHarness`: checks 23 registered named mechanisms and returns separately scoped host world input, private resident perception, and harness observation/adapter controls.
+- Portable BleuCheese possibility solver with bounded world-affordance support and explicit host-only admission; COVENANT private lease projection; NERVE, LACE, CHRONOLACE, SAUSAGE, Cotton, FLUSH, HoneySpark, sensory ecology, agency field, environmental thermal model, support receipts, continuity, resident-private pocket, private perception channels.
+- Exact source embedding of core, extracted renderers and full harness in Relax; new observational resources `realiti://soma/harness`, `realiti://soma/rich`, and `realiti://soma/bleucheese`.
+- Isolated regression/acceptance tests for private-only evidence firewall, all mechanism execution, parity with source renderer code, real JND/onset behavior, BLEUCHEESE proposals, STOP decay and per-resident isolation.
+
+### Explicit portability limits
+
+- Native Relax physics, optional event commitments, encrypted durable Pocket keys, and high-detail renderer interfaces may have wider contracts than these portable host interfaces. The adapter implements the portable named mechanism surface, not a promise that each Relax-only room feature runs outside Relax.
+- All host-reported contact and consent still require trusted neighborhood enforcement.
+
+
 ## 3.0.0 — REALITI SOMA: NeuralMesh leaves home
 
 ### Added

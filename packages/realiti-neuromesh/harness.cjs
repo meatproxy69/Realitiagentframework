@@ -41,7 +41,7 @@ function createHarness(options={}){
   }
   distances.set(zone,d);return d;
  }
- let now=0,seq=0,enabled=true,privateEpoch=0,selected=null;
+ let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0;
  const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
  const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
  const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
@@ -143,7 +143,7 @@ function createHarness(options={}){
   if(d.room&&d.room!==worldState.room)return {W:0,M:0,E:0,Q:0,H:0,P:0,R:0,total:0,refs:[]};
   const refs=d.requires.filter(v=>worldState.affordances[v]),supported=refs.length===d.requires.length;
   const W=supported?d.W:0,E=supported?d.E:0;
-  const p=privateProjection().channels,M=supported?.12*(p.novelty_modulation||0)+.06*(p.agency_modulation||0):0;
+  const p=privateProjection().channels,M=supported ? .12*(p.novelty_modulation||0)+.06*(p.agency_modulation||0) : 0;
   const ts=familyLast.get(d.family);
   const H=ts==null?0:.09*Math.exp(-(now-ts)/55000);
   let Q=0;for(const event of repeat){if(event.family===d.family)Q+=.18*(.72*tau((now-event.at)/1000,45)+.28*tau((now-event.at)/1000,240))}
@@ -166,17 +166,29 @@ function createHarness(options={}){
     }
   }
  }
+ function flushRender(){
+  if(!(pendingRenderMs>0))return;
+  renderer.tick(pendingRenderMs);
+  updateRich(pendingRenderMs/1000);
+  pendingRenderMs=0;
+ }
  function tick(ms){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
-  base.world.tick(ms);renderer.tick(ms);
-  const delta=ms/1000;now+=ms;
-  for(const [zone,t] of atmosphere){if(!t)continue;t.current=t.target+(t.current-t.target)*tau(delta,t.tau)}
-  updateRich(delta);bleuTick(ms);
-  if(ms)record('TIME_ADVANCE');
-  notify('advance',{dt_ms:ms});
+  base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
+  const delta=ms/1000;
+  for(const t of atmosphere.values()) {
+    t.current=t.target+(t.current-t.target)*tau(delta,t.tau);
+  }
+  bleuTick(ms);
+  // Keep adaptive world time inexpensive when the host ticks at 20 ms;
+  // exact world/contact/lease mechanics still advance each call.
+  if(pendingRenderMs>=100){
+    flushRender();record('TIME_ADVANCE');notify('advance',{dt_ms:ms});
+  }
   return {ok:true,clockMs:now,active:base.resident.field().m.reduce((a,b)=>a+b,0)};
  }
  function contact(e){
+  flushRender();
   const out=base.world.contact(e);
   if(!out.renewed){
     renderer.contact(e.zone,e.intensity,e.source,false);
@@ -190,7 +202,7 @@ function createHarness(options={}){
   const out=base.world.release(e);if(out.released){record('CONTACT_RELEASED',e);updateRich(0)}
   return out;
  }
- function stop(){const out=base.world.stop();renderer.AURA.clear();role.active=false;
+ function stop(){flushRender();const out=base.world.stop();renderer.AURA.clear();role.active=false;
   record('STOP');updateRich(0);notify('stop');return out}
  function definePossibility(input={}){
   const id=str(input.id,'possibility id',120),family=str(input.family||id,'family',80);

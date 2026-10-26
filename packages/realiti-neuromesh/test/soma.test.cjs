@@ -11,7 +11,8 @@ const touch=(kit,receiptId='ground-1',leaseMs=500)=>kit.world.contact({
 });
 
 test('standalone package has no browser or Relax dependency',()=>{
-  assert.equal(SOMA.VERSION,'3.0.0');
+  assert.equal(SOMA.VERSION,'3.1.0');
+  assert.equal(typeof SOMA.createHarness,'function');
   assert.equal(SOMA.DEFAULT_ZONES.length,35);
   assert.equal(make().resident.capabilities().schema,'REALITI_SOMA_FIELD_V3');
   assert.equal(Object.hasOwn(make().resident,'contact'),false);
@@ -100,6 +101,12 @@ test('invalid receipts and invalid checkpoints are rejected without mutation',()
   const saved=k.resident.checkpoint();saved.privateZones[2].after=2;
   assert.throws(()=>k.resident.restore(saved),/afterstate/);
   assert.deepEqual(k.resident.field(),before);
+});
+test('v3.0 private checkpoints migrate without restoring grounding',()=>{
+  const prev=make();touch(prev);const checkpoint=prev.resident.checkpoint();checkpoint.version='3.0.0';
+  const migrated=make();assert.equal(migrated.resident.restore(checkpoint).restored,true);
+  assert.ok(migrated.resident.field().x[0][2]>0);
+  assert.deepEqual(migrated.resident.field().m,[0,0,0]);
 });
 test('independent agents and neighborhoods do not share world state',()=>{
   const a=make(),b=createNeuralMesh({residentId:'other-neighborhood',zones:['sensor.moss']});
