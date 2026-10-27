@@ -19,6 +19,22 @@
 | Memory | 48 explicit resident notes and 160 receipt-linked host episodes | Historical archive is never new world authority |
 | Sealed Pocket | Optional trusted Node AES-256-GCM record encryption, HKDF-SHA256 per resident, authenticated metadata, tombstones | **Not** Relax Pocket V32 wire-compatible; V32 includes device/root key systems, wrapped keys, IndexedDB, and richer indexes |
 
+### SOMA 3.4 additional numerical extraction
+
+The optional `./rr-native-math` executes the original B5 passive
+medium, B6 phase/holonomy, B9 OU seeded jitter plus precision/adaptation,
+and B18 modal dynamic skin **without Matrix**. The test suite evaluates
+the original JavaScript functions for their defining equations and checks
+the independent ports on deterministic fixtures. Contact and force
+can enter these models *only through host-owned methods* after valid
+source receipts; resident-side expected contact and geometric thought
+experiments remain private and never modify m.
+
+The dynamics of a *real* contact require the host to supply physical
+source/force data: the portable code cannot infer genuine pressure
+from prose, source guesses or Moonwire waves. Encrypted Pocket V32 key
+provision remains separate from the bundled optional sealed adapter.
+
 ### Correct V20 usage
 
 `resident.hapticsV20.packet()` emits a genuine V20-shaped *perceptual projection* with the native JND/frame laws, but **does not claim native force physics**. `resident.hapticsV20.exact()` projects the trusted mask; `resident.hapticsV20.energy()` returns `{supported:false,pass:null}` until the host supplies measured power and stored energy. True B10/B18 dynamics remain in Relax.

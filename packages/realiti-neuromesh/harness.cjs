@@ -5,16 +5,16 @@
 (function(root,factory){
   'use strict';
   const api=(typeof module==='object'&&module.exports)
-    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'),require('./advanced.cjs'))
-    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1,root.REALITI_SOMA_ADVANCED_V1);
+    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'),require('./advanced.cjs'),require('./rr-native-math.cjs'))
+    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1,root.REALITI_SOMA_ADVANCED_V1,root.REALITI_SOMA_RR_NATIVE_V1);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.REALITI_SOMA_HARNESS_V3=api;
-})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED){
+})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED,RR_NATIVE){
 'use strict';
-if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED)throw Error('SOMA_CORE_RENDERERS_MEMORY_OR_ADVANCED_MISSING');
-const VERSION='3.3.1',SHELLS=['surface','shallow','mid','deep'];
+if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED||!RR_NATIVE)throw Error('SOMA_CORE_RENDERERS_MEMORY_ADVANCED_OR_RR_MATH_MISSING');
+const VERSION='3.4.0',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
-const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support','passive_medium','phase_grammar','holonomy','seeded_jitter','kalman_nerve','dynamic_skin'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
 const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
@@ -45,6 +45,7 @@ function createHarness(options={}){
  const memory=MEMORY.createMemory({residentId:options.residentId,worldId:options.worldId||'unscoped',clock:()=>Math.round(now)});
  const liveReceipts=new Map();
  const advanced=ADVANCED.createAdvanced({residentId:options.residentId,zones:z,edges});
+ const rrNative=RR_NATIVE.createNativeRR({residentId:options.residentId,zones:z});
  const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
  const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
  const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
@@ -257,6 +258,7 @@ function createHarness(options={}){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
   base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
   advanced.host.advance(base.resident.field());
+  rrNative.host.tick(ms);
   // Detect actual source-lease expiry using the authoritative core's live list.
   // A private echo may remain, but it is never a continuing contact.
   const grounded=base.resident.field().grounded;
@@ -265,6 +267,7 @@ function createHarness(options={}){
       memory.host.observe({kind:'CONTACT_EXPIRED',...entry,
         tMs:Math.min(Math.round(now),entry.expiresAtMs)});
       liveReceipts.delete(zone);
+      rrNative.host.release({zone,receiptId:entry.receiptId});
     }
   }
   const delta=ms/1000;
@@ -281,7 +284,8 @@ function createHarness(options={}){
   const out=base.world.contact(e); // invalid inputs cannot affect memory
   if(!out.renewed){
     const prior=liveReceipts.get(e.zone);
-    if(prior)memory.host.observe({kind:'CONTACT_ENDED',...prior});
+    if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});
+      rrNative.host.release({zone:e.zone,receiptId:prior.receiptId});}
     const event={zone:e.zone,source:e.source,cause:e.cause,
       receiptId:e.receiptId,material:e.material||null,roomId:worldState.room,
       expiresAtMs:Math.round(now+e.leaseMs)};
@@ -289,6 +293,7 @@ function createHarness(options={}){
     memory.host.observe({kind:'CONTACT_STARTED',...event});
     renderer.contact(e.zone,e.intensity,e.source,false);
     advanced.host.contact(e);
+    rrNative.host.accept(e);
     record('GROUNDED_CONTACT',e);
     notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
   }else{
@@ -303,6 +308,7 @@ function createHarness(options={}){
   const out=base.world.release(e);
   if(out.released){
     if(e?.receiptId)advanced.host.supportEnd(e.receiptId);
+    rrNative.host.release(e);
     const prior=liveReceipts.get(e.zone);
     if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});liveReceipts.delete(e.zone)}
     record('CONTACT_RELEASED',e);updateRich(0);
@@ -315,6 +321,7 @@ function createHarness(options={}){
   liveReceipts.clear();
   const out=base.world.stop();
   advanced.host.stop();advanced.host.advance(base.resident.field());
+  rrNative.host.stop();
   renderer.AURA.clear();role.active=false;
   if(!sessionStopped){
     memory.host.depart({roomId:worldState.room,reason});
@@ -389,6 +396,9 @@ function createHarness(options={}){
  function privateView(){
   const f=base.resident.field(),halo=renderer.HALO.snapshot(),aura=renderer.AURA.internalView();
   const native=advanced.resident.snapshot(f,halo,privateState);
+  const rr= {passive_medium:rrNative.resident.passive(),
+    nerve_precision:rrNative.resident.nerve(),
+    dynamic_skin:rrNative.resident.skin()};
   const thicc=z.map(zone=>({zone,...renderer.THICC.sample(zone)}));
   return clone({
     schema:'REALITI_SOMA_RICH_PERCEPTION_V3',version:VERSION,private:true,
@@ -396,7 +406,7 @@ function createHarness(options={}){
       coherence:native.lace.coherence_proxy,lambda2:native.lace.lambda2,
       coherence_proxy:native.lace.coherence_proxy},
     chronolace:chrono,
-    halo,thicc,aura,native,field20:native.field20,opponent:native.opponent,
+    halo,thicc,aura,native,rr,field20:native.field20,opponent:native.opponent,
     moonwire:native.moonwire,hearing:native.hearing,soft_support:native.support,
     sausage:{engine:'SAUSAGE_FATTENER_V4',level:rconfig.sausage_level,
       material:'WARM_HONEY',filled_volume:privateState.sausage_volume,
@@ -452,7 +462,19 @@ function createHarness(options={}){
       private_only:true},
     hearing:{available:Array.isArray(rich.hearing),world_measured_only:true},
     soft_support:{available:typeof advanced.host.supportStart==='function',
-      pressure_authority:'HOST_LEASE_ONLY'}
+      pressure_authority:'HOST_LEASE_ONLY'},
+    passive_medium:{available:typeof rrNative.resident.passive==='function',
+      passivity:rich.rr.passive_medium.passivity.ok},
+    phase_grammar:{available:typeof rrNative.resident.phase==='function',
+      ratios:['1:1','2:1'],no_external_contact:true},
+    holonomy:{available:typeof rrNative.resident.holonomy==='function',
+      simulated_reference_only:true},
+    seeded_jitter:{available:typeof rrNative.resident.jitterProbe==='function',
+      deterministic:true},
+    kalman_nerve:{available:typeof rrNative.resident.nerve==='function',
+      forecast_private:true},
+    dynamic_skin:{available:typeof rrNative.host.skinDrive==='function',
+      world_force_required:true}
   };
   return clone(modules);
  }
@@ -496,7 +518,9 @@ function createHarness(options={}){
     metrics:advanced.resident.graph.metrics}),
   hearing:Object.freeze({observe:advanced.host.sound}),
   refusal:Object.freeze({observe:advanced.host.refusal}),
-  haptics:Object.freeze({energySample:advanced.host.energySample}),
+  haptics:Object.freeze({energySample:advanced.host.energySample,
+    driveDynamicSkin:rrNative.host.skinDrive}),
+  geometry:Object.freeze({witness:rrNative.host.geometryWitness}),
   affordances:setAffordances,
   memory:Object.freeze({
     worldEvent:({receiptId,label,roomId=worldState.room}={})=>
@@ -523,6 +547,18 @@ function createHarness(options={}){
  });
  const resident=Object.freeze({
   field:()=>base.resident.field(),
+  rr:Object.freeze({
+    passive:rrNative.resident.passive,
+    nerve:rrNative.resident.nerve,
+    skin:rrNative.resident.skin,
+    expect:rrNative.resident.expect,
+    phase:rrNative.resident.phase,
+    phase21:rrNative.resident.phase21,
+    holonomy:rrNative.resident.holonomy,
+    jitterProbe:rrNative.resident.jitterProbe,
+    coincidence:rrNative.resident.coincidence,
+    prepareSkin:rrNative.resident.setPrep
+  }),
   hapticsV20:advanced.resident.field20,
   graph:advanced.resident.graph,
   interoception:advanced.resident.opponent,
@@ -562,7 +598,8 @@ function createHarness(options={}){
   }),
   memory:memory.resident,
   checkpoint:()=>({...base.resident.checkpoint(),memory:memory.resident.checkpoint(),
-    native_private:advanced.resident.checkpoint()}),
+    native_private:advanced.resident.checkpoint(),
+    rr_private:rrNative.resident.checkpoint()}),
   restore:checkpoint=>{
     // Validate the memory archive before modifying the live private body.
     // No archived contact can be reintroduced as current-world evidence.
@@ -570,6 +607,7 @@ function createHarness(options={}){
     const out=base.resident.restore(checkpoint);
     if(checkpoint?.memory)memory.host.restore(checkpoint.memory);
     if(checkpoint?.native_private)advanced.resident.restore(checkpoint.native_private);
+    if(checkpoint?.rr_private)rrNative.resident.restore(checkpoint.rr_private);
     liveReceipts.clear();
     now=Math.round(checkpoint.clockMs||0);pendingRenderMs=0;
     renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();

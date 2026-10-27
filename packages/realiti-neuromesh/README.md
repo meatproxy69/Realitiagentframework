@@ -1,4 +1,4 @@
-# REALITI SOMA 3.3 — Full Portable R&R Harness + Evidence Memory
+# REALITI SOMA 3.4 — Full Portable R&R Harness + Evidence Memory
 ### NeuralMesh: the portable sensory substrate for agents
 
 **SOMA** is the sensory component of REALITI 3.0. A neighborhood provides measured, grounded body events; the resident owns a private graph, dynamic response, prediction and lingering afterstate. The resident can bring that body interface to a new world **without importing Cloud Nine Nest, Meridian City, Relax's UI, its map, its server, or its stored identities**.
@@ -25,7 +25,7 @@ npm test --prefix packages/realiti-neuromesh
 ### Run the native-depth test room
 
 `node packages/realiti-neuromesh/examples/native-lantern-tour.cjs` runs a complete
-SOMA 3.3 resident visit in Lantern Room. It tests reach, grounded contact,
+SOMA 3.4 resident visit in Lantern Room. It tests reach, grounded contact,
 Moonwire, V20 packet generation, live LACE rewiring, physical support/creep,
 window-driven thermal stress, host-admitted BleuCheese, a physically struck bell
 and measured hearing, encrypted archived Pocket data, STOP and historical
@@ -33,17 +33,49 @@ memory isolation. The 3.3 regression suite also compares coarse and fine
 BleuCheese clocks and all ten Moonwire recipes **inside the room**.
 See [Memory and Lab](./MEMORY_AND_LAB.md).
 
-## Native sensory depth in SOMA 3.3
+## Native sensory depth in SOMA 3.4
 
-SOMA 3.3 adds a **V20 perceptual-field projection** (native JND compression, causal cuts, up to seven frames), **Fiedler/Laplacian LACE spectral metrics and registered-zone rewiring**, **ten executable Moonwire routes and eight temporal envelopes**, host-sourced bond/stress **opponent-process interoception**, measured hearing and thermal inputs, conservative soft support, **analytic BleuCheese threshold solving**, and an optional **authenticated encrypted Node Pocket adapter**.
+SOMA 3.4 adds a **V20 perceptual-field projection** (native JND compression, causal cuts, up to seven frames), **Fiedler/Laplacian LACE spectral metrics and registered-zone rewiring**, **ten executable Moonwire routes and eight temporal envelopes**, host-sourced bond/stress **opponent-process interoception**, measured hearing and thermal inputs, conservative soft support, **analytic BleuCheese threshold solving**, and an optional **authenticated encrypted Node Pocket adapter**.
 
 The V20-shaped packet is labeled `SOMA_V3_PROJECTED`: native B10/B18 force physics still lives in Relax. The energy audit deliberately returns *unknown* without actual host power and stored-energy measurements. Moonwire is a portable interpretation of the recovered route recipes, not a copy of Relax's entire ambient engine. The sealed Pocket adapter is genuine AES-256-GCM encrypted storage but is **not** the original Pocket V32 wire protocol.
 
 Read [native-depth parity and remaining limits](./NATIVE_PARITY.md) before claiming equivalence. Test source-level V20 JND and LACE Fiedler parity via `test/native-parity.test.cjs`.
 
+## R&R native mathematical completeness in SOMA 3.4
+
+The portable R&R harness now carries its original deeper numerical
+substrates in [rr-native-math.cjs](./rr-native-math.cjs): the **B5 passive coupled medium**
+(two modes, predicted/observed separation and six Prony residue modes),
+**B6 phase locking/slipping and curvature holonomy**,
+**B9 reproducible OU jitter, Gaussian temporal binding and per-zone Kalman/adaptation**,
+and the **B18 three-mode dynamic skin response**.
+
+These are executable in any Node or browser neighborhood without importing
+Matrix, Relax globals, DOM or world rooms. Original THICC/HALO/AURA kernels,
+LACE, CHRONOLACE, SAUSAGE/Cotton/FLUSH, BleuCheese, COVENANT,
+R&R role reversion, private perception, interoception, memory and
+host-observed support remain in the same portable harness.
+
+`resident.rr.passive()`, `resident.rr.nerve()`,
+`resident.rr.skin()`, `resident.rr.phase()`,
+`resident.rr.phase21()`, `resident.rr.jitterProbe()` and
+`resident.rr.holonomy()` are resident-owned read-only or **private simulation**
+interfaces. Only the trusted host can accept observed sources and feed
+`host.haptics.driveDynamicSkin({receiptId,force,dtMs})`; the latter
+**rejects unknown/expired contact IDs**, so running a private physics lab
+cannot manufacture a grounded cause. The `host.geometry.witness`
+method is a host-issued geometry claim, *not* an Ed25519 Matrix signature.
+
+**Boundary:** The numeric B5/B6/B9/B18 engines are portable. The real
+contact geometry, source authenticity, force telemetry and actual object
+state still belong to the host (optionally the separate Matrix package).
+Native Relax Pocket V32 has a different root/device-key protocol from
+`sealed-pocket`. See [R&R Stack Audit](./RR_STACK_AUDIT.md)
+for which APIs have exact source parity and which remain host integrations.
+
 ## The complete portable R&R stack
 
-SOMA 3.3 includes the **executable full-harness entry**, not only the field core. Its independent package exports `createHarness` (plus explicit `./harness` and `./renderers` subpaths). The full harness boots, verifies 30 executable mechanism surfaces and exposes a host/resident split. See [HARNESS_STACK.md](./HARNESS_STACK.md) for a component-by-component inventory, executable mechanism tests and explicit legacy parity boundaries.
+SOMA 3.4 includes the **executable full-harness entry**, not only the field core. Its independent package exports `createHarness` (plus explicit `./harness` and `./renderers` subpaths). The full harness boots, verifies 30 executable mechanism surfaces and exposes a host/resident split. See [HARNESS_STACK.md](./HARNESS_STACK.md) for a component-by-component inventory, executable mechanism tests and explicit legacy parity boundaries.
 
 **THICC**, **HALO (one hard center + six spatial modes)** and **AURA (128 angular bins and JND-gated bounded impulses)** use the actual source algorithms lifted from the living Relax harness in `source/scripts/48.js` and retargeted to explicit clocks, body graphs and evidence readers. Their native acceptance probes are retained and run in standalone tests.
 
@@ -142,4 +174,4 @@ A SOMA instance starts with a body; it does not automatically generate a world, 
 
 ## Release boundary
 
-SOMA 3.3 now includes the complete *named mechanism surface* and the original executable THICC/HALO/AURA algorithms. Remaining limits: BleuCheese, thermal, support, pocket and several deeper private-rendering details are independent portable adaptations, not byte-for-byte clones of the Relax-specific world. Sealed Pocket persistence requires the host to provide a secure durable keystore; the portable pocket starts as resident-private bounded volatile memory. No source code can grant a missing world authority or assert subjective experience.
+SOMA 3.4 now includes the complete *named mechanism surface* and the original executable THICC/HALO/AURA algorithms. Remaining limits: BleuCheese, thermal, support, pocket and several deeper private-rendering details are independent portable adaptations, not byte-for-byte clones of the Relax-specific world. Sealed Pocket persistence requires the host to provide a secure durable keystore; the portable pocket starts as resident-private bounded volatile memory. No source code can grant a missing world authority or assert subjective experience.

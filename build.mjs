@@ -28,6 +28,7 @@ for(const [marker,path] of [
   ['/*__REALITI_SOMA_MEMORY_V1__*/','packages/realiti-neuromesh/memory.cjs'],
   ['/*__REALITI_SOMA_FIELD20_V1__*/','packages/realiti-neuromesh/field20.cjs'],
   ['/*__REALITI_SOMA_ADVANCED_V1__*/','packages/realiti-neuromesh/advanced.cjs'],
+  ['/*__REALITI_SOMA_RR_NATIVE_V1__*/','packages/realiti-neuromesh/rr-native-math.cjs'],
   ['/*__REALITI_SOMA_HARNESS_V3__*/','packages/realiti-neuromesh/harness.cjs']
 ]){
   if(html.split(marker).length!==2)throw Error('Missing or duplicate full SOMA harness marker: '+marker);

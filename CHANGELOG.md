@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## SOMA 3.4.0 — Portable R&R numerical substrate, without Matrix coupling
+
+- Extracted independent executable B5 PASSIVE_MEDIUM two-mode oscillator with six Prony decay channels, linear cause superposition, observed-versus-predicted separation and passivity audits.
+- Extracted B6 1:1 and 2:1 phase laws, reference geometric holonomy, B9 deterministic Ornstein–Uhlenbeck seeded jitter and precision/adaptation zone modeling, and B18 damped dynamic skin modal solver, accepting force ONLY under live host-grounded receipts.
+- Integrated the substrate into `createHarness` with resident-owned private reads/predictions and world-host-owned contact, expiry, STOP, modeled skin force and geometry witnesses. The native R&R role and existing 30 modules remain operational; no Matrix dependency is added.
+- Added source-oracle parity fixtures for passive oscillator, 1:1/2:1 phase, jitter and skin, plus authority, passivity, checkpoint and host-bound force regressions. Additional R&R audits remain explicit where Pocket V32 and native world force handling differ.
+- New package version 3.4.0 for SOMA and headless. The underlying Relax native world and V32 Pocket are unmodified.
+
+
 ## SOMA 3.3.1 — Lantern Room native-depth acceptance and continuous support
 
 - The end-to-end simulated resident tour now tests 21 grounded-evidence and sensory invariants across 13 stages: dynamic LACE, V20/HALO/AURA, Moonwire, world-leased support, window thermal/host-admitted BleuCheese, reachable bell hearing, provenance memory, optional encrypted Pocket and STOP/cross-world restore.
