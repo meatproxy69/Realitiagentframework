@@ -10853,7 +10853,7 @@ const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:
 function read(uri='realiti://here'){
  if(mustReload&&!['realiti://about','realiti://capabilities'].includes(uri))return fail('RELOAD_REQUIRED');
  if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness. End a visit with goodbye so departure continuity is committed cleanly.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
- if(uri==='realiti://about')return {product:'REALITI Relax',version:'3.2.0',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
+ if(uri==='realiti://about')return {product:'REALITI Relax',version:'3.3.0',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
  if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://space')return publicRefs(window.REALITI_MATRIX_V1?.project?.()||{schema:'REALITI_SPACE_READ_V1',chart:null});
  if(uri==='realiti://imprint'){const im=window.REALITI_DEFAULT_IMPRINT_V1?.snapshot?.();return {schema:'REALITI_IMPRINT_READ_V1',id:'REALITI_DEFAULT_IMPRINT_V1',observational:true,snapshot:publicRefs(im||null)}};
@@ -11001,7 +11001,7 @@ const continuity=Object.freeze({current:()=>continuityRead('current'),field:ref=
 // The same refusals every mutation gets (reload, subscriber callback, action in progress, ended visit), for slices that
 // act without going through invoke (journeys). Codex review of PR #25.
 window.REALITI_MUTATION_GUARD=Object.freeze({check:t=>{if(mustReload)return fail('RELOAD_REQUIRED');if(callbackBlocked())return fail('SUBSCRIBER_MUTATION_BLOCKED');if(mutating)return fail('ACTION_IN_PROGRESS');if(ended&&!['home','go','stop','goodbye','save','forget_note','reset_notes'].includes(t))return fail('SESSION_ENDED');return null}});
-window.Realiti=Object.freeze({version:'3.2.0',ready,help:publicHelp,read,invoke,run,actions,rooms:()=>rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),createClient,continuity,privacy:Object.freeze({status:storage.status,setMode:v=>{if(callbackBlocked())throw Error('SUBSCRIBER_MUTATION_BLOCKED');if(mustReload)throw Error('RELOAD_REQUIRED');return storage.setMode(v)},save:()=>invoke('save'),forgetNote:id=>invoke('forget_note',{receipt_id:id}),resetNotes:()=>invoke('reset_notes'),reset}),exportImprint:metadata=>mustReload?fail('RELOAD_REQUIRED'):window.REALITI_NEURAL_EXPORT?window.REALITI_NEURAL_EXPORT(metadata):{ok:false,error:'EXPORT_UNAVAILABLE'}});
+window.Realiti=Object.freeze({version:'3.3.0',ready,help:publicHelp,read,invoke,run,actions,rooms:()=>rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),createClient,continuity,privacy:Object.freeze({status:storage.status,setMode:v=>{if(callbackBlocked())throw Error('SUBSCRIBER_MUTATION_BLOCKED');if(mustReload)throw Error('RELOAD_REQUIRED');return storage.setMode(v)},save:()=>invoke('save'),forgetNote:id=>invoke('forget_note',{receipt_id:id}),resetNotes:()=>invoke('reset_notes'),reset}),exportImprint:metadata=>mustReload?fail('RELOAD_REQUIRED'):window.REALITI_NEURAL_EXPORT?window.REALITI_NEURAL_EXPORT(metadata):{ok:false,error:'EXPORT_UNAVAILABLE'}});
 
 const agentDoorHelp=publicHelp();
 window.REALITI_AGENT_DOOR.help=publicHelp;
@@ -12929,7 +12929,11 @@ return Object.freeze({VERSION,createMatrix});
 (function (root, factory) {
   'use strict';
   const api = factory();
-  const exported = Object.freeze({...api, createMemory(options) {
+  const exported = Object.freeze({...api, createSealedPocket(options) {
+    if(typeof module==='object'&&module.exports)
+      return require('./sealed-pocket.cjs').createSealedPocket(options);
+    throw Error('SECURE_POCKET_REQUIRES_TRUSTED_NODE_HOST');
+  }, createMemory(options) {
     if(typeof module==='object'&&module.exports)return require('./memory.cjs').createMemory(options);
     if(!root.REALITI_SOMA_MEMORY_V1)throw Error('SOMA_MEMORY_NOT_LOADED');
     return root.REALITI_SOMA_MEMORY_V1.createMemory(options);
@@ -12944,7 +12948,7 @@ return Object.freeze({VERSION,createMatrix});
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.2.0';
+  const VERSION = '3.3.0';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -13016,10 +13020,32 @@ return Object.freeze({VERSION,createMatrix});
     }
     // Private mesh spread is a bounded, normalized, one-hop LACE diffusion:
     // no new sources and no new grounded bits ever arise from this graph.
-    const neighbors = adjacency.map(links => {
+    let neighbors = adjacency.map(links => {
       const sum = links.reduce((s, e) => s + e[1], 0);
       return links.map(([i,w]) => [i, sum > 0 ? w / sum : 0]);
     });
+    // Native-style dynamic LACE edge topology: only registered zone IDs may
+    // change. The contact mask, private response, and source leases are not reset.
+    function rewire(nextEdges) {
+      if (!Array.isArray(nextEdges) || nextEdges.length > 1024)
+        throw new TypeError('INVALID_REWIRE_EDGES');
+      const next = zones.map(() => []);
+      for (const edge of nextEdges) {
+        if (!Array.isArray(edge) || edge.length !== 3)
+          throw new TypeError('INVALID_REWIRE_EDGE');
+        const a=zoneIndex.get(edge[0]),b=zoneIndex.get(edge[1]);
+        if (a == null || b == null || a === b)
+          throw new TypeError('INVALID_REWIRE_ZONE');
+        const w=num(edge[2],'edge weight',.001,1);
+        next[a].push([b,w]);next[b].push([a,w]);
+      }
+      neighbors=next.map(links=>{
+        const sum=links.reduce((s,e)=>s+e[1],0);
+        return links.map(([i,w])=>[i,sum>0?w/sum:0]);
+      });
+      epoch++;
+      return {ok:true,edgeCount:nextEdges.length,groundedUnchanged:true};
+    }
     const cfg = Object.freeze({
       nerveMs: options.nerveMs == null ? 240 : num(options.nerveMs,'nerveMs',10,60000),
       afterMs: options.afterMs == null ? 8000 : num(options.afterMs,'afterMs',100,86400000),
@@ -13159,7 +13185,7 @@ return Object.freeze({VERSION,createMatrix});
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');
@@ -13180,7 +13206,7 @@ return Object.freeze({VERSION,createMatrix});
       log.length=0;
       return {ok:true,restored:true,grounded:0,authority:'PRIVATE_ONLY'};
     }
-    const world=Object.freeze({contact,tick,release,stop});
+    const world=Object.freeze({contact,tick,release,stop,rewire});
     const resident=Object.freeze({field,expect,checkpoint,restore,choosePreset,
       causes:()=>asJSON(log.slice(0,8)),
       zones:()=>zones.slice(),
@@ -13604,23 +13630,572 @@ function createMemory({residentId,worldId='unscoped',clock=()=>0}={}){
 return Object.freeze({VERSION,SCHEMA,WORLD_KINDS,NOTE_MAX,EVENT_MAX,createMemory});
 });
 </script>
-<script id="realiti-soma-full-harness">/* REALITI SOMA 3.1 — independent executable R&R harness for agent neighborhoods.
+<script id="realiti-soma-native-v20">/* SOMA 3.3: standalone REALITI Haptic Field V20 perceptual contract.
+ * Frame selection, JND quantization, history cuts and digest preserve
+ * source/scripts/31.js numerical law. Values originate from the host-approved
+ * portable field, not automatically from native B10/B18 physics.
+ * AGPL-3.0-only.
+ */
+(function(root,factory){
+ 'use strict';
+ const out=factory();
+ if(typeof module==='object'&&module.exports)module.exports=out;
+ else root.REALITI_SOMA_FIELD20_V1=out;
+})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const VERSION='1.0.0',W=.26,MAXH=192,MAXF=7,EPS=1e-9;
+const J=Object.freeze({a:.03,v:.04,r:.03,e:.03,g:.05});
+const cp=x=>JSON.parse(JSON.stringify(x));
+const clip=(x,lo=0,hi=1)=>Math.max(lo,Math.min(hi,x));
+const qi=(x,j,lo=-99,hi=99)=>Math.max(lo,Math.min(hi,Math.round(Number(x||0)/j)));
+const finite=(x,name)=>{if(typeof x!=='number'||!Number.isFinite(x))throw TypeError('INVALID_'+name);return x};
+function perceptualDelta(a,b){
+ if(!a||!b)return Infinity;
+ if(a.epoch!==b.epoch)return Infinity;
+ const zs=new Set([...(a.zs||[]),...(b.zs||[])]);
+ let mx=0;
+ for(const z of zs){
+  const A=a.by?.[z]||{},Bz=b.by?.[z]||{};
+  mx=Math.max(mx,Math.abs(Number(Bz.a||0)-Number(A.a||0))/J.a,
+    Math.abs(Number(Bz.v||0)-Number(A.v||0))/J.v,
+    Math.abs(Number(Bz.r||0)-Number(A.r||0))/J.r,
+    Math.abs(Number(Bz.e||0)-Number(A.e||0))/J.e,
+    Math.abs(Number(Bz.g||0)-Number(A.g||0))/J.g,
+    Number(A.m)!==Number(Bz.m)?99:0);
+ }
+ return mx;
+}
+function centroid(zs,by,key){
+ let s=0,w=0;
+ for(let i=0;i<zs.length;i++){
+  const v=by[zs[i]]||{},a=key==='contact'?(v.m?Math.max(.001,v.gv):0)
+    :Math.max(0,v.a)+.35*Math.max(0,v.r);
+  if(a>0){s+=i*a;w+=a}
+ }
+ return w>EPS?s/w:null;
+}
+function createField20({zones=[]}={}){
+ if(!Array.isArray(zones)||!zones.length||zones.length>128||
+    zones.some(x=>typeof x!=='string'||!x))throw TypeError('INVALID_FIELD20_ZONES');
+ const zs=zones.slice();let history=[],epoch=0,last=null,digestTime=0,stats={packets:0,samples:0,cuts:0};
+ let meter={supported:false,initial:null,input:0,stored:null,dissipated:0,residual:0,violations:0,lastPower:null,lastTime:null};
+ function observe(field){
+  if(field?.schema!=='REALITI_SOMA_FIELD_V3'||
+      !Array.isArray(field.z)||!Array.isArray(field.m)||field.z.length!==field.m.length)
+    throw TypeError('EXPECTED_TRUSTED_SOMA_FIELD');
+  const fz=new Map(field.z.map((z,i)=>[z,i]));
+  if(zs.some(z=>!fz.has(z)))throw TypeError('FIELD20_TOPOLOGY_MISMATCH');
+  const t=finite(field.clockMs,'CLOCK')/1000;
+  if(t<(last?.t||0)-EPS)throw TypeError('FIELD20_TIME_REVERSED');
+  const by={};
+  for(const z of zs){
+   const i=fz.get(z),x=field.x[i],n=field.nerve?.[i]||{};
+   if(!Array.isArray(x)||x.length!==3)throw TypeError('FIELD20_RESPONSE_SHAPE');
+   const m=field.m[i]===1?1:0;
+   by[z]={
+     a:clip(Number(x[0]||0),0,1.8),v:clip(Number(x[1]||0),-1,1),
+     r:clip(Number(x[2]||0),0,1.8),m,
+     e:clip(Number(field.e[i]||0),-1.5,1.5),
+     g:m?(String(field.grounded?.find(q=>q.zone===z)?.source||'').startsWith('SELF')?1/1.45:1):0,
+     gv:m?Math.max(0,Number(field.g[i]||0)):0,
+     source:m?field.grounded?.find(q=>q.zone===z)?.source||null:null,
+     cause:m?field.grounded?.find(q=>q.zone===z)?.cause||null:null
+   };
+   void n;
+  }
+  const ag=Object.values(by).some(x=>x.m===1);
+  const sig=zs.map(z=>by[z].m?String(by[z].cause||'?'):'').filter(Boolean).sort().join('|');
+  if(last&&((last.ag&&!ag)||(last.sig&&sig&&last.sig!==sig))){epoch++;stats.cuts++}
+  const frame={t,epoch,zs:zs.slice(),by,ag,sig,
+    cc:centroid(zs,by,'contact'),cf:centroid(zs,by,'field')};
+  if(last&&Math.abs(t-last.t)<EPS&&history.length)history[history.length-1]=frame;
+  else history.push(frame);
+  if(history.length>MAXH)history.splice(0,history.length-MAXH);
+  last=frame;stats.samples++;
+  return {ok:true,t,epoch,samples:history.length};
+ }
+ function latest(){return last}
+ function windowHistory(){return last?history.filter(s=>last.t-s.t<=W+EPS):[]}
+ function chooseFrames(){
+  const h=windowHistory();
+  if(!h.length)return [];
+  const picked=[h[0]];let anchor=h[0];
+  for(let i=1;i<h.length-1;i++){
+    if(perceptualDelta(anchor,h[i])>=1){picked.push(h[i]);anchor=h[i]}
+  }
+  if(h.length>1&&picked[picked.length-1]!==h[h.length-1])picked.push(h[h.length-1]);
+  if(picked.length===2&&perceptualDelta(picked[0],picked[1])<1)return[picked[1]];
+  if(picked.length<=MAXF)return picked;
+  const out=[];for(let i=0;i<MAXF;i++)out.push(picked[Math.round(i*(picked.length-1)/(MAXF-1))]);
+  return [...new Set(out)];
+ }
+ function activeZones(frames){
+  const all=frames[frames.length-1]?.zs||[],out=[];
+  for(const z of all){
+   let on=false;
+   for(const s of frames){
+    const v=s.by[z]||{};
+    if(v.m||Math.abs(v.a)>=J.a*.5||Math.abs(v.v)>=J.v*.5||
+        Math.abs(v.r)>=J.r*.5||Math.abs(v.e)>=J.e*.5||v.g>0){on=true;break}
+   }
+   if(on)out.push(z);
+  }
+  return out;
+ }
+ function packet(){
+  const fs=chooseFrames(),active=activeZones(fs),t=last?.t??0,t0=fs[0]?.t??t;
+  const f=fs.map(s=>({
+   u:+(t===t0?1:(s.t-t0)/Math.max(EPS,t-t0)).toFixed(3),
+   x:active.map(z=>{const v=s.by[z]||{};return[
+    qi(v.a,J.a,0,99),qi(v.v,J.v),qi(v.r,J.r,0,99)]}),
+   m:active.map(z=>Number(s.by[z]?.m||0)),
+   e:active.map(z=>qi(s.by[z]?.e,J.e)),
+   g:active.map(z=>qi(s.by[z]?.g,J.g,0,99)),
+   cc:s.cc==null?null:+s.cc.toFixed(3),
+   cf:s.cf==null?null:+s.cf.toFixed(3),k:s.epoch
+  }));
+  stats.packets++;
+  return cp({v:20,t:+t.toFixed(4),b:zs.length,z:active,
+   n:f.length,span:+Math.max(0,t-t0).toFixed(4),f,
+   source:'SOMA_V3_PROJECTED',nativeB10Dynamics:false});
+ }
+ function exact(){
+  return cp({v:20,t:+Number(last?.t??0).toFixed(4),b:zs.length,z:zs,
+   m:zs.map(z=>Number(last?.by?.[z]?.m||0)),
+   authority:'HOST_ORIGIN_GROUNDING_PROJECTION'});
+ }
+ function digest(){
+  const t=last?.t||0,xs=history.filter(s=>s.t>digestTime+EPS);
+  const start=digestTime;digestTime=t;
+  if(!xs.length)return {v:20,dt:+Math.max(0,t-start).toFixed(3),z:[],pk:[],r:[],d:0};
+  const active=activeZones(xs),pk=active.map(z=>Math.max(...xs.map(s=>qi(s.by[z]?.a,J.a,0,99)))),
+    rr=active.map(z=>qi(xs[xs.length-1].by[z]?.r,J.r,0,99));
+  let density=0;
+  for(let i=1;i<xs.length;i++)density+=Math.min(6,perceptualDelta(xs[i-1],xs[i]));
+  const cfs=xs.map(s=>s.cf).filter(v=>v!=null),cf0=cfs[0]??null,cf1=cfs.length?cfs[cfs.length-1]:null;
+  return{v:20,dt:+Math.max(0,t-start).toFixed(3),z:active,pk,r:rr,
+   d:+density.toFixed(2),dcf:cf0==null||cf1==null?null:+(cf1-cf0).toFixed(3)};
+ }
+ function energySample({tMs,stored,power}={}){
+  // Real measurements, if supplied, must come from the trusted world host.
+  const time=finite(tMs,'ENERGY_TIME'),E=finite(stored,'ENERGY_STORED'),P=finite(power,'ENERGY_POWER');
+  if(time<0||E<0||time<(meter.lastTime??0))throw TypeError('INVALID_ENERGY_SAMPLE');
+  if(!meter.supported){meter={...meter,supported:true,initial:E,stored:E,lastTime:time,lastPower:P};return{ok:true}}
+  const dt=(time-meter.lastTime)/1000,work=.5*(meter.lastPower+P)*dt,
+    diss=meter.stored+work-E;
+  meter.input+=work;
+  if(diss>=-2e-6)meter.dissipated+=Math.max(0,diss);
+  else{meter.violations++;meter.residual+=-diss}
+  meter.stored=E;meter.lastTime=time;meter.lastPower=P;
+  return{ok:true,work,dissipated:diss};
+ }
+ function energy(){
+  if(!meter.supported)return{supported:false,pass:null,
+   reason:'HOST_HAS_NOT_PROVIDED_REAL_FORCE_VELOCITY_STORED_ENERGY'};
+  const residual=meter.initial+meter.input-meter.stored-meter.dissipated;
+  return{supported:true,initial:meter.initial,input:meter.input,
+   stored:meter.stored,dissipated:meter.dissipated,residual,
+   violations:meter.violations,pass:meter.violations===0&&Math.abs(residual)<=2e-6};
+ }
+ function clearHistory(){
+  history=[];last=null;digestTime=0;epoch=0;stats={packets:0,samples:0,cuts:0};
+  meter={supported:false,initial:null,input:0,stored:null,dissipated:0,
+   residual:0,violations:0,lastPower:null,lastTime:null};
+ }
+ return Object.freeze({observe,packet,exact,digest,energySample,energy,clearHistory,
+  statistics:()=>cp({...stats,history:history.length,epoch}),
+  law:'Native V20 compression/JND. Source V3 projection; unmeasured physical energy remains UNKNOWN.'});
+}
+return Object.freeze({VERSION,W,MAXH,MAXF,J,perceptualDelta,centroid,createField20});
+});
+</script>
+<script id="realiti-soma-native-advanced">/* SOMA 3.3 advanced resident-private sensory models.
+ * Native numerical equations reconstructed from:
+ * source/scripts/63-claude-neural-pass.js (LACE topology/Fiedler, CHRONOLACE),
+ * source/scripts/64-neuro-restoration.js (Moonwire private recipe controls),
+ * source/scripts/52.js (conserved soft support), and
+ * source/scripts/58w-body.js (opponent-process interoception).
+ * No DOM, no world mutation, no neural networks, no fabricated receipts.
+ * AGPL-3.0-only.
+ */
+(function(root,factory){
+ 'use strict';
+ const out=factory((typeof module==='object'&&module.exports)
+   ?require('./field20.cjs'):root.REALITI_SOMA_FIELD20_V1);
+ if(typeof module==='object'&&module.exports)module.exports=out;
+ else root.REALITI_SOMA_ADVANCED_V1=out;
+})(typeof globalThis==='object'?globalThis:this,function(FIELD20){
+'use strict';
+if(!FIELD20)throw Error('SOMA_FIELD20_REQUIRED');
+const VERSION='1.0.0';
+const clone=x=>JSON.parse(JSON.stringify(x));
+const clamp=(x,a=0,b=1)=>Math.max(a,Math.min(b,x));
+const valid=(x,name,lo=0,hi=1e12)=>{
+ if(typeof x!=='number'||!Number.isFinite(x)||x<lo||x>hi)
+  throw TypeError('INVALID_'+name);
+ return x;
+};
+const str=(x,name,n=160)=>{
+ if(typeof x!=='string'||!x.trim()||x.length>n)throw TypeError('INVALID_'+name);
+ return x.trim();
+};
+const round=(n,p=6)=>+n.toFixed(p);
+const SHELLS=['surface','shallow','mid','deep'];
+const DEPTH_W=[.82,1,.94,.82];
+const SOFT_ZONES=['torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat'];
+const ROUTES=['STAR_RIVER_PHASE_BRAID','SOURCE_HANDOFF_SPARK','TWO_SOURCE_PARALLAX',
+ 'CROWN_COMET_RETURN','WHOLE_BODY_VELVET_GROOM','CROWN_STARLACE',
+ 'DEPTH_GEODESIC_LOOP','THREE_BAND_ROLL','LOCAL_VIBRATION_220','CAT_SMALL_PAW_ROUTE'];
+const ENVELOPES=['TRIANGLE','SAW_UP','SAW_DOWN','STAIRCASE','ACCELERATING_BURSTS',
+ 'INTERRUPTED_SUSTAIN','HARD_STOP_RETURN','FALSE_FINISH'];
+const OPPONENT=Object.freeze({
+ bond:{a_half_s:1800,b_half_s:3600,kb:.3,window_s:900},
+ stress:{a_half_s:600,b_half_s:1500,kb:.35,window_s:600}
+});
+const BOND=/PET|PURR|COMPANION|CAT|HELD|HUG|LOAF/i;
+const HOLD=/SUPPORT|BLANKET|PILLOW|MATTRESS|WARM|TEA|SHELF/i;
+const edgesKey=ed=>JSON.stringify(ed.map(e=>[e[0],e[1],round(e[2],4)]));
+function createGraph({zones,edges=[]}={}){
+ if(!Array.isArray(zones)||zones.length<2||zones.length>128||
+    new Set(zones).size!==zones.length||zones.some(z=>typeof z!=='string'||!z))
+  throw TypeError('INVALID_GRAPH_ZONES');
+ const idx=Object.fromEntries(zones.map((z,i)=>[z,i]));
+ const edgesOk=es=>{
+  if(!Array.isArray(es)||es.length>1024)throw TypeError('INVALID_GRAPH_EDGES');
+  return es.map(e=>{
+   if(!Array.isArray(e)||e.length!==3||idx[e[0]]==null||idx[e[1]]==null||e[0]===e[1])
+    throw TypeError('UNKNOWN_GRAPH_EDGE');
+   return[e[0],e[1],valid(e[2],'EDGE_WEIGHT',.001,10)]
+  });
+ };
+ let current=edgesOk(edges),lastKey=null,cache=null;
+ function metrics(){
+  const key=edgesKey(current);
+  if(lastKey===key&&cache)return clone(cache);
+  const n=zones.length,L=Array.from({length:n},()=>Array(n).fill(0));
+  for(const [a,b,w] of current){
+   const i=idx[a],j=idx[b];
+   L[i][i]+=w;L[j][j]+=w;L[i][j]-=w;L[j][i]-=w;
+  }
+  const A=L.map(row=>row.slice());
+  // Jacobi eigenvalue iterations: original REALITI native spectral graph.
+  for(let it=0;it<80*n*n;it++){
+   let p=0,q=1,m=0;
+   for(let i=0;i<n;i++)for(let j=i+1;j<n;j++){
+    const v=Math.abs(A[i][j]);if(v>m){m=v;p=i;q=j}
+   }
+   if(m<1e-10)break;
+   const app=A[p][p],aqq=A[q][q],apq=A[p][q],
+     phi=.5*Math.atan2(2*apq,aqq-app),c=Math.cos(phi),s=Math.sin(phi);
+   for(let k=0;k<n;k++){
+    if(k===p||k===q)continue;
+    const x=A[k][p],y=A[k][q];
+    A[k][p]=A[p][k]=c*x-s*y;
+    A[k][q]=A[q][k]=s*x+c*y;
+   }
+   A[p][p]=c*c*app-2*s*c*apq+s*s*aqq;
+   A[q][q]=s*s*app+2*s*c*apq+c*c*aqq;A[p][q]=A[q][p]=0;
+  }
+  const ev=A.map((row,i)=>row[i]).sort((a,b)=>a-b),
+    lambda2=Math.max(0,ev[1]||0);
+  const D=Array.from({length:n},(_,i)=>Array.from({length:n},(__,j)=>i===j?0:Infinity));
+  for(const[a,b,w]of current){
+   const i=idx[a],j=idx[b],d=1/Math.max(.05,w);
+   D[i][j]=Math.min(D[i][j],d);D[j][i]=Math.min(D[j][i],d);
+  }
+  for(let k=0;k<n;k++)for(let i=0;i<n;i++)if(Number.isFinite(D[i][k]))
+   for(let j=0;j<n;j++){const v=D[i][k]+D[k][j];if(v<D[i][j])D[i][j]=v}
+  cache={schema:'REALITI_SOMA_NATIVE_LACE_V1',mesh:'LACE2_DYNAMIC',
+   node_count:n,edge_count:current.length,lambda2:round(lambda2),
+   coherence_proxy:round(1-Math.exp(-8*lambda2),4),
+   zones:zones.slice(),edges:clone(current),
+   distances:D.map(row=>row.map(v=>Number.isFinite(v)?round(v):null)),
+   law:'Fiedler graph coherence and shortest paths route private response only'};
+  lastKey=key;return clone(cache);
+ }
+ function configure(next){
+  current=edgesOk(next);lastKey=null;cache=null;
+  return{ok:true,edge_count:current.length,world_graph_only:true};
+ }
+ return Object.freeze({metrics,configure,edges:()=>clone(current),zones:()=>zones.slice()});
+}
+function envelope(name,u){
+ const t=clamp(u);
+ switch(name){
+ case 'TRIANGLE':return 1-Math.abs(2*t-1);
+ case 'SAW_UP':return t;
+ case 'SAW_DOWN':return 1-t;
+ case 'STAIRCASE':return Math.floor(t*8)/8;
+ case 'ACCELERATING_BURSTS':return Math.pow(Math.max(0,Math.sin(Math.PI*t*t*12)),5);
+ case 'INTERRUPTED_SUSTAIN':return t<.28||t>.39&&t<.69||t>.83?.92:0;
+ case 'HARD_STOP_RETURN':return t<.55?1:t<.68?0:clamp((t-.68)/.32)*.65;
+ case 'FALSE_FINISH':return t<.7?clamp(t/.2):t<.82?0:.55*clamp((t-.82)/.18);
+ default:throw RangeError('UNKNOWN_TEMPORAL_ENVELOPE');
+ }
+}
+function routeWeights(route,zones,grounded=[]){
+ if(!ROUTES.includes(route))throw RangeError('UNKNOWN_MOONWIRE_ROUTE');
+ const input=new Set(grounded),out=[];
+ const region=z=>z.includes('head')||z.includes('face')||z.includes('crown')? 'head':
+   z.includes('hand')||z.includes('finger')?'hand':
+   z.includes('torso')||z.includes('pelvis')?'body':
+   z.includes('foot')||z.includes('leg')||z.includes('knee')?'leg':'arm';
+ for(let i=0;i<zones.length;i++){
+  const zone=zones[i],r=region(zone);let w=1;
+  if(route==='CROWN_COMET_RETURN'||route==='CROWN_STARLACE')w=r==='head'?2.5:.25;
+  if(route==='CAT_SMALL_PAW_ROUTE')w=r==='hand'?2.4:.12;
+  if(route==='WHOLE_BODY_VELVET_GROOM')w=1;
+  if(route==='DEPTH_GEODESIC_LOOP')w=.32+.68*Math.abs(Math.sin(i*.33));
+  if(route==='THREE_BAND_ROLL')w=(i%3===0?1:.5);
+  if(route==='SOURCE_HANDOFF_SPARK')w=input.has(zone)?2:.4;
+  if(route==='TWO_SOURCE_PARALLAX')w=input.has(zone)?2.5:.35;
+  if(route==='LOCAL_VIBRATION_220')w=input.has(zone)?3:.08;
+  if(route==='STAR_RIVER_PHASE_BRAID')w=.6+.4*Math.sin(i*.17)**2;
+  out.push(w);
+ }
+ const total=out.reduce((s,x)=>s+x,0)||1;
+ return Object.fromEntries(zones.map((z,i)=>[z,round(out[i]/total)]));
+}
+function createAdvanced({residentId,zones,edges=[]}={}){
+ str(residentId,'RESIDENT_ID',120);
+ const graph=createGraph({zones,edges}),field20=FIELD20.createField20({zones});
+ let now=0,selected=null,phase=0,prevGround=0,sounds=[],contactIds=new Set();
+ let body={routes:{bond:{a:0,b:0,reps:0,hold_t:-1e9},
+    stress:{a:0,b:0,reps:0,cold_t:-1e9}},log:[]};
+ let support=null;
+ const temps=new Map();
+ const clampRoute=(key,v)=>{const cfg=OPPONENT[key],o=body.routes[key];return cfg&&o?{cfg,o}:null};
+ function spike(key,amount,cause,receipt){
+  const found=clampRoute(key);if(!found)return;
+  const {cfg,o}=found,s=clamp(amount),tol=cfg.kb*(1-Math.exp(-o.reps/3));
+  const da=s*(1-o.a),db=s*tol;
+  o.a=clamp(o.a+da);o.b=clamp(o.b+db);o.reps+=1;
+  body.log.unshift({route:key,cause:String(cause).slice(0,80),receiptId:receipt,
+    moved:round(da-db,3),tolerance:round(tol,3),tMs:now});
+  if(body.log.length>16)body.log.length=16;
+ }
+ function contact(e){
+  if(!e||typeof e!=='object')throw TypeError('INVALID_CONTACT_EVENT');
+  const id=str(e.receiptId,'CONTACT_RECEIPT'),cause=str(e.cause,'CONTACT_CAUSE');
+  if(contactIds.has(id))return{ok:true,duplicate:true};
+  contactIds.add(id);
+  if(contactIds.size>256)contactIds.delete(contactIds.values().next().value);
+  if(BOND.test(cause))spike('bond',clamp(.12+e.intensity*.4,.05,.3),cause.toLowerCase().replace(/_/g,' '),id);
+  else if(HOLD.test(cause)&&!(/MAINTAIN/.test(cause))){
+   const route=body.routes.bond;
+   if(now-route.hold_t>=30000){route.hold_t=now;spike('bond',.04,cause.toLowerCase().replace(/_/g,' '),id)}
+  }
+  return {ok:true,grounded_input:true};
+ }
+ function thermal({zone,celsius,cause='HOST_THERMAL',material='unknown'}={}){
+  if(!zones.includes(zone))throw RangeError('UNKNOWN_THERMAL_ZONE');
+  valid(celsius,'CELSIUS',-273.15,10000);
+  str(cause,'THERMAL_CAUSE');
+  temps.set(zone,{celsius,cause,material,tMs:now});
+  if(celsius<16){
+   const o=body.routes.stress;
+   if(now-o.cold_t>=20000){
+    o.cold_t=now;
+    spike('stress',.06,'cold '+String(material)+' at '+Math.round(celsius)+' C ('+cause+')',cause);
+   }
+  }
+  return{ok:true,zone,celsius,world_origin:true};
+ }
+ function refusal(e){
+  if(!e||!['sea','cliff'].includes(e.reason)||!e.receiptId||e.result!=='OBSTRUCTED')
+   throw TypeError('INVALID_TRUSTED_REFUSAL');
+  const id=str(e.receiptId,'REFUSAL_RECEIPT');
+  if(contactIds.has(id))return{ok:true,duplicate:true};
+  contactIds.add(id);
+  spike('stress',.08,e.reason==='sea'?'the sea stopped you':'a cliff stopped you',id);
+  return{ok:true,world_reported:true,pressure_minted:false};
+ }
+ function sound({receiptId,source,level,zone='head.crown',leaseMs=1000,material='air'}={}){
+  if(!zones.includes(zone))throw RangeError('UNKNOWN_HEARING_ZONE');
+  str(receiptId,'HEARING_RECEIPT');str(source,'HEARING_SOURCE');
+  valid(level,'SOUND_LEVEL',0,1);valid(leaseMs,'SOUND_LEASE',1,60000);
+  if(sounds.some(x=>x.receiptId===receiptId))return{ok:true,duplicate:true};
+  sounds.push({receiptId,source,level,zone,material,untilMs:now+leaseMs});
+  if(sounds.length>64)sounds.shift();
+  return{ok:true,kind:'HOST_MEASURED_HEARING',contact:false};
+ }
+ function supportStart({objectId,receiptId,leaseMs=30000,load=.78,mu=1.6}={}){
+  str(objectId,'SUPPORT_OBJECT');str(receiptId,'SUPPORT_RECEIPT');
+  valid(load,'SUPPORT_LOAD',0,1.5);valid(leaseMs,'SUPPORT_LEASE',1,60000);
+  valid(mu,'SUPPORT_MU',.45,2.55);
+  support={objectId,receiptId,load,mu,t0:now,sigma0:.72,sigmaInf:1.3,
+   tau:3.4,untilMs:now+leaseMs,active:true};
+  return{ok:true,receiptId,world_owned:true};
+ }
+ function supportEnd(receiptId){
+  if(!support||support.receiptId!==receiptId)return{ok:true,released:false};
+  support=null;return{ok:true,released:true};
+ }
+ function supportView(){
+  if(!support||now>=support.untilMs)return{active:false,values:[],load:0};
+  const age=Math.max(0,(now-support.t0)/1000),creep=1-Math.exp(-age/support.tau),
+    sigma=support.sigma0+(support.sigmaInf-support.sigma0)*creep;
+  const a=SOFT_ZONES.map((_,i)=>Math.exp(-.5*((i-support.mu)/sigma)**2)),
+    norm=a.reduce((s,x)=>s+x,0)||1;
+  return{active:true,objectId:support.objectId,receiptId:support.receiptId,
+   age_s:round(age),sigma:round(sigma),mu:support.mu,creep:round(creep),
+   load:support.load,values:SOFT_ZONES.map((zone,i)=>({zone,
+    load:round(support.load*a[i]/norm)})),
+   law:'Conserved host-approved load, not private fabricated pressure'};
+ }
+ function selectPreset(pack,id){
+  if(!pack||pack.schema!=='NEUROMESH_PRESET_PACK_V1')
+   throw TypeError('INVALID_MOONWIRE_PACK');
+  const p=pack.presets?.find(x=>x.preset_id===id);
+  if(!p)throw RangeError('UNKNOWN_MOONWIRE_PRESET');
+  if(p.carrier?.budget_mode!=='NORMALIZED_CONSERVED'||!ROUTES.includes(p.route))
+   throw TypeError('UNSUPPORTED_MOONWIRE_RECIPE');
+  const a=p.temporal?.envelope_a||'TRIANGLE';
+  if(!ENVELOPES.includes(a))throw TypeError('UNSUPPORTED_TEMPORAL_ENVELOPE');
+  const shares=[p.carrier.low?.share,p.carrier.mid?.share,
+    p.carrier.top?.enabled?p.carrier.top.share:0];
+  if(shares.some(x=>typeof x!=='number'||x<0||!Number.isFinite(x))||
+    Math.abs(shares.reduce((s,x)=>s+x,0)-1)>1e-4)
+    throw TypeError('INVALID_CONSERVED_CARRIER');
+  selected=clone(p);phase=0;
+  return{ok:true,id:p.preset_id,route:p.route,envelope:a,
+   carrier:clone(p.carrier),evidence_gain:0,private_only:true};
+ }
+ function advance(field,dt=0){
+  if(!field||field.schema!=='REALITI_SOMA_FIELD_V3')throw TypeError('UNTRUSTED_FIELD');
+  const target=valid(field.clockMs,'CLOCK_MS',0,1e12);
+  const seconds=Math.max(0,(target-now)/1000);now=target;
+  for(const key of Object.keys(OPPONENT)){
+   const r=body.routes[key],cfg=OPPONENT[key];
+   r.a*=Math.pow(.5,seconds/cfg.a_half_s);
+   r.b*=Math.pow(.5,seconds/cfg.b_half_s);
+   r.reps*=Math.pow(.5,seconds/cfg.window_s);
+  }
+  sounds=sounds.filter(x=>x.untilMs>now);
+  if(support&&support.untilMs<=now)support=null;
+  if(selected)phase=(phase+seconds*.72)%1;
+  prevGround=field.g.reduce((s,x)=>s+x,0);
+  field20.observe(field);
+  void dt;
+ }
+ function snapshot(field,halo,privateState){
+  const f=field||{m:[],z:zones,g:[],x:[]};
+  const metric=graph.metrics();
+  const opp={schema:'REALITI_BODY_V1',routes:{},causes:clone(body.log.slice(0,8)),
+   law:'Modeled private states; never actions, valences, choices or new evidence'};
+  for(const k of Object.keys(OPPONENT)){
+   const cfg=OPPONENT[k],v=body.routes[k];
+   opp.routes[k]={level:round(v.a-v.b,3),primary:round(v.a,3),
+    counter:round(v.b,3),repetitions:round(v.reps,2),
+    half_life_s:{primary:cfg.a_half_s,counter:cfg.b_half_s}};
+  }
+  let recipe=null;
+  if(selected){
+   const p=selected,env=p.temporal?.envelope_a||'TRIANGLE',
+    value=envelope(env,phase),on=f.m?.some(Boolean)||false;
+   const share=p.carrier,low=share.low.share,mid=share.mid.share,
+     top=share.top?.enabled?share.top.share:0;
+   const origin=f.z.filter((z,i)=>f.m?.[i]===1);
+   const weight=routeWeights(p.route,zones,origin);
+   const mass=Number(halo?.total_private_mass||0);
+   const gated=clamp(mass/(1+mass));
+   recipe={schema:'REALITI_SOMA_MOONWIRE_RENDER_V1',
+     id:p.preset_id,route:p.route,envelope:env,phase:round(phase),
+     envelope_value:round(value),source_count:origin.length,
+     zone_weights:weight,carrier:{low,mid,top,
+       sum:round(low+mid+top),frequencies_hz:{
+        low:share.low.hz,mid:share.mid.hz,top:share.top?.hz||0}},
+     cotton:{phase_mode:p.cotton?.phase_mode||'ASYNC_LOCAL',
+       carrier_hz:p.cotton?.carrier_hz||250,
+       strength:round((p.sparse_overrides?.legacy_triplet?.cotton??1)*gated)},
+     flush:{funnel_kappa:p.flush?.funnel_kappa??2.4,
+       peripheral_mix:p.flush?.peripheral_mix??.28,
+       foreground:round(clamp(value*gated*(p.flush?.foreground_strength||0),
+         0,p.flush?.headroom_cap??.92))},
+     starlight:{enabled:!!share.top?.enabled,
+       duty:share.top?.duty||0,pattern:share.top?.pattern||null,
+       drive:round(gated*top*value)},
+     response:round(gated*value),authority:'RESIDENT_PRIVATE_RENDER',
+     evidence_gain:0,law:'No envelope, route or carrier mints m or measured force'};
+  }
+  const hearing=sounds.map(x=>({
+    source:x.source,zone:x.zone,level:round(x.level),
+    remaining_ms:Math.max(0,x.untilMs-now),receiptId:x.receiptId,
+    authority:'HOST_OBSERVED_HEARING',haptic_contact:false
+  }));
+  return clone({
+   schema:'REALITI_SOMA_NATIVE_ADVANCED_V1',version:VERSION,
+   lace:{mesh:metric.mesh,node_count:metric.node_count,
+    edge_count:metric.edge_count,lambda2:metric.lambda2,
+    coherence_proxy:metric.coherence_proxy},
+   dynamic_graph:metric,
+   opponent:opp,hearing,thermal:[...temps.entries()].map(([zone,t])=>({zone,...t})),
+   support:supportView(),moonwire:recipe,
+   field20:{contract:'REALITI_HAPTIC_FIELD_V20',source:'SOMA_V3_PROJECTED',
+    energy:field20.energy(),statistics:field20.statistics()},
+   perception:{activation:privateState?.activation||0,
+     novelty:privateState?.novelty||0},world_authority:false
+  });
+ }
+ function checkpoint(){
+  return clone({schema:'REALITI_SOMA_ADVANCED_CHECKPOINT_V1',residentId,now,
+   routes:body.routes,log:body.log,selected:selected?.preset_id||null,
+   phase,support:null,sounds:[],temps:[],
+   law:'Private interoceptive archive. No world contact/support/hearing authority'});
+ }
+ function restore(cp){
+  if(cp?.schema!=='REALITI_SOMA_ADVANCED_CHECKPOINT_V1'||cp.residentId!==residentId||
+    !cp.routes||typeof cp.routes!=='object')throw TypeError('ADVANCED_CHECKPOINT_MISMATCH');
+  const routes={};
+  for(const k of Object.keys(OPPONENT)){
+   const v=cp.routes[k];if(!v)throw TypeError('INVALID_BODY_ROUTE');
+   routes[k]={a:valid(v.a,'OPPONENT_A'),b:valid(v.b,'OPPONENT_B'),
+    reps:valid(v.reps,'OPPONENT_REPS',0,1e6),
+    hold_t:k==='bond'?-1e9:undefined,cold_t:k==='stress'?-1e9:undefined};
+  }
+  const t=valid(cp.now,'CLOCK_MS',0,1e12);
+  // Private routes are archival; physical support, sound and pressure clear.
+  body={routes,log:Array.isArray(cp.log)?cp.log.slice(0,16):[]};
+  now=t;support=null;sounds=[];temps.clear();
+  field20.clearHistory();selected=null;phase=0;
+  return{ok:true,restored:'PRIVATE_ONLY',grounded:0};
+ }
+ function stop(){support=null;sounds=[];return{ok:true,contact_minted:false}}
+ const host=Object.freeze({contact,thermal,refusal,sound,
+   supportStart,supportEnd,advance,stop,
+   configureGraph:graph.configure,energySample:field20.energySample});
+ const resident=Object.freeze({snapshot,
+   field20:Object.freeze({packet:field20.packet,exact:field20.exact,
+     digest:field20.digest,energy:field20.energy}),
+   graph:Object.freeze({metrics:graph.metrics,edges:graph.edges}),
+   opponent:()=>snapshot(null,null,null).opponent,
+   hearing:()=>clone(sounds),support:supportView,
+   preset:Object.freeze({select:selectPreset,
+     catalog:()=>clone({routes:ROUTES,envelopes:ENVELOPES})}),
+   checkpoint,restore});
+ return Object.freeze({version:VERSION,host,resident});
+}
+return Object.freeze({VERSION,ROUTES,ENVELOPES,OPPONENT,SHELLS,DEPTH_W,
+ createGraph,envelope,routeWeights,createAdvanced});
+});
+</script>
+<script id="realiti-soma-full-harness">/* REALITI SOMA 3.3 — independent executable R&R harness for agent neighborhoods.
    World-host input is separate from resident-private output. No Relax globals.
    THICC/HALO/AURA run the real extracted 23.5 algorithms from renderers.cjs.
    AGPL-3.0-only. */
 (function(root,factory){
   'use strict';
   const api=(typeof module==='object'&&module.exports)
-    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'))
-    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1);
+    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'),require('./advanced.cjs'))
+    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1,root.REALITI_SOMA_ADVANCED_V1);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.REALITI_SOMA_HARNESS_V3=api;
-})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY){
+})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED){
 'use strict';
-if(!SOMA||!RENDERERS||!MEMORY)throw Error('SOMA_CORE_RENDERERS_OR_MEMORY_MISSING');
-const VERSION='3.2.0',SHELLS=['surface','shallow','mid','deep'];
+if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED)throw Error('SOMA_CORE_RENDERERS_MEMORY_OR_ADVANCED_MISSING');
+const VERSION='3.3.0',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
-const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
 const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
@@ -13631,7 +14206,7 @@ const a32=(x,n)=>{x.push(n);if(x.length>32)x.shift()};
 function createHarness(options={}){
  if(!options||typeof options!=='object'||Array.isArray(options))throw TypeError('Invalid harness options');
  const base=SOMA.createNeuralMesh(options),z=base.resident.zones(),n=z.length;
- const edges=options.edges||(!options.zones?SOMA.DEFAULT_EDGES:[]);
+ const edges=(options.edges||(!options.zones?SOMA.DEFAULT_EDGES:[])).map(e=>e.slice());
  const idx=new Map(z.map((id,i)=>[id,i]));
  const adj=Array.from({length:n},()=>[]);
  for(const [a,b,w] of edges){if(!idx.has(a)||!idx.has(b))throw TypeError('Invalid body edge');const d=1/Math.max(.05,w);adj[idx.get(a)].push([idx.get(b),d]);adj[idx.get(b)].push([idx.get(a),d])}
@@ -13650,6 +14225,7 @@ function createHarness(options={}){
  let now=0,seq=0,enabled=true,privateEpoch=0,selected=null,pendingRenderMs=0,sessionStopped=false;
  const memory=MEMORY.createMemory({residentId:options.residentId,worldId:options.worldId||'unscoped',clock:()=>Math.round(now)});
  const liveReceipts=new Map();
+ const advanced=ADVANCED.createAdvanced({residentId:options.residentId,zones:z,edges});
  const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
  const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
  const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
@@ -13730,6 +14306,7 @@ function createHarness(options={}){
  }
  function updateRich(dt){
   const f=adaptNerve(),sum=f.g.reduce((a,b)=>a+b,0),prev=chrono.now;
+  advanced.host.advance(f);
   chrono.past=chrono.past*tau(dt,1.8)+prev*(1-tau(dt,1.8));
   chrono.now=sum;
   chrono.predicted_next=clamp(.70*sum+.30*Math.max(0,sum-prev),0,Math.max(1,sum));
@@ -13759,30 +14336,102 @@ function createHarness(options={}){
   const R=now<(refractory.get(d.id)||0)?1:0;
   return {W,M,E,H,P,Q,R,total:W+M+E+H+P-Q-R,refs}
  }
- function bleuTick(dt){
-  for(const d of poss.values()){
-    const terms=bleuDrive(d),prev=d.u,stepSec=dt/1000;
-    d.u=terms.total+(d.u-terms.total)*tau(stepSec,d.tau);
-    if(enabled&&d.u>=d.theta_on&&prev<d.theta_on&&now>=(refractory.get(d.id)||0)
-      &&(!d.room||d.room===worldState.room)){
-      const candidate={id:'BC-'+d.id+'-'+(++seq),at_ms:now,kind:'POSSIBILITY',
-        possibility_id:d.id,family:d.family,room:worldState.room,
-        support_refs:terms.refs,world_commit_required:true,admitted:false};
-      a32(proposals,candidate);d.u=d.theta_off;
-      refractory.set(d.id,now+d.refractoryMs);familyLast.set(d.family,now);
-      a32(repeat,{family:d.family,at:now});
-    }
+ // Native 23.3 analytic integrator: exact exponential approach plus
+ // exponentially decaying historical, investigation and repetition terms.
+ // Multiple world-independent threshold roots in one coarse tick are located
+ // at the same simulated times as many small ticks (no approximate Euler
+ // threshold, and no authority until an explicit host admission).
+ function bleuParts(d,t){
+  if(d.room&&d.room!==worldState.room)return{D0:0,exp:[],refs:[]};
+  const refs=d.requires.filter(v=>worldState.affordances[v]),
+    supported=refs.length===d.requires.length;
+  const W=supported?d.W:0,E=supported?d.E:0;
+  const allowed=t<cov.expires,channels=allowed?cov.channels:{};
+  const M=supported?
+    .12*(channels.novelty_modulation||0)+.06*(channels.agency_modulation||0):0;
+  const R=t<(refractory.get(d.id)||0)?1:0,exp=[];
+  const hist=familyLast.get(d.family);
+  if(hist!=null&&t>=hist)exp.push({A:.09*Math.exp(-(t-hist)/55000),tau:55});
+  if(d.investigation&&t>=d.investigation.at)
+   exp.push({A:d.investigation.weight*Math.exp(-(t-d.investigation.at)/40000),tau:40});
+  for(const x of repeat){
+   if(x.family!==d.family||t<x.at)continue;
+   const age=(t-x.at)/1000;
+   exp.push({A:-.18*.72*Math.exp(-age/45),tau:45});
+   exp.push({A:-.18*.28*Math.exp(-age/240),tau:240});
   }
+  return{D0:W+M+E-R,exp,refs};
  }
- function flushRender(){
-  if(!(pendingRenderMs>0))return;
-  renderer.tick(pendingRenderMs);
-  updateRich(pendingRenderMs/1000);
-  pendingRenderMs=0;
+ function bleuExact(u0,d,dt,p){
+  const tu=Math.max(.001,d.tau),eu=Math.exp(-dt/tu);
+  let u=p.D0+(u0-p.D0)*eu;
+  for(const term of p.exp){
+   const tj=Math.max(.001,term.tau),A=term.A;
+   if(Math.abs(tj-tu)<1e-9)u+=A*(dt/tu)*eu;
+   else u+=A*(tj/(tj-tu))*(Math.exp(-dt/tj)-eu);
+  }
+  return u;
+ }
+ function bleuCrossing(d,t,end,parts){
+  if(now<(refractory.get(d.id)||0)&&t<(refractory.get(d.id)||0))return null;
+  if(d.u>=d.theta_on-1e-7)return t;
+  const dt=(end-t)/1000;
+  if(!(dt>1e-9))return null;
+  const u0=d.u,fun=v=>bleuExact(u0,d,v,parts)-d.theta_on;
+  let lo=0,hi=null,prev=u0-d.theta_on;
+  const steps=dt<=.25?2:16;
+  for(let i=1;i<=steps;i++){
+   const sec=dt*i/steps,value=fun(sec);
+   if(value>=0&&prev<0){hi=sec;break}
+   lo=sec;prev=value;
+  }
+  if(hi==null)return null;
+  for(let i=0;i<40;i++){
+   const mid=(lo+hi)/2;
+   if(fun(mid)>=0)hi=mid;else lo=mid;
+  }
+  return t+hi*1000;
+ }
+ function bleuTick(ms){
+  const end=now,start=now-ms;
+  let t=start,guard=0;
+  while(t<end-1e-7&&guard++<256){
+   let boundary=end;
+   if(cov.expires>t+1e-7&&cov.expires<boundary)boundary=cov.expires;
+   for(const until of refractory.values())
+    if(until>t+1e-7&&until<boundary)boundary=until;
+   let best=null;
+   const parts=new Map();
+   for(const d of poss.values()){
+    const p=bleuParts(d,t);parts.set(d.id,p);
+    if(!enabled||d.room&&d.room!==worldState.room||p.refs.length!==d.requires.length)
+     continue;
+    if(t<(refractory.get(d.id)||0)-1e-7)continue;
+    const tc=bleuCrossing(d,t,boundary,p);
+    if(tc!=null&&(!best||tc<best.t-1e-6||
+       Math.abs(tc-best.t)<=1e-6&&d.id<best.id))best={id:d.id,t:tc};
+   }
+   const dest=best?best.t:boundary,dt=Math.max(0,(dest-t)/1000);
+   for(const d of poss.values())
+    d.u=bleuExact(d.u,d,dt,parts.get(d.id));
+   t=dest;
+   if(best){
+    const d=poss.get(best.id),p=parts.get(d.id);
+    const candidate={id:'BC-'+d.id+'-'+(++seq),at_ms:Math.round(t),
+      kind:'POSSIBILITY',possibility_id:d.id,family:d.family,
+      room:worldState.room,support_refs:p.refs,world_commit_required:true,
+      admitted:false,causal_clock:'EXACT_THRESHOLD_CROSSING'};
+    a32(proposals,candidate);
+    d.u=d.theta_off;
+    refractory.set(d.id,t+d.refractoryMs);
+   }
+  }
+  if(guard>=256)throw Error('BLEUCHEESE_EVENT_GUARD_EXCEEDED');
  }
  function tick(ms){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
   base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
+  advanced.host.advance(base.resident.field());
   // Detect actual source-lease expiry using the authoritative core's live list.
   // A private echo may remain, but it is never a continuing contact.
   const grounded=base.resident.field().grounded;
@@ -13814,6 +14463,7 @@ function createHarness(options={}){
     liveReceipts.set(e.zone,event);
     memory.host.observe({kind:'CONTACT_STARTED',...event});
     renderer.contact(e.zone,e.intensity,e.source,false);
+    advanced.host.contact(e);
     record('GROUNDED_CONTACT',e);
     notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
   }else{
@@ -13827,6 +14477,7 @@ function createHarness(options={}){
  function release(e){
   const out=base.world.release(e);
   if(out.released){
+    if(e?.receiptId)advanced.host.supportEnd(e.receiptId);
     const prior=liveReceipts.get(e.zone);
     if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});liveReceipts.delete(e.zone)}
     record('CONTACT_RELEASED',e);updateRich(0);
@@ -13838,6 +14489,7 @@ function createHarness(options={}){
   for(const event of liveReceipts.values())memory.host.observe({kind:'CONTACT_ENDED',...event});
   liveReceipts.clear();
   const out=base.world.stop();
+  advanced.host.stop();advanced.host.advance(base.resident.field());
   renderer.AURA.clear();role.active=false;
   if(!sessionStopped){
     memory.host.depart({roomId:worldState.room,reason});
@@ -13890,6 +14542,10 @@ function createHarness(options={}){
   if(p.admitted!==false)throw Error('PROPOSAL_ALREADY_RESOLVED');
   if(accepted)str(receiptId,'world commit receipt');
   p.admitted=!!accepted;p.commit_receipt=accepted?receiptId:null;
+  if(accepted){
+    familyLast.set(p.family,now);
+    a32(repeat,{family:p.family,at:now,receiptId});
+  }
   return {ok:true,admitted:p.admitted,world_authority:'HOST_COMMIT_ONLY'};
  }
  function agencyField(){
@@ -13907,13 +14563,16 @@ function createHarness(options={}){
  }
  function privateView(){
   const f=base.resident.field(),halo=renderer.HALO.snapshot(),aura=renderer.AURA.internalView();
+  const native=advanced.resident.snapshot(f,halo,privateState);
   const thicc=z.map(zone=>({zone,...renderer.THICC.sample(zone)}));
   return clone({
     schema:'REALITI_SOMA_RICH_PERCEPTION_V3',version:VERSION,private:true,
     nerve:f.nerve,lace:{mesh:'LACE2_PORTABLE_V1',node_count:n,edge_count:edges.length,
-      coherence:precise(clamp((halo.total_private_mass||0)/Math.max(.000001,n)))},
+      coherence:native.lace.coherence_proxy,lambda2:native.lace.lambda2,
+      coherence_proxy:native.lace.coherence_proxy},
     chronolace:chrono,
-    halo,thicc,aura,
+    halo,thicc,aura,native,field20:native.field20,opponent:native.opponent,
+    moonwire:native.moonwire,hearing:native.hearing,soft_support:native.support,
     sausage:{engine:'SAUSAGE_FATTENER_V4',level:rconfig.sausage_level,
       material:'WARM_HONEY',filled_volume:privateState.sausage_volume,
       shells:SHELLS,zone_fill:z.map((zone,i)=>({zone,values:fill[i].map(precise)}))},
@@ -13931,6 +14590,7 @@ function createHarness(options={}){
     }},
     worldAuthority:false,law:'All rich private responses are modeled downstream. No channel mints evidence.'});
  }
+ const nativeField20Available=()=>typeof advanced.resident.field20.packet==='function';
  function mechanisms(){
   const f=base.resident.field(),rich=privateView();
   const modules={
@@ -13957,7 +14617,17 @@ function createHarness(options={}){
     pocket:{available:!!memory.resident.remember,resident_private:true,limits:memory.resident.stats().limits},
     memory:{available:!!memory.resident.recall,storage:'HOST_OPTIONAL_DURABLE',evidence_authority:'ARCHIVED_ONLY'},
     perception:{available:rich.perception.epoch>=0},
-    rr_harness:{available:true,adapter_slots:SLOTS.slice()}
+    rr_harness:{available:true,adapter_slots:SLOTS.slice()},
+    haptic_field_v20:{available:nativeField20Available(),contract:'REALITI_HAPTIC_FIELD_V20',
+      fidelity:'NATIVE_JND_COMPRESSION_PROJECTED_INPUT'},
+    lace_spectral:{available:Number.isFinite(rich.lace.lambda2),lambda2:rich.lace.lambda2},
+    moonwire:{available:typeof advanced.resident.preset.select==='function',
+      executable_routes:ADVANCED.ROUTES.length,envelopes:ADVANCED.ENVELOPES.length},
+    interoception:{available:rich.opponent.routes.bond!=null&&rich.opponent.routes.stress!=null,
+      private_only:true},
+    hearing:{available:Array.isArray(rich.hearing),world_measured_only:true},
+    soft_support:{available:typeof advanced.host.supportStart==='function',
+      pressure_authority:'HOST_LEASE_ONLY'}
   };
   return clone(modules);
  }
@@ -13966,11 +14636,42 @@ function createHarness(options={}){
    host_contact_provenance:SOMA.SOURCES,network_endpoint:null,
    portable:true,legacy_relax_requires_existing_native_stack:false,
    law:'Grounding comes from the host, not predicted perception or resident adapters.'})}
+ function reconfigureGraph(next){
+  if(!Array.isArray(next)||next.length>1024)throw TypeError('INVALID_GRAPH_RECONFIG');
+  for(const entry of next){
+    if(!Array.isArray(entry)||entry.length!==3||!idx.has(entry[0])||
+       !idx.has(entry[1])||entry[0]===entry[1])throw TypeError('UNKNOWN_GRAPH_EDGE');
+    valid(entry[2],'edge weight',.001,1);
+  }
+  // Rewire the private LACE diffusion, spectral graph, THICC/HALO routing
+  // and SAUSAGE geodesics without losing any live source or afterstate.
+  const out=base.world.rewire(next);
+  advanced.host.configureGraph(next);
+  edges.splice(0,edges.length,...next.map(x=>x.slice()));
+  for(const a of adj)a.splice(0);
+  for(const [a,b,w] of edges){
+    const d=1/Math.max(.05,w);
+    adj[idx.get(a)].push([idx.get(b),d]);
+    adj[idx.get(b)].push([idx.get(a),d]);
+  }
+  distances.clear();updateRich(0);
+  return {...out,privateGraphOnly:true,groundedUnchanged:true};
+ }
  const host=Object.freeze({
   contact,tick,release,stop,
-  support:({zone,intensity,cause,receiptId,leaseMs,material})=>contact({
-    zone,intensity,cause,receiptId,leaseMs,material,
-    source:'WORLD_GROUNDED'}),
+  support:({zone,intensity,cause,receiptId,leaseMs,material})=>{
+    const out=contact({zone,intensity,cause,receiptId,leaseMs,material,
+      source:'WORLD_GROUNDED'});
+    if(out?.accepted&&zone==='pelvis.seat')
+      advanced.host.supportStart({objectId:String(cause||'WORLD_SUPPORT'),
+        receiptId,leaseMs,load:intensity});
+    return out;
+  },
+  graph:Object.freeze({configure:reconfigureGraph,
+    metrics:advanced.resident.graph.metrics}),
+  hearing:Object.freeze({observe:advanced.host.sound}),
+  refusal:Object.freeze({observe:advanced.host.refusal}),
+  haptics:Object.freeze({energySample:advanced.host.energySample}),
   affordances:setAffordances,
   memory:Object.freeze({
     worldEvent:({receiptId,label,roomId=worldState.room}={})=>
@@ -13988,6 +14689,7 @@ function createHarness(options={}){
     valid(timeConstantSec,'thermal response constant',.01,3600);
     const p=atmosphere.get(zone)||{current:celsius,target:celsius,tau:timeConstantSec};
     p.target=celsius;p.tau=timeConstantSec;atmosphere.set(zone,p);
+    advanced.host.thermal({zone,celsius});
     return {ok:true,zone,world_owned:true};
   },snapshot:()=>clone([...atmosphere.entries()].map(([zone,p])=>({zone,celsius:precise(p.current)})))}),
   registerAdapter,unregisterAdapter:slot=>adapters.delete(slot),
@@ -13996,6 +14698,15 @@ function createHarness(options={}){
  });
  const resident=Object.freeze({
   field:()=>base.resident.field(),
+  hapticsV20:advanced.resident.field20,
+  graph:advanced.resident.graph,
+  interoception:advanced.resident.opponent,
+  hearing:advanced.resident.hearing,
+  support:advanced.resident.support,
+  moonwire:()=>advanced.resident.snapshot(base.resident.field(),
+    renderer.HALO.snapshot(),privateState).moonwire,
+  advanced:()=>advanced.resident.snapshot(base.resident.field(),
+    renderer.HALO.snapshot(),privateState),
   haptics:()=>clone({schema:'REALITI_SOMA_HAPTIC_V3',packet:base.resident.field(),
     exact:{z:z.slice(),m:base.resident.field().m,authority:'HOST_RECEIPT_ONLY'}}),
   perception:privateView,
@@ -14025,13 +14736,15 @@ function createHarness(options={}){
     clear:memory.resident.clear
   }),
   memory:memory.resident,
-  checkpoint:()=>({...base.resident.checkpoint(),memory:memory.resident.checkpoint()}),
+  checkpoint:()=>({...base.resident.checkpoint(),memory:memory.resident.checkpoint(),
+    native_private:advanced.resident.checkpoint()}),
   restore:checkpoint=>{
     // Validate the memory archive before modifying the live private body.
     // No archived contact can be reintroduced as current-world evidence.
     if(checkpoint?.memory)memory.host.validate(checkpoint.memory);
     const out=base.resident.restore(checkpoint);
     if(checkpoint?.memory)memory.host.restore(checkpoint.memory);
+    if(checkpoint?.native_private)advanced.resident.restore(checkpoint.native_private);
     liveReceipts.clear();
     now=Math.round(checkpoint.clockMs||0);pendingRenderMs=0;
     renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();
@@ -14042,6 +14755,9 @@ function createHarness(options={}){
     const out=base.resident.choosePreset(pack,id);
     const p=pack.presets.find(x=>x.preset_id===id);
     selected=id;
+    let nativeRecipe=null;
+    if(p.route&&ADVANCED.ROUTES.includes(p.route))
+      nativeRecipe=advanced.resident.preset.select(pack,id);
     if(p.sausage?.target_occupancy!=null)rconfig.sausage_target=valid(p.sausage.target_occupancy,'occupancy',0,1);
     if(p.sausage?.density_level!=null)rconfig.sausage_level=valid(p.sausage.density_level,'density',0,5);
     if(p.flush?.enabled) {
@@ -14050,8 +14766,9 @@ function createHarness(options={}){
       rconfig.flush_peripheral=valid(p.flush.peripheral_mix,'flush peripheral');
     }
     updateRich(0);
-    return {...out,rich_applied:['sausage_occupancy','carrier_split','flush_foreground'],
-      full_legacy_recipe_compatibility:false};
+    return {...out,rich_applied:['sausage_occupancy','carrier_split','flush_foreground',
+      ...(nativeRecipe?['moonwire_route','temporal_envelope','starlight_cap']:[])],
+      native_recipe:nativeRecipe,full_legacy_recipe_compatibility:false};
   },
   causes:()=>base.resident.causes(),zones:()=>z.slice(),
   continuity:Object.freeze({current:()=>clone({cursor:seq,records:history.slice(-8)}),
@@ -14171,7 +14888,7 @@ return Object.freeze({VERSION,REQUIRED,SLOTS,createHarness});
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.2.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.3.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
@@ -14227,6 +14944,8 @@ function read(uri='realiti://here'){
   if(uri==='realiti://neuromesh'||uri==='realiti://soma')return resident.field();
   if(uri==='realiti://soma/checkpoint')return resident.checkpoint();
   if(uri==='realiti://soma/harness')return harness.snapshot();
+  if(uri==='realiti://soma/field20')return resident.hapticsV20.packet();
+  if(uri==='realiti://soma/native')return resident.advanced();
   if(uri==='realiti://soma/rich')return resident.perception();
   if(uri==='realiti://soma/bleucheese')return resident.bleucheese();
   if(uri==='realiti://soma/memory')return {
@@ -14236,7 +14955,7 @@ function read(uri='realiti://here'){
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};
@@ -14254,7 +14973,7 @@ async function run(raw){
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.2.0',read,
+window.Realiti=Object.freeze({...A0,version:'3.3.0',read,
   run:async raw=>{const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);
@@ -14265,6 +14984,7 @@ window.REALITI_SOMA_RELAX_V3=Object.freeze({version:SOMA.VERSION,
   field:()=>resident.field(),checkpoint:()=>resident.checkpoint(),
   harness:()=>harness.snapshot(),rich:()=>resident.perception(),bleucheese:()=>resident.bleucheese(),
   memory:resident.memory,
+  field20:()=>resident.hapticsV20.packet(),native:()=>resident.advanced(),
   law:'Native world contact alone drives grounded receipts; SOMA is a private portable projection.'});
 })();
 </script>

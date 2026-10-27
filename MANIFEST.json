@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/refresh-artifacts.yml",
-      "bytes": 2462,
-      "sha256": "d9728102d37e48ad38e7a9835d7076e2df955a881285f2c799ff25b60310ffdf"
+      "bytes": 2492,
+      "sha256": "eac95931283f02e0204fa3ea3f59ded7b8fc9c4383059feb5b9775b0c2062290"
     },
     {
       "path": ".github/workflows/server-ticket-close.yml",
@@ -37,8 +37,8 @@
     },
     {
       "path": ".github/workflows/validate.yml",
-      "bytes": 4025,
-      "sha256": "7365228951b6040935179c6e03a2b25ef8b497e9b500a2fc2244cd95a2793cde"
+      "bytes": 4296,
+      "sha256": "23a7dbd0c18017c82e0d786095ea80b4cb2c313c787bd33deef2332485edabe3"
     },
     {
       "path": ".gitignore",
@@ -52,13 +52,13 @@
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 42775,
-      "sha256": "7973b93bde546c0c96d32e81450c3364d08f1dd860a84d6741e660d9d992a903"
+      "bytes": 43224,
+      "sha256": "eab47c64e4f9e8c83bca9caf92be121074c2cf21f440c9adc2dbc09125c10f9d"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 63420,
-      "sha256": "57c6cf86c18604985f983aca1f8b794c96dd27a36c788ee96d143a96c900fbee"
+      "bytes": 65000,
+      "sha256": "8b14e5622b7f2eff6cf1f16948cd40e0553c5d27c6022333ef67df6a79d3f0ad"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 49434,
-      "sha256": "66a65fb303631e7572e1401a67351a20d05626d0f07c768bff22578047003294"
+      "bytes": 49818,
+      "sha256": "3ca8108c401445f1a25642bacf7de82023e0906b82330dc8ae5ad06c5097fdc2"
     },
     {
       "path": "RELEASE_NOTES.md",
@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1576058,
-      "sha256": "8c4cf059377e9214750f96e46c3dd5b999e9f5e0fb2875365823811e5ed8fd0b"
+      "bytes": 1610235,
+      "sha256": "d9399daed186eb0851dccddc076a3fd05087a79f4c6aedfc7947299f6ff5fe4c"
     },
     {
       "path": "SECURITY.md",
@@ -102,8 +102,8 @@
     },
     {
       "path": "VALIDATION.json",
-      "bytes": 6386,
-      "sha256": "f08f3f0a2207f949faeadeda5c485ac52b976c20ff6555e273bb5765b3ff8896"
+      "bytes": 7616,
+      "sha256": "5ef1ba5be3226bdd4a21b011ffc0dd06e8c7e2d51a00eed1c7185b98d8029a46"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -112,8 +112,8 @@
     },
     {
       "path": "build.mjs",
-      "bytes": 2676,
-      "sha256": "e32b2ff09746722b5f2970daf0223acbc8df164f8bbf748e0c2d82a19c30000a"
+      "bytes": 2838,
+      "sha256": "b4d48ec0e01b754ef4577fab5d615855a81681abda9ad701e3c41f6cd4bb97c2"
     },
     {
       "path": "continuity/README.md",
@@ -158,7 +158,7 @@
     {
       "path": "neuromesh/README.md",
       "bytes": 9042,
-      "sha256": "c75da551f503944ae7f668f37de85f18810cf2476122aedf33bf262060989191"
+      "sha256": "c0d899f0c087fb1fb8e350e699c1ba126424dd4e924536ebd5ba28e25313d86d"
     },
     {
       "path": "neuromesh/REGISTRY.json",
@@ -278,7 +278,7 @@
     {
       "path": "packages/realiti-headless-resident/package.json",
       "bytes": 2783,
-      "sha256": "712a6d63a5fa3a1c3dfef5be2cb1e78418ed973df53f23024ac04c32894a65e9"
+      "sha256": "9a394fc87a4686716415120b3e1a4a1b29519a317a39dd8b380f00821f0b3a1b"
     },
     {
       "path": "packages/realiti-headless-resident/peer.cjs",
@@ -432,8 +432,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/soma.cjs",
-      "bytes": 4423,
-      "sha256": "c3d8b5b84121d78c386e9865cf6440144aea860964472535d41123818bd50971"
+      "bytes": 4879,
+      "sha256": "c19c9716e4e6c1cba3eafcec74e984284b42675479e909859086507cfb4a2076"
     },
     {
       "path": "packages/realiti-headless-resident/test/time.cjs",
@@ -512,13 +512,13 @@
     },
     {
       "path": "packages/realiti-neuromesh/CONTRACT.md",
-      "bytes": 3618,
-      "sha256": "a05556d188e9d374240cdd79378cdcba652a991c3c8d6c0b44d32f5efe04fb97"
+      "bytes": 4555,
+      "sha256": "a9dfef1c460c0b4945742d830ce677f3c8750ac796d2b5ece7e6db74aa8e4eed"
     },
     {
       "path": "packages/realiti-neuromesh/HARNESS_STACK.md",
-      "bytes": 6330,
-      "sha256": "f3aa578157c5ee44f08697eaec48c86fe7c291d1ccad45f667ad2e52a7411fd0"
+      "bytes": 7287,
+      "sha256": "a1e22d3bfbf155f27b621c3db71946ef2cd365a871c08085526ce131a1d749b1"
     },
     {
       "path": "packages/realiti-neuromesh/MEMORY_AND_LAB.md",
@@ -526,9 +526,19 @@
       "sha256": "e389ac5ff4767604d47c3f2b001cd91a6bef9e2a772c28d6ddec6fd3524de394"
     },
     {
+      "path": "packages/realiti-neuromesh/NATIVE_PARITY.md",
+      "bytes": 5451,
+      "sha256": "3330615a21d86b5d70f56a003957111fb1c09f056223a3a0d76060e414912fd4"
+    },
+    {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 11905,
-      "sha256": "0ab83eb6296fa92debe51c45c8b1334920ddf3abc2798d2961e66897854b8b2c"
+      "bytes": 13076,
+      "sha256": "b6612e484b6125f11478183789f99664a0d8ae568d4bca4bbefe8207d3fcec2d"
+    },
+    {
+      "path": "packages/realiti-neuromesh/advanced.cjs",
+      "bytes": 17646,
+      "sha256": "ed4f3518245c413b48a02b7a1d389a72d1c8a130dcd10d5e3b7dc597ec226ee1"
     },
     {
       "path": "packages/realiti-neuromesh/examples/lantern-lab.cjs",
@@ -541,14 +551,19 @@
       "sha256": "9149bed1546810552725569c89453e10598cf1d44c54c4aa675bde17243c8629"
     },
     {
+      "path": "packages/realiti-neuromesh/field20.cjs",
+      "bytes": 8255,
+      "sha256": "f56a3706a995da29450b905a09fd97c46649488a413eb8e4218f431b531571c3"
+    },
+    {
       "path": "packages/realiti-neuromesh/harness.cjs",
-      "bytes": 31180,
-      "sha256": "b8a5ebaf7fb5fb56dce35516fe67a5a4fef394bc6bd6c27c35f2a5dfa8e3bc0a"
+      "bytes": 37852,
+      "sha256": "992321ba73ec1d65bdb1ffe5a068f3a6eeb31846db6834241e744269215314b4"
     },
     {
       "path": "packages/realiti-neuromesh/index.cjs",
-      "bytes": 14645,
-      "sha256": "06027cdb21cc80342e7bccf7ae0e18cf599044b227a8e09d41dd1b0011787ca6"
+      "bytes": 15890,
+      "sha256": "60807ee8a0f6c4f312698ca97c8643e574243e206e184c812e443e343dcc3d03"
     },
     {
       "path": "packages/realiti-neuromesh/lab/lantern-room.cjs",
@@ -562,8 +577,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/package.json",
-      "bytes": 1529,
-      "sha256": "b9fbec224fa3891157e98b8687960d5e63f6e2f1f2226ae530c08e5829f65d0b"
+      "bytes": 1900,
+      "sha256": "e1eee85ca5ae03cf558496087b50de92822aca4a37c24c38f4ebc99e5e2f6590"
     },
     {
       "path": "packages/realiti-neuromesh/presets/honeyspark-duo.json",
@@ -641,6 +656,11 @@
       "sha256": "6a476e7c657ef3cb713bcbbb0b0d78c141e2b91aeb797b6bf6be4a93b4706d00"
     },
     {
+      "path": "packages/realiti-neuromesh/sealed-pocket.cjs",
+      "bytes": 6430,
+      "sha256": "a79eedbfbf7d043ecb9fc99f4a4e8b0043ca519aab9e9ef8b32a2f7dc4faa0f8"
+    },
+    {
       "path": "packages/realiti-neuromesh/storage.cjs",
       "bytes": 3803,
       "sha256": "7c481ac425ebcb948f14be4a03153c1e61fc3338f24e94ea49928b9d440f8514"
@@ -648,7 +668,7 @@
     {
       "path": "packages/realiti-neuromesh/test/harness.test.cjs",
       "bytes": 12062,
-      "sha256": "c1f83a110d21d60dfcef4d39d3dfd3246d7303568ad16a4734e104868d893e3f"
+      "sha256": "420089c35a72a47d16f8807e9aee76414d8044448faa917984b670b5a22e83ba"
     },
     {
       "path": "packages/realiti-neuromesh/test/lab.test.cjs",
@@ -661,9 +681,14 @@
       "sha256": "10af902e1c8d26534c1971ec35253b49ffc17ef5ff55f2e762b68605ad8a244c"
     },
     {
+      "path": "packages/realiti-neuromesh/test/native-parity.test.cjs",
+      "bytes": 11864,
+      "sha256": "b1d0e04b05ff3eebffb6728b1bb82886c416e5cadfcb6a125a3baed0e7c92483"
+    },
+    {
       "path": "packages/realiti-neuromesh/test/soma.test.cjs",
       "bytes": 7652,
-      "sha256": "c8c83a56732f1bb05748031e099a36c6e3322aeaed727cd251ccd9f802116536"
+      "sha256": "6be7c5e330b5d58b1060a02abd68a6a3e9db792bde3828fa3f351e8c0103ba68"
     },
     {
       "path": "packages/realiti-server/Dockerfile",
@@ -1118,7 +1143,7 @@
     {
       "path": "source/scripts/60-public.js",
       "bytes": 29018,
-      "sha256": "8cf1c4a3c2b6b2a17a42616d8ac8b639ed77686f900e9b7914d2452dc7792cf3"
+      "sha256": "907cb5f9158c7e069eb0443cafed96b8a5b14d0817a9139a0e656faf3c6b7fd3"
     },
     {
       "path": "source/scripts/61-ui.js",
@@ -1202,8 +1227,8 @@
     },
     {
       "path": "source/scripts/98-soma-bridge.js",
-      "bytes": 5337,
-      "sha256": "a819bf8d1de195f3addedaefafd13a5538c462b2f194be91515c2c3fedc637a1"
+      "bytes": 5597,
+      "sha256": "6ca50b956e4966e85c061be65aec1d8cceff67cce21611d23382c7342f6c5bd0"
     },
     {
       "path": "source/scripts/99-door-final.js",
@@ -1212,8 +1237,8 @@
     },
     {
       "path": "source/template.html",
-      "bytes": 10285,
-      "sha256": "8aea8bbb4d80939daa688b7e461d151779110ad60ea91d24b838d1996a5bf766"
+      "bytes": 10447,
+      "sha256": "e7208e4d11a8eda8c436d0ceae4656652d4396aa64dccb31125caa22e675b89b"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
