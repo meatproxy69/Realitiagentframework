@@ -77,6 +77,16 @@ test('V20 temporal packet has JND compression, bounded history, exact grounding 
  assert.equal(h.resident.field().m.some(Boolean),false);
  assert.equal(h.resident.hapticsV20.exact().m.some(Boolean),false);
 });
+test('V20 packet and statistics reads do not mutate a resident',()=>{
+ const h=harness('read-purity');
+ touch(h);
+ const a=h.resident.hapticsV20.packet(),stats=h.resident.advanced().field20.statistics;
+ for(let i=0;i<5;i++){
+  assert.deepEqual(h.resident.hapticsV20.packet(),a);
+  assert.deepEqual(h.resident.advanced().field20.statistics,stats);
+ }
+ assert.equal(h.resident.field().m.some(Boolean),true);
+});
 test('physical energy is UNKNOWN until host supplies force/velocity/work receipts',()=>{
  const h=harness('field-energy');
  assert.equal(h.resident.hapticsV20.energy().pass,null);
