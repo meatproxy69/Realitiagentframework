@@ -48,7 +48,7 @@ substrates in [rr-native-math.cjs](./rr-native-math.cjs): the **B5 passive coupl
 (two modes, predicted/observed separation and six Prony residue modes),
 **B6 phase locking/slipping and curvature holonomy**,
 **B9 reproducible OU jitter, Gaussian temporal binding and per-zone Kalman/adaptation**,
-and the **B18 three-mode dynamic skin response**.
+and the **B18 three-mode dynamic skin response** and the **B10 eight-element GMS friction/material/receptor model** (live host contact and measured trajectory required).
 
 These are executable in any Node or browser neighborhood without importing
 Matrix, Relax globals, DOM or world rooms. Original THICC/HALO/AURA kernels,
@@ -175,3 +175,7 @@ A SOMA instance starts with a body; it does not automatically generate a world, 
 ## Release boundary
 
 SOMA 3.4 now includes the complete *named mechanism surface* and the original executable THICC/HALO/AURA algorithms. Remaining limits: BleuCheese, thermal, support, pocket and several deeper private-rendering details are independent portable adaptations, not byte-for-byte clones of the Relax-specific world. Sealed Pocket persistence requires the host to provide a secure durable keystore; the portable pocket starts as resident-private bounded volatile memory. No source code can grant a missing world authority or assert subjective experience.
+
+### Host-driven B10 moving contact (SOMA 3.4)
+
+The trusted `host.haptics.driveMovingContact({receiptId,position,velocity,pressure,dtMs,material,grain,materialState})` is available **only after** the host has accepted a live world contact via `host.contact`. Position and velocity use the original B10 six-point route units; the host must have actual observations for them. Materials match the reference solver (longfur, cardboard, blanket). The resident can inspect `resident.rr.movingContact()`; this output is a private numerical receptor model, **not a new physical touch or a claim that the world moved**. Release, STOP and checkpoint restore revoke contact-force authority. B10 friction/material/CT/receptive-field code is source-equation matched, but world collision and contact telemetry remain host-owned.

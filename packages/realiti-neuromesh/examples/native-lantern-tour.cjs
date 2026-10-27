@@ -1,5 +1,5 @@
 'use strict';
-// SOMA 3.3: an actual deterministic resident itinerary through Lantern Room.
+// SOMA 3.4: an actual deterministic resident itinerary through Lantern Room.
 // Every observation comes from the real room's world port and portable harness.
 // Run: node packages/realiti-neuromesh/examples/native-lantern-tour.cjs
 const assert=require('node:assert/strict');
@@ -36,8 +36,8 @@ function run(){
   return {state,native,v20,mask};
  }
  const initial=observe('arrival');
- verify('36 mechanisms booted',room.harness.boot().ok&&
-   Object.keys(room.harness.boot().mechanisms).length===36);
+ verify('37 mechanisms booted',room.harness.boot().ok&&
+   Object.keys(room.harness.boot().mechanisms).length===37);
  verify('initially ungrounded and no fabricated energy audit',
    initial.state.grounded===0&&room.resident.hapticsV20.energy().pass===null);
  const originalTime=room.tickMs,originalEvents=room.resident.memory.stats().events;

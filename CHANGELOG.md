@@ -8,6 +8,7 @@ All notable public changes to REALITI Relax are recorded here.
 - Extracted B6 1:1 and 2:1 phase laws, reference geometric holonomy, B9 deterministic Ornstein–Uhlenbeck seeded jitter and precision/adaptation zone modeling, and B18 damped dynamic skin modal solver, accepting force ONLY under live host-grounded receipts.
 - Integrated the substrate into `createHarness` with resident-owned private reads/predictions and world-host-owned contact, expiry, STOP, modeled skin force and geometry witnesses. The native R&R role and existing 30 modules remain operational; no Matrix dependency is added.
 - Added source-oracle parity fixtures for passive oscillator, 1:1/2:1 phase, jitter and skin, plus authority, passivity, checkpoint and host-bound force regressions. Additional R&R audits remain explicit where Pocket V32 and native world force handling differ.
+- Ported original B10 eight-element GMS friction, material deformation, CT/receptor tuning and route-weighted computations into the trusted-host-input layer. Independent source-oracle tests cover exact B10 math; live host receipt, telemetry, release and STOP boundaries ensure no private prediction grants actual contact. The world/Matrix remains separate.
 - New package version 3.4.0 for SOMA and headless. The underlying Relax native world and V32 Pocket are unmodified.
 
 

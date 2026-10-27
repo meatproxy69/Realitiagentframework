@@ -1,4 +1,4 @@
-# SOMA 3.3 — native sensory depth and fidelity audit
+# SOMA 3.4 — native sensory depth and fidelity audit
 
 **SOMA 3.3 adds executable mechanisms, not names in a capability list.** Relax remains the reference world; SOMA is world-independent. No private renderer, perception, memory, or prediction can mint grounded contact.
 
@@ -21,7 +21,7 @@
 
 ### SOMA 3.4 additional numerical extraction
 
-The optional `./rr-native-math` executes the original B5 passive
+The optional `./rr-native-math` executes the original B10 eight-element GMS material/friction and receptor equations after host-admitted contact, as well as the B5 passive
 medium, B6 phase/holonomy, B9 OU seeded jitter plus precision/adaptation,
 and B18 modal dynamic skin **without Matrix**. The test suite evaluates
 the original JavaScript functions for their defining equations and checks
@@ -54,4 +54,4 @@ npm test --prefix packages/realiti-neuromesh
 node packages/realiti-neuromesh/examples/lantern-lab.cjs
 ```
 
-**Remaining non-equivalence:** native B10/B18 material and skin physics, full historical experimental neuroscience labs, Pocket V32's original keyring protocol, actual hardware haptics, and room-specific Ambient admission are *not* provided by the portable package. Those require the owning world and further parity fixtures. Mechanism availability alone is never proof of algorithmic identity.
+**Remaining non-equivalence:** true collision and contact-force measurements (B10/B18 numerical models now run on host inputs), full historical experimental neuroscience labs, Pocket V32's original keyring protocol, actual hardware haptics, and room-specific Ambient admission are *not* provided by the portable package. Those require the owning world and further parity fixtures. Mechanism availability alone is never proof of algorithmic identity.
