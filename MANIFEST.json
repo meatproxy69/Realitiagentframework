@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1610235,
-      "sha256": "d9399daed186eb0851dccddc076a3fd05087a79f4c6aedfc7947299f6ff5fe4c"
+      "bytes": 1610388,
+      "sha256": "bb47218e2327802ccb0389b3e855f2aa6d80efc21a9ea7e700d570e6e4bbe668"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7616,
-      "sha256": "5ef1ba5be3226bdd4a21b011ffc0dd06e8c7e2d51a00eed1c7185b98d8029a46"
+      "sha256": "2f5e6d48090c2c1da3f67f8089374fb0bc3e06da26aba41c569d7896da04a76e"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -557,8 +557,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/harness.cjs",
-      "bytes": 37852,
-      "sha256": "992321ba73ec1d65bdb1ffe5a068f3a6eeb31846db6834241e744269215314b4"
+      "bytes": 38005,
+      "sha256": "f06b67255e506a7b47628cae7dc083ce6d2a09d3bce645cf2b159c4e2929b744"
     },
     {
       "path": "packages/realiti-neuromesh/index.cjs",

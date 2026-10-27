@@ -14428,6 +14428,12 @@ function createHarness(options={}){
   }
   if(guard>=256)throw Error('BLEUCHEESE_EVENT_GUARD_EXCEEDED');
  }
+ function flushRender(){
+  if(!(pendingRenderMs>0))return;
+  renderer.tick(pendingRenderMs);
+  updateRich(pendingRenderMs/1000);
+  pendingRenderMs=0;
+ }
  function tick(ms){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
   base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
