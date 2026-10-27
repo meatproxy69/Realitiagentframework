@@ -8,7 +8,8 @@ const OBSTACLES=Object.freeze([{id:'pine-bench',x0:2.2,x1:3.4,y0:1.15,y1:1.85}])
 const FIXTURES=Object.freeze({
  bench:{x:2.8,y:1.5,material:'pine',zone:'hand.R.palm',input:.73,leaseMs:680},
  window:{x:5.65,y:2.0,material:'glass',zone:'hand.L.palm',input:.35,leaseMs:450},
- lamp:{x:1.1,y:3.5,material:'brass',zone:'hand.R.palm',input:.48,leaseMs:440}
+ lamp:{x:1.1,y:3.5,material:'brass',zone:'hand.R.palm',input:.48,leaseMs:440},
+ bell:{x:1.45,y:3.12,material:'brass',zone:'hand.R.fingers',input:.44,leaseMs:380}
 });
 const copy=x=>JSON.parse(JSON.stringify(x));
 const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
@@ -47,6 +48,10 @@ class LanternRoom {
   this.#assertOpen();
   const target={x,y},d=dist(this.position,target);
   if(!finite(d))return {ok:false,error:'INVALID_POSITION'};
+  // Reject remote endpoints before allocating a potentially unbounded sweep.
+  // A huge but finite coordinate must not force billions of collision steps.
+  const targetError=this.#checkMove(target);
+  if(targetError)return {ok:false,error:targetError,position:copy(this.position)};
   // Swept collision sampling to prevent teleporting through the pine bench.
   const n=Math.max(1,Math.ceil(d/.06));
   for(let i=1;i<=n;i++){
@@ -90,6 +95,24 @@ class LanternRoom {
   if(!this.seated)return {ok:true,released:false};
   const receiptId=this.seated;this.seated=null;
   return this.__world.release({zone:'pelvis.seat',receiptId});
+ }
+ // Audible bell: only an actually reachable physical strike authorizes
+ // the auditory observation. Saying that the bell rang does not do so.
+ ringBell(){
+  this.#assertOpen();
+  if(!this.#near('bell'))return {ok:false,error:'OUT_OF_REACH'};
+  const touched=this.touch('bell');
+  if(!touched.ok)return touched;
+  const receiptId='LAB:'+this.worldId+':BELL_SOUND:'+(++this.sequence);
+  const heard=this.__world.hearing.observe({
+   receiptId,source:'DESK_BELL_STRUCK',level:.61,
+   zone:'head.crown',leaseMs:900,material:'brass'
+  });
+  this.__world.memory.worldEvent({
+   receiptId,label:'BELL_RUNG',roomId:this.roomId
+  });
+  return {ok:heard.ok,receiptId,contactReceiptId:touched.receiptId,
+   hearing:'HOST_MEASURED_HEARING'};
  }
  openWindow(){
   this.#assertOpen();
