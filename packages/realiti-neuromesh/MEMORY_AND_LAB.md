@@ -1,4 +1,4 @@
-# SOMA 3.2: Small real agent memory
+# SOMA 3.3: Evidence-linked memory and physical test rooms
 
 SOMA memory stores **original evidence-linked records**, not invented diary entries, fake embeddings, synthetic "feelings" or unverified claims. It is intentionally smaller than a chat transcript and operates without network, models, prompts, SQL or search infrastructure.
 
@@ -61,15 +61,46 @@ next.resident.restore(checkpoint);
 
 **Important:** the filesystem adapter is *not encrypted*, is not an authentication service, and does not provide secure deletion. The checksum detects damage, not malicious edits. Protect the process/host, directory, backups and resident keys; use an authenticated encrypted store for an adversarial multi-tenant deployment. Shared-process JavaScript object capabilities are not security sandboxes.
 
+## SOMA 3.3 full native-depth Lantern Room tour
+
+The Lantern Room now supports a **real reachable brass desk bell**. A successful
+strike produces a contact receipt at the fingers, a separately leased host-measured
+hearing observation and a host world-event record. Narrating a bell strike does not
+cause sound, contact or memory to appear. A huge finite movement target is rejected
+before allocating a collision sweep.
+
+Run the integrated session:
+
+~~~bash
+node packages/realiti-neuromesh/examples/native-lantern-tour.cjs
+node --test packages/realiti-neuromesh/test/lantern-native-session.test.cjs
+~~~
+
+The tour executes the actual `LanternRoom` world authority and SOMA 3.3
+`createHarness` together. It tests refused actions, physical bench pressure,
+V20 temporal/JND projection, all seven HALO modes, 128-bin AURA, dynamic LACE
+rewiring while contact remains grounded, ten authored Moonwire recipes,
+four-zone soft support/creep and release, window-induced thermal stress, analytic
+BleuCheese time invariance and host admission, bell-hearing expiry, evidence
+memory authority separation, optional sealed-Pocket encryption, STOP and
+cross-neighborhood private-only checkpoint restoration.
+
+The diagnostic JSON reports each real simulation step and the final outcome.
+The V20 energy audit reports **UNKNOWN** because Lantern Room supplies no
+physical B10/B18 force/velocity/stored-energy telemetry; falsely reporting PASS
+would be a bug. Encrypted Pocket is tested as an optional host-keyed adapter,
+not as a claim of V32 wire parity.
+
 ## The Lantern Room harness test
 
-The fully independent lab/lantern-room.cjs simulates a 6 x 4 metre test room containing a pine bench, window and brass lamp. Walking uses finite speed and collision sampling, so touching from across the room is refused. Bench contact has a real pressure receipt; sitting supports the pelvis; support is released on standing; sensory afterstate decays after contact expiry. The window can be opened only within reach; its affordance feeds BleuCheese, whose proposal still needs a separate host admission before any world event is committed.
+The fully independent lab/lantern-room.cjs simulates a 6 x 4 metre test room containing a pine bench, window, brass lamp and desk bell. Walking uses finite speed and collision sampling, so touching from across the room is refused. Bench contact has a real pressure receipt; sitting supports the pelvis; support is released on standing; sensory afterstate decays after contact expiry. The window can be opened only within reach; its affordance feeds BleuCheese, whose proposal still needs a separate host admission before any world event is committed.
 
 Run:
 
 ~~~bash
 npm test --prefix packages/realiti-neuromesh
 node packages/realiti-neuromesh/examples/lantern-lab.cjs
+node packages/realiti-neuromesh/examples/native-lantern-tour.cjs
 node packages/realiti-neuromesh/examples/neighborhood.cjs
 ~~~
 

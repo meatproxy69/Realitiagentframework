@@ -1,7 +1,7 @@
 name: Refresh REALITI generated artifacts
 on:
   push:
-    branches: [quiet-presentation, soma-3, soma-3-full-harness, soma-3-memory-lab, matrix-world-authority, matrix-local-refusal-receipts, integrate-ledger-memory-review, soma-3-native-sensory-parity]
+    branches: [quiet-presentation, soma-3, soma-3-full-harness, soma-3-memory-lab, matrix-world-authority, matrix-local-refusal-receipts, integrate-ledger-memory-review, soma-3-native-sensory-parity, test/soma-33-lantern-native-session]
   workflow_dispatch:
 
 permissions:

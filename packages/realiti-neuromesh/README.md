@@ -22,6 +22,17 @@ node packages/realiti-neuromesh/examples/lantern-lab.cjs
 npm test --prefix packages/realiti-neuromesh
 ~~~
 
+### Run the native-depth test room
+
+`node packages/realiti-neuromesh/examples/native-lantern-tour.cjs` runs a complete
+SOMA 3.3 resident visit in Lantern Room. It tests reach, grounded contact,
+Moonwire, V20 packet generation, live LACE rewiring, physical support/creep,
+window-driven thermal stress, host-admitted BleuCheese, a physically struck bell
+and measured hearing, encrypted archived Pocket data, STOP and historical
+memory isolation. The 3.3 regression suite also compares coarse and fine
+BleuCheese clocks and all ten Moonwire recipes **inside the room**.
+See [Memory and Lab](./MEMORY_AND_LAB.md).
+
 ## Native sensory depth in SOMA 3.3
 
 SOMA 3.3 adds a **V20 perceptual-field projection** (native JND compression, causal cuts, up to seven frames), **Fiedler/Laplacian LACE spectral metrics and registered-zone rewiring**, **ten executable Moonwire routes and eight temporal envelopes**, host-sourced bond/stress **opponent-process interoception**, measured hearing and thermal inputs, conservative soft support, **analytic BleuCheese threshold solving**, and an optional **authenticated encrypted Node Pocket adapter**.
