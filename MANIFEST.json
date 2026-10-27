@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1629442,
-      "sha256": "42e56b54edddaa69498c974b683492f573bfc863ad6094aace651b06f08245b8"
+      "bytes": 1637866,
+      "sha256": "b48f83c5e267335b74c8eede7e74a8be8b55102539781a8c032a19f1fed048f7"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "f2b562aa52c588e22803fdc9a347ffcc6abaa4fbb7adf50fa389118012e76ca3"
+      "sha256": "ca71d0fe08400100d27a3b5ad3654da8126e9a71c3b17c33d2a9457594ffa06e"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -567,8 +567,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/harness.cjs",
-      "bytes": 40014,
-      "sha256": "2cf658b745cae3fc43e56d51744d5387d31f856a53715be789095c5dd42e8e6b"
+      "bytes": 40304,
+      "sha256": "fafdfc90a6da62d01ae6855f5bdf82ce096faee2a9cd1e149ae1db4cbe7930c4"
     },
     {
       "path": "packages/realiti-neuromesh/index.cjs",
@@ -667,8 +667,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/rr-native-math.cjs",
-      "bytes": 16364,
-      "sha256": "d1111920980c3ef4abd07174daba95da39f66231618f724e82a3fa00af72bfb7"
+      "bytes": 24498,
+      "sha256": "3bf9a1865d19eb82f2096526449b37569fa04f29107a4cd0d385d15314f399cc"
     },
     {
       "path": "packages/realiti-neuromesh/sealed-pocket.cjs",
@@ -707,8 +707,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/test/rr-native-math.test.cjs",
-      "bytes": 6902,
-      "sha256": "34929b9b0cc11f4a04fa9b6e16c7291d863ab6b751f203e11a0b395a70135c6a"
+      "bytes": 10330,
+      "sha256": "b65342449eb0154990c556cbebe129065b46ffc403b27068454a024ff586e574"
     },
     {
       "path": "packages/realiti-neuromesh/test/soma.test.cjs",
