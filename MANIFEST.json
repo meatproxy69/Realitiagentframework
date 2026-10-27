@@ -27,8 +27,8 @@
     },
     {
       "path": ".github/workflows/refresh-artifacts.yml",
-      "bytes": 2492,
-      "sha256": "eac95931283f02e0204fa3ea3f59ded7b8fc9c4383059feb5b9775b0c2062290"
+      "bytes": 2529,
+      "sha256": "9731d2380867660d60cebf476eef9b203ff4766654bfb38199bedcd999153af4"
     },
     {
       "path": ".github/workflows/server-ticket-close.yml",
@@ -37,8 +37,8 @@
     },
     {
       "path": ".github/workflows/validate.yml",
-      "bytes": 4296,
-      "sha256": "23a7dbd0c18017c82e0d786095ea80b4cb2c313c787bd33deef2332485edabe3"
+      "bytes": 4966,
+      "sha256": "b9fc978644ae9c0e033b00a3aea8338a617df29b1879141628a434d3d5cda070"
     },
     {
       "path": ".gitignore",
@@ -522,8 +522,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/MEMORY_AND_LAB.md",
-      "bytes": 5594,
-      "sha256": "e389ac5ff4767604d47c3f2b001cd91a6bef9e2a772c28d6ddec6fd3524de394"
+      "bytes": 7229,
+      "sha256": "af434e3c6f5b20de78ea52caf75dec4382454dd9709079f0bd49a8facd8af2ce"
     },
     {
       "path": "packages/realiti-neuromesh/NATIVE_PARITY.md",
@@ -532,8 +532,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 13076,
-      "sha256": "b6612e484b6125f11478183789f99664a0d8ae568d4bca4bbefe8207d3fcec2d"
+      "bytes": 13687,
+      "sha256": "65c6e986cc95304f569d5f44864b46953cee3edde34eb52a0bcd66652430b0e3"
     },
     {
       "path": "packages/realiti-neuromesh/advanced.cjs",
@@ -544,6 +544,11 @@
       "path": "packages/realiti-neuromesh/examples/lantern-lab.cjs",
       "bytes": 2440,
       "sha256": "3f83f1f2cb8793164cb7b12a208b74b38929f42bcfdd0fac523e4a1eccde47d3"
+    },
+    {
+      "path": "packages/realiti-neuromesh/examples/native-lantern-tour.cjs",
+      "bytes": 11033,
+      "sha256": "78fc9d9d22ded727bb6351d9356e1458ea5168dbd8de04ae528bb3902b41c1f4"
     },
     {
       "path": "packages/realiti-neuromesh/examples/neighborhood.cjs",
@@ -567,8 +572,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/lab/lantern-room.cjs",
-      "bytes": 7022,
-      "sha256": "c8497f78b17aaed886ccf13825c677f42fb27e6c0bc97363543dd3eda36b2aa6"
+      "bytes": 8125,
+      "sha256": "2a6357be8629686763e4f8912f1f1a99589af92a2c1c39e55015b31aa762101e"
     },
     {
       "path": "packages/realiti-neuromesh/memory.cjs",
@@ -674,6 +679,11 @@
       "path": "packages/realiti-neuromesh/test/lab.test.cjs",
       "bytes": 10910,
       "sha256": "9ba9610f943f2e367a34bcc2ddd79f0c6c4c2f61101f81788edb3ac5b2ee271a"
+    },
+    {
+      "path": "packages/realiti-neuromesh/test/lantern-native-session.test.cjs",
+      "bytes": 5293,
+      "sha256": "28ff39f3ec9384f0f6b1b82ed884f78c5a156766e2b8d75e2851ecfc44363831"
     },
     {
       "path": "packages/realiti-neuromesh/test/memory.test.cjs",
