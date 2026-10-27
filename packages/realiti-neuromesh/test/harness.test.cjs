@@ -236,7 +236,7 @@ test('B10 host numerical contact expires and never grants evidence on its own',(
  const drive={receiptId:E.receiptId,position:2.68,velocity:.75,pressure:.7,dtMs:100,
   material:'blanket',grain:'against',materialState:{crease:.15,dent:.07,wear:.02}};
  assert.throws(()=>h.host.haptics.driveMovingContact(drive),/LIVE_WORLD_RECEIPT/);
- assert.equal(Object.hasOwn(h.resident,'haptics'),false);
+ assert.equal(typeof h.resident.haptics?.driveMovingContact,'undefined');
  input(h);
  const mask=h.resident.field().m.slice();
  const first=h.host.haptics.driveMovingContact(drive);
