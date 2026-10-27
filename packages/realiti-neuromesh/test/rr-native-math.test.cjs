@@ -18,7 +18,7 @@ test('original B5 modal oscillator integrator is numerically identical',()=>{
  }
 });
 test('exact B6 phase and 2:1 regimes match original numerical formulas',()=>{
- const src=native('13.js'),fn=extract(src,'function b6phase(', '\nfunction b6phaseDrive(');
+ const src=native('13.js'),fn=extract(src,'function b6phase(', 'function b6phaseDrive(');
  const sandbox={};
  vm.runInNewContext('const b6clamp=(x,a,b)=>Math.max(a,Math.min(b,x));'+fn+
    ';this.p=b6phase;this.p21=b6phase21;',sandbox);
