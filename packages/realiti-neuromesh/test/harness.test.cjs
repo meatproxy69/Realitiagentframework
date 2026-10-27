@@ -230,3 +230,31 @@ test('field and harness reads are observational, and isolation holds across neig
  assert.deepEqual(h.resident.field(),core);
  assert.deepEqual(h.resident.checkpoint(),checkpoint);
 });
+
+test('B10 host numerical contact expires and never grants evidence on its own',()=>{
+ const h=mk('b10-harness-expiry');
+ const drive={receiptId:E.receiptId,position:2.68,velocity:.75,pressure:.7,dtMs:100,
+  material:'blanket',grain:'against',materialState:{crease:.15,dent:.07,wear:.02}};
+ assert.throws(()=>h.host.haptics.driveMovingContact(drive),/LIVE_WORLD_RECEIPT/);
+ assert.equal(Object.hasOwn(h.resident,'haptics'),false);
+ input(h);
+ const mask=h.resident.field().m.slice();
+ const first=h.host.haptics.driveMovingContact(drive);
+ assert.equal(first.zones.length,6);
+ assert.equal(first.friction.material_state.crease,.15);
+ assert.equal(first.zones.every(x=>x.evidence===false),true);
+ assert.deepEqual(h.resident.field().m,mask,'private receptors cannot mint m');
+ const rich=h.resident.perception().rr.moving_contact;
+ assert.equal(rich.active.length,1);
+ rich.active[0].zones[0].u=999;
+ assert.notEqual(h.resident.perception().rr.moving_contact.active[0].zones[0].u,999);
+ h.host.tick(501);
+ assert.equal(h.resident.field().m.some(Boolean),false);
+ assert.equal(h.resident.perception().rr.moving_contact.active.length,0);
+ assert.throws(()=>h.host.haptics.driveMovingContact(drive),/LIVE_WORLD_RECEIPT/);
+ input(h,{receiptId:'b10-next-contact'});
+ assert.throws(()=>h.host.haptics.driveMovingContact(drive),/LIVE_WORLD_RECEIPT/,
+  'a newer receipt does not revive an old contact');
+ h.host.stop();
+ assert.equal(h.resident.perception().rr.moving_contact.active.length,0);
+});
