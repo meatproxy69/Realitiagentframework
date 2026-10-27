@@ -127,3 +127,65 @@ test('private probes and archived restart cannot fabricate live source receipts'
  assert.throws(()=>api.createNativeRR({residentId:'other',zones:['hand.L.palm','hand.R.palm']})
   .resident.restore(checkpoint),/IDENTITY_MISMATCH/);
 });
+
+test('B10 eight-element GMS friction, material and receptive fields reproduce source 19',()=>{
+ const src=native('19.js');
+ const mats=extract(src,'const MATERIALS={','function cp(');
+ const fn=extract(src,'function gmsNew()','function lane10(');
+ const rf=extract(src,'function rfDrive(','function meshBinding(');
+ const sandbox={};
+ vm.runInNewContext('const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));'+mats+
+  fn+rf+';this.ref={gmsNew,gmsStored,materialDyn,gmsStep,ctCore,rfDrive};',sandbox);
+ for(const material of ['longfur','blanket','cardboard']){
+  const orig={gms:sandbox.ref.gmsNew(),v:0,material,material_state:{crease:.27,dent:.34,wear:.19,contact_temperature_C:29},pressure:.6,grain:'against'},
+   copy={...orig,gms:api.gmsNew()};
+  for(const velocity of [.42,-1.2,2.5,0,-.17]){
+   orig.v=copy.v=velocity;
+   assert.deepEqual(api.gmsStep(copy,.1),JSON.parse(JSON.stringify(sandbox.ref.gmsStep(orig,.1))));
+   assert.ok(Math.abs(api.gmsStored(copy)-sandbox.ref.gmsStored(orig))<1e-12);
+  }
+  assert.deepEqual(api.materialDyn(copy),JSON.parse(JSON.stringify(sandbox.ref.materialDyn(orig))));
+ }
+ for(const v of [.05,1,3,7.2,21]){
+  assert.equal(api.ctCore(v,32,true),sandbox.ref.ctCore(v,32,true));
+  assert.equal(api.ctCore(v,24,false),0);
+ }
+ for(const x of [0,.4,2.68,4.55])
+  assert.equal(api.rfDrive(x,api.B10_ROUTE[2],.3,.8),sandbox.ref.rfDrive(x,api.B10_ROUTE[2],.3,.8));
+});
+test('moving B10 must be host-grounded and creates no additional evidence',()=>{
+ const m=api.createNativeRR({residentId:'b10-room',zones:['hand.L.palm','hand.R.palm']});
+ const args={receiptId:'world-touch',position:2.68,velocity:.75,pressure:.66,
+  dtMs:100,material:'blanket',grain:'against',
+  materialState:{crease:.2,dent:.1,wear:.3,contact_temperature_C:31}};
+ assert.throws(()=>m.host.movingContact(args),/LIVE_WORLD_RECEIPT/);
+ m.host.accept({zone:'hand.L.palm',intensity:.66,source:'WORLD_GROUNDED',cause:'WORLD_COLLISION',receiptId:'world-touch'});
+ const before=m.resident.passive();
+ const step=m.host.movingContact(args);
+ assert.equal(step.zones.length,6);
+ assert.ok(step.zones.some(z=>z.SA1>0&&z.u>0));
+ assert.equal(step.zones.every(z=>z.evidence===false),true);
+ assert.equal(step.evidence,false);
+ assert.deepEqual(m.resident.passive(),before);
+ const read=m.resident.movingContact();
+ assert.equal(read.active.length,1);
+ read.active[0].zones[0].SA1=5000;
+ assert.notEqual(m.resident.movingContact().active[0].zones[0].SA1,5000);
+ m.host.release({zone:'hand.L.palm',receiptId:'world-touch'});
+ assert.throws(()=>m.host.movingContact(args),/LIVE_WORLD_RECEIPT/);
+ assert.equal(m.resident.movingContact().active.length,0);
+});
+test('B10 STOP and checkpoint restore never authorize old contact',()=>{
+ const m=api.createNativeRR({residentId:'b10-stop',zones:['pelvis.seat']});
+ m.host.accept({zone:'pelvis.seat',intensity:.3,source:'WORLD_GROUNDED',cause:'BENCH',receiptId:'rr'});
+ const args={receiptId:'rr',position:4.1,velocity:.2,pressure:.3,dtMs:100};
+ m.host.movingContact(args);
+ const saved=m.resident.checkpoint();
+ m.host.stop();
+ assert.equal(m.resident.movingContact().active.length,0);
+ assert.throws(()=>m.host.movingContact(args),/LIVE_WORLD_RECEIPT/);
+ const next=api.createNativeRR({residentId:'b10-stop',zones:['pelvis.seat']});
+ next.resident.restore(saved);
+ assert.equal(next.resident.movingContact().active.length,0);
+ assert.throws(()=>next.host.movingContact(args),/LIVE_WORLD_RECEIPT/);
+});

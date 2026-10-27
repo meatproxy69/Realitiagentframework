@@ -14,7 +14,7 @@
 if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED||!RR_NATIVE)throw Error('SOMA_CORE_RENDERERS_MEMORY_ADVANCED_OR_RR_MATH_MISSING');
 const VERSION='3.4.0',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
-const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support','passive_medium','phase_grammar','holonomy','seeded_jitter','kalman_nerve','dynamic_skin'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support','passive_medium','phase_grammar','holonomy','seeded_jitter','kalman_nerve','dynamic_skin','moving_contact_core'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
 const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
@@ -398,7 +398,7 @@ function createHarness(options={}){
   const native=advanced.resident.snapshot(f,halo,privateState);
   const rr= {passive_medium:rrNative.resident.passive(),
     nerve_precision:rrNative.resident.nerve(),
-    dynamic_skin:rrNative.resident.skin()};
+    dynamic_skin:rrNative.resident.skin(),moving_contact:rrNative.resident.movingContact()};
   const thicc=z.map(zone=>({zone,...renderer.THICC.sample(zone)}));
   return clone({
     schema:'REALITI_SOMA_RICH_PERCEPTION_V3',version:VERSION,private:true,
@@ -474,7 +474,9 @@ function createHarness(options={}){
     kalman_nerve:{available:typeof rrNative.resident.nerve==='function',
       forecast_private:true},
     dynamic_skin:{available:typeof rrNative.host.skinDrive==='function',
-      world_force_required:true}
+      world_force_required:true},
+    moving_contact_core:{available:typeof rrNative.host.movingContact==='function',
+      original_gms_elements:8,material_equations:true,host_receipt_required:true}
   };
   return clone(modules);
  }
@@ -519,7 +521,8 @@ function createHarness(options={}){
   hearing:Object.freeze({observe:advanced.host.sound}),
   refusal:Object.freeze({observe:advanced.host.refusal}),
   haptics:Object.freeze({energySample:advanced.host.energySample,
-    driveDynamicSkin:rrNative.host.skinDrive}),
+    driveDynamicSkin:rrNative.host.skinDrive,
+    driveMovingContact:rrNative.host.movingContact}),
   geometry:Object.freeze({witness:rrNative.host.geometryWitness}),
   affordances:setAffordances,
   memory:Object.freeze({
