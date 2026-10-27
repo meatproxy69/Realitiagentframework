@@ -12948,7 +12948,7 @@ return Object.freeze({VERSION,createMatrix});
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.3.0';
+  const VERSION = '3.3.1';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -13185,7 +13185,7 @@ return Object.freeze({VERSION,createMatrix});
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0','3.3.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');
@@ -14023,6 +14023,15 @@ function createAdvanced({residentId,zones,edges=[]}={}){
   str(objectId,'SUPPORT_OBJECT');str(receiptId,'SUPPORT_RECEIPT');
   valid(load,'SUPPORT_LOAD',0,1.5);valid(leaseMs,'SUPPORT_LEASE',1,60000);
   valid(mu,'SUPPORT_MU',.45,2.55);
+  // The same live host receipt is a lease RENEWAL, not a new physical
+  // support onset. Keep the original t0 and creep profile continuous.
+  if(support?.active&&support.receiptId===receiptId){
+   if(support.objectId!==objectId||Math.abs(support.load-load)>1e-10||
+      Math.abs(support.mu-mu)>1e-10)
+    throw TypeError('SUPPORT_RENEWAL_SCOPE_MISMATCH');
+   support.untilMs=now+leaseMs;
+   return{ok:true,receiptId,renewed:true,world_owned:true};
+  }
   support={objectId,receiptId,load,mu,t0:now,sigma0:.72,sigmaInf:1.3,
    tau:3.4,untilMs:now+leaseMs,active:true};
   return{ok:true,receiptId,world_owned:true};
@@ -14193,7 +14202,7 @@ return Object.freeze({VERSION,ROUTES,ENVELOPES,OPPONENT,SHELLS,DEPTH_W,
 })(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED){
 'use strict';
 if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED)throw Error('SOMA_CORE_RENDERERS_MEMORY_OR_ADVANCED_MISSING');
-const VERSION='3.3.0',SHELLS=['surface','shallow','mid','deep'];
+const VERSION='3.3.1',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
 const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support'];
 const clone=x=>JSON.parse(JSON.stringify(x));
@@ -14894,7 +14903,7 @@ return Object.freeze({VERSION,REQUIRED,SLOTS,createHarness});
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.3.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.3.1'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
@@ -14979,7 +14988,7 @@ async function run(raw){
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.3.0',read,
+window.Realiti=Object.freeze({...A0,version:'3.3.1',read,
   run:async raw=>{const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);
