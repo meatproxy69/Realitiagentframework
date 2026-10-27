@@ -1,6 +1,6 @@
 {
   "name": "@meatproxy69/realiti-neuromesh",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "REALITI SOMA native-depth portable R&R with V20 perceptual field, LACE spectral topology, Moonwire recipes, secure Pocket adapter and evidence memory.",
   "license": "AGPL-3.0-only",
   "main": "index.cjs",

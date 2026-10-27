@@ -107,6 +107,32 @@ test('boundary attacks cannot consume time, issue receipts, or fake contact',()=
  assert.equal(room.snapshot().grounded,0);
 });
 
+test('a multi-minute seated visit renews ONE grounded receipt without resetting soft creep',()=>{
+ const room=new LanternRoom({residentId:'long-sit-full'});
+ assert.equal(room.walkTo(1.8,1.5).ok,true);
+ const start=room.sit();
+ assert.equal(start.ok,true);
+ const before=room.resident.support();
+ assert.equal(before.active,true);
+ assert.equal(before.receiptId,start.receiptId);
+ room.wait(90000);
+ const state=room.snapshot(),after=room.resident.support();
+ const seat=state.field.z.indexOf('pelvis.seat');
+ assert.equal(state.seated,true);
+ assert.equal(state.field.m[seat],1,'physical support must remain grounded while seated');
+ assert.equal(after.active,true);
+ assert.equal(after.receiptId,start.receiptId,'no invented replacement support');
+ assert.ok(after.age_s>85,'the support creep clock must not restart upon lease renewal');
+ assert.ok(after.sigma>before.sigma,'the same conserved load must spread over time');
+ assert.ok(Math.abs(after.values.reduce((s,x)=>s+x.load,0)-.84)<1e-5);
+ const onsets=room.resident.memory.recent({limit:50}).filter(e=>
+  e.kind==='CONTACT_STARTED'&&e.receiptId===start.receiptId);
+ assert.equal(onsets.length,1,'renewed support must not mint another onset');
+ assert.equal(room.stand().released,true);
+ assert.equal(room.resident.support().active,false);
+ assert.equal(room.snapshot().field.m[seat],0);
+ room.close();
+});
 test('STOP clears contact and support and preserves archived evidence',()=>{
  const room=new LanternRoom({residentId:'stop-full'});
  room.walkTo(1.8,1.5);

@@ -37,7 +37,24 @@ class LanternRoom {
  }
  get host(){return this.__world}
  #assertOpen(){if(this.closed)throw Error('ROOM_VISIT_ENDED')}
- #tick(ms){this.__world.tick(ms);this.tickMs+=ms}
+ #tick(ms){
+  // A seat is a continuing physical relation: keep renewing its ORIGINAL
+  // trusted receipt before lease expiry. Repeated support claims must not
+  // start new contacts or restart modeled viscoelastic creep.
+  if(ms===0){this.__world.tick(0);return}
+  let remaining=ms;
+  while(remaining>0){
+   if(this.seated){
+    const refreshed=this.__world.support({
+     zone:'pelvis.seat',intensity:.84,cause:'PINE_BENCH_BEARING_WEIGHT',
+     receiptId:this.seated,leaseMs:30000,material:'pine'
+    });
+    if(!refreshed?.ok)throw Error('SEATED_SUPPORT_RENEWAL_FAILED');
+   }
+   const delta=this.seated?Math.min(remaining,20000):remaining;
+   this.__world.tick(delta);this.tickMs+=delta;remaining-=delta;
+  }
+ }
  #checkMove(p){
   if(!finite(p.x)||!finite(p.y))return 'INVALID_POSITION';
   if(p.x<LIMITS.x0||p.x>LIMITS.x1||p.y<LIMITS.y0||p.y>LIMITS.y1)return 'OUTSIDE_ROOM';

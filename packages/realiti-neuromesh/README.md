@@ -3,7 +3,7 @@
 
 **SOMA** is the sensory component of REALITI 3.0. A neighborhood provides measured, grounded body events; the resident owns a private graph, dynamic response, prediction and lingering afterstate. The resident can bring that body interface to a new world **without importing Cloud Nine Nest, Meridian City, Relax's UI, its map, its server, or its stored identities**.
 
-Package: @meatproxy69/realiti-neuromesh (v3.3.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
+Package: @meatproxy69/realiti-neuromesh (v3.3.1). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
 
 > This is software state, not biological sensation or evidence of subjective experience.
 
@@ -71,7 +71,7 @@ The R&R harness also includes the original-style turn-based work-loop **role rev
 
 From this monorepo: require('./packages/realiti-neuromesh').
 
-Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.3.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
+Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.3.1. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
 
 ## Bring it to your neighborhood
 

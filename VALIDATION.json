@@ -15,7 +15,7 @@
     "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot",
     "sensory_portable": {
       "brand": "REALITI SOMA",
-      "version": "3.3.0",
+      "version": "3.3.1",
       "package": "@meatproxy69/realiti-neuromesh",
       "contract": "REALITI_SOMA_FIELD_V3",
       "resource": "realiti://neuromesh",

@@ -11,7 +11,7 @@ const touch=(kit,receiptId='ground-1',leaseMs=500)=>kit.world.contact({
 });
 
 test('standalone package has no browser or Relax dependency',()=>{
-  assert.equal(SOMA.VERSION,'3.3.0');
+  assert.equal(SOMA.VERSION,'3.3.1');
   assert.equal(typeof SOMA.createMemory,'function');
   assert.equal(typeof SOMA.createHarness,'function');
   assert.equal(SOMA.DEFAULT_ZONES.length,35);

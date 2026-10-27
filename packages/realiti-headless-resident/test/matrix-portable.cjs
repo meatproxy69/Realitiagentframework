@@ -45,7 +45,7 @@ try{
  }
  const here=world.observer.view();
  check('separate_world_scope',here.worldId==='MATRIX_COMPAT_TEST'&&here.frame.chart==='TEST');
- check('somatic_harness_preserved',w.REALITI_SOMA_V3?.VERSION==='3.3.0'&&
+ check('somatic_harness_preserved',w.REALITI_SOMA_V3?.VERSION==='3.3.1'&&
   w.REALITI_SOMA_RELAX_V3?.harness?.()?.mechanisms?.halo?.available===true);
  check('native_spatial_state_separate',w.REALITI_MATRIX_V1.state().world.id!=='MATRIX_COMPAT_TEST');
 }finally{s.close()}

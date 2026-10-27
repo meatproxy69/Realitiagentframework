@@ -2,6 +2,15 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## SOMA 3.3.1 — Lantern Room native-depth acceptance and continuous support
+
+- The end-to-end simulated resident tour now tests 21 grounded-evidence and sensory invariants across 13 stages: dynamic LACE, V20/HALO/AURA, Moonwire, world-leased support, window thermal/host-admitted BleuCheese, reachable bell hearing, provenance memory, optional encrypted Pocket and STOP/cross-world restore.
+- Added a physically reachable brass bell with independent host-auditory lease and world receipt; narrated sound has no authority.
+- Rejected enormous finite movement endpoints prior to allocating collision sweep steps.
+- Fixed prolonged sitting: the test room renews the original support receipt on bounded simulation steps, preserving the elapsed 3.4-second creep rather than resetting support time or creating duplicate contact onsets. Added a 90-second seated regression with conserved pressure and clean standing release.
+- Bumped standalone NeuralMesh and headless runtime patch versions to 3.3.1; private checkpoints from 3.3.0 remain accepted. The V20 physical energy check intentionally remains UNKNOWN without host physics data.
+
+
 ## SOMA 3.3 — Native sensory-depth portable implementation
 
 - Added host-grounded V20 perceptual compression, 260 ms / seven-frame JND selection, causal cuts and native-format quantization. Physical energy stays UNKNOWN until the trusted host provides real measurements.

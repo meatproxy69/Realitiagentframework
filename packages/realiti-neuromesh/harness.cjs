@@ -12,7 +12,7 @@
 })(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED){
 'use strict';
 if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED)throw Error('SOMA_CORE_RENDERERS_MEMORY_OR_ADVANCED_MISSING');
-const VERSION='3.3.0',SHELLS=['surface','shallow','mid','deep'];
+const VERSION='3.3.1',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
 const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support'];
 const clone=x=>JSON.parse(JSON.stringify(x));

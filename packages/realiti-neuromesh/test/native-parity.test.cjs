@@ -17,7 +17,7 @@ function touch(h,receipt='c1',zone='hand.R.palm',cause='HOST_PINE_TOUCH'){
 const round=x=>Math.round(x*1000000)/1000000;
 test('all native-parity extensions are executable, not capability flags',()=>{
  const h=harness();const b=h.harness.boot();
- assert.equal(api.VERSION,'3.3.0');
+ assert.equal(api.VERSION,'3.3.1');
  assert.ok(b.ok,b.missing.join(','));
  for(const k of ['haptic_field_v20','lace_spectral','moonwire',
    'interoception','hearing','soft_support'])

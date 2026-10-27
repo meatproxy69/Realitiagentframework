@@ -21,7 +21,7 @@
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.3.0';
+  const VERSION = '3.3.1';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -258,7 +258,7 @@
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0','3.3.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');

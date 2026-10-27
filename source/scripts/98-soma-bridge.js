@@ -4,7 +4,7 @@
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.3.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.3.1'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
@@ -89,7 +89,7 @@ async function run(raw){
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.3.0',read,
+window.Realiti=Object.freeze({...A0,version:'3.3.1',read,
   run:async raw=>{const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);

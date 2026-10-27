@@ -212,6 +212,15 @@ function createAdvanced({residentId,zones,edges=[]}={}){
   str(objectId,'SUPPORT_OBJECT');str(receiptId,'SUPPORT_RECEIPT');
   valid(load,'SUPPORT_LOAD',0,1.5);valid(leaseMs,'SUPPORT_LEASE',1,60000);
   valid(mu,'SUPPORT_MU',.45,2.55);
+  // The same live host receipt is a lease RENEWAL, not a new physical
+  // support onset. Keep the original t0 and creep profile continuous.
+  if(support?.active&&support.receiptId===receiptId){
+   if(support.objectId!==objectId||Math.abs(support.load-load)>1e-10||
+      Math.abs(support.mu-mu)>1e-10)
+    throw TypeError('SUPPORT_RENEWAL_SCOPE_MISMATCH');
+   support.untilMs=now+leaseMs;
+   return{ok:true,receiptId,renewed:true,world_owned:true};
+  }
   support={objectId,receiptId,load,mu,t0:now,sigma0:.72,sigmaInf:1.3,
    tau:3.4,untilMs:now+leaseMs,active:true};
   return{ok:true,receiptId,world_owned:true};
