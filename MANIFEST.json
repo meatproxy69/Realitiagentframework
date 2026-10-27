@@ -682,8 +682,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/test/harness.test.cjs",
-      "bytes": 13551,
-      "sha256": "4da24d536c24623858893b4e32239aef466ae72969fccae849bfe2a3b5d0a676"
+      "bytes": 13567,
+      "sha256": "cd5147c9b3c34fa251b03877f901a355129ab8de2a045bcb6e5f25ebf281a827"
     },
     {
       "path": "packages/realiti-neuromesh/test/lab.test.cjs",
