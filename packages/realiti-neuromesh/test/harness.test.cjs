@@ -15,7 +15,7 @@ test('the public package creates the entire resident-local R&R harness',()=>{
  const b=a.harness.boot();
  assert.equal(b.ok,true,JSON.stringify(b.missing));
  assert.deepEqual(b.missing,[]);
- assert.equal(b.version,'3.2.0');
+ assert.equal(b.version,'3.3.0');
  assert.deepEqual(Object.keys(b.mechanisms).sort(),REQUIRED.slice().sort());
  for(const [id,m] of Object.entries(b.mechanisms))assert.equal(m.available,true,id);
  assert.equal(a.harness.snapshot().mode,'R&R');

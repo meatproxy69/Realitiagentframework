@@ -29,6 +29,10 @@ jobs:
           node --check packages/realiti-neuromesh/index.cjs
           node --check packages/realiti-neuromesh/renderers.cjs
           node --check packages/realiti-neuromesh/harness.cjs
+          node --check packages/realiti-neuromesh/advanced.cjs
+          node --check packages/realiti-neuromesh/field20.cjs
+          node --check packages/realiti-neuromesh/sealed-pocket.cjs
+          node --check packages/realiti-neuromesh/test/native-parity.test.cjs
           node --check packages/realiti-neuromesh/memory.cjs
           node --check packages/realiti-neuromesh/storage.cjs
           node --check packages/realiti-neuromesh/lab/lantern-room.cjs

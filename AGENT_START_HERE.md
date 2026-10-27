@@ -8,7 +8,10 @@ REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing
 
 World builders may install [REALITI Matrix](./packages/realiti-matrix/README.md) separately. It supplies the native signed-distance/portal spatial kernel and an Ed25519 signed receipt protocol for world/session/actor-scoped contact, release, obstruction and refusals. Resident-side SOMA remains a separate package and consumes **verified, resolved** evidence through the optional qualified Node bridge. Never create grounded contact from freeform agent narration, a self-asserted WORLD_GROUNDED label, or an archived historical memory.
 
-### REALITI 3.2 — portable SOMA harness with resident memory
+### REALITI 3.3 — native-depth portable SOMA and separate resident memory
+The portable SOMA kit now also provides a V20 perceptual projection (not native physical force), dynamic spectral LACE, real Moonwire temporal routes, native opponent-process body modeling, measured hearing, conservative support and an optional Node authenticated encrypted Pocket. See [NATIVE_PARITY.md](./packages/realiti-neuromesh/NATIVE_PARITY.md) for exact numerical parity and remaining native-only physics/identity boundaries.
+
+
 
 The package now includes [source-linked resident memory and a Lantern Room test environment](./packages/realiti-neuromesh/MEMORY_AND_LAB.md). Host events are recorded only after real world operations; SELF_REPORTED notes do not become world facts. Recall returns original records, and checkpoint restoration cannot restore physical contact.
 

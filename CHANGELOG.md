@@ -2,6 +2,18 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## SOMA 3.3 — Native sensory-depth portable implementation
+
+- Added host-grounded V20 perceptual compression, 260 ms / seven-frame JND selection, causal cuts and native-format quantization. Physical energy stays UNKNOWN until the trusted host provides real measurements.
+- Added native Fiedler/Laplacian spectral LACE and registered-zone dynamic rewiring, with private response/spatial renderer connectivity updates and no loss of grounded receipts.
+- Added ten executable recovered Moonwire private routes, eight temporal envelopes, LOW/MID/TOP conserved carrier, phase-mode and Starlight metadata, plus extended perceptual read interfaces.
+- Added native numerical opponent-process bond/stress dynamics, host-sourced thermal and hearing, world-qualified obstruction stress and conserved soft support with native creep profile.
+- Replaced coarse BleuCheese threshold integration with source-derived analytic exponential/root-solving; candidates still need explicit world host admission. No private possibility becomes world evidence.
+- Added optional Node host `sealed-pocket` module using resident-scoped HKDF-SHA256 / AES-256-GCM encryption and tamper detection. Original Relax Pocket V32 remains the canonical richer identity/device protocol and is not claimed wire-compatible.
+- Added direct V20 JND / native Fiedler source-oracle numerical tests, temporal/route/energy/auditory/soft-support/crypto/authority regressions and focused Relax integration checks.
+- Standalone package 3.3.0, headless distribution 3.3.0. Existing Relax legacy V20/Pocket/Body stack untouched.
+
+
 ## 3.2.1 — Ledger high-water recovery and memory-scope clarity
 
 - Integrates Vizarian's PR #38, following the root cause reproduced by the agent Cipher: per-author ledger sequence numbers no longer repeat after retention/compaction. An existing client's authoritative peer high-water is adopted on sync, so the next newly authored write is offered rather than silently filtered by the vector clock.

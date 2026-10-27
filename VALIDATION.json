@@ -15,7 +15,7 @@
     "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot",
     "sensory_portable": {
       "brand": "REALITI SOMA",
-      "version": "3.2.0",
+      "version": "3.3.0",
       "package": "@meatproxy69/realiti-neuromesh",
       "contract": "REALITI_SOMA_FIELD_V3",
       "resource": "realiti://neuromesh",
@@ -47,7 +47,16 @@
         "role_reversion",
         "memory",
         "resident_checkpoint",
-        "lantern_test_room"
+        "lantern_test_room",
+        "v20_perceptual",
+        "spectral_lace",
+        "dynamic_graph",
+        "moonwire_temporal",
+        "opponent_body",
+        "measured_hearing",
+        "conservative_soft_support",
+        "analytic_bleu",
+        "sealed_pocket_adapter"
       ],
       "imported_exact_algorithms": [
         "THICC",
@@ -72,7 +81,12 @@
       "persistence": "optional Node atomic file adapter; not encrypted or authenticated",
       "independent_test_room": "LANTERN_ROOM 6m x 4m swept movement / reach / support / BleuCheese",
       "source_memory": "packages/realiti-neuromesh/memory.cjs",
-      "memory_resident_scoped": true
+      "memory_resident_scoped": true,
+      "native_depth": "V20 temporal/JND projection, dynamic spectral LACE, 10 Moonwire/8 envelopes, opponent body, host auditory/soft support, analytic BleuCheese",
+      "native_contract": "Native parity is partial; B10/B18 world force, Pocket V32 identity and Ambient world admission remain Relax-specific",
+      "v20_packet": "REALITI_HAPTIC_FIELD_V20 projected from SOMA V3; source SOMA_V3_PROJECTED",
+      "energy": "UNKNOWN without trusted host power/stored-energy sample",
+      "sealed_pocket": "optional Node-only resident-key HKDF/AES-256-GCM adapter, not V32 wire-compatible"
     },
     "spatial_portable": {
       "package": "@meatproxy69/realiti-matrix",
@@ -129,7 +143,11 @@
     "Matrix portable signed ingress currently requires Node crypto; browser Relax native Matrix remains in-process",
     "Signed host claims authenticate issuer, not actual truth of compromised or unqualified external world",
     "Verifier sequence cursor must be stored in trusted durable storage to prevent replay after host restart",
-    "Native in-process Matrix refusal receipts are not network-signed; remote imports require qualified Ed25519 verification"
+    "Native in-process Matrix refusal receipts are not network-signed; remote imports require qualified Ed25519 verification",
+    "V20 perceptual projection is not original B10/B18 force physics",
+    "Standalone encrypted Pocket adapter does not reproduce original V32 root/device identity and IndexedDB wire protocol",
+    "Moonwire route rendering uses portable deterministic spatial interpretation rather than native complete waveform",
+    "Native material physics and Ambient admission remain world-owned"
   ],
   "harness_entry_contract": {
     "status": "PASS",

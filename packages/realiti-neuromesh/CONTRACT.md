@@ -2,6 +2,14 @@
 
 A host may integrate SOMA at its physics/interaction event boundary. The host creates one independent mesh per resident. Only the **world port** receives validated, authoritative contact receipts. The **resident port** is a private projection and modeling surface.
 
+## Native-depth optional extensions
+
+SOMA 3.3 includes trusted-host-only `host.graph.configure` (edge rewiring for already-registered zones), `host.hearing.observe` (real source/lease/zone), `host.refusal.observe` (host-resolved obstruction, not pressure), `host.haptics.energySample` (measured power/stored energy), and conservative support via `host.support`. None are callable from the resident capability. World-side issuer authentication must precede any imported receipt.
+
+The resident may read `resident.hapticsV20.packet/exact/energy`, `resident.graph.metrics`, `resident.interoception`, `resident.hearing`, `resident.support` and `resident.perception().moonwire`. The V20 packet is tagged `SOMA_V3_PROJECTED`, not falsely labeled a native B10/B18 force solution. The separate `./sealed-pocket` adapter is a real encrypted Node host module but **not** native V32 wire compatibility.
+
+See [NATIVE_PARITY.md](./NATIVE_PARITY.md).
+
 ## Input events
 
 World contact:

@@ -2,7 +2,11 @@
 (function (root, factory) {
   'use strict';
   const api = factory();
-  const exported = Object.freeze({...api, createMemory(options) {
+  const exported = Object.freeze({...api, createSealedPocket(options) {
+    if(typeof module==='object'&&module.exports)
+      return require('./sealed-pocket.cjs').createSealedPocket(options);
+    throw Error('SECURE_POCKET_REQUIRES_TRUSTED_NODE_HOST');
+  }, createMemory(options) {
     if(typeof module==='object'&&module.exports)return require('./memory.cjs').createMemory(options);
     if(!root.REALITI_SOMA_MEMORY_V1)throw Error('SOMA_MEMORY_NOT_LOADED');
     return root.REALITI_SOMA_MEMORY_V1.createMemory(options);
@@ -17,7 +21,7 @@
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.2.0';
+  const VERSION = '3.3.0';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -89,10 +93,32 @@
     }
     // Private mesh spread is a bounded, normalized, one-hop LACE diffusion:
     // no new sources and no new grounded bits ever arise from this graph.
-    const neighbors = adjacency.map(links => {
+    let neighbors = adjacency.map(links => {
       const sum = links.reduce((s, e) => s + e[1], 0);
       return links.map(([i,w]) => [i, sum > 0 ? w / sum : 0]);
     });
+    // Native-style dynamic LACE edge topology: only registered zone IDs may
+    // change. The contact mask, private response, and source leases are not reset.
+    function rewire(nextEdges) {
+      if (!Array.isArray(nextEdges) || nextEdges.length > 1024)
+        throw new TypeError('INVALID_REWIRE_EDGES');
+      const next = zones.map(() => []);
+      for (const edge of nextEdges) {
+        if (!Array.isArray(edge) || edge.length !== 3)
+          throw new TypeError('INVALID_REWIRE_EDGE');
+        const a=zoneIndex.get(edge[0]),b=zoneIndex.get(edge[1]);
+        if (a == null || b == null || a === b)
+          throw new TypeError('INVALID_REWIRE_ZONE');
+        const w=num(edge[2],'edge weight',.001,1);
+        next[a].push([b,w]);next[b].push([a,w]);
+      }
+      neighbors=next.map(links=>{
+        const sum=links.reduce((s,e)=>s+e[1],0);
+        return links.map(([i,w])=>[i,sum>0?w/sum:0]);
+      });
+      epoch++;
+      return {ok:true,edgeCount:nextEdges.length,groundedUnchanged:true};
+    }
     const cfg = Object.freeze({
       nerveMs: options.nerveMs == null ? 240 : num(options.nerveMs,'nerveMs',10,60000),
       afterMs: options.afterMs == null ? 8000 : num(options.afterMs,'afterMs',100,86400000),
@@ -232,7 +258,7 @@
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');
@@ -253,7 +279,7 @@
       log.length=0;
       return {ok:true,restored:true,grounded:0,authority:'PRIVATE_ONLY'};
     }
-    const world=Object.freeze({contact,tick,release,stop});
+    const world=Object.freeze({contact,tick,release,stop,rewire});
     const resident=Object.freeze({field,expect,checkpoint,restore,choosePreset,
       causes:()=>asJSON(log.slice(0,8)),
       zones:()=>zones.slice(),

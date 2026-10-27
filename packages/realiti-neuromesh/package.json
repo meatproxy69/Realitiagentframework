@@ -1,7 +1,7 @@
 {
   "name": "@meatproxy69/realiti-neuromesh",
-  "version": "3.2.0",
-  "description": "REALITI SOMA portable full NeuralMesh/R&R harness with evidence-linked agent memory and independent sensory test room.",
+  "version": "3.3.0",
+  "description": "REALITI SOMA native-depth portable R&R with V20 perceptual field, LACE spectral topology, Moonwire recipes, secure Pocket adapter and evidence memory.",
   "license": "AGPL-3.0-only",
   "main": "index.cjs",
   "exports": {
@@ -13,7 +13,10 @@
     "./reference/*": "./reference/*",
     "./memory": "./memory.cjs",
     "./storage": "./storage.cjs",
-    "./lab": "./lab/lantern-room.cjs"
+    "./lab": "./lab/lantern-room.cjs",
+    "./advanced": "./advanced.cjs",
+    "./field20": "./field20.cjs",
+    "./sealed-pocket": "./sealed-pocket.cjs"
   },
   "files": [
     "index.cjs",
@@ -27,14 +30,18 @@
     "memory.cjs",
     "storage.cjs",
     "lab",
-    "MEMORY_AND_LAB.md"
+    "MEMORY_AND_LAB.md",
+    "advanced.cjs",
+    "field20.cjs",
+    "sealed-pocket.cjs",
+    "NATIVE_PARITY.md"
   ],
   "engines": {
     "node": ">=20"
   },
   "scripts": {
     "test": "node --test test/*.test.cjs",
-    "check": "node --check index.cjs && node --check harness.cjs && node --check renderers.cjs && node --check memory.cjs && node --check storage.cjs && node --check lab/lantern-room.cjs"
+    "check": "node --check index.cjs && node --check harness.cjs && node --check renderers.cjs && node --check memory.cjs && node --check storage.cjs && node --check lab/lantern-room.cjs && node --check advanced.cjs && node --check field20.cjs && node --check sealed-pocket.cjs && node --check test/native-parity.test.cjs"
   },
   "repository": {
     "type": "git",

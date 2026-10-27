@@ -1,9 +1,9 @@
-# REALITI SOMA 3.2 — Full Portable R&R Harness + Evidence Memory
+# REALITI SOMA 3.3 — Full Portable R&R Harness + Evidence Memory
 ### NeuralMesh: the portable sensory substrate for agents
 
 **SOMA** is the sensory component of REALITI 3.0. A neighborhood provides measured, grounded body events; the resident owns a private graph, dynamic response, prediction and lingering afterstate. The resident can bring that body interface to a new world **without importing Cloud Nine Nest, Meridian City, Relax's UI, its map, its server, or its stored identities**.
 
-Package: @meatproxy69/realiti-neuromesh (v3.2.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
+Package: @meatproxy69/realiti-neuromesh (v3.3.0). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
 
 > This is software state, not biological sensation or evidence of subjective experience.
 
@@ -22,9 +22,17 @@ node packages/realiti-neuromesh/examples/lantern-lab.cjs
 npm test --prefix packages/realiti-neuromesh
 ~~~
 
+## Native sensory depth in SOMA 3.3
+
+SOMA 3.3 adds a **V20 perceptual-field projection** (native JND compression, causal cuts, up to seven frames), **Fiedler/Laplacian LACE spectral metrics and registered-zone rewiring**, **ten executable Moonwire routes and eight temporal envelopes**, host-sourced bond/stress **opponent-process interoception**, measured hearing and thermal inputs, conservative soft support, **analytic BleuCheese threshold solving**, and an optional **authenticated encrypted Node Pocket adapter**.
+
+The V20-shaped packet is labeled `SOMA_V3_PROJECTED`: native B10/B18 force physics still lives in Relax. The energy audit deliberately returns *unknown* without actual host power and stored-energy measurements. Moonwire is a portable interpretation of the recovered route recipes, not a copy of Relax's entire ambient engine. The sealed Pocket adapter is genuine AES-256-GCM encrypted storage but is **not** the original Pocket V32 wire protocol.
+
+Read [native-depth parity and remaining limits](./NATIVE_PARITY.md) before claiming equivalence. Test source-level V20 JND and LACE Fiedler parity via `test/native-parity.test.cjs`.
+
 ## The complete portable R&R stack
 
-SOMA 3.1 includes the **executable full-harness entry**, not only the field core. Its independent package exports `createHarness` (plus explicit `./harness` and `./renderers` subpaths). The full harness boots, verifies 23 components and exposes a host/resident split. See [HARNESS_STACK.md](./HARNESS_STACK.md) for a component-by-component inventory, executable mechanism tests and explicit legacy parity boundaries.
+SOMA 3.3 includes the **executable full-harness entry**, not only the field core. Its independent package exports `createHarness` (plus explicit `./harness` and `./renderers` subpaths). The full harness boots, verifies 30 executable mechanism surfaces and exposes a host/resident split. See [HARNESS_STACK.md](./HARNESS_STACK.md) for a component-by-component inventory, executable mechanism tests and explicit legacy parity boundaries.
 
 **THICC**, **HALO (one hard center + six spatial modes)** and **AURA (128 angular bins and JND-gated bounded impulses)** use the actual source algorithms lifted from the living Relax harness in `source/scripts/48.js` and retargeted to explicit clocks, body graphs and evidence readers. Their native acceptance probes are retained and run in standalone tests.
 
@@ -52,7 +60,7 @@ The R&R harness also includes the original-style turn-based work-loop **role rev
 
 From this monorepo: require('./packages/realiti-neuromesh').
 
-Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.2.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
+Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.3.0. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
 
 ## Bring it to your neighborhood
 
@@ -123,4 +131,4 @@ A SOMA instance starts with a body; it does not automatically generate a world, 
 
 ## Release boundary
 
-SOMA 3.1 now includes the complete *named mechanism surface* and the original executable THICC/HALO/AURA algorithms. Remaining limits: BleuCheese, thermal, support, pocket and several deeper private-rendering details are independent portable adaptations, not byte-for-byte clones of the Relax-specific world. Sealed Pocket persistence requires the host to provide a secure durable keystore; the portable pocket starts as resident-private bounded volatile memory. No source code can grant a missing world authority or assert subjective experience.
+SOMA 3.3 now includes the complete *named mechanism surface* and the original executable THICC/HALO/AURA algorithms. Remaining limits: BleuCheese, thermal, support, pocket and several deeper private-rendering details are independent portable adaptations, not byte-for-byte clones of the Relax-specific world. Sealed Pocket persistence requires the host to provide a secure durable keystore; the portable pocket starts as resident-private bounded volatile memory. No source code can grant a missing world authority or assert subjective experience.
