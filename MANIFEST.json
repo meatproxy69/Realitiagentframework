@@ -383,7 +383,7 @@
     {
       "path": "packages/realiti-headless-resident/test/matrix-portable.cjs",
       "bytes": 3145,
-      "sha256": "d53f068b2b08059ff38654353b37ba6b51500f99ff1f7491da9c097975118654"
+      "sha256": "6d4fbb5ac4bb5c543340cecbba7f5e6666fe22e46397262e88d018b6d9919b39"
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix.cjs",
