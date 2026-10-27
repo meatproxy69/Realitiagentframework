@@ -57,8 +57,8 @@
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 67316,
-      "sha256": "984d2c2b90fc2cff43f0f874d3b9c8533af93952d6f9d85c97ba301ccf3555c9"
+      "bytes": 67673,
+      "sha256": "61a8b56d682363262fc9ef22ca0265c9c752027d8e048abd78cf158368fbd98c"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -517,8 +517,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/HARNESS_STACK.md",
-      "bytes": 7287,
-      "sha256": "a1e22d3bfbf155f27b621c3db71946ef2cd365a871c08085526ce131a1d749b1"
+      "bytes": 8197,
+      "sha256": "ea18d82dab3991c8702a038ae83b87d9b95778c5a9e06416c7a2b015a775e50d"
     },
     {
       "path": "packages/realiti-neuromesh/MEMORY_AND_LAB.md",
@@ -527,18 +527,18 @@
     },
     {
       "path": "packages/realiti-neuromesh/NATIVE_PARITY.md",
-      "bytes": 6313,
-      "sha256": "9343954aacc4f6efeae2720073eba4321fab68ef8fd7658251411f62020e45e1"
+      "bytes": 6475,
+      "sha256": "4ee98754607c9ebd9be46ccf5291f07081b8c90903238520150f7beb8b231116"
     },
     {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 15512,
-      "sha256": "75c675f6a382d93fd330392a281027573006cc63a8d2f210d4c5d99df9cfa2e8"
+      "bytes": 16447,
+      "sha256": "4a2a67127f873116d2f370d9c3983a52ecb54e32114266b4838b7510177e0d23"
     },
     {
       "path": "packages/realiti-neuromesh/RR_STACK_AUDIT.md",
-      "bytes": 5222,
-      "sha256": "45904ecec1fabca6d2c4f45131ae3091b25a34983acb19829ca0daaa7a19cf3a"
+      "bytes": 5556,
+      "sha256": "4fbb9ee730cb01ab4da6343f847eb7c08ba59dd02cab202cd9a28be1da3c62af"
     },
     {
       "path": "packages/realiti-neuromesh/advanced.cjs",
@@ -553,7 +553,7 @@
     {
       "path": "packages/realiti-neuromesh/examples/native-lantern-tour.cjs",
       "bytes": 12412,
-      "sha256": "a4f66d29841613f37bae3dea79884ed1c3dafeb9f3291c6043d007242f79e845"
+      "sha256": "0afaf6ac84289b16d95c848eb903aaebdf9bb1dcbb61e0d5e73e511b7457b194"
     },
     {
       "path": "packages/realiti-neuromesh/examples/neighborhood.cjs",
