@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1610388,
-      "sha256": "bb47218e2327802ccb0389b3e855f2aa6d80efc21a9ea7e700d570e6e4bbe668"
+      "bytes": 1610445,
+      "sha256": "5659de29d412671179e208dd8f5973ec66b703cc829727ab732f9330f55d30cd"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7616,
-      "sha256": "2f5e6d48090c2c1da3f67f8089374fb0bc3e06da26aba41c569d7896da04a76e"
+      "sha256": "c57e7524a1d1676fb16f5b2360e3690c65a782f2d264f573774182ad3671bffc"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -552,8 +552,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/field20.cjs",
-      "bytes": 8255,
-      "sha256": "f56a3706a995da29450b905a09fd97c46649488a413eb8e4218f431b531571c3"
+      "bytes": 8312,
+      "sha256": "e64c4cdfd152c00fe5278bbfcf8dfb3ad259c43ecb2128a8cfb1254d479b56e8"
     },
     {
       "path": "packages/realiti-neuromesh/harness.cjs",
@@ -682,8 +682,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/test/native-parity.test.cjs",
-      "bytes": 11864,
-      "sha256": "b1d0e04b05ff3eebffb6728b1bb82886c416e5cadfcb6a125a3baed0e7c92483"
+      "bytes": 12274,
+      "sha256": "c32227eea5efdfb6ef15dfaa6a99f41854fde097e0f5487744fab992475b5f54"
     },
     {
       "path": "packages/realiti-neuromesh/test/soma.test.cjs",

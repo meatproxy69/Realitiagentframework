@@ -13754,7 +13754,7 @@ function createField20({zones=[]}={}){
    cc:s.cc==null?null:+s.cc.toFixed(3),
    cf:s.cf==null?null:+s.cf.toFixed(3),k:s.epoch
   }));
-  stats.packets++;
+  // Public reads are strictly observational; sampling occurs in observe().
   return cp({v:20,t:+t.toFixed(4),b:zs.length,z:active,
    n:f.length,span:+Math.max(0,t-t0).toFixed(4),f,
    source:'SOMA_V3_PROJECTED',nativeB10Dynamics:false});
