@@ -1,6 +1,6 @@
-# SOMA 3.4 — native sensory depth and fidelity audit
+# SOMA 3.4 Beta — native sensory depth and fidelity audit
 
-**SOMA 3.3 adds executable mechanisms, not names in a capability list.** Relax remains the reference world; SOMA is world-independent. No private renderer, perception, memory, or prediction can mint grounded contact.
+**SOMA 3.4 Beta contains executable mechanisms, not just names in a capability list.** Relax remains the reference world; SOMA is world-independent. No private renderer, perception, memory, or prediction can mint grounded contact.
 
 | Module | What runs independently | Native parity status |
 | --- | --- | --- |
@@ -18,6 +18,8 @@
 | Soft support | Native 4-zone Gaussian load redistribution and 3.4 s creep, conserved pressure, bounded host lease | Real physical relation must still be issued and renewed by the host |
 | Memory | 48 explicit resident notes and 160 receipt-linked host episodes | Historical archive is never new world authority |
 | Sealed Pocket | Optional trusted Node AES-256-GCM record encryption, HKDF-SHA256 per resident, authenticated metadata, tombstones | **Not** Relax Pocket V32 wire-compatible; V32 includes device/root key systems, wrapped keys, IndexedDB, and richer indexes |
+
+**Beta acceptance gap:** the package does not yet provide all original/default presets and a reference-equivalent grounded starting baseline for arbitrary neighborhood hosts. A clean harness boot proves mechanisms are available, not that startup support/posture/environment is correctly resolved. Such grounding must originate with the trusted world host.
 
 ### SOMA 3.4 additional numerical extraction
 

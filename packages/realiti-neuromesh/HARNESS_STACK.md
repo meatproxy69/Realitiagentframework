@@ -1,8 +1,10 @@
-# SOMA 3.4 — Full R&R Harness Portability Audit
+# SOMA 3.4 Beta — R&R Harness Portability Audit
 
 REALITI Relax remains the reference neighborhood and retains its full native, layered runtime. The independent @meatproxy69/realiti-neuromesh module exports an **executable harness** that a new neighborhood can boot without importing Relax, its browser globals, map, rooms, server or identity.
 
 The full harness is created with createHarness({residentId,zones,edges}). harness.boot() checks registered mechanism surfaces. Standalone tests exercise real dynamic responses and the authority boundary. The harness REQUIRED list enumerates 37 mechanism surfaces: 24 original, six native-depth sensory extensions, six R&R numerical modules and the host-admitted B10 moving-contact core.
+
+**Beta status:** 37 mechanism surfaces is an executable inventory, not complete native parity. Original presets/default calibration and host-resolved standing/seated/environment grounding are still being ported or qualified. A host must provide trustworthy initial support/contact receipts; private renderer defaults cannot mint them.
 
 ## Mechanism inventory
 

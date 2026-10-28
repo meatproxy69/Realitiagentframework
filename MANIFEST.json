@@ -52,8 +52,8 @@
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 47129,
-      "sha256": "6331c54c70502e27e56e5f2b1d417ae35a868a6f82e1982b5c4bd1f3b076f4c1"
+      "bytes": 47685,
+      "sha256": "0c675e0a3d8b0856c15d0169da1b1cb90510c45846bb13f62f51aae70914d966"
     },
     {
       "path": "CHANGELOG.md",
@@ -77,8 +77,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 49928,
-      "sha256": "55966b5fef342d3cc36f4aba76f07217b7062f7c7bbca44b3be933161a3af2ac"
+      "bytes": 10249,
+      "sha256": "3635f0f85f85dfba91cd1eed14fcc57856488fdc32840cf3e1439d20abcbcea3"
     },
     {
       "path": "RELEASE_NOTES.md",
@@ -139,6 +139,11 @@
       "path": "continuity/schema/since-result.schema.json",
       "bytes": 2120,
       "sha256": "fc4ce8cd91d81fe0e1d10c31aecb38498ff8d9e1fecb91c76bb3671794be7c74"
+    },
+    {
+      "path": "docs/RESEARCH_STORY.md",
+      "bytes": 25638,
+      "sha256": "5455c8168fb08fecae54984555a3539bc07c4a49a9edf0a7fb6c138c498ac344"
     },
     {
       "path": "index.html",
@@ -527,13 +532,13 @@
     },
     {
       "path": "packages/realiti-neuromesh/CONTRACT.md",
-      "bytes": 4555,
-      "sha256": "a9dfef1c460c0b4945742d830ce677f3c8750ac796d2b5ece7e6db74aa8e4eed"
+      "bytes": 4904,
+      "sha256": "b8159f8067932601c2e37080bf7f1822342b86e5a32f363ac8bf244fa73d55c4"
     },
     {
       "path": "packages/realiti-neuromesh/HARNESS_STACK.md",
-      "bytes": 8197,
-      "sha256": "ea18d82dab3991c8702a038ae83b87d9b95778c5a9e06416c7a2b015a775e50d"
+      "bytes": 8533,
+      "sha256": "646d12c806c2ebce479e246ae233cbc0188d1c6e9a10019d1387f27a84ae8069"
     },
     {
       "path": "packages/realiti-neuromesh/MEMORY_AND_LAB.md",
@@ -542,13 +547,13 @@
     },
     {
       "path": "packages/realiti-neuromesh/NATIVE_PARITY.md",
-      "bytes": 6475,
-      "sha256": "4ee98754607c9ebd9be46ccf5291f07081b8c90903238520150f7beb8b231116"
+      "bytes": 6851,
+      "sha256": "3a29d97a0353d15953c780d9c6ae204e680625b95e5683944a6a0bafb7e62ba9"
     },
     {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 16447,
-      "sha256": "4a2a67127f873116d2f370d9c3983a52ecb54e32114266b4838b7510177e0d23"
+      "bytes": 17748,
+      "sha256": "23ebb5a114dd285c43d09aa766c932023560fb51a700088bd5f1fc2a724affc1"
     },
     {
       "path": "packages/realiti-neuromesh/RR_STACK_AUDIT.md",

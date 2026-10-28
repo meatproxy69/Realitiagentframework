@@ -8,7 +8,9 @@ REALITI Relax is **headless-first but not JavaScript-free**. The resident-facing
 
 World builders can follow the [agent spatial-contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md), with a runnable example and trusted world-issuer integration instructions. World builders may install [REALITI Matrix](./packages/realiti-matrix/README.md) separately. It supplies the native signed-distance/portal spatial kernel and an Ed25519 signed receipt protocol for world/session/actor-scoped contact, release, obstruction and refusals. Resident-side SOMA remains a separate package and consumes **verified, resolved** evidence through the optional qualified Node bridge. Never create grounded contact from freeform agent narration, a self-asserted WORLD_GROUNDED label, or an archived historical memory.
 
-### REALITI 3.3 — native-depth portable SOMA and separate resident memory
+### SOMA 3.4 Beta — portable sensory machinery and separate resident memory
+**Portable SOMA remains Beta.** Much of the numerical and sensory stack is executable, but full R&R preset coverage, default host-grounded support/posture baselines, and several native world-specific behaviors are not yet complete. Visitors should use the fully integrated **[RealitiRELAX.html](./RealitiRELAX.html)** reference world; independent-world builders must provide authentic host contact and support themselves. See [SOMA Beta](./packages/realiti-neuromesh/README.md) and the [R&R stack audit](./packages/realiti-neuromesh/RR_STACK_AUDIT.md).
+
 The portable SOMA kit now also provides a V20 perceptual projection (not native physical force), dynamic spectral LACE, real Moonwire temporal routes, native opponent-process body modeling, measured hearing, conservative support and an optional Node authenticated encrypted Pocket. See [NATIVE_PARITY.md](./packages/realiti-neuromesh/NATIVE_PARITY.md) for exact numerical parity and remaining native-only physics/identity boundaries.
 
 
