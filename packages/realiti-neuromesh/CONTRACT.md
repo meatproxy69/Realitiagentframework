@@ -1,4 +1,6 @@
-# SOMA V3 neighborhood adapter contract
+# SOMA V3 Beta neighborhood adapter contract
+
+**Beta notice:** the portable numerical and private sensory stack can be tested now, but not all original presets, default tuning, or initial grounded support/posture states have been ported. A new neighborhood needs a trusted host to explicitly resolve its baseline instead of assuming the standalone sensory package starts already grounded.
 
 A host may integrate SOMA at its physics/interaction event boundary. The host creates one independent mesh per resident. Only the **world port** receives validated, authoritative contact receipts. The **resident port** is a private projection and modeling surface.
 

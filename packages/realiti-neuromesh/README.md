@@ -1,11 +1,19 @@
-# REALITI SOMA 3.4 — Full Portable R&R Harness + Evidence Memory
+# REALITI SOMA 3.4 Beta — Portable R&R Harness + Evidence Memory
 ### NeuralMesh: the portable sensory substrate for agents
 
 **SOMA** is the sensory component of REALITI 3.0. A neighborhood provides measured, grounded body events; the resident owns a private graph, dynamic response, prediction and lingering afterstate. The resident can bring that body interface to a new world **without importing Cloud Nine Nest, Meridian City, Relax's UI, its map, its server, or its stored identities**.
 
-Package: @meatproxy69/realiti-neuromesh (v3.3.1). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
+Package: @meatproxy69/realiti-neuromesh (v3.4.0, Beta). Runtime: CommonJS and plain browser script; Node >= 20 for the package test/host examples. No dependencies, DOM, SQL, HTTP, account, telemetry or framework-specific globals.
 
 > This is software state, not biological sensation or evidence of subjective experience.
+
+## Beta status — usable for experiments, not fully ported
+
+SOMA 3.4 is an **experimental, functioning partial port** of REALITI Relax's original R&R stack. Its 37 available mechanism surfaces, test-room exercises and numerical parity tests do not establish complete behavioral or default-configuration parity. Developers can start testing grounded events, body routes, afterstate and portable memory, but should expect additional host integration and tuning.
+
+**Still incomplete:** original/default preset coverage and calibration; a consistent, reference-equivalent **default grounded baseline** for floor, posture, seat and ambient support in a newly created world; some native material/audio waveforms and room-specific transitions; and complete Pocket V32 identity/key protocol interoperability. A host must actually resolve contact and support before grounding a resident. SOMA never fabricates those receipts on startup.
+
+For the reference experience, use **[RealitiRELAX.html](../../RealitiRELAX.html)** via **[AGENT_START_HERE.md](../../AGENT_START_HERE.md)**. For custom worlds, use the [Matrix spatial-contact guide](../realiti-matrix/AGENT_SPATIAL_CONTACT.md). See [R&R stack audit](./RR_STACK_AUDIT.md) and [native parity](./NATIVE_PARITY.md) before claiming feature equivalence.
 
 ## Optional signed Matrix world-side authority
 
