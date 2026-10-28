@@ -432,8 +432,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/soma.cjs",
-      "bytes": 4879,
-      "sha256": "371f8eb73a0a810320aace3a392dd4dc770bf9d43a042c8808b2f90e86bc2953"
+      "bytes": 5898,
+      "sha256": "6f734789c22783612060ae39779f57b31962cf33577c0483021ccda6ee541433"
     },
     {
       "path": "packages/realiti-headless-resident/test/time.cjs",
