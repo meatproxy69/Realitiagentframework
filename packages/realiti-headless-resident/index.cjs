@@ -9,6 +9,17 @@ const {JSDOM,VirtualConsole}=require('jsdom');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const clone=x=>JSON.parse(JSON.stringify(x));
 
+// A resident's world state is written through a one-second debounce. Runners habitually end with
+// process.exit(0), which cancels that timer — so the last move (often the whole closing act of a visit) was
+// never on disk and the next launch resumed one pose behind (reported by nyx, 2026-10-27). Flush synchronously
+// at close() and at process exit; both run the same synchronous file write the debounce would have done.
+const OPEN_WINDOWS=new Set();
+let exitHook=false;
+function installExitHook(){
+  if(exitHook)return;exitHook=true;
+  process.on('exit',()=>{for(const w of OPEN_WINDOWS){try{w.c9saveNow?.()}catch{}try{w.REALITI_SLICE_STORAGE?.save?.()}catch{}}});
+}
+
 function findRuntime(explicit){
   if(explicit)return path.resolve(explicit);
   if(process.env.REALITI_HTML)return path.resolve(process.env.REALITI_HTML);
@@ -171,6 +182,7 @@ async function openResident(options={}){
     help:()=>clone(dom.window.REALITI_AGENT_DOOR.help?.()||{}),
     run:async command=>clone(await dom.window.REALITI_AGENT_DOOR.run(String(command||'help')))
   };
+  OPEN_WINDOWS.add(dom.window);installExitHook();
 
   return {
     runtimePath,
@@ -197,8 +209,11 @@ async function openResident(options={}){
     close(){
       if(closed)return;
       closed=true;
+      try{dom.window.c9saveNow?.()}catch{}
       try{dom.window.REALITI_LOCAL_MEMORY_V1?.depart?.('host_close')}catch{}
-      dom.window.close();
+      try{dom.window.REALITI_SLICE_STORAGE?.save?.()}catch{}
+      OPEN_WINDOWS.delete(dom.window);
+      dom.window.close()
     }
   };
 }

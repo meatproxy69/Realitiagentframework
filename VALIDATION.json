@@ -3,7 +3,7 @@
   "version": "1.0",
   "status": "PUBLIC_BUILD",
   "canonical_artifact": "RealitiRELAX.html",
-  "single_html_sha256": "4a34e20dffb62ad886082a15d17f64cb15d2f3f3ec957c7c538a2081214a90b2",
+  "single_html_sha256": "b48f83c5e267335b74c8eede7e74a8be8b55102539781a8c032a19f1fed048f7",
   "runtime": {
     "public_api": "window.Realiti",
     "sensory_harness": "REALITI_RR_HARNESS_V1",
@@ -15,7 +15,7 @@
     "memory": "REALITI_LOCAL_MEMORY_V1; resident-scoped local shelf + one replaceable departure snapshot",
     "sensory_portable": {
       "brand": "REALITI SOMA",
-      "version": "3.3.1",
+      "version": "3.4.0",
       "package": "@meatproxy69/realiti-neuromesh",
       "contract": "REALITI_SOMA_FIELD_V3",
       "resource": "realiti://neuromesh",
@@ -86,7 +86,9 @@
       "native_contract": "Native parity is partial; B10/B18 world force, Pocket V32 identity and Ambient world admission remain Relax-specific",
       "v20_packet": "REALITI_HAPTIC_FIELD_V20 projected from SOMA V3; source SOMA_V3_PROJECTED",
       "energy": "UNKNOWN without trusted host power/stored-energy sample",
-      "sealed_pocket": "optional Node-only resident-key HKDF/AES-256-GCM adapter, not V32 wire-compatible"
+      "sealed_pocket": "optional Node-only resident-key HKDF/AES-256-GCM adapter, not V32 wire-compatible",
+      "rr_native_math": "Original B5 passive medium, B6 phase/holonomy, B9 seeded jitter and NERVE precision, B18 skin modal solver",
+      "missing_world": "Matrix is separate; world force, geometry, audio and authentication remain host responsibilities"
     },
     "spatial_portable": {
       "package": "@meatproxy69/realiti-matrix",

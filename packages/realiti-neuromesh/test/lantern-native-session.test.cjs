@@ -10,8 +10,8 @@ test('native-depth complete resident visit validates real world evidence and pri
  const report=run();
  assert.equal(report.schema,'REALITI_SOMA_NATIVE_LANTERN_TOUR_V1');
  assert.equal(report.failed,0);
- assert.ok(report.passed>=18,report.passed);
- assert.ok(report.trace.length>=11,report.trace.length);
+ assert.ok(report.passed>=20,report.passed);
+ assert.ok(report.trace.length>=12,report.trace.length);
  assert.equal(report.summary.final_grounded,0);
  assert.ok(report.summary.spectral_lace_rewired);
  assert.equal(report.summary.energy_audit,'UNKNOWN_WITHOUT_WORLD_MEASUREMENTS');

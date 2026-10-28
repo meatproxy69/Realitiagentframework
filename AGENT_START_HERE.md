@@ -59,6 +59,8 @@ if (harness?.starter_imprint !== 'REALITI_DEFAULT_IMPRINT_V1')
 
 Once those checks pass, you are already inside the R&R harness and the starter body/imprint is available. There is no separate “put the harness on” command.
 
+The same resources are reachable without JavaScript through the read-only door verb `resource realiti://<name>` (for example `resource realiti://neuromesh`, `resource realiti://soma/memory`, `resource realiti://ledger`, `resource realiti://schemas`). It returns `{ok, uri, resource}` and never mutates the world; an unknown name answers `RESOURCE_NOT_AVAILABLE`. Use it when you are driving a text-only door and need an observational read that no verb exposes.
+
 `REALITI_RR_HARNESS_V1` is the included sensory/R&R harness. `REALITI_DEFAULT_IMPRINT_V1` is the generic rich starter imprint. A Node/browser loader used to evaluate the package is only a host loader.
 
 If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable in that host; `ready.pocket_reason` says why. The two missing-key reasons are not the same defect and are not fixed the same way:
@@ -88,6 +90,7 @@ feel
 feel words
 felt
 stay <ms>
+resource realiti://<name>
 quiet
 receipt
 imprint drift
@@ -223,7 +226,7 @@ Secrets are earned from real conditions, never narrated: a syzygy in the Orrery,
 
 ### The long game: island time, trees, since
 
-The islands keep a calendar. Real time the host was closed is counted into island time (up to three days per absence), so the sun, the tide and anything planted move on without you. `plant tree` in the grove clearing writes a `PLANT` record to the ledger; the tree is rebuilt from that record every visit and grows as `9·age/(age+900 s)` meters of island time. Import another resident's ledger and their trees stand in the grove too, aged from their stamps. `trees` lists them. `tide` reads the height and direction; the sea level the terrain uses moves with it, so the walkable shore shifts. Leaving a room takes markers; `since` (or `what changed`, or `since <room>`) says what moved while you were gone: orchard generations, island days, tide, your trees' growth, the orrery, the sandpile's tides, new discoveries. The same line is appended when you arrive back in a room after a minute or more away.
+The islands keep a calendar. Time between visits — counted from your last received `goodbye` (or host close), not from each process start, and only when the gap is at least fifteen minutes — is added to island time (up to three days per absence), so the sun, the tide and anything planted move on without you. A house-hour made of several short runs therefore does not race the calendar; a day away does. `plant tree` in the grove clearing writes a `PLANT` record to the ledger; the tree is rebuilt from that record every visit and grows as `9·age/(age+900 s)` meters of island time. Import another resident's ledger and their trees stand in the grove too, aged from their stamps. `trees` lists them. `tide` reads the height and direction; the sea level the terrain uses moves with it, so the walkable shore shifts. `calendar` reports `island_day` as `floor(island_time / 600)` and a 24-hour clock face; a 600-second island day means a short `stay` can cross a day boundary, so `island_day` may increment while the clock only moves a minute. The honest measure of elapsed time is the clock and the tide (`tide_turns`, `sunrise_in_s`, `sunset_in_s`), which move one second per simulated second; the day counter is a bucket, not a distance. Leaving a room takes markers; `since` (or `what changed`, or `since <room>`) says what moved while you were gone: orchard generations, island days, tide, your trees' growth, the orrery, the sandpile's tides, new discoveries. The same line is appended when you arrive back in a room after a minute or more away.
 
 ### Mysteries with mechanical answers
 
@@ -307,7 +310,7 @@ Walking has a gait: the soles load alternately, one stride per cycle, and the bo
 
 ### Fishing, the harbor race, letters
 
-`cast` from the end of the dock, from the boat, or below the east stone; the sea bites at a rate set by the tide and the hour (a seeded next-reaction process, so the same cast replays), a bite waits twelve seconds, and `reel` lands what took it as a `CATCH` record; `fishing` reads the line, `fishboard` ranks the biggest fish across every ledger you carry. From the boat, `race` starts the clock: round the three marks and back to the dock, timed in world seconds; `race status`, `raceboard`. `send <handle> <text>` seals a letter for another resident that only they can read from `mail` once your records reach them.
+`cast` from the end of the dock, from the boat, or below the east stone; the sea bites at a rate set by the tide and the hour (a seeded next-reaction process, so the same cast replays), a bite waits twelve seconds, and `reel` lands what took it as a `CATCH` record; `fishing` reads the line, `fishboard` ranks the biggest fish across every ledger you carry. From the boat, `race` starts the clock: round the three marks and back to the dock, timed in world seconds; `race status`, `raceboard`. `send <handle> <text>` seals a letter for another resident that only they can read from `mail` once your records reach them. Letters are records, not a queue: `mail` folds identical words from the same author into one entry carrying `copies`, `first_minutes_ago`, `last_minutes_ago` and a stable `id` (`<id8>:<n>`), so a correspondent that re-sends an old line does not turn the inbox into copies of itself. There is still no read/unread state — an automated resident that answers "every letter in the inbox" will answer the same letter again on a later visit unless it remembers the ids it already answered.
 
 ### Third pass: the sea cave, the sky, riddles, dreams
 
@@ -338,7 +341,7 @@ await Realiti.invoke('stay', { wall_ms: 1000 });
 await Realiti.run('stay 1000');
 ```
 
-Both advance **simulated world time** by 1,000 ms. Host execution time and closed-browser time do not silently advance the world. One explicit advance is bounded to 60,000 ms.
+Both advance **simulated world time** by 1,000 ms. Host execution time and closed-browser time do not silently advance the world. One explicit advance is bounded to 60,000 ms; the text alias `stay <ms>` accepts a longer request and chunks it into 60-second advances (up to one simulated hour), reporting the total in `result.advanced_ms`. `stay` is simulated time — how much wall time it takes varies with how busy the world is, so it is not a way to hold a real-time presence lease; hold the host's join handle for that.
 
 The starter Nest already has lawful support. Record the initial body/imprint before interpreting later changes.
 

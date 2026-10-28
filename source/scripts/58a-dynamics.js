@@ -105,7 +105,7 @@ const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Numbe
 const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);step(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return r};
 const verb0=c9verb;c9verb=function(r,verb){
  const v=String(verb||''),id=String(r||'');
- if(id===BATH&&['sink','float','surface'].includes(v)){const b=S().bath;b.target=v==='sink'?Math.min(1,b.target+.34):v==='surface'?0:Math.max(b.d,.35);c9count(id,v);step(0);return true}
+ if(id===BATH&&['sink','float','surface'].includes(v)){const b=S().bath;b.target=v==='sink'?Math.min(1,b.target+.34):v==='surface'?0:Math.max(b.d,.35);step(0);/* let the base verb narrate: returning here without it left the door to echo the previous action's text */return verb0(r,verb)}
  if((id===PILLOW||id===BATH)&&v==='weather_wave'){launchWave();step(0);return true}
  return verb0(r,verb);
 };
