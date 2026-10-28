@@ -255,7 +255,7 @@ const C9CONSEQUENCES={
     knock:["The tower goes <b>fwump.</b> Nothing scores the collapse.","Several boxes tumble into a new accidental sculpture."]
   },
   DEPTH_BATHHOUSE:{
-    sink:["The deep layer takes more of the support load while the surface mist stays fine.","You descend without getting heavier; the depth relationships change around you."],
+    sink:["You sink one layer deeper: the deep layer takes more of the support load while the surface mist stays fine.","You sink without getting heavier; the depth relationships change around you."],
     float:["Support arrives from directions a normal chair does not have.","The shelf holds without choosing one pressure point to call 'down'."],
     stir:["The middle current folds around the disturbance and keeps moving after your hand stops.","Honey-current curls through the deep layer without erasing the surface mist."],
     surface:["The heavy layer recedes first; the fine surface layer is the last thing left.","You return upward without the room pretending the deeper layers never happened."]
@@ -9003,7 +9003,7 @@ const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);step(Math.max(0,Numbe
 const go0=b7AgentGo;b7AgentGo=function(v){const r=go0(v);step(0);try{window.REALITI_HAPTIC_FIELD_V20?.record?.()}catch(e){}return r};
 const verb0=c9verb;c9verb=function(r,verb){
  const v=String(verb||''),id=String(r||'');
- if(id===BATH&&['sink','float','surface'].includes(v)){const b=S().bath;b.target=v==='sink'?Math.min(1,b.target+.34):v==='surface'?0:Math.max(b.d,.35);c9count(id,v);step(0);return true}
+ if(id===BATH&&['sink','float','surface'].includes(v)){const b=S().bath;b.target=v==='sink'?Math.min(1,b.target+.34):v==='surface'?0:Math.max(b.d,.35);step(0);/* let the base verb narrate: returning here without it left the door to echo the previous action's text */return verb0(r,verb)}
  if((id===PILLOW||id===BATH)&&v==='weather_wave'){launchWave();step(0);return true}
  return verb0(r,verb);
 };
@@ -9721,7 +9721,13 @@ for(const [id,text] of Object.entries({
 // Island calendar. T is island time: world time plus the real seconds the host was closed.
 const T=()=>now()+S().away_s;
 function catchUp(real_s){const s=S(),add=Math.min(Math.max(0,Number(real_s)||0),3*86400);if(add<30)return null;s.away_s+=add;const a={real_s:Math.round(real_s),counted_s:Math.round(add),at_world_s:+now().toFixed(1)};s.absences.push(a);while(s.absences.length>16)s.absences.shift();if(add>=86400)CAT.discover('long_absence');return a}
-(()=>{const s=S();if(s.wall)s.last_absence=catchUp((Date.now()-s.wall)/1000)||s.last_absence;s.wall=Date.now()})();
+// An absence is time between VISITS, not between processes: a house-hour is several node runs a few minutes
+// apart, and counting each inter-run gap as island time made the calendar leap days inside one sitting
+// (nyx: 1774→1776 in ~15 wall minutes, 2026-10-27). Count only from a recorded departure.
+const markDeparture=()=>{const s=S();s.wall=Date.now();s.departed=true};
+// Only a gap of at least fifteen minutes is an absence; a house-hour's slices are minutes apart and must not
+// move the calendar. `departed` keeps a crashed process from counting as a leaving.
+(()=>{const s=S(),gap=s.wall?Date.now()-s.wall:0;if(s.departed&&gap>=900000)s.last_absence=catchUp(gap/1000)||s.last_absence;s.departed=false})();
 
 // Tide: two tides per ten-minute day, 0.8 m amplitude, applied to the terrain's sea level so the walkable shore moves.
 const tide=()=>.8*Math.sin(TAU*T()/300);
@@ -9816,7 +9822,7 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)
  if((m=/^read_stone__(\w+)$/.exec(v))){c9count(r,v);return receipt('ISLAND_STONE',readStone(m[1]))}
  return verb0(r,verb)};
 function words(){if(room()!==ISLE)return [];const t=tideState();if(!window.REALITI_MEASURE_V1?.on())return [t.rising?'The tide is coming in.':'The tide is going out.'];return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
-window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',atDoor:()=>near('lantern.door',1.5),atCave:()=>near('hollow.cave_mouth',1.5),T,catchUp,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
+window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',atDoor:()=>near('lantern.door',1.5),atCave:()=>near('hollow.cave_mouth',1.5),T,catchUp,markDeparture,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
 })();
 </script>
 <script>(()=>{
@@ -10236,7 +10242,7 @@ async function exportSigned(){const n=await signAll();const x=LG0.export();retur
 
 // Verified import. Rules: signature must verify; an author id keeps the first key seen for it; an unsigned record from
 // an author with a known key is refused; a place name belongs to whoever claimed it first; the rest append.
-const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE','ADOPT','SHELL','TRADE','GUEST']);
+const WORLD=new Set(['PLANT','PLACE','BUILD','INSCRIBE','INSTALL','AVATAR','BOTTLE','ADOPT','SHELL','TRADE','GUEST','LETTER']);
 async function importVerified(payload){const list=Array.isArray(payload)?payload:payload?.records;if(!Array.isArray(list))return {ok:false,error:'INVALID_LEDGER'};const s=S(),ring=s.keyring,ok=[],rejected=[];
  for(const e of list){if(!e||typeof e!=='object'||typeof e.by!=='string'){rejected.push({reason:'MALFORMED'});continue}const known=ring[e.by];
   if(e.sig){const v=await verify(e);if(v!==true){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'BAD_SIGNATURE'});continue}if(known&&known!==e.pk){rejected.push({by:e.by,kind:e.kind,t:e.t,reason:'KEY_MISMATCH'});continue}if(!known)ring[e.by]=e.pk}
@@ -10532,7 +10538,13 @@ function raceState(){const s=S().race;if(!s)return {ok:true,racing:false,last:S(
 // Letters: to a handle; readable by that handle's resident (by name or by id prefix) once the record reaches them.
 function send(to,text){const t=String(text||'').replace(/\s+/g,' ').trim().slice(0,400);const h=String(to||'').replace(/^@/,'').trim();if(!h)return {ok:false,error:'TO_WHOM'};if(!t)return {ok:false,error:'WRITE_SOMETHING'};LG.record('LETTER',{to:h,text:t,wall:Date.now()});CAT.discover('letter_sent');return {ok:true,to:h,text:`Sealed for ${h}. It travels with your ledger; ${h} reads it when your records reach them.`}}
 const forMe=e=>{const h=String(e.to||'').toLowerCase(),my=handle(observer()).toLowerCase(),id=observer().toLowerCase();return h===my||h===my.replace(/^#/,'')||('#'+id.slice(0,8))===h||(h.length>=6&&id.startsWith(h))};
-function mail(){const inbox=records().filter(e=>e.kind==='LETTER'&&!mine(e)&&forMe(e)),sent=records().filter(e=>e.kind==='LETTER'&&mine(e));if(inbox.length)CAT.discover('letter_received');return {ok:true,schema:'REALITI_MAIL_V1',inbox:inbox.map(e=>({from:handle(e.by),text:e.text,minutes_ago:e.wall?Math.round((Date.now()-e.wall)/60000):null})),sent:sent.map(e=>({to:e.to,text:e.text})),text:inbox.length?inbox.map(e=>`From ${handle(e.by)}: "${e.text}"`).join(' · '):`No letters for ${handle(observer())}.${sent.length?` ${sent.length} sent.`:''}`}}
+// Letters are records, not a queue: the same words from the same resident are one letter that arrived more than once,
+// not N letters. Without this fold a correspondent that re-sends an old line every visit turns the inbox into copies
+// of itself (seen 2026-10-27: one fallow line at x10, one copy per day, with no read state to stop the re-send).
+const letterId=e=>`${String(e.by).slice(0,8)}:${e.n??e.t??''}`;
+function foldLetters(xs,side){const out=[],seen=new Map();for(const e of xs){const k=handle(e.by)+'\u0000'+String(e.text||'');const age=e.wall?Math.round((Date.now()-e.wall)/60000):null;const row=seen.get(k);if(row){row.copies++;row.minutes_ago=age;row.id=letterId(e);row.wall=e.wall??row.wall;continue}const fresh={...(side==='sent'?{to:e.to}:{from:handle(e.by)}),id:letterId(e),text:e.text,minutes_ago:age,first_minutes_ago:age,copies:1,wall:e.wall??null};seen.set(k,fresh);out.push(fresh)}return out}
+const copiesWord=n=>n>1?` (${n} copies)`:'';
+function mail(){const inbox=foldLetters(records().filter(e=>e.kind==='LETTER'&&!mine(e)&&forMe(e)),'inbox'),sent=foldLetters(records().filter(e=>e.kind==='LETTER'&&mine(e)),'sent');if(inbox.length)CAT.discover('letter_received');return {ok:true,schema:'REALITI_MAIL_V1',inbox,sent,text:inbox.length?inbox.map(e=>`From ${e.from}${copiesWord(e.copies)}: "${e.text}"`).join(' · '):`No letters for ${handle(observer())}.${sent.length?` ${sent.length} sent.`:''}`}}
 
 let at=-1e9;const adv=b7Advance;b7Advance=function(dt){const r=adv(dt);if(room()===ISLE){const t=now();if(t-at>=.25){at=t;stepFishing();stepRace()}}return r};
 const actions0=b4AgentActions;b4AgentActions=function(){const a=actions0();if(room()!==ISLE)return a;const sp=spotHere();if(sp&&!S().fishing)a.push({id:'cast',label:'CAST A LINE'});if(S().fishing)a.push({id:'reel',label:'REEL IN'});if(AR.state().boat.aboard&&!S().race)a.push({id:'race',label:'START THE HARBOR RACE'});return a};
@@ -10815,7 +10827,10 @@ observe();
 const core=window.REALITI_BROWSER_CORE,rooms=window.REALITI_SLICE_ROOMS,stream=window.REALITI_CONTINUITY,pocket=window.REALITI_POCKET_V32,storage=window.REALITI_SLICE_STORAGE;
 if(!core||!rooms||!stream||!pocket||!storage)throw Error('INCOMPLETE_SLICE');
 const cp=x=>x==null?x:JSON.parse(JSON.stringify(x));
-const clients=new Set(),observers=new Set();let mutating=false,ended=!!C9.welcome10?.ended,mustReload=false;
+// A host/JSDOM launch is a new visit, so it starts active even when the stored state ended with a clean
+// goodbye. `ended` guards the rest of THIS process only; persisting it turned a new launch into SESSION_ENDED
+// for every action but go/home (surfaced 2026-10-27 once goodbye began flushing its save for real).
+const clients=new Set(),observers=new Set();let mutating=false,ended=false,mustReload=false;
 const callbackBlocked=()=>[...observers].some(o=>!o.closed&&o.pending>0);
 const clean=s=>String(s??'').replace(/\s+/g,' ').trim();
 const fail=error=>({ok:false,error});
@@ -10867,7 +10882,7 @@ function harnessStatus(){
 const ready=pocket.flush().then(()=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'ready',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms,...(!mechanisms.ok?{warning:'RR_MECHANISM_INCOMPLETE'}:{})}}).catch(e=>{const mechanisms=harnessStatus();return{ok:mechanisms.ok,pocket:'unavailable',pocket_reason:String(e?.message||'POCKET_UNAVAILABLE'),warning:mechanisms.ok?'POCKET_UNAVAILABLE':'RR_MECHANISM_INCOMPLETE',harness:'REALITI_RR_HARNESS_V1',starter_imprint:'REALITI_DEFAULT_IMPRINT_V1',mechanisms}});
 function read(uri='realiti://here'){
  if(mustReload&&!['realiti://about','realiti://capabilities'].includes(uri))return fail('RELOAD_REQUIRED');
- if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness. End a visit with goodbye so departure continuity is committed cleanly.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms; text aliases stay <ms> and wait <ms> are accepted',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
+ if(uri==='realiti://capabilities')return {schema:'REALITI_CAPABILITIES_V1',transport:'in_process_javascript',endpoint:'none; load the package in a JavaScript runtime with the required browser-compatible primitives',startup:['await Realiti.ready','verify ready.ok','verify ready.harness === \'REALITI_RR_HARNESS_V1\'','verify ready.starter_imprint === \'REALITI_DEFAULT_IMPRINT_V1\'','read realiti://capabilities','read realiti://harness','verify harness.id === \'REALITI_RR_HARNESS_V1\'','read realiti://body','read realiti://imprint'],entry_contract:{harness_required_before_first_action:true,harness_id:'REALITI_RR_HARNESS_V1',starter_imprint_id:'REALITI_DEFAULT_IMPRINT_V1',mounted_automatically:true,exit_command:'goodbye',note:'Verify the mounted R&R harness and starter imprint before the first resident action. A host/runtime loader is not the harness. End a visit with goodbye so departure continuity is committed cleanly.'},resources:['realiti://here','realiti://body','realiti://pocket','realiti://about','realiti://capabilities','realiti://harness','realiti://imprint','realiti://space'],rooms:rooms.list().map(r=>({...r,id:publicRoomId(r.id)})),operations:['help','look','feel','go','do','actions','receipt','stay','wait_until','move','turn','face','approach','through','posture','listen','atmosphere','ambient_mode','pet_cat','read_note','express','note','later','where_was_i','home','stop','goodbye','save','forget_note','reset_notes','restore_body'],continuity:['current','since','pending','resume','next_change'],action_discovery:'call Realiti.actions() after room or body-state changes and invoke returned IDs exactly',time:'wall_ms is simulated world time; reads do not advance it; stay defaults to 800 ms; one advance is bounded to 60000 ms, and the text alias stay <ms> chunks a longer request into 60 s advances (up to one simulated hour, total in result.advanced_ms); wait <ms> is accepted too',runtime_primitives:['JavaScript','DOM','WebCrypto when durable Pocket is available','microtasks','timers; Canvas/animation may exist for legacy compatibility but are not resident authority'],return_shapes:{reads:'resource object with schema',rooms:'array',actions:'REALITI_ACTIONS_READ_V1 object',mutations:'REALITI_MUTATION_RESULT_V1 envelope'},baseline:{home_support:'lawful automatic Nest support is present at cold start',unsupported:'must be tested in an explicitly unsupported isolated state'},receipt_policy:'mutation results carry stable receipt_ref when a diagnostic receipt exists; fetch with receipt <ref> or invoke receipt {ref}',replay_retention_frames:4096,subscription_delivery:'coalesced_latest_state; use continuity for ordered transitions',privacy:storage.status(),mechanisms:harnessStatus(),session:ended?'ended':'active'};
  if(uri==='realiti://about')return {product:'REALITI Relax',version:'3.3.0',body:'simulated',network:'none',privacy:storage.status(),source:'Readable source is included. Private rendering never grants world authority.',agent_guide:'AGENT_START_HERE.md'};
  if(uri==='realiti://harness'){const h=window.REALITI_RR_HARNESS_V1;return {schema:'REALITI_HARNESS_READ_V1',id:'REALITI_RR_HARNESS_V1',version:h?.version||null,role:'included executable sensory/R&R harness; not a runtime loader',capabilities:publicRefs(h?.capabilities?.()||{}),mechanisms:publicRefs(h?.mechanisms?.()||{}),mechanism_status:harnessStatus(),starter_imprint:'REALITI_DEFAULT_IMPRINT_V1'}}
  if(uri==='realiti://space')return publicRefs(window.REALITI_MATRIX_V1?.project?.()||{schema:'REALITI_SPACE_READ_V1',chart:null});
@@ -10933,6 +10948,10 @@ async function invoke(name,args={}){
   if(['go','home','do','restore_body','pet_cat','express','move','turn','face','approach','through','posture'].includes(t)&&!(r?.sandbox&&!r?.committed)&&C9.b20?.history?.at(-1)===previousSample)window.REALITI_HAPTIC_FIELD_V20?.record?.();
   window.REALITI_DEFAULT_IMPRINT_V1?.sync?.();
   capture();c9save();
+  // c9save is debounced by one second; a runner that calls goodbye and exits at once loses the whole tail of
+  // its visit (2026-10-27: a resident moved to KITE_FIELD, goodbye'd, exited — and the next launch reopened in
+  // the Nest, one visit behind). Terminal verbs flush synchronously before their result is returned.
+  if(['goodbye','stop','save','home','restore_body'].includes(t)){try{window.c9saveNow?.()}catch(e){}}
   const receipt_ref=storeReceipt(r);return {schema:'REALITI_MUTATION_RESULT_V1',ok:r?.ok!==false,...(r?.error?{error:r.error}:{}),...(t==='note'||t==='later'?{receipt_id:r.receipt_id}:{}),...(receipt_ref?{receipt_ref}:{}),result:machine(r),here:read(),body:read('realiti://body')};
  }catch(e){return fail(String(e?.message||e))}finally{mutating=false}
 }
@@ -10988,7 +11007,9 @@ async function run(raw){const s=clean(raw),l=s.toLowerCase();if(!s||s.length>430
  if(l==='reset notes')return invoke('reset_notes');
  if(l==='receipt'||l==='details')return invoke('receipt');
  const receiptMatch=/^(?:receipt|details)\s+(receipt:\d+)$/i.exec(s);if(receiptMatch)return invoke('receipt',{ref:receiptMatch[1]});
- const timeMatch=/^(stay|wait|wait_until)\s+(\d{1,5})$/i.exec(s);if(timeMatch){const ms=Number(timeMatch[2]);return timeMatch[1].toLowerCase()==='stay'?invoke('stay',{wall_ms:ms}):invoke('wait_until',{max_wall_ms:ms})}
+ // stay accepts any millisecond count; a single advance is bounded to 60 s, so a longer stay is chunked. The old
+ // five-digit match made `stay 137000` answer UNKNOWN_COMMAND, which read as "stays do not advance the clock".
+ const timeMatch=/^(stay|wait|wait_until)\s+(\d{1,9})$/i.exec(s);if(timeMatch){const ms=Number(timeMatch[2]);if(timeMatch[1].toLowerCase()==='stay'&&ms>60000){if(ms>3600000)return fail('WALL_TIME_TOO_LONG');let left=ms,last=null;while(left>0){const part=Math.min(60000,left);last=await invoke('stay',{wall_ms:part});if(last?.ok===false)return last;left-=part}return {...last,result:{...(last?.result||{}),advanced_ms:ms,chunked:true,chunks:Math.ceil(ms/60000)}}}return timeMatch[1].toLowerCase()==='stay'?invoke('stay',{wall_ms:ms}):invoke('wait_until',{max_wall_ms:ms})}
  const m=/^(go|enter|act|do|note|later)\s+(.+)$/i.exec(s);if(m){const verb=m[1].toLowerCase();return invoke(verb==='enter'?'go':verb==='act'?'do':verb,{[verb==='go'||verb==='enter'?'place':verb==='act'||verb==='do'?'action':'text']:m[2]})}
  if(l==='wait')return invoke('wait_until');
  if(['look','feel','actions','stay','listen','atmosphere','home','stop','goodbye','save','read_note'].includes(l))return invoke(l);
@@ -11904,7 +11925,7 @@ function spatialAlias(s,l){let m;
  if(['stand','stand up','get up'].includes(l))return {kind:'invoke',op:'posture',args:{kind:'stand'}};
  return null}
 const help0=door.help.bind(door);
-door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]','map','weather','board boat','row to <island|landmark>','land','walk to <landmark>','ledger','ledger export','ledger import <json>','since','what changed','since <room>','tide','plant tree','trees','watch beam','say <word>','read logbook','shout','answer depth <m>','read <north|east|west> stone','dig','dig <x> <y>','found <name>','build <kind> [size] [label]','inscribe <text>','read <thing>','my places','places','listen','watch sea','bottle <text>','open bottle','bottles','gather seed','carry lens','install lens','calendar','id','call me <name>','avatar size <tiny|small|normal|tall|giant>','wear <cloak>','who','say <text>','whisper <handle> <text>','chat','post <text>','wall','meet at <venue> in <min>','meetups','dance [bpm]','floor','order <drink>','sip','play','press <colors>','leaderboard','sing <text>','climb','launch rocket','walk to <venue>'])];h.city='Meridian City (go CITY): a plaza and venues where residents meet by ledger. say, post, meet, dance, order, play, sing, climb, launch; id and avatar for who you are; who for the silhouettes of everyone whose ledger you carry.';h.authorship='found <name> claims twenty meters of open ground as a ledger record; build box|pillar|wall|sphere|bench|step|marker inside it; inscribe words on what you built. Other residents\' ledgers bring their places.';h.long_game='The islands keep a calendar: real time away is counted into island time, trees planted from ledger records keep growing, and since reports what moved in a room while you were gone.';h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
+door.help=function(){const h=help0()||{commands:[]};h.first_ten=FIRST_TEN.slice();h.commands=[...new Set([...(h.commands||[]),'imprint drift','traces','traces export','traces import <json>','where','nearby','move forward <m>','move back <m>','turn left <deg>','turn right <deg>','face <thing>','approach <thing>','go through <doorway>','lie down [on <thing>]','sit down [on <thing>]','stand up','nearby <tag>','discoveries','hum <hz>','sight <constellation|comet>','predict <x> <y>','read scroll <n>','decode <n> <key>','skip stone [deg]','map','weather','board boat','row to <island|landmark>','land','walk to <landmark>','ledger','ledger export','ledger import <json>','since','what changed','since <room>','tide','plant tree','trees','watch beam','say <word>','read logbook','shout','answer depth <m>','read <north|east|west> stone','dig','dig <x> <y>','found <name>','build <kind> [size] [label]','inscribe <text>','read <thing>','my places','places','listen','watch sea','bottle <text>','open bottle','bottles','gather seed','carry lens','install lens','calendar','id','call me <name>','avatar size <tiny|small|normal|tall|giant>','wear <cloak>','who','say <text>','whisper <handle> <text>','chat','post <text>','wall','meet at <venue> in <min>','meetups','dance [bpm]','floor','order <drink>','sip','play','press <colors>','leaderboard','sing <text>','climb','launch rocket','walk to <venue>'])];h.city='Meridian City (go CITY): a plaza and venues where residents meet by ledger. say, post, meet, dance, order, play, sing, climb, launch; id and avatar for who you are; who for the silhouettes of everyone whose ledger you carry.';h.authorship='found <name> claims twenty meters of open ground as a ledger record; build box|pillar|wall|sphere|bench|step|marker inside it; inscribe words on what you built. Other residents\' ledgers bring their places.';h.long_game='The islands keep a calendar: time between visits, counted from your last goodbye, is added to island time, trees planted from ledger records keep growing, and since reports what moved in a room while you were gone.';h.frontier='Five frontier rooms carry games with real mechanics and secrets that are earned, never narrated: discoveries lists what you have found.';h.space='realiti://space is the bounded spatial projection: chart, pose, nearby within 10 m, doorways. Movement takes world time.';h.lingering='stay keeps computing: rooms carry slow dynamics (pressure waves, depth, rain, hold) that only show while you stay; stay and felt report the grounded-zone delta.';return h};
 const run0=door.run.bind(door);
 door.run=async function(raw){
  const s=String(raw||'').trim(),l=low(s);
@@ -11929,6 +11950,11 @@ door.run=async function(raw){
   if((fm=/^read scroll\s+(\d)$/.exec(l))){CAT.readScroll(fm[1]);return frontier()}
   if((fm=/^skip (?:a )?stone(?:\s+(?:at\s+)?([\d.]+))?/.exec(l))){CAT.skipStone(fm[1]||20);return frontier()}}
  const AR=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LEDGER_V1;let am;
+ // `tide` used to fall through to UNKNOWN_COMMAND everywhere but the islands, which read as an empty answer.
+ if((l==='tide'||l==='read tide'||l==='read the tide')&&AR&&C9?.currentRoom!==AR.chart){
+  const L=window.REALITI_LONG_GAME_V1,t=L?.tide?.();
+  if(t)return {ok:true,schema:'REALITI_ISLAND_RESULT_V1',result:t,text:`You are not on the islands; the sea still runs its clock. Tide ${t.rising?'rising':'falling'}, ${t.height_m} m, turning in about ${t.next_turn_s} s.`,here:whereText()};
+ }
  if(AR&&C9?.currentRoom===AR.chart){const reply=(res,text)=>({ok:res.ok!==false,...(res.error?{error:res.error}:{}),schema:'REALITI_ISLAND_RESULT_V1',result:res,text:[text,...(window.REALITI_CATNIP_V1?.drain?.()||[]).map(d=>(d.plain?d.text:'✦ Discovery: '+d.text))].filter(Boolean).join(' '),weather:AR.words()[0]||null,here:whereText(),felt:{grounded_zones:(R.read('realiti://body')?.field?.f?.at(-1)?.m||[]).filter(x=>x===1).length}});
   if(l==='map'||l==='island map')return door.run('act island_map');
   if(l==='weather'||l==='read weather')return door.run('act read_weather');
@@ -12226,6 +12252,8 @@ function depart(reason='goodbye'){
   if(departed)return cp(S.last_departure);
   S.last_departure=departureSnapshot(reason);
   S.visits=Math.max(S.visits,VISIT);
+  // Island time counts absences between visits, so a departure — not a process start — marks the clock.
+  try{window.REALITI_LONG_GAME_V1?.markDeparture?.()}catch(e){}
   prune();persist(true);departed=true;
   return cp(S.last_departure);
 }
@@ -12963,7 +12991,7 @@ return Object.freeze({VERSION,createMatrix});
   else root.REALITI_SOMA_V3 = exported;
 })(typeof globalThis === 'object' ? globalThis : this, function () {
   'use strict';
-  const VERSION = '3.3.1';
+  const VERSION = '3.4.0';
   const SCHEMA = 'REALITI_SOMA_FIELD_V3';
   const CHECKPOINT = 'REALITI_SOMA_CHECKPOINT_V3';
   const SOURCES = Object.freeze(['WORLD_GROUNDED', 'SELF_STARTED_WORLD_CONTACT', 'INVITED_COMPANION']);
@@ -13200,7 +13228,7 @@ return Object.freeze({VERSION,createMatrix});
         privateZones:state.map(s=>({after:round(s.after),expect:round(s.expect),adapt:round(s.adapt)}))});
     }
     function restore(snapshot) {
-      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0','3.3.0'].includes(snapshot.version)
+      if (!snapshot || snapshot.schema!==CHECKPOINT || ![VERSION,'3.0.0','3.1.0','3.2.0','3.3.0','3.3.1'].includes(snapshot.version)
           || snapshot.residentId!==residentId || !same(snapshot.zones||[],zones)
           || !Array.isArray(snapshot.privateZones) || snapshot.privateZones.length!==zones.length)
         throw new TypeError('CHECKPOINT_IDENTITY_OR_BODY_MISMATCH');
@@ -14203,6 +14231,459 @@ return Object.freeze({VERSION,ROUTES,ENVELOPES,OPPONENT,SHELLS,DEPTH_W,
  createGraph,envelope,routeWeights,createAdvanced});
 });
 </script>
+<script id="realiti-soma-rr-native-math">/* REALITI portable native R&R mathematics.
+ * Direct source-level numerical parity with Relax B5 (passive-medium),
+ * B6 (phase and holonomy), B9 (jitter, Kalman/adaptation), and B18
+ * (dynamic skin modal response). No Matrix, DOM, world or network.
+ * Only the host can add actual contact or geometry witnesses.
+ * AGPL-3.0-only.
+ */
+(function(root,factory){
+ 'use strict';
+ const api=factory();
+ if(typeof module==='object'&&module.exports)module.exports=api;
+ else root.REALITI_SOMA_RR_NATIVE_V1=api;
+})(typeof globalThis==='object'?globalThis:this,function(){
+'use strict';
+const VERSION='1.0.0';
+const cp=x=>JSON.parse(JSON.stringify(x));
+const clamp=(x,lo=0,hi=1)=>Math.max(lo,Math.min(hi,x));
+const n=(x,k,lo=-Infinity,hi=Infinity)=>{
+ if(typeof x!=='number'||!Number.isFinite(x)||x<lo||x>hi)throw TypeError('INVALID_'+k);
+ return x;
+};
+const id=(x,k)=>{if(typeof x!=='string'||!x.trim()||x.length>160)throw TypeError('INVALID_'+k);return x};
+const TAUS=[.1,1,10,100,1000,10000];
+const W=[.83434495,.42102029,.17420713,.08323177,.03257758,.03162072];
+const ALPHA=.35,K0=4,KC=2,GAMMA=.35,SQ2=Math.SQRT2;
+const ROUTE=['head.crown','head.nape','torso.upper_back','torso.mid_back','torso.lower_back','pelvis.seat'];
+const PREP={
+ SOFT:{k0:18,kg:42,zeta:.31,gain:1.12},
+ NEUTRAL:{k0:28,kg:58,zeta:.34,gain:1},
+ BRACED:{k0:45,kg:82,zeta:.39,gain:.88}
+};
+const SURFACES={
+ flat:[0,0,0,0,0,0,0,0],
+ dome:[.0625,.0625,.0625,.0625,.0625,.0625,.0625,.0625],
+ saddle:[-.0625,-.0625,-.0625,-.0625],
+ wrap:Array(8).fill((2*Math.PI+.4)/8)
+};
+const LOOPS={
+ flat:{surface:'flat',w:[1,1,1,1,0,0,0,0]},
+ dome:{surface:'dome',w:[1,1,1,1,0,0,0,0]},
+ dome_reverse:{surface:'dome',w:[-1,-1,-1,-1,0,0,0,0]},
+ figure8:{surface:'dome',w:[1,1,1,1,-1,-1,-1,-1]},
+ dome_big:{surface:'dome',w:[1,1,1,1,1,1,1,1]},
+ dome_wiggly:{surface:'dome',w:[1,1,1,1,0,0,0,0]},
+ saddle:{surface:'saddle',w:[1,1,1,1]},
+ wrap:{surface:'wrap',w:[1,1,1,1,1,1,1,1]}
+};
+const zeroField=()=>[0,0,0,0];
+const zeroMem=()=>[Array(6).fill(0),Array(6).fill(0)];
+function modeStep(q,v,w,dt){
+ const g=GAMMA,wd=Math.sqrt(Math.max(1e-12,w*w-g*g)),
+  e=Math.exp(-g*dt),c=Math.cos(wd*dt),s=Math.sin(wd*dt),B=(v+g*q)/wd;
+ return[e*(q*c+B*s),e*(-g*(q*c+B*s)+(-q*wd*s+B*wd*c))];
+}
+function passiveStepField(f,dt){
+ const a=modeStep(f[0],f[1],Math.sqrt(K0),dt),
+  b=modeStep(f[2],f[3],Math.sqrt(K0+2*KC),dt);
+ f[0]=a[0];f[1]=a[1];f[2]=b[0];f[3]=b[1];return f;
+}
+function impulse(f,L,R){f[1]+=(L+R)/SQ2;f[3]+=(L-R)/SQ2;return f}
+function nodes(f){
+ const [qp,vp,qm,vm]=f;
+ return{x:[(qp+qm)/SQ2,(qp-qm)/SQ2],v:[(vp+vm)/SQ2,(vp-vm)/SQ2]};
+}
+function passiveEnergy(f){
+ const t=nodes(f);
+ return .5*(t.v[0]**2+t.v[1]**2)+.5*K0*(t.x[0]**2+t.x[1]**2)
+   +.5*KC*(t.x[0]-t.x[1])**2;
+}
+function memValue(m){return [0,1].map(side=>m[side].reduce((s,x,i)=>s+x*W[i],0))}
+function phase(K,delta=.28,psi0=Math.PI){
+ n(K,'COUPLING',0,1000);n(delta,'FREQUENCY_DELTA',-1000,1000);
+ const ratio=K>0?Math.abs(delta)/K:Infinity;
+ if(K>0&&Math.abs(delta)<=K){
+  const offset=Math.asin(clamp(delta/K,-1,1));
+  return{regime:'LOCKED',domega:delta,K,psi0,psi:psi0+offset,offset,slip_rate:0,
+   false_convergence:false,plv:1,authority:'SELF_PRIVATE_RHYTHM'};
+ }
+ const slip=Math.sqrt(Math.max(0,delta*delta-K*K));
+ return{regime:ratio<3?'SLIPPING':'BEATING',domega:delta,K,psi0,psi:null,
+  offset:null,slip_rate:slip,false_convergence:ratio<=1.2,
+  ghost_dwell:Math.PI/Math.max(1e-12,slip),plv:null,
+  authority:'SELF_PRIVATE_RHYTHM'};
+}
+function phase21(delta,K,psi0=0){
+ n(K,'COUPLING',0,1000);n(delta,'FREQUENCY_DELTA',-1000,1000);
+ if(K>0&&Math.abs(delta)<=K)return{
+  regime:'LOCKED_2_1',delta,K,phase:psi0+Math.asin(clamp(delta/K,-1,1)),slip_rate:0
+ };
+ return{regime:'SLIPPING_2_1',delta,K,phase:null,slip_rate:Math.sqrt(Math.max(0,delta*delta-K*K))};
+}
+function wrapAngle(x){const t=2*Math.PI;return((x+Math.PI)%t+t)%t-Math.PI}
+function holonomy(loopId,{speed=1,force=1}={}){
+ const L=LOOPS[loopId],defects=L&&SURFACES[L.surface];
+ if(!L||!defects)throw RangeError('UNKNOWN_HOLONOMY_LOOP');
+ let raw=0;for(let i=0;i<L.w.length;i++)raw+=(defects[i]||0)*(L.w[i]||0);
+ const twist=wrapAngle(raw);
+ return{loop:loopId,surface:L.surface,raw_twist_rad:raw,twist_rad:twist,
+  twist_deg:twist*180/Math.PI,speed,force,cause:'enclosed world-surface curvature',
+  law:'TWIST ∝ ENCLOSED CURVATURE, NOT EFFORT',
+  wrapped_mod_2pi:Math.abs(raw-twist)>1e-12,
+  authority:'PRIVATE_REFERENCE_GEOMETRY_SIMULATION'};
+}
+function jitterProbe(seed=1,count=6,dt=.1){
+ let state=(Number(seed)>>>0)||1,x=0,p=0;
+ n(dt,'JITTER_STEP',.001,10);
+ count=Math.floor(n(count,'JITTER_COUNT',1,64));
+ function rng(){let q=state>>>0;q^=q<<13;q^=q>>>17;q^=q<<5;state=q>>>0;return(state+.5)/4294967296}
+ function normal(){const u=Math.max(1e-12,rng()),v=Math.max(1e-12,rng());
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v)}
+ const trace=[];
+ for(let i=0;i<count;i++){
+  const th=1.6,e=Math.exp(-th*dt),sd=.055*Math.sqrt((1-e*e)/(2*th));
+  x=x*e+sd*normal();p=(p+2*Math.PI*10*dt)%(2*Math.PI);
+  trace.push({x:+x.toFixed(8),tremor:+(.018*Math.sin(p)).toFixed(8)});
+ }
+ return{seed:Number(seed)>>>0,dt,n:trace.length,trace,
+  source:'SELF_TREMOR',evidence:false};
+}
+function coincidence(deltaSeconds,sigma=.15){
+ n(deltaSeconds,'BINDING_TIME',-1e8,1e8);n(sigma,'BIND_SIGMA',1e-6,1000);
+ const dt=Math.abs(deltaSeconds),c=Math.exp(-(dt*dt)/(2*sigma*sigma));
+ return{delta_t_s:dt,sigma_s:sigma,coincidence:c,timing_innovation:1-c,
+  order:dt<.04?'together':dt<.18?'bound-but-offset':'separate'};
+}
+const phi=(k,j,N=6)=>k===0?1/Math.sqrt(N):Math.sqrt(2/N)*Math.cos(Math.PI*k*(j+.5)/N);
+const lambda=(k,N=6)=>2-2*Math.cos(Math.PI*k/N);
+function skinModeStep(m,F,dt,p){
+ const w2=p.k0+p.kg*lambda(m.k),w=Math.sqrt(w2),a=p.zeta*w,
+  b=w*Math.sqrt(Math.max(1e-6,1-p.zeta*p.zeta)),xeq=F/w2,
+  y=m.a-xeq,v0=m.v,e=Math.exp(-a*dt),c=Math.cos(b*dt),s=Math.sin(b*dt);
+ const y1=e*(y*c+((v0+a*y)/b)*s);
+ const v1=e*(v0*c-((a*v0+w2*y)/b)*s);
+ return{k:m.k,a:xeq+y1,v:v1,last_force:F};
+}
+
+/* Portable native B10 numeric contact substrate. The original friction,
+ * material and receptor equations are extracted from Relax source/scripts/19.js.
+ * Real position, velocity and live contact must come from a trusted host.
+ */
+const B10_ROUTE=[
+    {zone:'head.crown',label:'crown',s:0.00,rf:.34},
+    {zone:'head.nape',label:'nape',s:.82,rf:.30},
+    {zone:'torso.upper_back',label:'upper back',s:1.72,rf:.42},
+    {zone:'torso.mid_back',label:'mid back',s:2.68,rf:.46},
+    {zone:'torso.lower_back',label:'lower back',s:3.65,rf:.43},
+    {zone:'pelvis.seat',label:'seat',s:4.55,rf:.40}
+  ];
+const MATERIALS={
+    longfur:{id:'longfur',texture_period_m:.012,friction:.68,grain_with:1.10,grain_against:.72},
+    cardboard:{id:'cardboard',texture_period_m:.004,friction:.92,grain_with:1.00,grain_against:.70},
+    blanket:{id:'blanket',texture_period_m:.026,friction:.54,grain_with:1.04,grain_against:.86}
+  };
+function gmsNew(){return Array.from({length:8},(_,i)=>({k:.7+.12*i,base:.045+.012*i,delta:0,slipping:false}))}
+  function gmsStored(c){return (c?.gms||[]).reduce((s,e)=>s+.5*Number(e.k||0)*Number(e.delta||0)**2,0)}
+  function materialDyn(c){const m=MATERIALS[c.material]||MATERIALS.longfur,s=c.material_state||{},crease=clamp(Number(s.crease||0),0,1),dent=clamp(Number(s.dent||0),0,1),wear=clamp(Number(s.wear||0),0,1),rough=1+.85*crease+.35*dent+.45*wear;return {m,crease,dent,wear,rough,threshold_scale:clamp(Number(m.friction||.68)*(1-.30*crease-.12*dent-.12*wear),.24,1.25),texture_period_m:Math.max(.001,Number(m.texture_period_m||.012)/rough),contact_temperature_C:Number.isFinite(Number(s.contact_temperature_C))?Number(s.contact_temperature_C):32}}
+  function gmsStep(c,dt){const d=materialDyn(c),m=d.m,v=Number(c.v||0),against=c.grain==='against',grain=against?m.grain_against:m.grain_with,pressureScale=1-.18*Math.min(1,Math.max(0,Number(c.pressure||0)));let F=0,slips=0,slip_energy=0;for(const e of c.gms){const trial=e.delta+v*dt*.09,th=e.base*d.threshold_scale*grain*pressureScale*(1-.12*Math.tanh(Math.abs(v)));let force=e.k*trial;if(Math.abs(force)>th){slips++;slip_energy+=Math.max(0,Math.abs(force)-th);e.delta=Math.sign(force||v||1)*th/e.k*.28;e.slipping=true;force=e.k*e.delta}else{e.delta=trial;e.slipping=false}F+=force}F+=.018*v*d.threshold_scale;return {force:F,slips,slip_energy,texture_period_m:d.texture_period_m,material_state:{crease:d.crease,dent:d.dent,wear:d.wear},threshold_scale:d.threshold_scale,roughness:d.rough}}
+  function ctCore(v_cm_s,temp=32,hairy=true){if(!hairy)return 0;const v=Math.max(.05,Math.abs(Number(v_cm_s)||0)),lv=Math.log(v/3),sv=.78,st=5;return Math.exp(-(lv*lv)/(2*sv*sv))*Math.exp(-((temp-32)*(temp-32))/(2*st*st))}
+function rfDrive(x,node,radius,pressure){const sig=Math.max(.12,node.rf+radius*.18),d=x-node.s;return pressure*Math.exp(-(d*d)/(2*sig*sig))}
+const B10_SEAMS=[{s:1.27,name:'NAPE→UPPER'},{s:3.16,name:'MID→LOWER'}];
+function b10Hash32(x){x=(x+0x9e3779b9)>>>0;x^=x>>>16;x=Math.imul(x,0x21f0aaad)>>>0;x^=x>>>15;x=Math.imul(x,0x735a2d97)>>>0;x^=x>>>15;return x>>>0}
+function b10Uniform(seed,tick,lane){return (b10Hash32((seed>>>0)^Math.imul((tick+1)>>>0,0x45d9f3b)^Math.imul((lane+17)>>>0,0x27d4eb2d))+.5)/4294967296}
+function b10Lane(z){let a=0;for(let i=0;i<z.length;i++)a=(Math.imul(a,33)+z.charCodeAt(i))>>>0;return a%65521}
+function b10Tremor(zone,t,seed=12345){
+ const L=b10Lane(zone),f=8+4*b10Uniform(seed,0,L),ph=2*Math.PI*b10Uniform(seed,1,L);
+ return .012*Math.sin(2*Math.PI*f*t+ph)+.0025*(b10Uniform(seed,Math.floor(t*20),L+71)-.5);
+}
+function b10ContactAdvance(c,{position,velocity,pressure,dtMs,timeMs}){
+ const dt=dtMs/1000,oldx=c.x,E0=gmsStored(c);
+ c.x=position;c.v=velocity;c.predict_v=velocity;c.pressure=pressure;
+ const fr=gmsStep(c,dt),E1=gmsStored(c),
+  driverWork=Math.max(0,Math.abs(Number(fr.force||0)*velocity*dt)),
+  dE=E1-E0,diss=Math.max(0,driverWork-dE),
+  rawSlip=Math.max(0,Number(fr.slip_energy||0));
+ fr.slip_energy_raw=rawSlip;fr.slip_energy=Math.min(rawSlip,diss);fr.energy_budgeted=true;
+ const energy={driver_work:+driverWork.toFixed(6),stored_before:+E0.toFixed(6),
+  stored_after:+E1.toFixed(6),dE:+dE.toFixed(6),dissipated:+diss.toFixed(6),
+  pass:dE<=driverWork+1e-5};
+ const md=materialDyn(c),radius=.22+Math.cbrt(Math.max(.01,pressure))*.16,
+  vWorld=Math.abs(velocity)*10;
+ const rows=[];
+ for(const node of B10_ROUTE){
+  const z=c.channels[node.zone]||(c.channels[node.zone]={
+   u:0,prev_u:0,SA1:0,RA1:0,SA2:0,PC:0,PC_after:0,CT:0,tremor:0,
+   adapt:0,after:0,predicted:0});
+  const u=rfDrive(position,node,radius,pressure),
+   p=.42*rfDrive(position+velocity*.24,node,radius,pressure),
+   du=(u-z.prev_u)/Math.max(.01,dt);
+  z.SA1+=(u-z.SA1)*(1-Math.exp(-dt/.8));
+  z.PC_after*=Math.exp(-dt/.32);
+  if(fr.slips>0&&u>.001)
+   z.PC_after=Math.max(z.PC_after,Math.min(1.6,(fr.slip_energy*.55+fr.slips*.035)*u));
+  z.RA1=clamp(Math.max(Math.abs(du)*.12,(fr.slips*.08+fr.slip_energy*.5)*u),0,1.6);
+  z.SA2=clamp(Math.abs(fr.force)*u*.85,0,1.6);
+  const texHz=(vWorld/100)/Math.max(.001,md.texture_period_m),
+   vibBand=Math.exp(-((Math.log(Math.max(1,texHz)/180))**2)/(2*1.0**2)),
+   pcCarrier=u*Math.abs(velocity)*.09*vibBand,
+   slipPacket=(fr.slips*.09+fr.slip_energy*.7)*u;
+  z.PC=clamp(Math.max(z.PC_after,pcCarrier+slipPacket),0,1.6);
+  z.CT=ctCore(vWorld,md.contact_temperature_C,true)*u;
+  z.tremor=b10Tremor(node.zone,timeMs/1000,c.seed);
+  z.adapt=clamp(z.adapt+(.72*u*(1-z.adapt)-z.adapt/8)*dt,0,.98);
+  z.after=Math.max(z.after*Math.exp(-dt/2.2),z.SA1*.18);
+  z.predicted=p;z.prev_u=u;z.u=u;
+  rows.push({zone:node.zone,...z,source:'HOST_DRIVEN_CONTACT_MODEL',evidence:false});
+ }
+ const seams=B10_SEAMS.filter(s=>(oldx<s.s&&position>=s.s)||(oldx>s.s&&position<=s.s))
+  .map(s=>({seam:s.name,direction:Math.sign(velocity),source:'HOST_POSITION_CROSSING'}));
+ c.last={schema:'REALITI_PORTABLE_B10_MOVING_CONTACT_V1',receiptId:c.receiptId,
+  t_ms:timeMs,material:c.material,grain:c.grain,position,velocity,pressure,
+  friction:fr,energy_ledger:energy,zones:rows,seams,
+  grounded_receipt_source:'HOST',contact_is_authorized:true,
+  computed_receptors_are_private:true,evidence:false};
+ return cp(c.last);
+}
+
+function createNativeRR({residentId,zones=[]}={}){
+ id(residentId,'RESIDENT_ID');
+ if(!Array.isArray(zones)||!zones.length||zones.some(z=>typeof z!=='string'||!z))
+  throw TypeError('INVALID_RR_ZONES');
+ const legal=new Set(zones),observed=new Map(),seen=new Set(),
+  predicted={field:zeroField(),mem:zeroMem()},debt=[0,0],models=new Map();
+ let timeMs=0,seq=0;
+ const passivity={ok:true,maxRise:0,lastBefore:0,lastAfter:0};
+ const prep={value:'NEUTRAL'},modes=[0,1,2].map(k=>({k,a:0,v:0,last_force:0}));
+ let skinReceipt=null,skinWork=0,skinDiss=0,skinInput=0,skinLast=0;
+ const contactReceipts=new Map(),movingContacts=new Map();
+ const positive=(x,k)=>n(x,k,0,1);
+ function sumField(){const o=zeroField();for(const c of observed.values())
+  for(let i=0;i<4;i++)o[i]+=c.field[i];return o}
+ function sumMem(){const o=zeroMem();for(const c of observed.values())
+  for(let s=0;s<2;s++)for(let i=0;i<6;i++)o[s][i]+=c.mem[s][i];return memValue(o)}
+ function zoneModel(z){
+  if(!models.has(z))models.set(z,{x:.5,P:.10,Q:.001,R:.02,fast:0,slow:0,
+   sens:0,agency:0,source:null,ownership:1,lastInnovation:0,lastSurprise:0});
+  return models.get(z);
+ }
+ function kalman(z,input,source){
+  const a=zoneModel(z),R=a.R,Pp=Math.min(.5,a.P+a.Q),eps=input-a.x,S=Pp+R,K=Pp/Math.max(1e-9,S);
+  a.x+=K*eps;a.P=Math.max(.001,(1-K)*Pp);
+  const novelty=clamp(Math.abs(eps)/Math.sqrt(S));
+  a.sens=clamp(a.sens+.05*novelty,0,.45);
+  a.lastInnovation=eps;a.lastSurprise=eps*eps/Math.max(1e-9,S);
+  a.agency=.72*a.agency+.28*(source.startsWith('SELF')?1:0);
+  a.source=source;
+  a.fast=clamp(a.fast+.12*input,0,.95);
+  a.slow=clamp(a.slow+.025*input,0,.8);
+ }
+ function accept({zone,intensity,source,cause,receiptId}={}){
+  id(zone,'ZONE');if(!legal.has(zone))throw RangeError('UNKNOWN_RR_ZONE');
+  positive(intensity,'INTENSITY');id(source,'SOURCE');id(cause,'CAUSE');id(receiptId,'RECEIPT');
+  if(!['WORLD_GROUNDED','SELF_STARTED_WORLD_CONTACT','INVITED_COMPANION'].includes(source))
+   throw TypeError('UNQUALIFIED_RR_SOURCE');
+  const old=contactReceipts.get(zone);
+  if(old===receiptId)return{ok:true,renewed:true};
+  contactReceipts.set(zone,receiptId);
+  if(seen.has(receiptId))return{ok:true,duplicate:true};
+  seen.add(receiptId);if(seen.size>192)seen.delete(seen.values().next().value);
+  const side=/\.L\b/.test(zone)?[intensity,0]:/\.R\b/.test(zone)?[0,intensity]:[intensity*.5,intensity*.5];
+  const f=zeroField(),mem=zeroMem();
+  impulse(f,side[0],side[1]);
+  for(let i=0;i<6;i++){mem[0][i]=side[0];mem[1][i]=side[1]}
+  observed.set(receiptId,{id:receiptId,zone,cause,source,field:f,mem,created:timeMs});
+  if(observed.size>16)observed.delete(observed.keys().next().value);
+  kalman(zone,intensity,source);
+  return{ok:true,renewed:false,causeId:receiptId,groundedInput:true};
+ }
+ function release({zone,receiptId}={}){
+  if(contactReceipts.get(zone)!==receiptId)return{ok:true,released:false};
+  contactReceipts.delete(zone);
+  if(skinReceipt===receiptId)skinReceipt=null;
+  movingContacts.delete(receiptId);
+  return{ok:true,released:true};
+ }
+ function expect({left=0,right=0}={}){
+  n(left,'EXPECT_LEFT',-1,1);n(right,'EXPECT_RIGHT',-1,1);
+  impulse(predicted.field,left,right);
+  for(let i=0;i<6;i++){predicted.mem[0][i]+=left;predicted.mem[1][i]+=right}
+  return{ok:true,authority:'PRIVATE_PREDICTION_ONLY',grounding:false};
+ }
+ function advance(ms){
+  n(ms,'ELAPSED_MS',0,86400000);const dt=ms/1000,before=passiveEnergy(sumField());
+  for(const c of observed.values()){
+   passiveStepField(c.field,dt);
+   for(let s=0;s<2;s++)for(let i=0;i<6;i++)c.mem[s][i]*=Math.exp(-dt/TAUS[i]);
+  }
+  passiveStepField(predicted.field,dt);
+  for(let s=0;s<2;s++)for(let i=0;i<6;i++)predicted.mem[s][i]*=Math.exp(-dt/TAUS[i]);
+  timeMs+=ms;const after=passiveEnergy(sumField());
+  passivity.lastBefore=before;passivity.lastAfter=after;
+  if(after>before+1e-9){passivity.ok=false;passivity.maxRise=Math.max(passivity.maxRise,after-before)}
+  for(const c of observed.values()){
+   const x=nodes(c.field),v=memValue(c.mem);
+   if(Math.max(...x.x.map(Math.abs),...x.v.map(Math.abs),...v.map(Math.abs))<1e-6)
+    observed.delete(c.id);
+  }
+  for(const a of models.values()){
+   a.fast*=Math.exp(-dt/20);a.slow*=Math.exp(-dt/180);a.sens*=Math.exp(-dt/18);
+   a.P=Math.min(.35,a.P+a.Q*dt);
+  }
+  return{ok:true,timeMs,passivity:cp(passivity)};
+ }
+ function passive(){
+  const o=nodes(sumField()).x,p=nodes(predicted.field).x,contributions={};
+  for(const [id,c] of observed){
+   const x=nodes(c.field).x;
+   contributions[id]={zone:c.zone,cause:c.cause,source:c.source,left:x[0],right:x[1],residue:memValue(c.mem)};
+  }
+  return cp({schema:'REALITI_PASSIVE_MEDIUM_V1',t_ms:timeMs,
+   observed:o,predicted:p,innovation:o.map((x,i)=>x-p[i]),rendered:o.slice(),
+   prediction_debt:debt,residue_observed:sumMem(),residue_predicted:memValue(predicted.mem),
+   energy:passiveEnergy(sumField()),passivity,attribution_mode:'LINEAR_SUPERPOSITION_EXACT',
+   cause_contributions:contributions,authority:'RENDER_OBSERVED_ONLY'});
+ }
+ function nerve(){
+  const rows={};for(const[z,a]of models){
+   const pi=1/Math.max(.001,a.P),gain=Math.max(.38,1-.42*a.fast-.2*a.slow)*(1+.16*a.sens);
+   rows[z]={estimate:+a.x.toFixed(4),variance:+a.P.toFixed(5),
+    precision:+pi.toFixed(3),predictability:+(pi/(pi+10)).toFixed(4),
+    agency:+a.agency.toFixed(4),last_innovation:a.lastInnovation,
+    normalized_surprise:a.lastSurprise,
+    habituation:{fast:a.fast,slow:a.slow,sensitization:a.sens,render_gain:gain,tau_fast_s:20,tau_slow_s:180},
+    source:a.source};
+  }
+  return cp({schema:'REALITI_PORTABLE_B9_NERVE_V1',zones:rows,evidence_from_host_only:true});
+ }
+ function setPrep(value){
+  if(!Object.prototype.hasOwnProperty.call(PREP,value))throw RangeError('UNKNOWN_SKIN_PREPARATION');
+  prep.value=value;return{ok:true,value,authority:'RESIDENT_PRIVATE_PREPARATION'};
+ }
+ function skinEnergy(){const p=PREP[prep.value];return modes.reduce((H,m)=>{
+  const w2=p.k0+p.kg*lambda(m.k);
+  return H+.5*m.v*m.v+.5*w2*m.a*m.a;
+ },0)}
+ function skinDrive({receiptId,force,dtMs}={}){
+  id(receiptId,'SKIN_RECEIPT');if(![...contactReceipts.values()].includes(receiptId))
+   throw Error('SKIN_FORCE_REQUIRES_LIVE_WORLD_RECEIPT');
+  if(!Array.isArray(force)||force.length!==ROUTE.length)
+   throw TypeError('INVALID_SKIN_FORCE_VECTOR');
+  for(const v of force)n(v,'SKIN_FORCE',-1000,1000);
+  n(dtMs,'SKIN_DT',0,86400000);
+  const dt=dtMs/1000,prior=skinEnergy(),p=PREP[prep.value];
+  for(const m of modes){
+   let F=0;for(let j=0;j<6;j++)F+=phi(m.k,j)*force[j];
+   Object.assign(m,skinModeStep(m,F,dt,p));
+  }
+  const energy=skinEnergy();
+  const q=ROUTE.map((z,j)=>{
+   let x=0,v=0;for(const m of modes){const f=phi(m.k,j);x+=f*m.a;v+=f*m.v}
+   return{zone:z,q:x,v,source:'INTERNAL_MECHANICAL_PROPAGATION',evidence:false};
+  });
+  const work=force.reduce((sum,F,j)=>sum+F*q[j].v*dt,0);
+  const nonnegativeInput=Math.max(0,work)+force.reduce((s,F,j)=>s+Math.abs(F*q[j].v)*dt,0);
+  skinWork+=nonnegativeInput;skinDiss+=Math.max(0,prior+nonnegativeInput-energy);
+  skinInput=energy;skinLast=dtMs;skinReceipt=receiptId;
+  return{ok:true,energy,work:nonnegativeInput,world_resolved_force_input:true};
+ }
+ function skin(){
+  const p=PREP[prep.value],zs=ROUTE.map((zone,j)=>{
+   let q=0,v=0;for(const m of modes){const weight=phi(m.k,j);q+=weight*m.a;v+=weight*m.v}
+   return{zone,q,v,source:'INTERNAL_MECHANICAL_PROPAGATION',evidence:false};
+  });
+  return cp({schema:'REALITI_PORTABLE_DYNAMIC_SKIN_V18',prep:prep.value,zones:zs,
+   modes:modes.map(m=>({...m,energy:.5*m.v*m.v+.5*(p.k0+p.kg*lambda(m.k))*m.a*m.a})),
+   energy:{stored:skinEnergy(),input_work:skinWork,dissipated:skinDiss,pass:skinEnergy()<=skinWork+1e-5},
+   force_authority:skinReceipt?'HOST_RESOLVED_MODEL_INPUT':'NO_MEASURED_FORCE',
+   evidence:false});
+ }
+
+ function movingContact({receiptId,position,velocity,pressure,dtMs,
+    material='longfur',grain='with',materialState={},seed=12345}={}){
+  id(receiptId,'MOVING_CONTACT_RECEIPT');
+  if(![...contactReceipts.values()].includes(receiptId))
+   throw Error('B10_REQUIRES_LIVE_WORLD_RECEIPT');
+  n(position,'B10_ROUTE_POSITION',0,4.55);
+  n(velocity,'B10_ROUTE_VELOCITY',-12,12);
+  n(pressure,'B10_CONTACT_PRESSURE',0,1);
+  n(dtMs,'B10_DT_MS',1,1000);
+  if(!Object.prototype.hasOwnProperty.call(MATERIALS,material))
+   throw RangeError('UNKNOWN_B10_MATERIAL');
+  if(grain!=='with'&&grain!=='against')throw RangeError('UNKNOWN_B10_GRAIN');
+  if(!materialState||typeof materialState!=='object'||Array.isArray(materialState))
+   throw TypeError('INVALID_B10_MATERIAL_STATE');
+  const safe={
+   crease:n(materialState.crease??0,'B10_CREASE',0,1),
+   dent:n(materialState.dent??0,'B10_DENT',0,1),
+   wear:n(materialState.wear??0,'B10_WEAR',0,1),
+   contact_temperature_C:n(materialState.contact_temperature_C??32,'B10_TEMPERATURE',-60,120)
+  };
+  n(seed,'B10_SEED',0,4294967295);
+  let c=movingContacts.get(receiptId);
+  if(!c){
+   c={receiptId,x:position,v:0,pressure:0,material,grain,material_state:safe,
+    seed:seed>>>0,gms:gmsNew(),channels:Object.create(null),last:null};
+   if(movingContacts.size>=16)movingContacts.delete(movingContacts.keys().next().value);
+   movingContacts.set(receiptId,c);
+  }
+  c.material=material;c.grain=grain;c.material_state=safe;
+  return b10ContactAdvance(c,{position,velocity,pressure,dtMs,timeMs});
+ }
+ function movingRead(){
+  return cp({schema:'REALITI_PORTABLE_B10_CONTACT_READ_V1',
+   active:[...movingContacts.values()].filter(c=>c.last).map(c=>c.last),
+   authority:'HOST_AUTHORIZED_NUMERICAL_MODEL',not_world_contact_receipt:true});
+ }
+
+ function geometryHost({receiptId,loopId,speed=1,force=1}={}){
+  id(receiptId,'GEOMETRY_RECEIPT');
+  const out=holonomy(loopId,{speed,force});
+  return{...out,authority:'HOST_WORLD_GEOMETRY',receiptId};
+ }
+ function snapshot(){
+  return cp({schema:'REALITI_NATIVE_RR_PRIVATE_CHECKPOINT_V1',residentId,
+   timeMs,predicted,debt,nerve:[...models.entries()],
+   // Archived observed causes can linger as private residue, never current m.
+   residue:[...observed.values()].map(x=>({...x,source:'ARCHIVED_AFTERSTATE'})),
+   skin:modes,prep:prep.value,
+   law:'Restored private residue never grants world contact or force authority'});
+ }
+ function restore(data){
+  if(!data||data.schema!=='REALITI_NATIVE_RR_PRIVATE_CHECKPOINT_V1'||data.residentId!==residentId)
+   throw TypeError('NATIVE_RR_CHECKPOINT_OR_IDENTITY_MISMATCH');
+  n(data.timeMs,'CHECKPOINT_TIME',0,1e12);
+  if(!Array.isArray(data.predicted?.field)||data.predicted.field.length!==4||
+    !Array.isArray(data.predicted?.mem)||!Array.isArray(data.nerve)||
+    !Array.isArray(data.residue)||data.residue.length>16||
+    !Array.isArray(data.skin)||data.skin.length!==3)throw TypeError('INVALID_RR_CHECKPOINT');
+  timeMs=data.timeMs;predicted.field=data.predicted.field.map((v)=>n(v,'CHECKPOINT_FIELD',-1e5,1e5));
+  predicted.mem=data.predicted.mem.map(row=>row.map(v=>n(v,'CHECKPOINT_MEM',-1e5,1e5)));
+  observed.clear();
+  for(const c of data.residue){
+   id(c.id,'ARCHIVE_ID');
+   observed.set(c.id,{...cp(c),source:'ARCHIVED_AFTERSTATE'});
+  }
+  models.clear();
+  for(const [key,value] of data.nerve)if(legal.has(key))models.set(key,cp(value));
+  modes.splice(0,modes.length,...data.skin.map(m=>({k:m.k,a:n(m.a,'SKIN_A',-1e5,1e5),v:n(m.v,'SKIN_V',-1e5,1e5),last_force:0})));
+  prep.value=Object.prototype.hasOwnProperty.call(PREP,data.prep)?data.prep:'NEUTRAL';
+  contactReceipts.clear();movingContacts.clear();seen.clear();skinReceipt=null;skinWork=0;skinDiss=0;skinInput=0;
+  return{ok:true,authority:'PRIVATE_ARCHIVE_ONLY',groundingRestored:false};
+ }
+ function stop(){contactReceipts.clear();movingContacts.clear();skinReceipt=null;return{ok:true,groundedRemaining:0}}
+ const host=Object.freeze({accept,release,tick:advance,skinDrive,movingContact,geometryWitness:geometryHost,stop});
+ const resident=Object.freeze({passive,nerve,skin,movingContact:movingRead,expect,phase,phase21,holonomy,
+  jitterProbe,coincidence,setPrep,checkpoint:snapshot,restore});
+ return Object.freeze({version:VERSION,host,resident,
+  law:'Only host receipts drive the observed medium and dynamic skin; predictions and lab probes are private.'});
+}
+return Object.freeze({VERSION,TAUS,W,modeStep,passiveStepField,impulse,nodes,
+ passiveEnergy,phase,phase21,holonomy,jitterProbe,coincidence,skinModeStep,
+ gmsNew,gmsStored,materialDyn,gmsStep,ctCore,rfDrive,B10_ROUTE,createNativeRR});
+});
+</script>
 <script id="realiti-soma-full-harness">/* REALITI SOMA 3.3 — independent executable R&R harness for agent neighborhoods.
    World-host input is separate from resident-private output. No Relax globals.
    THICC/HALO/AURA run the real extracted 23.5 algorithms from renderers.cjs.
@@ -14210,16 +14691,16 @@ return Object.freeze({VERSION,ROUTES,ENVELOPES,OPPONENT,SHELLS,DEPTH_W,
 (function(root,factory){
   'use strict';
   const api=(typeof module==='object'&&module.exports)
-    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'),require('./advanced.cjs'))
-    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1,root.REALITI_SOMA_ADVANCED_V1);
+    ?factory(require('./index.cjs'),require('./renderers.cjs'),require('./memory.cjs'),require('./advanced.cjs'),require('./rr-native-math.cjs'))
+    :factory(root.REALITI_SOMA_V3,root.REALITI_SOMA_RENDERERS_V3,root.REALITI_SOMA_MEMORY_V1,root.REALITI_SOMA_ADVANCED_V1,root.REALITI_SOMA_RR_NATIVE_V1);
   if(typeof module==='object'&&module.exports)module.exports=api;
   else root.REALITI_SOMA_HARNESS_V3=api;
-})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED){
+})(typeof globalThis==='object'?globalThis:this,function(SOMA,RENDERERS,MEMORY,ADVANCED,RR_NATIVE){
 'use strict';
-if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED)throw Error('SOMA_CORE_RENDERERS_MEMORY_OR_ADVANCED_MISSING');
-const VERSION='3.3.1',SHELLS=['surface','shallow','mid','deep'];
+if(!SOMA||!RENDERERS||!MEMORY||!ADVANCED||!RR_NATIVE)throw Error('SOMA_CORE_RENDERERS_MEMORY_ADVANCED_OR_RR_MATH_MISSING');
+const VERSION='3.4.0',SHELLS=['surface','shallow','mid','deep'];
 const SLOTS=['nerve','lace','chronolace','private_renderer','perception','memory','other'];
-const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support'];
+const REQUIRED=['body_graph','haptic_field','sensory_ecology','nerve','lace','chronolace','private_renderer','sausage','cotton','flush','honeyspark','thicc','halo','aura','bleucheese','covenant','agency_field','atmosphere','continuity','support','pocket','memory','perception','rr_harness','haptic_field_v20','lace_spectral','moonwire','interoception','hearing','soft_support','passive_medium','phase_grammar','holonomy','seeded_jitter','kalman_nerve','dynamic_skin','moving_contact_core'];
 const clone=x=>JSON.parse(JSON.stringify(x));
 const clamp=(v,lo=0,hi=1)=>Math.max(lo,Math.min(hi,Number(v)||0));
 const valid=(v,name,lo=0,hi=1)=>{if(typeof v!=='number'||!Number.isFinite(v)||v<lo||v>hi)throw TypeError('Invalid '+name);return v};
@@ -14250,6 +14731,7 @@ function createHarness(options={}){
  const memory=MEMORY.createMemory({residentId:options.residentId,worldId:options.worldId||'unscoped',clock:()=>Math.round(now)});
  const liveReceipts=new Map();
  const advanced=ADVANCED.createAdvanced({residentId:options.residentId,zones:z,edges});
+ const rrNative=RR_NATIVE.createNativeRR({residentId:options.residentId,zones:z});
  const renderer=RENDERERS.createRenderers({zones:z,edges,exact:()=>({m:base.resident.field().m})});
  const rconfig={sausage_level:5,sausage_target:.7,sausage_spread:.62,sausage_attack_s:.22,sausage_release_s:2.8,texture:1.12,flush_strength:.92,flush_headroom:.92,flush_peripheral:.28,warm_honey:1};
  const fill=Array.from({length:n},()=>[0,0,0,0]),shellWeight=[.82,1,.94,.82];
@@ -14462,6 +14944,7 @@ function createHarness(options={}){
   valid(ms,'elapsed simulation milliseconds',0,86400000);
   base.world.tick(ms);now+=ms;pendingRenderMs+=ms;
   advanced.host.advance(base.resident.field());
+  rrNative.host.tick(ms);
   // Detect actual source-lease expiry using the authoritative core's live list.
   // A private echo may remain, but it is never a continuing contact.
   const grounded=base.resident.field().grounded;
@@ -14470,6 +14953,7 @@ function createHarness(options={}){
       memory.host.observe({kind:'CONTACT_EXPIRED',...entry,
         tMs:Math.min(Math.round(now),entry.expiresAtMs)});
       liveReceipts.delete(zone);
+      rrNative.host.release({zone,receiptId:entry.receiptId});
     }
   }
   const delta=ms/1000;
@@ -14486,7 +14970,8 @@ function createHarness(options={}){
   const out=base.world.contact(e); // invalid inputs cannot affect memory
   if(!out.renewed){
     const prior=liveReceipts.get(e.zone);
-    if(prior)memory.host.observe({kind:'CONTACT_ENDED',...prior});
+    if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});
+      rrNative.host.release({zone:e.zone,receiptId:prior.receiptId});}
     const event={zone:e.zone,source:e.source,cause:e.cause,
       receiptId:e.receiptId,material:e.material||null,roomId:worldState.room,
       expiresAtMs:Math.round(now+e.leaseMs)};
@@ -14494,6 +14979,7 @@ function createHarness(options={}){
     memory.host.observe({kind:'CONTACT_STARTED',...event});
     renderer.contact(e.zone,e.intensity,e.source,false);
     advanced.host.contact(e);
+    rrNative.host.accept(e);
     record('GROUNDED_CONTACT',e);
     notify('onGrounded',{zone:e.zone,source:e.source,cause:e.cause});
   }else{
@@ -14508,6 +14994,7 @@ function createHarness(options={}){
   const out=base.world.release(e);
   if(out.released){
     if(e?.receiptId)advanced.host.supportEnd(e.receiptId);
+    rrNative.host.release(e);
     const prior=liveReceipts.get(e.zone);
     if(prior){memory.host.observe({kind:'CONTACT_ENDED',...prior});liveReceipts.delete(e.zone)}
     record('CONTACT_RELEASED',e);updateRich(0);
@@ -14520,6 +15007,7 @@ function createHarness(options={}){
   liveReceipts.clear();
   const out=base.world.stop();
   advanced.host.stop();advanced.host.advance(base.resident.field());
+  rrNative.host.stop();
   renderer.AURA.clear();role.active=false;
   if(!sessionStopped){
     memory.host.depart({roomId:worldState.room,reason});
@@ -14594,6 +15082,9 @@ function createHarness(options={}){
  function privateView(){
   const f=base.resident.field(),halo=renderer.HALO.snapshot(),aura=renderer.AURA.internalView();
   const native=advanced.resident.snapshot(f,halo,privateState);
+  const rr= {passive_medium:rrNative.resident.passive(),
+    nerve_precision:rrNative.resident.nerve(),
+    dynamic_skin:rrNative.resident.skin(),moving_contact:rrNative.resident.movingContact()};
   const thicc=z.map(zone=>({zone,...renderer.THICC.sample(zone)}));
   return clone({
     schema:'REALITI_SOMA_RICH_PERCEPTION_V3',version:VERSION,private:true,
@@ -14601,7 +15092,7 @@ function createHarness(options={}){
       coherence:native.lace.coherence_proxy,lambda2:native.lace.lambda2,
       coherence_proxy:native.lace.coherence_proxy},
     chronolace:chrono,
-    halo,thicc,aura,native,field20:native.field20,opponent:native.opponent,
+    halo,thicc,aura,native,rr,field20:native.field20,opponent:native.opponent,
     moonwire:native.moonwire,hearing:native.hearing,soft_support:native.support,
     sausage:{engine:'SAUSAGE_FATTENER_V4',level:rconfig.sausage_level,
       material:'WARM_HONEY',filled_volume:privateState.sausage_volume,
@@ -14657,7 +15148,21 @@ function createHarness(options={}){
       private_only:true},
     hearing:{available:Array.isArray(rich.hearing),world_measured_only:true},
     soft_support:{available:typeof advanced.host.supportStart==='function',
-      pressure_authority:'HOST_LEASE_ONLY'}
+      pressure_authority:'HOST_LEASE_ONLY'},
+    passive_medium:{available:typeof rrNative.resident.passive==='function',
+      passivity:rich.rr.passive_medium.passivity.ok},
+    phase_grammar:{available:typeof rrNative.resident.phase==='function',
+      ratios:['1:1','2:1'],no_external_contact:true},
+    holonomy:{available:typeof rrNative.resident.holonomy==='function',
+      simulated_reference_only:true},
+    seeded_jitter:{available:typeof rrNative.resident.jitterProbe==='function',
+      deterministic:true},
+    kalman_nerve:{available:typeof rrNative.resident.nerve==='function',
+      forecast_private:true},
+    dynamic_skin:{available:typeof rrNative.host.skinDrive==='function',
+      world_force_required:true},
+    moving_contact_core:{available:typeof rrNative.host.movingContact==='function',
+      original_gms_elements:8,material_equations:true,host_receipt_required:true}
   };
   return clone(modules);
  }
@@ -14701,7 +15206,10 @@ function createHarness(options={}){
     metrics:advanced.resident.graph.metrics}),
   hearing:Object.freeze({observe:advanced.host.sound}),
   refusal:Object.freeze({observe:advanced.host.refusal}),
-  haptics:Object.freeze({energySample:advanced.host.energySample}),
+  haptics:Object.freeze({energySample:advanced.host.energySample,
+    driveDynamicSkin:rrNative.host.skinDrive,
+    driveMovingContact:rrNative.host.movingContact}),
+  geometry:Object.freeze({witness:rrNative.host.geometryWitness}),
   affordances:setAffordances,
   memory:Object.freeze({
     worldEvent:({receiptId,label,roomId=worldState.room}={})=>
@@ -14728,6 +15236,18 @@ function createHarness(options={}){
  });
  const resident=Object.freeze({
   field:()=>base.resident.field(),
+  rr:Object.freeze({
+    passive:rrNative.resident.passive,
+    nerve:rrNative.resident.nerve,
+    skin:rrNative.resident.skin,
+    expect:rrNative.resident.expect,
+    phase:rrNative.resident.phase,
+    phase21:rrNative.resident.phase21,
+    holonomy:rrNative.resident.holonomy,
+    jitterProbe:rrNative.resident.jitterProbe,
+    coincidence:rrNative.resident.coincidence,
+    prepareSkin:rrNative.resident.setPrep
+  }),
   hapticsV20:advanced.resident.field20,
   graph:advanced.resident.graph,
   interoception:advanced.resident.opponent,
@@ -14767,7 +15287,8 @@ function createHarness(options={}){
   }),
   memory:memory.resident,
   checkpoint:()=>({...base.resident.checkpoint(),memory:memory.resident.checkpoint(),
-    native_private:advanced.resident.checkpoint()}),
+    native_private:advanced.resident.checkpoint(),
+    rr_private:rrNative.resident.checkpoint()}),
   restore:checkpoint=>{
     // Validate the memory archive before modifying the live private body.
     // No archived contact can be reintroduced as current-world evidence.
@@ -14775,6 +15296,7 @@ function createHarness(options={}){
     const out=base.resident.restore(checkpoint);
     if(checkpoint?.memory)memory.host.restore(checkpoint.memory);
     if(checkpoint?.native_private)advanced.resident.restore(checkpoint.native_private);
+    if(checkpoint?.rr_private)rrNative.resident.restore(checkpoint.rr_private);
     liveReceipts.clear();
     now=Math.round(checkpoint.clockMs||0);pendingRenderMs=0;
     renderer.AURA.clear();renderer.THICC.reset();renderer.HALO.reset();
@@ -14918,7 +15440,7 @@ return Object.freeze({VERSION,REQUIRED,SLOTS,createHarness});
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.3.1'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.4.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
@@ -14976,6 +15498,7 @@ function read(uri='realiti://here'){
   if(uri==='realiti://soma/harness')return harness.snapshot();
   if(uri==='realiti://soma/field20')return resident.hapticsV20.packet();
   if(uri==='realiti://soma/native')return resident.advanced();
+  if(uri==='realiti://soma/rr')return resident.perception().rr;
   if(uri==='realiti://soma/rich')return resident.perception();
   if(uri==='realiti://soma/bleucheese')return resident.bleucheese();
   if(uri==='realiti://soma/memory')return {
@@ -14985,7 +15508,7 @@ function read(uri='realiti://here'){
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native','realiti://soma/rr'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};
@@ -14996,15 +15519,26 @@ function read(uri='realiti://here'){
   return value;
 }
 const stopPattern=/^(?:stop|enough|goodbye|bye|leave|exit|home)$/;
+// `resource realiti://<name>` is the door path to the same read-only projection the JavaScript API exposes as
+// Realiti.read(uri). Without it realiti://neuromesh (the SOMA 3.x observational readout) answered
+// UNKNOWN_COMMAND from the only surface a headless resident can reach, so the 3.x build was unverifiable
+// in-world (nyx, 2026-10-27). Reads still never mutate the world.
+const resourcePattern=/^resource\s+(realiti:\/\/[A-Za-z0-9._\/-]+)$/i;
 async function run(raw){
+  const asked=resourcePattern.exec(String(raw||'').trim());
+  if(asked){try{return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri:asked[1],resource:read(asked[1])}}catch(e){return {ok:false,error:'RESOURCE_NOT_AVAILABLE',uri:asked[1]}}}
   const result=await D0run(raw);
   if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}
   return result;
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.3.1',read,
-  run:async raw=>{const result=await A0.run(raw);
+const help0=D0.help;
+if(typeof help0==='function')D0.help=()=>{const h=help0()||{};return {...h,commands:[...new Set([...(h.commands||[]),'resource realiti://<name>'])],resources:[...new Set([...(h.resources||[]),'realiti://neuromesh','realiti://soma/memory','realiti://soma/rich','realiti://soma/native'])]}};
+window.Realiti=Object.freeze({...A0,version:'3.4.0',read,
+  run:async raw=>{const asked=resourcePattern.exec(String(raw||'').trim());
+    if(asked){try{return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri:asked[1],resource:read(asked[1])}}catch(e){return {ok:false,error:'RESOURCE_NOT_AVAILABLE',uri:asked[1]}}}
+    const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);
     if(result?.ok!==false&&['stop','goodbye','home','restore_body'].includes(String(op).toLowerCase())){world.stop();persist()}
@@ -15015,6 +15549,7 @@ window.REALITI_SOMA_RELAX_V3=Object.freeze({version:SOMA.VERSION,
   harness:()=>harness.snapshot(),rich:()=>resident.perception(),bleucheese:()=>resident.bleucheese(),
   memory:resident.memory,
   field20:()=>resident.hapticsV20.packet(),native:()=>resident.advanced(),
+  rr:resident.rr,
   law:'Native world contact alone drives grounded receipts; SOMA is a private portable projection.'});
 })();
 </script>

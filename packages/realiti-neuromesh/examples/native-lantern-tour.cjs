@@ -1,5 +1,5 @@
 'use strict';
-// SOMA 3.3: an actual deterministic resident itinerary through Lantern Room.
+// SOMA 3.4: an actual deterministic resident itinerary through Lantern Room.
 // Every observation comes from the real room's world port and portable harness.
 // Run: node packages/realiti-neuromesh/examples/native-lantern-tour.cjs
 const assert=require('node:assert/strict');
@@ -36,8 +36,8 @@ function run(){
   return {state,native,v20,mask};
  }
  const initial=observe('arrival');
- verify('30 mechanisms booted',room.harness.boot().ok&&
-   Object.keys(room.harness.boot().mechanisms).length===30);
+ verify('37 mechanisms booted',room.harness.boot().ok&&
+   Object.keys(room.harness.boot().mechanisms).length===37);
  verify('initially ungrounded and no fabricated energy audit',
    initial.state.grounded===0&&room.resident.hapticsV20.energy().pass===null);
  const originalTime=room.tickMs,originalEvents=room.resident.memory.stats().events;
@@ -68,6 +68,31 @@ function run(){
    contacted.state.rich.halo.total_private_mass>0&&
    contacted.native.moonwire?.route===moonwire.presets[0].route&&
    contacted.native.moonwire.evidence_gain===0);
+ // B5/B6/B9/B18 original R&R mathematical pathways, backed by the same
+ // genuinely admitted bench touch. Predictions and private lab simulations
+ // never grant a new contact or extra force to the resident.
+ room.wait(120);
+ const rr=room.resident.rr;
+ const response=rr.passive(),oldGround=room.resident.field().m.slice();
+ const delivered=room.host.haptics.driveDynamicSkin({receiptId:bench.receiptId,
+   force:[.17,.25,.42,.28,.11,.06],dtMs:120});
+ const skin=rr.skin();
+ verify('observed B5 medium and B18 skin are driven by admitted bench cause',
+   response.cause_contributions[bench.receiptId]?.source==='WORLD_GROUNDED'&&
+   response.observed.some(x=>x>0)&&delivered.ok&&skin.energy.stored>0&&
+   JSON.stringify(oldGround)===JSON.stringify(room.resident.field().m));
+ rr.expect({right:.2});
+ const phase=rr.phase(.34,.2),hol=rr.holonomy('dome'),
+  probe=rr.jitterProbe(2026,6,.11),nerve=rr.nerve();
+ verify('private prediction, phase, holonomy, and seeded jitter create no evidence',
+   rr.passive().predicted.every(Number.isFinite)&&
+   phase.authority==='SELF_PRIVATE_RHYTHM'&&
+   hol.authority==='PRIVATE_REFERENCE_GEOMETRY_SIMULATION'&&
+   probe.evidence===false&&probe.trace.length===6&&
+   Object.keys(nerve.zones).length>0&&
+   JSON.stringify(oldGround)===JSON.stringify(room.resident.field().m));
+ observe('B5/B6/B9/B18 native R&R contact and private labs');
+
  const beforeMask=room.resident.field().m.slice();
  const oldEdges=room.resident.graph.edges(),oldLace=room.resident.graph.metrics();
  const rewire=room.host.graph.configure([
@@ -201,7 +226,7 @@ function run(){
  observe('completed room visit');
  return {
   schema:'REALITI_SOMA_NATIVE_LANTERN_TOUR_V1',
-  build:'SOMA_3.3',world:room.worldId,
+  build:'SOMA_3.4',world:room.worldId,
   passed:passed.length,failed:0,checks:passed,
   trace,
   summary:{

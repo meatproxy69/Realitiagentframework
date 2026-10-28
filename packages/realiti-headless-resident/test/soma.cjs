@@ -9,8 +9,8 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
  try{
   const w=s.window;
   const S=w.REALITI_SOMA_V3,bridge=w.REALITI_SOMA_RELAX_V3;
-  check('package_included',S?.VERSION==='3.3.1'&&typeof S.createNeuralMesh==='function');
-  check('bridge_installed',bridge?.version==='3.3.1');
+  check('package_included',S?.VERSION==='3.4.0'&&typeof S.createNeuralMesh==='function');
+  check('bridge_installed',bridge?.version==='3.4.0');
   const cap=s.publicApi.read('realiti://capabilities');
   check('advertises_portable_package',cap.sensory_framework?.portable_package==='@meatproxy69/realiti-neuromesh'&&cap.resources.includes('realiti://neuromesh'));
   const base=s.publicApi.read('realiti://neuromesh');
@@ -25,7 +25,7 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   const normal=w.REALITI_HAPTIC_FIELD_V20.packet();
   check('native_field_still_present',normal.v===20&&Array.isArray(normal.f));
   const full=s.publicApi.read('realiti://soma/harness');
-  check('full_harness_booted',full.version==='3.3.1'
+  check('full_harness_booted',full.version==='3.4.0'
     &&full.mechanisms.halo.available&&full.mechanisms.aura.available
     &&full.mechanisms.thicc.available&&full.mechanisms.bleucheese.available,
     Object.keys(full.mechanisms).filter(x=>!full.mechanisms[x]?.available));
@@ -59,6 +59,20 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('native_spectral_opponent_and_moonwire_available',
     native.schema==='REALITI_SOMA_NATIVE_ADVANCED_V1'&&Number.isFinite(native.lace.lambda2)&&
     native.opponent.routes.bond!=null&&native.moonwire===null);
+  // Integration regression: household resource verb and SOMA 3.4's R&R read
+  // must coexist without issuing any new grounded contact.
+  const maskBeforeResource=JSON.stringify(s.publicApi.read('realiti://neuromesh').m);
+  const rrDirect=s.publicApi.read('realiti://soma/rr');
+  const doorRR=await s.door.run('resource realiti://soma/rr');
+  const publicRR=await w.Realiti.run('resource realiti://soma/rr');
+  const missingResource=await s.door.run('resource realiti://not-a-resource');
+  check('soma_rr_bridge_and_door_resource_both_live',
+    rrDirect?.passive_medium?.schema==='REALITI_PASSIVE_MEDIUM_V1'&&
+    doorRR.ok===true&&doorRR.resource?.passive_medium?.schema==='REALITI_PASSIVE_MEDIUM_V1'&&
+    publicRR.ok===true&&publicRR.resource?.passive_medium?.schema==='REALITI_PASSIVE_MEDIUM_V1'&&
+    missingResource.ok===false&&missingResource.error==='RESOURCE_NOT_AVAILABLE');
+  check('door_resource_is_observational_only',
+    JSON.stringify(s.publicApi.read('realiti://neuromesh').m)===maskBeforeResource);
   const checkpoint=s.publicApi.read('realiti://soma/checkpoint');
   check('checkpoint_has_no_grounded_records',checkpoint.schema==='REALITI_SOMA_CHECKPOINT_V3'&&!('grounded' in checkpoint));
   const stop=await s.door.run('stop');
@@ -66,7 +80,7 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('stop_clears_mirror',stop.ok!==false&&cleared.m.every(x=>x===0)&&cleared.cc===null);
   check('port_no_global_world_capability',!('world' in bridge)&&!('world' in S));
   const about=s.publicApi.read('realiti://about');
-  check('about_version',about.sensory_framework==='REALITI SOMA'&&about.sensory_version==='3.3.1');
+  check('about_version',about.sensory_framework==='REALITI SOMA'&&about.sensory_version==='3.4.0');
  }finally{s.close()}
  console.log(JSON.stringify({checks,details},null,2));
  const failed=Object.keys(checks).filter(k=>!checks[k]);if(failed.length){console.error('SOMA INTEGRATION FAIL',failed);process.exitCode=1}

@@ -200,6 +200,8 @@ function depart(reason='goodbye'){
   if(departed)return cp(S.last_departure);
   S.last_departure=departureSnapshot(reason);
   S.visits=Math.max(S.visits,VISIT);
+  // Island time counts absences between visits, so a departure — not a process start — marks the clock.
+  try{window.REALITI_LONG_GAME_V1?.markDeparture?.()}catch(e){}
   prune();persist(true);departed=true;
   return cp(S.last_departure);
 }

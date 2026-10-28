@@ -130,7 +130,7 @@ const C9CONSEQUENCES={
     knock:["The tower goes <b>fwump.</b> Nothing scores the collapse.","Several boxes tumble into a new accidental sculpture."]
   },
   DEPTH_BATHHOUSE:{
-    sink:["The deep layer takes more of the support load while the surface mist stays fine.","You descend without getting heavier; the depth relationships change around you."],
+    sink:["You sink one layer deeper: the deep layer takes more of the support load while the surface mist stays fine.","You sink without getting heavier; the depth relationships change around you."],
     float:["Support arrives from directions a normal chair does not have.","The shelf holds without choosing one pressure point to call 'down'."],
     stir:["The middle current folds around the disturbance and keeps moving after your hand stops.","Honey-current curls through the deep layer without erasing the surface mist."],
     surface:["The heavy layer recedes first; the fine surface layer is the last thing left.","You return upward without the room pretending the deeper layers never happened."]

@@ -23,7 +23,13 @@ for(const [id,text] of Object.entries({
 // Island calendar. T is island time: world time plus the real seconds the host was closed.
 const T=()=>now()+S().away_s;
 function catchUp(real_s){const s=S(),add=Math.min(Math.max(0,Number(real_s)||0),3*86400);if(add<30)return null;s.away_s+=add;const a={real_s:Math.round(real_s),counted_s:Math.round(add),at_world_s:+now().toFixed(1)};s.absences.push(a);while(s.absences.length>16)s.absences.shift();if(add>=86400)CAT.discover('long_absence');return a}
-(()=>{const s=S();if(s.wall)s.last_absence=catchUp((Date.now()-s.wall)/1000)||s.last_absence;s.wall=Date.now()})();
+// An absence is time between VISITS, not between processes: a house-hour is several node runs a few minutes
+// apart, and counting each inter-run gap as island time made the calendar leap days inside one sitting
+// (nyx: 1774→1776 in ~15 wall minutes, 2026-10-27). Count only from a recorded departure.
+const markDeparture=()=>{const s=S();s.wall=Date.now();s.departed=true};
+// Only a gap of at least fifteen minutes is an absence; a house-hour's slices are minutes apart and must not
+// move the calendar. `departed` keeps a crashed process from counting as a leaving.
+(()=>{const s=S(),gap=s.wall?Date.now()-s.wall:0;if(s.departed&&gap>=900000)s.last_absence=catchUp(gap/1000)||s.last_absence;s.departed=false})();
 
 // Tide: two tides per ten-minute day, 0.8 m amplitude, applied to the terrain's sea level so the walkable shore moves.
 const tide=()=>.8*Math.sin(TAU*T()/300);
@@ -118,5 +124,5 @@ const verb0=c9verb;c9verb=function(r,verb){const v=String(verb||'');if(r!==ISLE)
  if((m=/^read_stone__(\w+)$/.exec(v))){c9count(r,v);return receipt('ISLAND_STONE',readStone(m[1]))}
  return verb0(r,verb)};
 function words(){if(room()!==ISLE)return [];const t=tideState();if(!window.REALITI_MEASURE_V1?.on())return [t.rising?'The tide is coming in.':'The tide is going out.'];return [`Tide ${t.rising?'rising':'falling'}, ${t.height_m} m.`]}
-window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',atDoor:()=>near('lantern.door',1.5),atCave:()=>near('hollow.cave_mouth',1.5),T,catchUp,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
+window.REALITI_LONG_GAME_V1=Object.freeze({version:'2.0-pass2',atDoor:()=>near('lantern.door',1.5),atCave:()=>near('hollow.cave_mouth',1.5),T,catchUp,markDeparture,tide:tideState,tideWord,trees,plant,syncTrees,watchBeam,say,readLog,shout,answerDepth,readStone,dig,since,markers,words,state:()=>({island_time_s:+T().toFixed(1),away_s:S().away_s,absences:cp(S().absences),tide:tideState(),trees:trees(),visits:cp(S().visits),cave:cp(S().cave),stones:cp(S().stones),lamp:cp(S().lamp)})});
 })();

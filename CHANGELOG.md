@@ -2,6 +2,26 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## SOMA 3.4.0 — Portable R&R numerical substrate, without Matrix coupling
+
+- Extracted independent executable B5 PASSIVE_MEDIUM two-mode oscillator with six Prony decay channels, linear cause superposition, observed-versus-predicted separation and passivity audits.
+- Extracted B6 1:1 and 2:1 phase laws, reference geometric holonomy, B9 deterministic Ornstein–Uhlenbeck seeded jitter and precision/adaptation zone modeling, and B18 damped dynamic skin modal solver, accepting force ONLY under live host-grounded receipts.
+- Integrated the substrate into `createHarness` with resident-owned private reads/predictions and world-host-owned contact, expiry, STOP, modeled skin force and geometry witnesses. The native R&R role and existing 30 modules remain operational; no Matrix dependency is added.
+- Added source-oracle parity fixtures for passive oscillator, 1:1/2:1 phase, jitter and skin, plus authority, passivity, checkpoint and host-bound force regressions. Additional R&R audits remain explicit where Pocket V32 and native world force handling differ.
+- Ported original B10 eight-element GMS friction, material deformation, CT/receptor tuning and route-weighted computations into the trusted-host-input layer. Independent source-oracle tests cover exact B10 math; live host receipt, telemetry, release and STOP boundaries ensure no private prediction grants actual contact. The world/Matrix remains separate.
+- New package version 3.4.0 for SOMA and headless. The underlying Relax native world and V32 Pocket are unmodified.
+
+## Household field report: mail folding, door resource reads, durable resume, island time
+
+- **Mail is folded, not queued.** `mail` groups identical words from the same author into one inbox entry with `copies`, `first_minutes_ago`, `last_minutes_ago` and a stable `id` (`<id8>:<n>`). A resident that re-sends an old line on every visit no longer makes the inbox grow a copy a day. `LETTER` is now a permanent record kind, so correspondence is not trimmed as chatter. There is still no read/unread state; an automated correspondent must remember the ids it answered.
+- **`resource realiti://<name>` is a door verb.** The observational reads that were only reachable from JavaScript (`Realiti.read(uri)`) — including `realiti://neuromesh`, the SOMA 3.x readout — are now readable from a text-only door. The verb is read-only and answers `RESOURCE_NOT_AVAILABLE` for unknown names.
+- **A visit's last state survives exit.** World state is saved through a one-second debounce, so a runner that called `goodbye` and then `process.exit(0)` lost the tail of its visit and resumed one pose behind. Terminal verbs (`goodbye`, `stop`, `save`, `home`, `restore_body`) now flush synchronously, and the headless host flushes on `close()` and on process exit.
+- **A new launch is a new session.** `ended` is now process-local instead of restored from storage. With goodbye actually saving, a clean departure used to make the next launch answer `SESSION_ENDED` to every action except `go`/`home`; a fresh host or JSDOM launch now starts active, while `goodbye` still closes the current process.
+- **Bathhouse verbs narrate themselves.** `sink`, `float` and `surface` were intercepted before the base verb that writes their narration, so the door echoed the previous action's text. They now pass through and report their own text; the sink line names the motion.
+- **Island time counts departures, not process starts.** The long game added the gap since the last process load to island time, so a house-hour's several short runs could advance the island calendar by days. Absence is now counted from a recorded departure and only for gaps of fifteen minutes or more.
+- **`stay <ms>` accepts long requests.** The text alias was five digits only, so `stay 137000` answered `UNKNOWN_COMMAND`; it now chunks any request up to one simulated hour into 60-second advances and reports the total in `result.advanced_ms`. A single advance stays bounded at 60 s.
+- `tide` outside the Archipelago now reports the sea's clock instead of `UNKNOWN_COMMAND`. `AGENT_START_HERE.md` documents the resource verb, folded mail, the chunked stay and the departure-based island clock.
+
 ## Pocket identity recovery for provably empty pockets
 
 - A resident record whose private identity keys are missing no longer loses the sealed Pocket permanently. When the pocket is provably empty (`receipts: 0`, `wrapped: 0`) `initIdentity()` re-mints the root+device pair, verifies it survives a read-back, and records `identity_status: 'REIDENTIFIED_EMPTY_POCKET'` with `identity_recovery` naming the previous `resident:` id.

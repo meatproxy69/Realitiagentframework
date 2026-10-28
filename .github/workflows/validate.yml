@@ -46,7 +46,7 @@ jobs:
           node packages/realiti-neuromesh/examples/lantern-lab.cjs > /tmp/soma-lantern-room.json
           node -e 'const r=require("/tmp/soma-lantern-room.json"); if(!r.harness.ok||r.departed.grounded!==0||r.live.haloModes!==7||r.live.auraBins!==128)process.exit(1)'
           node packages/realiti-neuromesh/examples/native-lantern-tour.cjs > /tmp/soma-lantern-native-tour.json
-          node -e 'const r=require("/tmp/soma-lantern-native-tour.json");console.log("NATIVE LANTERN ROOM RESULT",JSON.stringify({passed:r.passed,failed:r.failed,stages:r.trace.length,world:r.world,real_world_events:r.summary.real_world_events,final_grounded:r.summary.final_grounded,energy:r.summary.energy_audit}));if(r.failed||r.passed<18||r.summary.final_grounded!==0)process.exit(1)'
+          node -e 'const r=require("/tmp/soma-lantern-native-tour.json");console.log("NATIVE LANTERN ROOM RESULT",JSON.stringify({passed:r.passed,failed:r.failed,stages:r.trace.length,world:r.world,real_world_events:r.summary.real_world_events,final_grounded:r.summary.final_grounded,energy:r.summary.energy_audit}));if(r.failed||r.passed<20||r.summary.final_grounded!==0)process.exit(1)'
           node packages/realiti-neuromesh/examples/neighborhood.cjs > /tmp/soma-neighborhood.json
           npm pack --dry-run ./packages/realiti-neuromesh > /tmp/soma-pack.txt
           cmp neuromesh/preset-packs/honeyspark-duo.json packages/realiti-neuromesh/presets/honeyspark-duo.json

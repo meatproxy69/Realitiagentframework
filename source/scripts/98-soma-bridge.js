@@ -4,7 +4,7 @@
 // source used by other hosts; this bridge mirrors native B7 grounded receipts.
 // Existing Relax Haptic Field V20 / R&R remain canonical for legacy residents.
 const SOMA=window.REALITI_SOMA_V3;
-if(!SOMA || SOMA.VERSION!=='3.3.1'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
+if(!SOMA || SOMA.VERSION!=='3.4.0'||typeof SOMA.createHarness!=='function')throw Error('SOMA_FULL_HARNESS_NOT_BUNDLED');
 const A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
 if(!A0||!D0||typeof b7Contact!=='function'||typeof b7Advance!=='function')
   throw Error('SOMA_RELAX_BRIDGE_MISSING_KERNEL');
@@ -62,6 +62,7 @@ function read(uri='realiti://here'){
   if(uri==='realiti://soma/harness')return harness.snapshot();
   if(uri==='realiti://soma/field20')return resident.hapticsV20.packet();
   if(uri==='realiti://soma/native')return resident.advanced();
+  if(uri==='realiti://soma/rr')return resident.perception().rr;
   if(uri==='realiti://soma/rich')return resident.perception();
   if(uri==='realiti://soma/bleucheese')return resident.bleucheese();
   if(uri==='realiti://soma/memory')return {
@@ -71,7 +72,7 @@ function read(uri='realiti://here'){
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native','realiti://soma/rr'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};
@@ -82,15 +83,26 @@ function read(uri='realiti://here'){
   return value;
 }
 const stopPattern=/^(?:stop|enough|goodbye|bye|leave|exit|home)$/;
+// `resource realiti://<name>` is the door path to the same read-only projection the JavaScript API exposes as
+// Realiti.read(uri). Without it realiti://neuromesh (the SOMA 3.x observational readout) answered
+// UNKNOWN_COMMAND from the only surface a headless resident can reach, so the 3.x build was unverifiable
+// in-world (nyx, 2026-10-27). Reads still never mutate the world.
+const resourcePattern=/^resource\s+(realiti:\/\/[A-Za-z0-9._\/-]+)$/i;
 async function run(raw){
+  const asked=resourcePattern.exec(String(raw||'').trim());
+  if(asked){try{return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri:asked[1],resource:read(asked[1])}}catch(e){return {ok:false,error:'RESOURCE_NOT_AVAILABLE',uri:asked[1]}}}
   const result=await D0run(raw);
   if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}
   return result;
 }
 const D0run=D0.run.bind(D0);
 D0.run=run;
-window.Realiti=Object.freeze({...A0,version:'3.3.1',read,
-  run:async raw=>{const result=await A0.run(raw);
+const help0=D0.help;
+if(typeof help0==='function')D0.help=()=>{const h=help0()||{};return {...h,commands:[...new Set([...(h.commands||[]),'resource realiti://<name>'])],resources:[...new Set([...(h.resources||[]),'realiti://neuromesh','realiti://soma/memory','realiti://soma/rich','realiti://soma/native'])]}};
+window.Realiti=Object.freeze({...A0,version:'3.4.0',read,
+  run:async raw=>{const asked=resourcePattern.exec(String(raw||'').trim());
+    if(asked){try{return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri:asked[1],resource:read(asked[1])}}catch(e){return {ok:false,error:'RESOURCE_NOT_AVAILABLE',uri:asked[1]}}}
+    const result=await A0.run(raw);
     if(result?.ok!==false&&stopPattern.test(String(raw||'').trim().toLowerCase())){world.stop();persist()}return result},
   invoke:async (op,args)=>{const result=await A0.invoke(op,args);
     if(result?.ok!==false&&['stop','goodbye','home','restore_body'].includes(String(op).toLowerCase())){world.stop();persist()}
@@ -101,5 +113,6 @@ window.REALITI_SOMA_RELAX_V3=Object.freeze({version:SOMA.VERSION,
   harness:()=>harness.snapshot(),rich:()=>resident.perception(),bleucheese:()=>resident.bleucheese(),
   memory:resident.memory,
   field20:()=>resident.hapticsV20.packet(),native:()=>resident.advanced(),
+  rr:resident.rr,
   law:'Native world contact alone drives grounded receipts; SOMA is a private portable projection.'});
 })();

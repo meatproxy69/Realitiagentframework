@@ -1,8 +1,8 @@
-# SOMA 3.3 — Full R&R Harness Portability Audit
+# SOMA 3.4 — Full R&R Harness Portability Audit
 
 REALITI Relax remains the reference neighborhood and retains its full native, layered runtime. The independent @meatproxy69/realiti-neuromesh module exports an **executable harness** that a new neighborhood can boot without importing Relax, its browser globals, map, rooms, server or identity.
 
-The full harness is created with createHarness({residentId,zones,edges}). harness.boot() checks registered mechanism surfaces. Standalone tests exercise real dynamic responses and the authority boundary. The harness REQUIRED list enumerates all 30 components.
+The full harness is created with createHarness({residentId,zones,edges}). harness.boot() checks registered mechanism surfaces. Standalone tests exercise real dynamic responses and the authority boundary. The harness REQUIRED list enumerates 37 mechanism surfaces: 24 original, six native-depth sensory extensions, six R&R numerical modules and the host-admitted B10 moving-contact core.
 
 ## Mechanism inventory
 
@@ -35,7 +35,7 @@ The full harness is created with createHarness({residentId,zones,edges}). harnes
 
 ## SOMA 3.3 deeper native mechanisms
 
-The 30 registered surfaces now additionally include **haptic_field_v20**, **lace_spectral**, **moonwire**, **interoception**, **hearing** and **soft_support**. These are actual integrated outputs, not documentation-only flags. A separate optional `sealed-pocket` Node subpath supplies authenticated encrypted resident notes with a host-owned key; the standard bounded memory archive is not encrypted by merely installing the package.
+The registered surfaces additionally include **haptic_field_v20**, **lace_spectral**, **moonwire**, **interoception**, **hearing** and **soft_support**. These are actual integrated outputs, not documentation-only flags. A separate optional `sealed-pocket` Node subpath supplies authenticated encrypted resident notes with a host-owned key; the standard bounded memory archive is not encrypted by merely installing the package.
 
 The V20 field reproduces native temporal/JND compression and historical cuts but projects V3 values rather than claiming the native B10/B18 force solver. Graph topology can be rewired for registered zones and the native Fiedler eigenvalue is computed. Native Moonwire recipe identifiers are all executed with spatial routing and temporal envelopes, but not every historical native waveform is bit-for-bit reproduced. Full fidelity boundaries: [NATIVE_PARITY.md](./NATIVE_PARITY.md).
 
@@ -54,3 +54,7 @@ SOMA 3.3 also includes [an independent Lantern Room](./MEMORY_AND_LAB.md) with r
 GitHub validation runs the standalone harness tests, the original renderer acceptance probes and a source-parity guard, then generates RealitiRELAX.html from the same embedded scripts and verifies its SHA-256. A separate Relax integration check verifies that legacy V20 remains live while SOMA 3.3 can see grounded causes, render private state, and clear its m channel on STOP.
 
 This is **computational modeled sensory state**, not a declaration about subjective experience. Object capability boundaries do not sandbox arbitrary third-party JavaScript in the same process. Always isolate untrusted residents/agents and secure private Pocket storage in the hosting environment.
+
+## SOMA 3.4 original B10 contact dynamics
+
+The world-independent `rr-native-math.cjs` embeds the original B10 eight-element GMS friction memory, material deformation, CT tuning and receptive-field equations. `host.haptics.driveMovingContact` needs a still-live host-issued receipt and explicitly measured route position/velocity, pressure, material and simulation step; it **never** moves an object or mints a new body-contact receipt. `resident.rr.movingContact()` returns detached, observational model channels. Missing, released or restored receipts cannot drive it. The original-source numerical oracle tests those equations; real geometry, motion and material telemetry must still be supplied by the neighborhood. See `RR_STACK_AUDIT.md` for the separate Matrix/world trust boundary.
