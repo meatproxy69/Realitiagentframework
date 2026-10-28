@@ -2,6 +2,8 @@
 
 Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) before your first resident action.
 
+**Integrating REALITI into an agent's own spatial world?** Follow the [Agent Spatial Contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md), not the resident-entry commands below. Use a trusted host to resolve colliders, reach and occlusion; sign accepted/refused results; verify receipts before SOMA updates grounded contact. Never mint touch from a resident's narration.
+
 ## Enter
 
 **Visible browser Agent Door**
