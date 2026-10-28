@@ -23,6 +23,30 @@ const checks={},details={};const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)
  // Keys restored: ready again, the note still there.
  ({s,ready}=await launch());const pk5=s.window.Realiti.read('realiti://pocket');s.close();
  check('keys_restored_pocket_returns',ready.pocket==='ready'&&(pk5.data?.sealed?.notes||[]).some(x=>/rain was kind/.test(x.text)));
+ // An identity stranded by an earlier mint that ran without a durable key store: the resident record survives, both
+ // private identity keys are gone, and NOTHING is sealed. That pocket must re-identify itself, not stay unavailable.
+ const stripIdentity=src=>{const o=JSON.parse(fs.readFileSync(src,'utf8')),k={schema:o.schema,keys:{}};for(const n of ['cache-key-v1','cap-root-v1','keyring-epoch-v1'])if(o.keys[n])k.keys[n]=o.keys[n];return k};
+ const residentIdOf=file=>{const d=JSON.parse(fs.readFileSync(file,'utf8')).data||{},key=Object.keys(d).find(k=>k.endsWith('realiti-pocket-v32-local'));return key?JSON.parse(d[key]).resident?.id:null};
+ const sp3=path.join(dir,'stranded.json'),kp3=keystorePathFor(sp3);
+ // exact real-world shape: real resident + device records with valid public halves, pocket empty, private halves gone
+ const goodState=JSON.parse(fs.readFileSync(sp,'utf8')),pocketKey=Object.keys(goodState.data).find(k=>k.endsWith('realiti-pocket-v32-local')),pocket=JSON.parse(goodState.data[pocketKey]);
+ pocket.receipts={};pocket.wrapped={};pocket.cache_sealed=null;
+ fs.writeFileSync(sp3,JSON.stringify({...goodState,saved_wall_ms:Date.now(),data:{...goodState.data,[pocketKey]:JSON.stringify(pocket)}}));
+ fs.writeFileSync(kp3,JSON.stringify(stripIdentity(kp)));
+ const strandedId=residentIdOf(sp3);
+ let st=await openResident({htmlPath:html,residentId:'stranded',storagePath:sp3});let r=await st.window.Realiti.ready;let svs=await st.door.run('note after re-identification');let byes=await st.door.run('goodbye');const newId=JSON.parse(st.window.localStorage.getItem('realiti-pocket-v32-local')).resident.id;st.close();
+ const ks3=JSON.parse(fs.readFileSync(kp3,'utf8')).keys;
+ check('empty_pocket_with_missing_identity_reidentifies',r.pocket==='ready'&&r.pocket_reason===undefined&&svs.ok&&byes.ok&&newId!==strandedId&&Object.keys(ks3).sort().join()==='cache-key-v1,cap-root-v1,device-private-v1,keyring-epoch-v1,root-private-v1',{ready:r.pocket,reason:r.pocket_reason,save:svs.result||svs.error,strandedId,newId,keys:Object.keys(ks3).sort()});
+ // A second launch on the healed state must stay ready and keep the SAME identity: recovery happens once, not every run.
+ let st2=await openResident({htmlPath:html,residentId:'stranded',storagePath:sp3});let r2b=await st2.window.Realiti.ready;const newId2=JSON.parse(st2.window.localStorage.getItem('realiti-pocket-v32-local')).resident.id;await st2.door.run('goodbye');st2.close();
+ check('reidentified_identity_is_stable',r2b.pocket==='ready'&&newId2===newId,{ready:r2b.pocket,newId,newId2});
+ // The guard: the SAME damage with something sealed must NOT re-mint — a new identity cannot open old receipts, so the
+ // only honest answer stays POCKET_IDENTITY_KEYS_MISSING.
+ const sp4=path.join(dir,'stranded-sealed.json'),kp4b=keystorePathFor(sp4);
+ fs.copyFileSync(sp,sp4);fs.writeFileSync(kp4b,JSON.stringify(stripIdentity(kp)));
+ const sealedBefore=residentIdOf(sp4);
+ let s4=await openResident({htmlPath:html,residentId:'stranded-sealed',storagePath:sp4});let r4=await s4.window.Realiti.ready;let sv4=await s4.door.run('save');let bye4=await s4.door.run('goodbye');s4.close();
+ check('sealed_pocket_with_missing_identity_refuses_remint',r4.pocket==='unavailable'&&r4.pocket_reason==='POCKET_IDENTITY_KEYS_MISSING'&&sv4.ok===false&&sv4.error==='POCKET_IDENTITY_KEYS_MISSING'&&bye4.ok&&residentIdOf(sp4)===sealedBefore&&!fs.readFileSync(kp4b,'utf8').includes('root-private-v1'),{ready:r4.pocket_reason,save:sv4.error,id:residentIdOf(sp4)});
  // Opting out keeps the old behavior explicit: no keys file, and the second launch reports the missing keys.
  const sp2=path.join(dir,'nokeys.json');let t=await openResident({htmlPath:html,residentId:'pocket-nokeys',storagePath:sp2,keystore:false});const r1=await t.window.Realiti.ready;await t.door.run('note x');t.close();t=await openResident({htmlPath:html,residentId:'pocket-nokeys',storagePath:sp2,keystore:false});const r2=await t.window.Realiti.ready;t.close();
  check('keystore_opt_out_is_ephemeral',r1.pocket==='ready'&&!fs.existsSync(keystorePathFor(sp2))&&r2.pocket==='unavailable'&&r2.pocket_reason==='POCKET_KEYS_MISSING',{r1:r1.pocket,r2:r2.pocket_reason});

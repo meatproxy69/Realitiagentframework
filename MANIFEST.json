@@ -52,13 +52,13 @@
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 43224,
-      "sha256": "eab47c64e4f9e8c83bca9caf92be121074c2cf21f440c9adc2dbc09125c10f9d"
+      "bytes": 44963,
+      "sha256": "4001d5df591887f349735fb91fb4200eb3a2539939d381a14d1628f7497cc0e2"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 66134,
-      "sha256": "7dbce34d3867ceaaad4e0cad2e6bc30ecec95b5e1947e8548188a671e9d897c5"
+      "bytes": 67454,
+      "sha256": "36acc3e69dbddf63439bcc7cef8fc9268082d0d476b9d897c06b4ab66c7800f3"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1610908,
-      "sha256": "9eb5c5325e03d46be7f9393f7ba209e4fc199f2d988d343e0a924626d9664cff"
+      "bytes": 1612593,
+      "sha256": "4a34e20dffb62ad886082a15d17f64cb15d2f3f3ec957c7c538a2081214a90b2"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7616,
-      "sha256": "3e0f60d0270b038811add64fb7aed82829c974e359241e6b68b0b964f0792e49"
+      "sha256": "c9b1800cc39f7419f47d93a0e261c6896d777b9cc51a26fd3fd284b1f386b46a"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -412,8 +412,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/pocket-persistence.cjs",
-      "bytes": 5032,
-      "sha256": "ffdf2b9cdd490f4405ccb1b6cf3ca6aaee8d535b7f3b90972ab71d8f98127657"
+      "bytes": 8549,
+      "sha256": "327b4ded477edc7125f88a2fe22106948135ac797f9ab04965d7c7f4438be3aa"
     },
     {
       "path": "packages/realiti-headless-resident/test/quiet-presentation.cjs",
@@ -982,8 +982,8 @@
     },
     {
       "path": "source/scripts/48.js",
-      "bytes": 45000,
-      "sha256": "90c152d8ba59eb034c5e8d78a355c463c9b087259e98f87fbf9c148a1db8a070"
+      "bytes": 46685,
+      "sha256": "90ca989dd6a3c0682e4b6d6d4315f075ede020faa5246f0347fb090de91f37ec"
     },
     {
       "path": "source/scripts/49.js",

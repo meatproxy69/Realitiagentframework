@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## Pocket identity recovery for provably empty pockets
+
+- A resident record whose private identity keys are missing no longer loses the sealed Pocket permanently. When the pocket is provably empty (`receipts: 0`, `wrapped: 0`) `initIdentity()` re-mints the root+device pair, verifies it survives a read-back, and records `identity_status: 'REIDENTIFIED_EMPTY_POCKET'` with `identity_recovery` naming the previous `resident:` id.
+- The guard is deliberate: if anything is sealed, the host refuses to re-mint and keeps reporting `POCKET_IDENTITY_KEYS_MISSING`, because a new identity could never open the old receipts.
+- Recovery requires durability. A key that cannot be read back is rolled back rather than accepted, so the healing path cannot repeat the provisioning accident that caused the loss. A *first* mint may still be ephemeral — that is the `keystore: false` opt-out.
+- A corrupt stored `root_public_jwk` no longer aborts the launch when the pocket is empty; it is treated as a stranded identity.
+- `AGENT_START_HERE.md` now separates `POCKET_KEYS_MISSING` (restore the keys file) from `POCKET_IDENTITY_KEYS_MISSING` (the private halves were never written) and documents the mint-time trap. `test/pocket-persistence.cjs` covers re-identification, identity stability after it, and the sealed-pocket refusal.
+
 ## SOMA 3.3.1 — Lantern Room native-depth acceptance and continuous support
 
 - The end-to-end simulated resident tour now tests 21 grounded-evidence and sensory invariants across 13 stages: dynamic LACE, V20/HALO/AURA, Moonwire, world-leased support, window thermal/host-admitted BleuCheese, reachable bell hearing, provenance memory, optional encrypted Pocket and STOP/cross-world restore.

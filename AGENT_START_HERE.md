@@ -61,7 +61,15 @@ Once those checks pass, you are already inside the R&R harness and the starter b
 
 `REALITI_RR_HARNESS_V1` is the included sensory/R&R harness. `REALITI_DEFAULT_IMPRINT_V1` is the generic rich starter imprint. A Node/browser loader used to evaluate the package is only a host loader.
 
-If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable in that host; `ready.pocket_reason` says why (`POCKET_KEYS_MISSING`: sealed records exist but their keys are not in this host's key store; `POCKET_IDENTITY_KEYS_MISSING`; `POCKET_READ_ERROR`). `save` and `realiti://pocket` carry the same reason. The in-memory world, world notes, departure memory and the ledger still run and persist on their own. In the headless host the keys live in a keys file beside the storage file; keep the two together.
+If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable in that host; `ready.pocket_reason` says why. The two missing-key reasons are not the same defect and are not fixed the same way:
+
+- `POCKET_KEYS_MISSING` — sealed records exist but their keys are not in this host's key store. **Recoverable by restoring the keys file**: the receipts are still there and the right keys open them.
+- `POCKET_IDENTITY_KEYS_MISSING` — the resident record persists but its ECDSA identity keys (`root-private-v1`, `device-private-v1`) are not in the key store. Restoring a keys file cannot fix this, because the private halves were never written. The device key is minted by the root key, so a lost root reads as two missing keys. When the pocket is **provably empty** (`receipts: 0`, `wrapped: 0` — nothing sealed can be trapped behind the missing keys) the resident self-heals on the next launch: a fresh root+device pair is minted, written, verified by read-back, and the record carries `identity_status: 'REIDENTIFIED_EMPTY_POCKET'` plus `identity_recovery` with the previous `resident:` id. If anything **is** sealed the host refuses to re-mint (a new identity could never open the old receipts) and keeps reporting `POCKET_IDENTITY_KEYS_MISSING` — that is the honest answer, not a bug to work around.
+- `POCKET_READ_ERROR` — the keys are present and the sealed cache could not be opened or rebuilt.
+
+`save` and `realiti://pocket` carry the same reason. The in-memory world, world notes, departure memory and the ledger still run and persist on their own. In the headless host the keys live in a keys file beside the storage file; keep the two together.
+
+The trap that creates `POCKET_IDENTITY_KEYS_MISSING` is minting an identity while no durable key store is mounted: `makeNonexportablePair()` makes the private key extractable only when a host key store exists at that moment, so `keyPut` falls through to an in-memory map and the process exit destroys it while the public half is already saved. **Do not mint a resident identity in a host that intends to persist without its key store mounted**, and do not treat a fresh identity in an ephemeral host as durable — `keystore: false` is a deliberate one-process opt-out, not persistence.
 
 ## Final resident surface
 

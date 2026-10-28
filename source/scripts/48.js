@@ -181,8 +181,23 @@ const Pocket=(()=>{
  async function keyDel(name){if(HKS()){try{await HKS().del(name)}catch{}return}try{const db=await idb();await new Promise((resolve,reject)=>{const tx=db.transaction(KEY_STORE,'readwrite');tx.objectStore(KEY_STORE).delete(name);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error)});db.close()}catch{ephKeys.delete(name)}}
  async function makeNonexportablePair(){const kp=await crypto.subtle.generateKey({name:'ECDSA',namedCurve:'P-256'},true,['sign','verify']),pub=await crypto.subtle.exportKey('jwk',kp.publicKey),pkcs8=await crypto.subtle.exportKey('pkcs8',kp.privateKey),priv=await crypto.subtle.importKey('pkcs8',pkcs8,{name:'ECDSA',namedCurve:'P-256'},EXTRACT(),['sign']);return {pub,priv}}
  async function initIdentity(){
-  if(state.resident?.root_public_jwk){rootPub=await crypto.subtle.importKey('jwk',state.resident.root_public_jwk,{name:'ECDSA',namedCurve:'P-256'},true,['verify']);rootPriv=await keyGet('root-private-v1');if(!rootPriv)state.identity_status='ROOT_KEY_MISSING'}
-  else{const kp=await makeNonexportablePair(),h=await sha(enc.encode(JSON.stringify(kp.pub)));rootPriv=kp.priv;rootPub=await crypto.subtle.importKey('jwk',kp.pub,{name:'ECDSA',namedCurve:'P-256'},true,['verify']);await keyPut('root-private-v1',rootPriv);state.resident={id:'resident:'+b64(h).replace(/[+/=]/g,'').slice(0,22),root_public_jwk:kp.pub};state.identity_status='OK'}
+  // A resident record can outlive its private keys: if an identity was minted before a durable key store was mounted,
+  // the private half was non-extractable, keyPut fell through to the in-memory map, and the public half alone was saved.
+  // Every later launch then took the recover branch, found nothing, and never reached the mint branch — one provisioning
+  // miss became a permanent, silent loss of the sealed pocket. Re-mint ONLY when the pocket is provably empty (nothing
+  // sealed can be trapped behind the missing keys) and only when the new key survives a read-back, i.e. is really durable.
+  const emptyPocket=!Object.keys(state.receipts||{}).length&&!Object.keys(state.wrapped||{}).length;
+  let remint=false;
+  if(state.resident?.root_public_jwk){try{rootPub=await crypto.subtle.importKey('jwk',state.resident.root_public_jwk,{name:'ECDSA',namedCurve:'P-256'},true,['verify'])}catch{rootPub=null;if(!emptyPocket)throw new Error('POCKET_RESIDENT_KEY_UNREADABLE')}rootPriv=await keyGet('root-private-v1');if(!rootPriv){if(emptyPocket)remint=true;else state.identity_status='ROOT_KEY_MISSING'}}
+  if(!state.resident?.root_public_jwk||remint){
+   const prior=remint?{resident:state.resident,device:state.device}:null;
+   const kp=await makeNonexportablePair(),h=await sha(enc.encode(JSON.stringify(kp.pub)));rootPriv=kp.priv;rootPub=await crypto.subtle.importKey('jwk',kp.pub,{name:'ECDSA',namedCurve:'P-256'},true,['verify']);
+   const stored=await keyPut('root-private-v1',rootPriv),readBack=await keyGet('root-private-v1');
+   // Recovery must be durable, or it repeats the trap that caused the loss. A FIRST mint may stay ephemeral — that is the
+   // documented `keystore:false` opt-out, where the pocket is honestly one-process-only.
+   if(remint&&(!stored||!readBack)){state.resident=prior.resident;state.device=prior.device;rootPriv=null;rootPub=null;state.identity_status='ROOT_KEY_MISSING';state.identity_recovery='KEYSTORE_NOT_DURABLE'}
+   else{state.resident={id:'resident:'+b64(h).replace(/[+/=]/g,'').slice(0,22),root_public_jwk:kp.pub};state.device=null;state.device_status=null;state.identity_status=remint?'REIDENTIFIED_EMPTY_POCKET':'OK';if(remint)state.identity_recovery={at:new Date().toISOString(),reason:'ROOT_KEY_MISSING_EMPTY_POCKET',previous_resident_id:prior.resident.id}}
+  }
   if(state.device?.public_jwk){devicePriv=await keyGet('device-private-v1');if(!devicePriv)state.device_status='DEVICE_KEY_MISSING'}
   else if(rootPriv){const kp=await makeNonexportablePair(),desc={id:'device:'+rid(),public_jwk:kp.pub},sig=await crypto.subtle.sign({name:'ECDSA',hash:'SHA-256'},rootPriv,enc.encode(JSON.stringify(desc)));devicePriv=kp.priv;await keyPut('device-private-v1',devicePriv);state.device={...desc,root_signature:b64(sig),revoked:false};state.device_status='OK'}
   state.hlc.node=state.device?.id||state.hlc.node||rid();
