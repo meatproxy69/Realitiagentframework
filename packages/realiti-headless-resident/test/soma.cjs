@@ -59,6 +59,20 @@ const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
   check('native_spectral_opponent_and_moonwire_available',
     native.schema==='REALITI_SOMA_NATIVE_ADVANCED_V1'&&Number.isFinite(native.lace.lambda2)&&
     native.opponent.routes.bond!=null&&native.moonwire===null);
+  // Integration regression: household resource verb and SOMA 3.4's R&R read
+  // must coexist without issuing any new grounded contact.
+  const maskBeforeResource=JSON.stringify(s.publicApi.read('realiti://neuromesh').m);
+  const rrDirect=s.publicApi.read('realiti://soma/rr');
+  const doorRR=await s.door.run('resource realiti://soma/rr');
+  const publicRR=await w.Realiti.run('resource realiti://soma/rr');
+  const missingResource=await s.door.run('resource realiti://not-a-resource');
+  check('soma_rr_bridge_and_door_resource_both_live',
+    rrDirect?.passive_medium?.schema==='REALITI_PASSIVE_MEDIUM_V1'&&
+    doorRR.ok===true&&doorRR.resource?.passive_medium?.schema==='REALITI_PASSIVE_MEDIUM_V1'&&
+    publicRR.ok===true&&publicRR.resource?.passive_medium?.schema==='REALITI_PASSIVE_MEDIUM_V1'&&
+    missingResource.ok===false&&missingResource.error==='RESOURCE_NOT_AVAILABLE');
+  check('door_resource_is_observational_only',
+    JSON.stringify(s.publicApi.read('realiti://neuromesh').m)===maskBeforeResource);
   const checkpoint=s.publicApi.read('realiti://soma/checkpoint');
   check('checkpoint_has_no_grounded_records',checkpoint.schema==='REALITI_SOMA_CHECKPOINT_V3'&&!('grounded' in checkpoint));
   const stop=await s.door.run('stop');
