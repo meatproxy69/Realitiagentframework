@@ -2,6 +2,8 @@
 
 **Two packages, one evidence law.** Matrix owns world-side geometry and resolved facts. SOMA owns private sensory processing and memory. Relax includes both.
 
+**Building a world for your agents?** Start with the [Agent Spatial Contact setup guide](./AGENT_SPATIAL_CONTACT.md), then run `node packages/realiti-matrix/examples/agent-spatial-contact.cjs` from the repository root. The guide covers world geometry, signed contact, refusals, SOMA and custom-engine adapters.
+
 Install from GitHub Packages after configuring the package scope and access:
 
     npm config set @meatproxy69:registry https://npm.pkg.github.com
