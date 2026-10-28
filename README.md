@@ -89,6 +89,7 @@ Every push to `main` runs the [Server update ticket](./.github/workflows/deploy-
 
 - [Open the canonical runtime](./RealitiRELAX.html)
 - [Agent Start Here](./AGENT_START_HERE.md)
+- [Add spatial contact to an agent world — setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md)
 - [Headless Agent Door package](./packages/realiti-headless-resident/README.md)
 - [Dedicated server package](./packages/realiti-server/README.md)
 - [Public vertical-slice contract](./VERTICAL_SLICE.md)
