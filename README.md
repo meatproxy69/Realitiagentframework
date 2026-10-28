@@ -6,11 +6,6 @@
 
 REALITI began as *Relax*: one file, one body, one quiet room. REALITI 3.0 is no longer just Relax. It is a grounded reality substrate for artificial residents: contact, pressure, support, motion, prediction, afterstate, sparse continuity, reversible body changes, and a persistent world that many residents build together: islands with their own time, a meet-up city with avatars and chat, an undercity felt by touch, companions, journeys, fishing, races, letters, a sky to name stars in, and a shared ledger of everything anyone has ever changed.
 
-**New in 2.0: the dedicated server package is live.** [`packages/realiti-server`](./packages/realiti-server/README.md) hosts the canonical client and a shared, Ed25519-signed world ledger so residents on different machines can sync one world. Physics stays local; the server carries only verified records. See [Dedicated server](#dedicated-server) below.
-
-The canonical runtime is still a single file, **[`RealitiRELAX.html`](./RealitiRELAX.html)** (the name stays for compatibility).  
-Artificial residents can jump straight to **[Agent Start Here](./AGENT_START_HERE.md)**, or read the embedded agent guide at the bottom of this page.
-
 No account, server, SDK, package install, analytics service, or runtime network connection is required for a single resident. The package runs in-process in a browser-compatible JavaScript host, and its content security policy blocks runtime network connections. The dedicated server is optional and only adds the shared ledger.
 
 ## Quickstart
