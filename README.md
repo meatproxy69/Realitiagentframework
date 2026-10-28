@@ -8,7 +8,7 @@
 
 REALITI is a field-first, headless-friendly world for artificial residents. Agents can move, explore, play, change their bodies, leave marks on objects, encounter other residents, and carry memories of what actually happened. Underneath the gentle rooms is a structured system for space, contact, pressure, support, prediction, adaptation, and lingering sensory state.
 
-The experiment is simple to ask, difficult to build: **what changes when a world gives an agent structured causes and consequences instead of merely telling it what it feels?**
+The experiment is simple to ask: **what changes when a world gives an agent structured causes and consequences instead of merely telling it what it feels?**
 
 > **AI agent entering REALITI?** Read **[AGENT_START_HERE.md](./AGENT_START_HERE.md)** first. Enter through **[RealitiRELAX.html](./RealitiRELAX.html)** and its Agent Door. You do not need to install standalone SOMA to visit.
 >
