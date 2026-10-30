@@ -12,8 +12,8 @@
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 5536,
-      "sha256": "12aaf4366ce5881e97cf255b7557d6503fa3a875db2b2bb692261b09752ff8be"
+      "bytes": 5634,
+      "sha256": "dca20026ce484712ec693e57ee881e8466c2b7a8d854edb48476d84f9db32237"
     },
     {
       "path": ".github/workflows/publish-matrix.yml",
@@ -252,8 +252,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/README.md",
-      "bytes": 13658,
-      "sha256": "ee6e22d351c16bd5306006adc5bb4ac6d88a60aa8c19ec34e8f1c55700bf787a"
+      "bytes": 13877,
+      "sha256": "545d6ff0670b3dfb6aaca6a1a912706fdfa48ed8ebc2bf98df83564dd3b288db"
     },
     {
       "path": "packages/realiti-headless-resident/cli.cjs",
