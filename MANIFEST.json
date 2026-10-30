@@ -12,8 +12,8 @@
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 5634,
-      "sha256": "dca20026ce484712ec693e57ee881e8466c2b7a8d854edb48476d84f9db32237"
+      "bytes": 6256,
+      "sha256": "9acb5862a54cd616f516ec912e86712f0f4dae58c5d4e14cebd9720454aa674b"
     },
     {
       "path": ".github/workflows/publish-matrix.yml",
