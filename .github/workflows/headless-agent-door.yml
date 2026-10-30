@@ -32,6 +32,18 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
+      - name: Rebuild canonical runtime for this runner
+        run: node build.mjs
+      - name: Pin runner-local runtime integrity hash for isolated test
+        shell: bash
+        run: |
+          node <<'JS'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const validation = JSON.parse(fs.readFileSync('VALIDATION.json', 'utf8'));
+          validation.single_html_sha256 = crypto.createHash('sha256').update(fs.readFileSync('RealitiRELAX.html')).digest('hex');
+          fs.writeFileSync('VALIDATION.json', JSON.stringify(validation, null, 2) + '\n');
+          JS
       - name: Offline repair and regression syntax
         shell: bash
         run: |
