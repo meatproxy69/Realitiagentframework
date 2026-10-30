@@ -1,7 +1,5 @@
 name: Server update ticket close
 
-# The rolling server-update ticket closes itself when every checklist box is ticked,
-# or an operator comments "done". All user text is parsed as data, never shell code.
 on:
   issue_comment:
     types: [created, edited]
@@ -9,39 +7,24 @@ on:
     types: [edited]
 
 permissions:
+  contents: read
   issues: write
+
+concurrency:
+  group: server-update
+  cancel-in-progress: false
 
 jobs:
   close-when-done:
-    if: contains(github.event.issue.labels.*.name, 'server-update') && github.event.issue.state == 'open'
+    if: contains(github.event.issue.labels.*.name, 'server-update') && github.event.issue.state == 'open' && github.event.sender.type != 'Bot'
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ github.token }}
-      NUMBER: ${{ github.event.issue.number }}
-      REPO: ${{ github.repository }}
     steps:
-      - name: Close when every box is ticked
-        shell: bash
-        run: |
-          set -euo pipefail
-          said_done=false
-          if [ "${GITHUB_EVENT_NAME}" = "issue_comment" ]; then
-            author_type="$(jq -r '.comment.user.type // ""' "$GITHUB_EVENT_PATH")"
-            body="$(jq -r '.comment.body // ""' "$GITHUB_EVENT_PATH")"
-            normalized="$(printf '%s' "$body" | tr '[:upper:]' '[:lower:]' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
-            if [ "$author_type" != "Bot" ]; then
-              case "$normalized" in
-                done|done.|"all done"|closed|applied) said_done=true ;;
-              esac
-            fi
-          fi
-          comments="$(gh api "repos/$REPO/issues/$NUMBER/comments" --paginate --jq '.[] | select(.user.type=="Bot") | .body')"
-          total="$(printf '%s\n' "$comments" | grep -cE '^- \[[ xX]\]' || true)"
-          open="$(printf '%s\n' "$comments" | grep -cE '^- \[ \]' || true)"
-          echo "updates filed with $total checklist items, $open still open; said done: $said_done"
-          if [ "$total" = "0" ]; then echo 'nothing filed yet'; exit 0; fi
-          if [ "$open" != "0" ] && [ "$said_done" != "true" ]; then exit 0; fi
-          latest="$(printf '%s\n' "$comments" | sed -nE 's/^### Update ([0-9a-f]{7}).*/\1/p' | tail -1)"
-          latest="${latest:-unknown}"
-          gh issue comment "$NUMBER" --body "All updates on this ticket are applied (latest \`$latest\`). Closing; the next push to \`main\` opens a fresh ticket."
-          gh issue close "$NUMBER" --reason completed
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - name: Confirm the current deployment as an authorized operator
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await require('./scripts/server-update-queue.cjs').closeUpdate({github, context, core});
