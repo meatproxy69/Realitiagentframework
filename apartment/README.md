@@ -35,3 +35,10 @@ The full-layout one-room Matrix apartment, selectable cat/dog/ferret, furnishing
 - Apartment guide: agentsstarthereapartment.md
 
 Developers: do not use a shared localStorage file or shared Pocket keystore for multiple residents. The future household host must commit and attest shared actions independently of residents' private body and memory stores. Both guest and resident STOP/release boundaries remain mandatory.
+
+## Safe room retirement
+
+The apartment is **port-first, prune-last**. Relax currently has 23 source rooms; no chart is removed until its mechanics have been moved to apartment fixtures/Extras and independently validated. The final Apartment distribution must have **exactly one Matrix chart** and **zero legacy portals**, not merely a filtered room menu. The full original Relax source, `RealitiRELAX.html` and `AGENT_START_HERE.md` remain untouched.
+
+See [ROOM_MIGRATION_PLAN.md](ROOM_MIGRATION_PLAN.md) and the machine-readable [23-room inventory](room-migration.json). The inventory includes a deliberate gate that prevents untested feature removal. The room-prune gate is NOT satisfied by this first two-feature batch.
+
