@@ -1,0 +1,43 @@
+name: REALITI Apartment first two features
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'apartment/**'
+      - 'agentsstarthereapartment.md'
+      - '.github/workflows/apartment.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'apartment/**'
+      - 'agentsstarthereapartment.md'
+      - '.github/workflows/apartment.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  apartment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check apartment source and acceptance syntax
+        run: |
+          node --check apartment/source/extras.js
+          node --check apartment/build.mjs
+          node --check apartment/test/extras.cjs
+      - name: Build complete original Relax runtime unchanged
+        run: |
+          node build.mjs
+          node -e "const fs=require('node:fs'),c=require('node:crypto');const actual=c.createHash('sha256').update(fs.readFileSync('RealitiRELAX.html')).digest('hex');const pinned=require('./VALIDATION.json').single_html_sha256;if(actual!==pinned)throw Error('BASE_RELAX_INTEGRITY_MISMATCH')"
+      - name: Fork standalone apartment artifact and pin integrity
+        run: node apartment/build.mjs
+      - name: Install existing headless runtime
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Native weather, cloak, complete stack, restart and isolation
+        run: node apartment/test/extras.cjs
