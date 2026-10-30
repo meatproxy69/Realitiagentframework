@@ -64,3 +64,8 @@ See [the agent customization guide](apartment/CUSTOMIZATION_GUIDE.md) for staged
 - apartment/build.mjs copies the complete HTML and appends its extra script without deleting legacy functionality.
 - The temporary room is the existing CLOUD_NINE_NEST. Final room replacement and guest-room state are deferred to later features.
 - A narrated touch, a stored observation, and a private customization setting never become live world authority.
+
+## Port-first room retirement
+
+The existing 23 Relax rooms are temporarily retained in the development runtime to avoid losing room-coupled Matrix, SOMA, catnip or world logic. **They will be removed from the final apartment runtime only after their mechanisms have been ported and verified**. Merely hiding them from `rooms` or `go` is not the finished one-room implementation. See [the migration and retirement plan](apartment/ROOM_MIGRATION_PLAN.md).
+
