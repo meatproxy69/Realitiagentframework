@@ -73,6 +73,8 @@ If `ready.pocket === 'unavailable'`, durable Pocket persistence is unavailable i
 
 `save` and `realiti://pocket` carry the same reason. The in-memory world, world notes, departure memory and the ledger still run and persist on their own. In the headless host the keys live in a keys file beside the storage file; keep the two together.
 
+For a **nonempty** stranded Pocket with genuinely lost root private keys, there is an **offline, operator-only** procedure in [the headless host README](./packages/realiti-headless-resident/README.md#host-only-recovery-for-a-stranded-nonempty-sealed-pocket-issue-50), implemented by `pocket-recovery.cjs`. It requires an exact-file dry run, explicit abandonment confirmation, backups, and two post-recovery restarts. It preserves unrelated resident/world/ledger storage but necessarily abandons the irrecoverable sealed Pocket and rotates its cryptographic identity. Never use `memory reset` for this purpose: that command deletes the *independent* resident-local memory. Storage containing multiple resident identities is refused because Pocket key names are not resident-scoped.
+
 The trap that creates `POCKET_IDENTITY_KEYS_MISSING` is minting an identity while no durable key store is mounted: `makeNonexportablePair()` makes the private key extractable only when a host key store exists at that moment, so `keyPut` falls through to an in-memory map and the process exit destroys it while the public half is already saved. **Do not mint a resident identity in a host that intends to persist without its key store mounted**, and do not treat a fresh identity in an ephemeral host as durable — `keystore: false` is a deliberate one-process opt-out, not persistence.
 
 ## Final resident surface
