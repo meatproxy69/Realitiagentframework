@@ -1,0 +1,122 @@
+'use strict';
+// Issue #50: actual nonempty encrypted Pocket recovery, with cross-store preservation and two restarts.
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const os = require('node:os');
+const crypto = require('node:crypto');
+const { openResident, keystorePathFor } = require('../index.cjs');
+const { inspectPocketRecovery, applyPocketRecovery } = require('../pocket-recovery.cjs');
+const html = path.resolve(process.argv[2] || '../../RealitiRELAX.html');
+const digest = data => crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
+const RID = 'issue-50-recovery';
+const POCKET_LOGICAL_KEY = 'realiti-pocket-v32-local';
+const MEMORY_LOGICAL_KEY = 'resident-memory-v1:' + encodeURIComponent(RID);
+function checkpoint(file, modify) {
+  const x = JSON.parse(fs.readFileSync(file, 'utf8'));
+  modify(x.data);
+  x.sha256 = digest(x.data);
+  fs.writeFileSync(file, JSON.stringify(x, null, 2));
+}
+(async () => {
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'realiti-recovery-'));
+  const storagePath = path.join(dir, 'resident.json'), keystorePath = keystorePathFor(storagePath);
+  const opt = {storagePath, keystorePath, residentId: RID};
+  let s = await openResident({htmlPath:html, residentId:RID, storagePath});
+  assert.equal(s.ready.pocket, 'ready');
+  assert.equal((await s.door.run('remember the garden door still exists')).ok, true);
+  assert.equal((await s.door.run('note this encrypted pocket note will be irrecoverable')).ok, true);
+  assert.equal((await s.door.run('save')).ok, true);
+  assert.equal((await s.door.run('goodbye')).ok, true);
+  s.close();
+  // An unrelated world key is an exact preservation canary. Only the real Pocket field may be modified.
+  checkpoint(storagePath, data => { data['foreign-world-v1'] = JSON.stringify({place:'unchanged',note:'preserve'}); });
+  const healthyStore = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+  const physicalPocketKeys = Object.keys(healthyStore.data).filter(k => k.endsWith(POCKET_LOGICAL_KEY));
+  const physicalMemoryKeys = Object.keys(healthyStore.data).filter(k => k.endsWith(MEMORY_LOGICAL_KEY));
+  assert.equal(physicalPocketKeys.length, 1, 'one scoped Pocket');
+  assert.equal(physicalMemoryKeys.length, 1, 'one scoped resident memory');
+  const PK = physicalPocketKeys[0], MK = physicalMemoryKeys[0];
+  const oldPocket = JSON.parse(healthyStore.data[PK]);
+  assert.ok(Object.keys(oldPocket.receipts).length > 0);
+  assert.ok(healthyStore.data[MK]);
+  // Real-world lost-key shape: encrypted receipts remain, root/device private keys were never durably persisted.
+  const originalKeys = JSON.parse(fs.readFileSync(keystorePath, 'utf8'));
+  assert.ok(originalKeys.keys['root-private-v1']);
+  delete originalKeys.keys['root-private-v1'];
+  delete originalKeys.keys['device-private-v1'];
+  originalKeys.keys['unrelated-key-canary'] = {label:'other application',value:'do not touch'};
+  fs.writeFileSync(keystorePath, JSON.stringify(originalKeys, null, 2), {mode:0o600});
+  // Current native behavior refuses silent re-identification of a nonempty Pocket.
+  s = await openResident({htmlPath:html, residentId:RID, storagePath});
+  assert.equal(s.ready.pocket, 'unavailable');
+  assert.equal(s.ready.pocket_reason, 'POCKET_IDENTITY_KEYS_MISSING');
+  const rejectedSave = await s.door.run('save');
+  assert.equal(rejectedSave.ok, false);
+  assert.equal(rejectedSave.error, 'POCKET_IDENTITY_KEYS_MISSING');
+  s.close();
+  const plan = inspectPocketRecovery(opt);
+  assert.equal(plan.status, 'DRY_RUN_ONLY');
+  assert.equal(plan.old_pocket_identity, oldPocket.resident.id);
+  assert.ok(plan.sealed_receipts > 0);
+  assert.ok(plan.keys_to_remove.includes('keyring-epoch-v1'));
+  const before = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+  const beforeBytes = fs.readFileSync(storagePath);
+  const beforeKeys = JSON.parse(fs.readFileSync(keystorePath, 'utf8'));
+  assert.throws(() => applyPocketRecovery({...opt, offlineConfirmed:true, confirmation:'wrong'}), /RECOVERY_CONFIRMATION_MISMATCH/);
+  assert.throws(() => applyPocketRecovery({...opt, confirmation:plan.confirmation}), /RECOVERY_OFFLINE_ACK_REQUIRED/);
+  assert.deepEqual(JSON.parse(fs.readFileSync(storagePath, 'utf8')), before);
+  assert.deepEqual(JSON.parse(fs.readFileSync(keystorePath, 'utf8')), beforeKeys);
+  // Fail closed on shared backing files: the Pocket's five key names are not per-resident.
+  checkpoint(storagePath, data => { data['resident-memory-v1:other'] = JSON.stringify({schema:'REALITI_LOCAL_MEMORY_V1',resident_id:'other',memories:[]}); });
+  assert.throws(() => inspectPocketRecovery(opt), /RECOVERY_SHARED_OR_UNVERIFIED_RESIDENT/);
+  fs.writeFileSync(storagePath, beforeBytes);
+  // Strict checkpoint verification catches edits/torn writes and never silently repairs the world state.
+  const damaged = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+  damaged.data['foreign-world-v1'] = 'corrupted';
+  fs.writeFileSync(storagePath, JSON.stringify(damaged));
+  assert.throws(() => inspectPocketRecovery(opt), /RECOVERY_CHECKPOINT_INTEGRITY_MISMATCH/);
+  fs.writeFileSync(storagePath, beforeBytes);
+  const done = applyPocketRecovery({...opt, confirmation:plan.confirmation, offlineConfirmed:true});
+  assert.equal(done.status, 'RECOVERY_APPLIED_RESTART_VERIFICATION_REQUIRED');
+  assert.ok(fs.existsSync(done.backup_storage));
+  assert.ok(fs.existsSync(done.backup_keystore));
+  assert.deepEqual(JSON.parse(fs.readFileSync(done.backup_storage, 'utf8')), before);
+  assert.deepEqual(JSON.parse(fs.readFileSync(done.backup_keystore, 'utf8')), beforeKeys);
+  const after = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+  const afterKeys = JSON.parse(fs.readFileSync(keystorePath, 'utf8'));
+  assert.equal(after.sha256, digest(after.data));
+  for (const k of Object.keys(before.data)) if(k !== PK) assert.equal(after.data[k], before.data[k], 'preserved '+k);
+  assert.equal(Object.keys(after.data).length, Object.keys(before.data).length);
+  assert.deepEqual(afterKeys.keys['unrelated-key-canary'], beforeKeys.keys['unrelated-key-canary']);
+  for (const name of ['root-private-v1','device-private-v1','keyring-epoch-v1','cache-key-v1','cap-root-v1']) assert.ok(!Object.hasOwn(afterKeys.keys,name), 'removed '+name);
+  const emptied = JSON.parse(after.data[PK]);
+  assert.equal(emptied.resident.id, oldPocket.resident.id); // native #44 must perform the durable re-identification
+  assert.deepEqual(emptied.receipts, {});
+  assert.deepEqual(emptied.wrapped, {});
+  assert.equal(emptied.cache_sealed, null);
+  assert.deepEqual(emptied.tombstones, {});
+  // Same host ID and same path: Pocket first re-opens, saves device-locally, then remains durable after restart.
+  s = await openResident({htmlPath:html, residentId:RID, storagePath});
+  assert.equal(s.ready.pocket, 'ready');
+  const newIdentity = JSON.parse(s.window.localStorage.getItem(POCKET_LOGICAL_KEY)).resident.id;
+  assert.notEqual(newIdentity, oldPocket.resident.id);
+  let result = await s.door.run('save');
+  assert.equal(result.ok, true);
+  assert.equal(s.window.REALITI_POCKET_V32.readCommitted().storage, 'durable');
+  const memory1 = JSON.parse(s.window.localStorage.getItem(MEMORY_LOGICAL_KEY));
+  assert.ok(memory1.memories.some(x => /garden door still exists/.test(x.text)), 'resident memory survived');
+  assert.equal(JSON.parse(fs.readFileSync(storagePath, 'utf8')).data['foreign-world-v1'], before.data['foreign-world-v1']);
+  s.close();
+  s = await openResident({htmlPath:html, residentId:RID, storagePath});
+  assert.equal(s.ready.pocket, 'ready');
+  assert.equal(JSON.parse(s.window.localStorage.getItem(POCKET_LOGICAL_KEY)).resident.id, newIdentity);
+  result = await s.door.run('save');
+  assert.equal(result.ok, true);
+  assert.equal(s.window.REALITI_POCKET_V32.readCommitted().storage, 'durable');
+  assert.ok(JSON.parse(s.window.localStorage.getItem(MEMORY_LOGICAL_KEY)).memories.some(x => /garden door still exists/.test(x.text)));
+  s.close();
+  const finalKeys = JSON.parse(fs.readFileSync(keystorePath, 'utf8')).keys;
+  for (const name of ['root-private-v1','device-private-v1','keyring-epoch-v1','cache-key-v1','cap-root-v1']) assert.ok(finalKeys[name], 'durably reminted '+name);
+  console.log('SEALED POCKET RECOVERY PASS: dry-run, guards, scoped preservation, backup, re-identification, save, two restarts');
+})().catch(e => {console.error(e);process.exitCode = 1;});

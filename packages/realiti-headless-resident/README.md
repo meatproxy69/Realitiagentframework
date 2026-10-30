@@ -166,3 +166,25 @@ RealitiRELAX.html?ui=1
 ```
 
 Without `?ui=1`, the standalone runtime intentionally defaults to headless mode.
+
+## Host-only recovery for a stranded nonempty sealed Pocket (issue #50)
+
+**Never run this against a live worker.** This is an opt-in migration for a resident whose original Pocket root private key is truly lost, while encrypted receipts remain. It does **not** decrypt or preserve the abandoned sealed Pocket receipts, notes or cryptographic identity. If there is any possibility of finding the original identity key, restore it instead.
+
+Requires a current, schema-valid headless storage checkpoint (`REALITI_STORE_CHECKPOINT_V1`), its matching host key store, and the stable external resident ID. The script deliberately refuses a storage file with multiple resident-memory identities because the five Pocket keystore slots are not currently namespaced per resident. This restriction protects other residents rather than guessing which cryptographic keys belong to whom.
+
+Stop **all** headless workers using the storage and key files. With the same paths supplied to your normal `openResident({residentId,storagePath,keystorePath})` call, start with the **read-only dry run**:
+
+`node packages/realiti-headless-resident/pocket-recovery.cjs --storage /absolute/path/resident.json --resident-id YOUR_RESIDENT_ID`
+
+If your host uses a custom `keystorePath`, add `--keystore /absolute/path/keys.json`. The dry run checks the original checkpoint digest, file schemas, resident-memory ownership, missing root private key, and nonempty encrypted Pocket. It prints the old `resident:` cryptographic identity, affected record/key counts, preserved unrelated entries, file fingerprint and one-time confirmation token. It never prints private key bytes.
+
+After reviewing the scope and deciding that the original ciphertext is irrecoverable, **while the host is still stopped**, run:
+
+`node packages/realiti-headless-resident/pocket-recovery.cjs --storage /absolute/path/resident.json --resident-id YOUR_RESIDENT_ID --apply --offline-confirmed --confirm 'ABANDON:resident:OLD_ID:FINGERPRINT'`
+
+Copy the exact `confirmation` field from the immediately preceding dry run rather than typing a guessed value. Any file change between dry run and apply invalidates the confirmation. The tool retains owner-only byte-for-byte backups of **both** files, writes an interruption journal, updates each file via an individual atomic rename, clears only the Pocket sealed state and its five named Pocket key slots, and leaves every other storage entry and unrelated key untouched. The stable external `residentId` remains unchanged. There is no atomic transaction spanning two files; a host/process crash between renames may require restoring both originals from the journal-named backups before retrying.
+
+Next, start the **same** `openResident` with the **same** resident ID and storage/key paths. The existing native **empty-Pocket-only** recovery path should now mint a different, durably readable root/device identity. Verify `session.ready.pocket === 'ready'`, `await session.door.run('save')` succeeds, `session.window.REALITI_POCKET_V32.readCommitted().storage === 'durable'`, and compare the old identity printed by the recovery tool with `JSON.parse(session.window.localStorage.getItem('realiti-pocket-v32-local')).resident.id` to record the **new** identity. Stop the worker cleanly and repeat this check on a second launch; confirm the new identity is unchanged and resident-local memories, departure, world notes/state and ledger survive. These checks are tested with an intentionally stranded nonempty Pocket in `test/pocket-recovery.cjs`.
+
+Do **not** use `memory reset`: it affects independent departure/explicit memory, not the sealed Pocket. Retain both backups (including the sensitive keys backup) securely until both restart tests pass; never commit, upload or publicly post them. On Windows, verify restrictive NTFS ACLs on the backups; POSIX owner-only modes do not themselves establish Windows ACLs. If a `.pocket-recovery.pending.json` journal remains, **do not restart** and do not manually remove the journal: stop all hosts and restore both original files from the paths in that journal, then re-run the dry run. A crashed process may also leave `.pocket-recovery.lock`; after confirming no host or recovery process is running and both originals have been restored, an operator can remove that stale lock file before a new attempt. There is no automatic untrusted-data repair or speculative key reconstruction.

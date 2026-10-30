@@ -12,8 +12,8 @@
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 4766,
-      "sha256": "29537ab17e25f2226b2d67f2da2481e8b7902f50726a6c6db7a04bda4c15cd55"
+      "bytes": 6256,
+      "sha256": "9acb5862a54cd616f516ec912e86712f0f4dae58c5d4e14cebd9720454aa674b"
     },
     {
       "path": ".github/workflows/publish-matrix.yml",
@@ -52,13 +52,13 @@
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 47685,
-      "sha256": "0c675e0a3d8b0856c15d0169da1b1cb90510c45846bb13f62f51aae70914d966"
+      "bytes": 48467,
+      "sha256": "00a012697603c726c41221c7dc19a7ee091858724994d6cf4d0ab6d3d0973d80"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 71644,
-      "sha256": "c89947262de87c8858d316ac14a159ed4ec19ebf3753f379c4079bb67f5a8b8e"
+      "bytes": 73144,
+      "sha256": "139de2bfed61d55a3da3031940b13b68f1a5dfa3926039af9a6a2c0b0215daf9"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -252,8 +252,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/README.md",
-      "bytes": 9462,
-      "sha256": "d0cb299e463bf3b8e20ea245f86e8f9044b0c16c655b655c0be4500e808175a8"
+      "bytes": 13877,
+      "sha256": "545d6ff0670b3dfb6aaca6a1a912706fdfa48ed8ebc2bf98df83564dd3b288db"
     },
     {
       "path": "packages/realiti-headless-resident/cli.cjs",
@@ -282,13 +282,18 @@
     },
     {
       "path": "packages/realiti-headless-resident/package.json",
-      "bytes": 2783,
-      "sha256": "e2fa93712c744324ab9b6aa3249e566bda3ff50fa3d017f69ebe717c7c532e44"
+      "bytes": 2921,
+      "sha256": "13fccc6ae185bc3e71ed332de0a428ea5e25e139b2d63e3b2e25cb5527831fd3"
     },
     {
       "path": "packages/realiti-headless-resident/peer.cjs",
       "bytes": 10752,
       "sha256": "0afc07f472ad7d334a2b5be5d1e7fd9deaefbe078cdbfac4e23e793bc78ca864"
+    },
+    {
+      "path": "packages/realiti-headless-resident/pocket-recovery.cjs",
+      "bytes": 11496,
+      "sha256": "86d8dd732a96f8122c918b281afa6a29e406ef4eda92e782c0ea1bc6952514d0"
     },
     {
       "path": "packages/realiti-headless-resident/sync.cjs",
@@ -419,6 +424,11 @@
       "path": "packages/realiti-headless-resident/test/pocket-persistence.cjs",
       "bytes": 8549,
       "sha256": "327b4ded477edc7125f88a2fe22106948135ac797f9ab04965d7c7f4438be3aa"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/pocket-recovery.cjs",
+      "bytes": 8415,
+      "sha256": "ee896399a58e8a3936372964c81fbd2fbf7acd70febf66d1eacd228d4be1605a"
     },
     {
       "path": "packages/realiti-headless-resident/test/quiet-presentation.cjs",

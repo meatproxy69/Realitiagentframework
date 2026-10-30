@@ -21,6 +21,41 @@ on:
       - '.github/workflows/headless-agent-door.yml'
 
 jobs:
+  pocket-recovery:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Rebuild canonical runtime for this runner
+        run: node build.mjs
+      - name: Pin runner-local runtime integrity hash for isolated test
+        shell: bash
+        run: |
+          node <<'JS'
+          const fs = require('node:fs');
+          const crypto = require('node:crypto');
+          const validation = JSON.parse(fs.readFileSync('VALIDATION.json', 'utf8'));
+          validation.single_html_sha256 = crypto.createHash('sha256').update(fs.readFileSync('RealitiRELAX.html')).digest('hex');
+          fs.writeFileSync('VALIDATION.json', JSON.stringify(validation, null, 2) + '\n');
+          JS
+      - name: Offline repair and regression syntax
+        shell: bash
+        run: |
+          node --check packages/realiti-headless-resident/pocket-recovery.cjs
+          node --check packages/realiti-headless-resident/test/pocket-recovery.cjs
+      - name: Install package dependency
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Recover a nonempty stranded sealed Pocket, verify two restarts
+        working-directory: packages/realiti-headless-resident
+        run: node test/pocket-recovery.cjs ../../RealitiRELAX.html
+
   test:
     runs-on: ubuntu-latest
     steps:
