@@ -21,6 +21,15 @@ const world=read('source/scripts/58d-matrix-world.js');
 const worldStart=world.indexOf('const WORLD={'),worldEnd=world.indexOf('\n};',worldStart);
 assert.ok(worldStart>=0&&worldEnd>worldStart,'canonical Matrix world definitions preserved');
 const chartIds=[...world.slice(worldStart,worldEnd).matchAll(/^\s+([A-Z0-9_]+):\{size:/gm)].map(x=>x[1]);
+const separatelyDeclared=[
+  ['ARCHIPELAGO','source/scripts/58f-archipelago.js','M.define(ISLE,'],
+  ['MERIDIAN_CITY','source/scripts/58j-city.js','M.define(CITY,'],
+  ['UNDERCITY','source/scripts/58n-undercity.js','M.define(UNDER,']
+];
+for(const [room,file,signature] of separatelyDeclared){
+ assert.ok(read(file).includes(signature),room+' is still a separately registered Matrix chart');
+ chartIds.push(room);
+}
 const expected=new Set(inventory.entries.map(x=>x.source_room));
 assert.equal(expected.size,23,'exactly one checklist entry for each source room');
 assert.deepEqual([...new Set(roomIds)].sort(),[...expected].sort(),'every original room has a migration plan');
