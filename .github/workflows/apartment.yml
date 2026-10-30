@@ -39,5 +39,7 @@ jobs:
       - name: Install existing headless runtime
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
+      - name: Verify port-first room migration inventory
+        run: node apartment/test/room-inventory.cjs
       - name: Native weather, cloak, complete stack, restart and isolation
         run: node apartment/test/extras.cjs

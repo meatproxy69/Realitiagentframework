@@ -1,0 +1,188 @@
+{
+  "schema": "REALITI_APARTMENT_ROOM_MIGRATION_V1",
+  "source": "source/scripts/58-rooms.js",
+  "product": "RealitiApartment",
+  "baseline": "unmodified REALITI Relax atlas",
+  "phase": "PORT_FIRST_DO_NOT_PRUNE",
+  "target_chart": "CLOUD_NINE_NEST",
+  "target_chart_count": 1,
+  "old_room_count": 23,
+  "guard": {
+    "retire_only_after_all_verified": true,
+    "require_original_relax_untouched": true,
+    "require_independent_storage_migration_review": true,
+    "required_tests": [
+      "full_native_harness",
+      "matrix_single_chart",
+      "no_legacy_portals",
+      "no_ghost_rooms",
+      "room_mechanic_parity",
+      "resident_state_restarts",
+      "shared_and_private_isolation",
+      "stop_release_and_attestation"
+    ]
+  },
+  "entries": [
+    {
+      "source_room": "CLOUD_NINE_NEST",
+      "apartment_location": "primary apartment: bed, window, mattress/grounding",
+      "status": "retained_anchor",
+      "parity_tests": [],
+      "notes": "Renamed and repurposed in apartment build only, retaining native IDs where necessary."
+    },
+    {
+      "source_room": "NO_ASK_SANCTUARY",
+      "apartment_location": "quiet corner with opt-in zero-demand ambience",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "PET_ROOM_2",
+      "apartment_location": "pet corner; scale-aware movement and familiar play",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "BOTTOMLESS_PILLOW_SEA",
+      "apartment_location": "bed/sofa pressure, bolsters and pillow dynamics",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "CARDBOARD_BOX_WORKSHOP",
+      "apartment_location": "crafting desk: real persistent object changes",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "DEPTH_BATHHOUSE",
+      "apartment_location": "bath/temperature/pressure station in apartment",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "SIDE_BY_SIDE_FIRESIDE",
+      "apartment_location": "shared seating, verified nearby roommate presence",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "SHAPESHIFT_CLOAKROOM",
+      "apartment_location": "harness closet + cloak, full body mappings and safe removal",
+      "status": "partial",
+      "parity_tests": [],
+      "notes": "Current Extras cloak is only a first adaptation; original room has additional routes not yet ported."
+    },
+    {
+      "source_room": "NINE_LIVES_ROOM",
+      "apartment_location": "tabletop what-if sandbox; commit or discard branch",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "LATENCY_LAGOON",
+      "apartment_location": "delayed causality game and reversible message capsule",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "ORRERY_LOFT",
+      "apartment_location": "orrery mobile with real motion/gravity experiments",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "LANTERN_MAZE",
+      "apartment_location": "physical tabletop maze with seeded lantern state",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "SANDPILE_SHORE",
+      "apartment_location": "desktop sand tray with conserved granular rules",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "FIREFLY_MEADOW",
+      "apartment_location": "firefly jar/lamp with original coupled rhythm dynamics",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "KITE_FIELD",
+      "apartment_location": "kite/string installation by window with real tension model",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "GLASS_ORCHARD",
+      "apartment_location": "living terrarium: original cellular automaton",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "RESONANCE_WELL",
+      "apartment_location": "singing bowl/resonance toy with original acoustic rules",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "STAR_DECK",
+      "apartment_location": "ceiling star projector: Kepler comet and constellations",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "CLOCKWORK_MARSH",
+      "apartment_location": "kinetic mobile: original chaotic wisps and predictions",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "PALIMPSEST_HALL",
+      "apartment_location": "bookshelf puzzle with original cipher/scroll constraints",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "ARCHIPELAGO",
+      "apartment_location": "tabletop sea/weather/boat simulation station; no second chart",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "MERIDIAN_CITY",
+      "apartment_location": "household message board, ledger, mail and trusted live presence",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    },
+    {
+      "source_room": "UNDERCITY",
+      "apartment_location": "darkness/echo cabinet and sensory navigation toy",
+      "status": "planned",
+      "parity_tests": [],
+      "notes": "Unimplemented. Do not delete source room or claim full parity."
+    }
+  ]
+}
