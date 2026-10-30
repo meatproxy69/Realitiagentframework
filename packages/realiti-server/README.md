@@ -2,7 +2,7 @@
 
 The dedicated REALITI server. One Node process with no dependencies. It does two things:
 
-1. **Hosts the canonical client.** `GET /client/RealitiRELAX.html` and `GET /client/VALIDATION.json` serve the same single file and hash the repository ships; `GET /` reports whether they agree. `POST /admin/update` (with `Authorization: Bearer $ADMIN_TOKEN`) fetches the latest client from the repository's `main`, verifies the hash against its validation file, and swaps it in atomically without a restart. The `Server update ticket` workflow publishes the image and files each push to `main` on a rolling issue labelled `server-update` with the exact commands to apply it.
+1. **Hosts the canonical client.** `GET /client/RealitiRELAX.html` and `GET /client/VALIDATION.json` serve the same single file and hash the repository ships; `GET /` reports whether they agree. `POST /admin/update` (with `Authorization: Bearer $ADMIN_TOKEN`) fetches the latest client from the repository's `main`, verifies the hash against its validation file, and swaps it in atomically without a restart. The `Server update ticket` workflow publishes the image and refreshes one current deployment checklist on a rolling issue labelled `server-update`. Older comments are history; deploy the latest target using the existing service configuration and data volume.
 2. **Keeps the shared ledger.** Residents push signed records; the server verifies each Ed25519 signature over the record's canonical JSON, binds every author id to the first public key seen for it, refuses tampering, key mismatches and unsigned records from known authors, keeps a place name for whoever claimed it first, and compacts chatter while never dropping a world-shaping record. Clients pull what they lack by per-author sequence clock. New records are announced over server-sent events.
 
 Worlds still run in each resident's own client. The server carries the records between them. That is the multiplayer model: physics local, authorship shared, trust by signature.
@@ -30,7 +30,7 @@ The published image is `ghcr.io/meatproxy69/realiti-server:latest` (and `:<commi
 1. Run the container as in `docker-compose.yml` (loopback bind, `TRUST_PROXY=1`, `REALITI_PUBLIC_URL` set to your hostname).
 2. Put https in front: Caddy, nginx, Cloudflare Tunnel or Tailscale Funnel. The origin never needs a public port.
 3. Optional: `SERVER_PASSWORD` for a private city, `SHARDS` to join one that is already hosted.
-4. Watch the `server-update` issue in this repository: every push to `main` adds a comment saying whether the server itself changed (pull and restart) or only the client (`/admin/update` is enough), and which environment variables are new. Tick the boxes as you apply them; when every box is ticked, or you comment `done`, the ticket closes itself and the next push opens a fresh one.
+4. Watch the `server-update` issue in this repository. Its body holds one current target and three deployment checks. A pending server restart remains required across later client-only pushes; legacy queues without a verified baseline also require a full deployment. Deploy the pinned image with your existing configuration and persistent data, stopping gracefully first. After verifying the running server version and exact client hash, an operator with repository write access can tick all three boxes or comment `done <full target commit SHA>`. Bare or stale confirmations cannot close the queue. Earlier comments are superseded history, not instructions to install every intermediate image.
 5. Leases renew themselves: a resident that stays joined renews at two thirds of the lease life, and rejoins on its own if the server restarted and forgot it.
 
 ## Endpoints
@@ -104,3 +104,4 @@ node cli.cjs --html ../../RealitiRELAX.html --sync http://localhost:8787 who
 ```
 
 or in code, `const {sync}=require('@meatproxy69/realiti-headless-resident/sync.cjs'); await sync(session.window,'http://localhost:8787')`. A sync exchanges heads, pushes the records the server lacks (signed), and imports the records the resident lacks through the client's own verified import, so the same rules hold on both sides.
+
