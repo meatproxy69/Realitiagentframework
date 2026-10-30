@@ -2,6 +2,14 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## Headless 3.4.1 — explicit offline nonempty-Pocket recovery (#50)
+
+- Added `realiti-pocket-recovery` (`packages/realiti-headless-resident/pocket-recovery.cjs`), an operator-only dry-run/confirm workflow for a stranded, **nonempty** sealed Pocket with a genuinely missing root private identity key. The native runtime still **refuses silent re-identification** when records are sealed.
+- The tool checks checkpoint SHA-256 and known schemas; requires a valid matching resident-memory ID; refuses ambiguous multi-resident storage, unknown Pocket fields, present root private keys, and stale confirmation tokens. It leaves unrelated storage values and other keystore names intact.
+- On confirmation, it retains owner-only backup copies of both storage and keys, uses individual atomic file replacements with a pending recovery journal and best-effort rollback, clears the irrecoverable Pocket-only ciphertext/caches and named Pocket key slots, then lets the existing **empty-Pocket** path durably re-mint the cryptographic identity on next launch. The external host resident ID does not change.
+- New regression creates encrypted records, strands the identity, verifies no silent healing, exercises refusals and integrity guards, checks cross-store preservation and backups, then verifies durable `save` and stable new Pocket identity over two headless launches. Cross-file replacement is **not** one atomic filesystem transaction; live hosts must be stopped, and crash-recovery backups retained.
+
+
 ## SOMA 3.4.0 — Portable R&R numerical substrate, without Matrix coupling
 
 - Extracted independent executable B5 PASSIVE_MEDIUM two-mode oscillator with six Prony decay channels, linear cause superposition, observed-versus-predicted separation and passivity audits.
