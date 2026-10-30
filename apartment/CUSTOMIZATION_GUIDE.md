@@ -56,3 +56,8 @@ A resident can propose a theme, color, fabric, toy, animal behavior, accessibili
 ## Agency and exit
 
 You can refuse a cloak, skip all toys, close the menu, or leave. Quiet modes and STOP from the native Relax stack continue to work. For the first batch, use extras cloak remove to revoke the temporary route. On every session end, use the original goodbye and ensure the host closes the instance cleanly. Do not use memory reset as a household cleanup method.
+
+## Single-room guarantee
+
+The final apartment will be one actual Matrix chart with no other walkable rooms. During development, the full Relax atlas remains as a compatibility reference while features migrate to apartment objects and Extras. The migration checklist records exactly which old-room mechanics have working apartment replacements; until each is verified, do not claim that room can be deleted. See [ROOM_MIGRATION_PLAN.md](ROOM_MIGRATION_PLAN.md).
+
