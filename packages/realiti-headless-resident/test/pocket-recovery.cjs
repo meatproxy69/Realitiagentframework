@@ -10,8 +10,8 @@ const { inspectPocketRecovery, applyPocketRecovery } = require('../pocket-recove
 const html = path.resolve(process.argv[2] || '../../RealitiRELAX.html');
 const digest = data => crypto.createHash('sha256').update(JSON.stringify(data)).digest('hex');
 const RID = 'issue-50-recovery';
-const PK = 'realiti-pocket-v32-local';
-const MK = 'resident-memory-v1:' + encodeURIComponent(RID);
+const POCKET_LOGICAL_KEY = 'realiti-pocket-v32-local';
+const MEMORY_LOGICAL_KEY = 'resident-memory-v1:' + encodeURIComponent(RID);
 function checkpoint(file, modify) {
   const x = JSON.parse(fs.readFileSync(file, 'utf8'));
   modify(x.data);
@@ -32,6 +32,11 @@ function checkpoint(file, modify) {
   // An unrelated world key is an exact preservation canary. Only the real Pocket field may be modified.
   checkpoint(storagePath, data => { data['foreign-world-v1'] = JSON.stringify({place:'unchanged',note:'preserve'}); });
   const healthyStore = JSON.parse(fs.readFileSync(storagePath, 'utf8'));
+  const physicalPocketKeys = Object.keys(healthyStore.data).filter(k => k.endsWith(POCKET_LOGICAL_KEY));
+  const physicalMemoryKeys = Object.keys(healthyStore.data).filter(k => k.endsWith(MEMORY_LOGICAL_KEY));
+  assert.equal(physicalPocketKeys.length, 1, 'one scoped Pocket');
+  assert.equal(physicalMemoryKeys.length, 1, 'one scoped resident memory');
+  const PK = physicalPocketKeys[0], MK = physicalMemoryKeys[0];
   const oldPocket = JSON.parse(healthyStore.data[PK]);
   assert.ok(Object.keys(oldPocket.receipts).length > 0);
   assert.ok(healthyStore.data[MK]);
