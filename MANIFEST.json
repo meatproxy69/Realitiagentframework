@@ -427,8 +427,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/pocket-recovery.cjs",
-      "bytes": 8327,
-      "sha256": "bdc50e4dd52ba14b4701a7cea41ed08bef201ae72c3ef1152c642d35f29b8e9e"
+      "bytes": 8415,
+      "sha256": "ee896399a58e8a3936372964c81fbd2fbf7acd70febf66d1eacd228d4be1605a"
     },
     {
       "path": "packages/realiti-headless-resident/test/quiet-presentation.cjs",
