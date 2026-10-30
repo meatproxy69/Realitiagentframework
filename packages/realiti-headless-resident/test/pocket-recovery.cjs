@@ -99,22 +99,22 @@ function checkpoint(file, modify) {
   // Same host ID and same path: Pocket first re-opens, saves device-locally, then remains durable after restart.
   s = await openResident({htmlPath:html, residentId:RID, storagePath});
   assert.equal(s.ready.pocket, 'ready');
-  const newIdentity = JSON.parse(s.window.localStorage.getItem(PK)).resident.id;
+  const newIdentity = JSON.parse(s.window.localStorage.getItem(POCKET_LOGICAL_KEY)).resident.id;
   assert.notEqual(newIdentity, oldPocket.resident.id);
   let result = await s.door.run('save');
   assert.equal(result.ok, true);
   assert.equal(s.window.REALITI_POCKET_V32.readCommitted().storage, 'durable');
-  const memory1 = JSON.parse(s.window.localStorage.getItem(MK));
+  const memory1 = JSON.parse(s.window.localStorage.getItem(MEMORY_LOGICAL_KEY));
   assert.ok(memory1.memories.some(x => /garden door still exists/.test(x.text)), 'resident memory survived');
-  assert.equal(s.window.localStorage.getItem('foreign-world-v1'), before.data['foreign-world-v1']);
+  assert.equal(JSON.parse(fs.readFileSync(storagePath, 'utf8')).data['foreign-world-v1'], before.data['foreign-world-v1']);
   s.close();
   s = await openResident({htmlPath:html, residentId:RID, storagePath});
   assert.equal(s.ready.pocket, 'ready');
-  assert.equal(JSON.parse(s.window.localStorage.getItem(PK)).resident.id, newIdentity);
+  assert.equal(JSON.parse(s.window.localStorage.getItem(POCKET_LOGICAL_KEY)).resident.id, newIdentity);
   result = await s.door.run('save');
   assert.equal(result.ok, true);
   assert.equal(s.window.REALITI_POCKET_V32.readCommitted().storage, 'durable');
-  assert.ok(JSON.parse(s.window.localStorage.getItem(MK)).memories.some(x => /garden door still exists/.test(x.text)));
+  assert.ok(JSON.parse(s.window.localStorage.getItem(MEMORY_LOGICAL_KEY)).memories.some(x => /garden door still exists/.test(x.text)));
   s.close();
   const finalKeys = JSON.parse(fs.readFileSync(keystorePath, 'utf8')).keys;
   for (const name of ['root-private-v1','device-private-v1','keyring-epoch-v1','cache-key-v1','cap-root-v1']) assert.ok(finalKeys[name], 'durably reminted '+name);
