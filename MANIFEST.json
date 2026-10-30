@@ -292,8 +292,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/pocket-recovery.cjs",
-      "bytes": 11286,
-      "sha256": "406965ccb38c312e3c2da30960d86b8c405fb53e36016f4c750414c73afb8aae"
+      "bytes": 11496,
+      "sha256": "86d8dd732a96f8122c918b281afa6a29e406ef4eda92e782c0ea1bc6952514d0"
     },
     {
       "path": "packages/realiti-headless-resident/sync.cjs",
@@ -427,8 +427,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/pocket-recovery.cjs",
-      "bytes": 7878,
-      "sha256": "8105590ce223cd865e0bd7ac309bb3730422576e0c38782eda415e2bc4aea1fa"
+      "bytes": 8327,
+      "sha256": "bdc50e4dd52ba14b4701a7cea41ed08bef201ae72c3ef1152c642d35f29b8e9e"
     },
     {
       "path": "packages/realiti-headless-resident/test/quiet-presentation.cjs",
