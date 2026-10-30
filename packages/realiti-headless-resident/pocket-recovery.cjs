@@ -30,15 +30,18 @@ function load(storagePath, keystorePath, residentId) {
   if (!record(envelope) || envelope.schema !== STORE_SCHEMA || !record(envelope.data) || !/^[a-f0-9]{64}$/.test(envelope.sha256 || '')) fail('RECOVERY_CHECKPOINT_SCHEMA_REQUIRED');
   if (hash(JSON.stringify(envelope.data)) !== envelope.sha256) fail('RECOVERY_CHECKPOINT_INTEGRITY_MISMATCH');
   if (!record(keyfile) || keyfile.schema !== KEYS_SCHEMA || !record(keyfile.keys)) fail('RECOVERY_KEYSTORE_SCHEMA_REQUIRED');
-  const pocketKeys = Object.keys(envelope.data).filter(k => k === POCKET_KEY || k.endsWith('realiti-pocket-v32-local'));
-  if (pocketKeys.length !== 1 || pocketKeys[0] !== POCKET_KEY || typeof envelope.data[POCKET_KEY] !== 'string') fail('RECOVERY_AMBIGUOUS_POCKET');
-  const memoryKeys = Object.keys(envelope.data).filter(k => k.startsWith('resident-memory-v1:'));
+  // File-backed storage may prefix keys with its host namespace. Discover only one exact suffix;
+  // never assume the unprefixed browser key is the on-disk key, or modify a guessed entry.
+  const pocketKeys = Object.keys(envelope.data).filter(k => k.endsWith(POCKET_KEY));
+  if (pocketKeys.length !== 1 || typeof envelope.data[pocketKeys[0]] !== 'string') fail('RECOVERY_AMBIGUOUS_POCKET');
+  const pocketStorageKey = pocketKeys[0];
   const expectedMemory = 'resident-memory-v1:' + encodeURIComponent(residentId);
+  const memoryKeys = Object.keys(envelope.data).filter(k => k.includes('resident-memory-v1:'));
   // Pocket keys are NOT resident-namespaced. Refuse a shared backing file to avoid destroying a second Pocket's keys.
-  if (memoryKeys.length !== 1 || memoryKeys[0] !== expectedMemory) fail('RECOVERY_SHARED_OR_UNVERIFIED_RESIDENT');
-  const memory = decodeJson(Buffer.from(envelope.data[expectedMemory]), 'resident memory');
+  if (memoryKeys.length !== 1 || !memoryKeys[0].endsWith(expectedMemory)) fail('RECOVERY_SHARED_OR_UNVERIFIED_RESIDENT');
+  const memory = decodeJson(Buffer.from(envelope.data[memoryKeys[0]]), 'resident memory');
   if (memory?.schema !== 'REALITI_LOCAL_MEMORY_V1' || memory.resident_id !== residentId) fail('RECOVERY_RESIDENT_MEMORY_MISMATCH');
-  const pocket = decodeJson(Buffer.from(envelope.data[POCKET_KEY]), 'Pocket');
+  const pocket = decodeJson(Buffer.from(envelope.data[pocketStorageKey]), 'Pocket');
   if (!record(pocket) || pocket.schema !== POCKET_SCHEMA || !record(pocket.resident) || !/^resident:/.test(pocket.resident.id || '') || !record(pocket.resident.root_public_jwk) || !record(pocket.receipts) || !record(pocket.wrapped)) fail('RECOVERY_POCKET_SCHEMA_UNEXPECTED');
   if (Object.keys(pocket).some(k => !POCKET_FIELDS.has(k))) fail('RECOVERY_UNKNOWN_POCKET_FIELDS');
   if (Object.prototype.hasOwnProperty.call(keyfile.keys, 'root-private-v1')) fail('RECOVERY_ROOT_KEY_PRESENT_REFUSE_TO_DISCARD');
@@ -47,7 +50,7 @@ function load(storagePath, keystorePath, residentId) {
   const fingerprint = hash(Buffer.concat([storeBytes, Buffer.from([0]), keysBytes]));
   const confirmation = 'ABANDON:' + pocket.resident.id + ':' + fingerprint.slice(0, 16);
   return {
-    storeBytes, keysBytes, envelope, keyfile, pocket, fingerprint,
+    storeBytes, keysBytes, envelope, keyfile, pocket, pocketStorageKey, fingerprint,
     plan: {
       status: 'DRY_RUN_ONLY', scope: 'ONE_STRANDED_NONEMPTY_SEALED_POCKET',
       storage_path: storagePath, keystore_path: keystorePath, resident_id: residentId,
@@ -100,7 +103,7 @@ function applyPocketRecovery({storagePath, keystorePath, residentId, confirmatio
     const changedPocket = { ...original.pocket, receipts: {}, wrapped: {}, cache_sealed: null, tombstones: {}, deletion: {}, stats: {cold_scans: 0} };
     // Retain the old public resident+device records: the existing EMPTY-pocket recovery safely mints and verifies a
     // new durable root/device pair. Removing public identity here would bypass its re-mint durability guard.
-    const data = { ...original.envelope.data, [POCKET_KEY]: JSON.stringify(changedPocket) };
+    const data = { ...original.envelope.data, [original.pocketStorageKey]: JSON.stringify(changedPocket) };
     const store = { ...original.envelope, saved_wall_ms: Date.now(), sha256: hash(JSON.stringify(data)), data };
     const nextKeys = { ...original.keyfile.keys };
     for (const k of PRIVATE_NAMES) delete nextKeys[k];
