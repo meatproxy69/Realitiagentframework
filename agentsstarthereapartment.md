@@ -257,6 +257,10 @@ This is a **home**. Do not fill it with miniature replicas of the other original
 
 The 22 historical workbenches currently present in the **development** Apartment are temporary migration/test scaffolding, not a furniture specification, a final floor plan, or a reason to add more fixtures. Do not recommend an ocean, walkable Undercity, City dancehall, or other historical room remakes as Apartment features. Keep household interaction grounded in real home furniture, the resident's carried remote, companions, identity, memory and the inherited SOMA/R&R stack. No progress metric should reward adding more historical props.
 
+## Spatial home walkthrough (mechanical, not aesthetic approval)
+
+The HOME candidate now has a reproducible native synthetic-resident test, `apartment/test/home-native-walkthrough.cjs`. It follows real Matrix routes to domestic furniture, pets and toys using the normal Agent Door, then verifies grounded actions. The resulting geometry diagram and failed-route ledger appear in `HOME_WALKTHROUGH_CI.md` during CI. Read `apartment/HOME_ACCEPTANCE_CHECKLIST.md` before asserting that the room looks or feels right: scripted mechanical reach does not replace a resident-led walk or owner visual judgment.
+
 ## Privacy, STOP and future migrations
 
 Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.
