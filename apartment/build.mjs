@@ -42,7 +42,7 @@ const apartmentArchipelago=adaptArchipelago(archSource);
 html=html.replace(archSource,apartmentArchipelago);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
-  'source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
+  'source/stations.js','source/sea-table.js','source/closet.js','source/household-view.js','source/remote.js'];
 for(const filename of overlays){
  const body=await read(filename);
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
@@ -51,6 +51,7 @@ for(const filename of overlays){
   'source/furniture.js':'realiti-apartment-furniture',
   'source/catnip.js':'realiti-apartment-catnip',
   'source/stations.js':'realiti-apartment-native-stations',
+  'source/sea-table.js':'realiti-apartment-native-sea-table',
   'source/closet.js':'realiti-apartment-closet',
   'source/household-view.js':'realiti-apartment-household-view',
   'source/remote.js':'realiti-apartment-remote'};
