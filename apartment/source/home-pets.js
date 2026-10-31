@@ -66,6 +66,16 @@ if(HOME_FIRST){
   if(E[id]?.chart===HOME)M.removeEntity(id);
  E['apartment.bookcase'].pose.position=[-5.0,4.35,1.1];
  E['apartment.quiet-cushion'].pose.position=[-3.2,3.5,.2];
+ // The historical Nest's cardboard collision walls read as test scaffolding.
+ // Use an existing, truthful native wood material (warm paneling) instead of
+ // adding more decorative props, a fake shader, or a second sensory stack.
+ for(const side of ['east','west','north','south']){
+  const wall=E[HOME+'.wall.'+side];
+  if(wall?.chart===HOME){
+   wall.material='wood';
+   wall.label='warm wood-paneled wall';
+  }
+ }
  M.bump();
 }
 const OWNED=['nest.mattress','nest.window','nest.backrest','nest.shelf',...FIXTURES.map(x=>x[0]),'apartment.rug','apartment.lamp'];
