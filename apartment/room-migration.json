@@ -294,6 +294,11 @@
     "offline_recovery_rehearsal_tool": "apartment/rehearse-home-backup.cjs",
     "offline_recovery_regression": "apartment/test/home-backup-rehearsal.cjs",
     "production_recovery_rehearsed": false,
-    "storage_migration_owner_approved": false
+    "storage_migration_owner_approved": false,
+    "native_agent_route_test": "apartment/test/home-native-walkthrough.cjs",
+    "native_agent_route_report": "apartment/HOME_WALKTHROUGH_CI.json",
+    "owner_visual_acceptance_file": "apartment/HOME_ACCEPTANCE_CHECKLIST.md",
+    "synthetic_route_gate_status": "CI_REQUIRED_NOT_OWNER_APPROVAL",
+    "owner_layout_approved": false
   }
 }
