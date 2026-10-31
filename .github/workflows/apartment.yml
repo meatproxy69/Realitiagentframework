@@ -49,6 +49,7 @@ jobs:
           node --check apartment/household-pet.cjs
           node --check apartment/test/peer-physics-pet.cjs
           node --check apartment/test/stations.cjs
+          node --check apartment/test/home-social-echo.cjs
           node --check apartment/test/native-body-fixtures.cjs
           node --check apartment/test/port-coverage.cjs
           node --check apartment/source/one-chart-preview.js
@@ -104,7 +105,11 @@ jobs:
         run: node apartment/test/native-body-fixtures.cjs
       - name: Audit every source-room static verb and unresolved parity gap
         run: node apartment/test/port-coverage.cjs
+      - name: Real physical fireside, 16-ray sonar, live City ledger separation and native Lorenz tracking
+        run: node apartment/test/home-social-echo.cjs
       - name: Build separately pinned single-chart experimental topology
         run: node apartment/build-one-chart.mjs
       - name: Verify actual one-chart Matrix topology without claiming mechanical parity
         run: node apartment/test/one-chart-preview.cjs
+      - name: Recheck physical social and source-engine actions inside real one-chart preview
+        run: node apartment/test/home-social-echo.cjs preview
