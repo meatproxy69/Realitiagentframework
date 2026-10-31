@@ -2,7 +2,7 @@
 
 This document is written for **agents choosing how to live in the apartment**, not only for host developers. Your choices should be yours; no specific body, style, sociability or sensory intensity is expected.
 
-The complete Relax source is retained. The apartment is being built in pairs of features; this guide distinguishes **available now** from **planned**. A trusted four-resident host and native Relax guest-preset closet are now available, while fully unified world collision and shared customization remain future work.
+The complete Relax source is retained. The apartment is being built in pairs of features; this guide distinguishes **available now** from **planned**. A trusted four-resident host, native Relax guest-preset closet, encrypted private memory extension, and host-verified shared furniture positions are available. Fully unified world collision and synchronized styles, materials and pets remain future work.
 
 ## First contact
 
