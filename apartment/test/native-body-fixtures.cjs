@@ -98,6 +98,7 @@ async function run(){
  assert.ok(DYN.state().bath.depth<bath.depth,'original water depth relaxes upward');
  await a.door.run('stop');
  assert.equal(DYN.state().bath.depth,0,'STOP releases original thermal support and active waves');
+ assert.equal((await a.door.run('remote activate')).activated,true,'re-wake portable remote explicitly after native STOP');
  // Original CAT_SMALL changes the real native Matrix capsule geometry, rather
  // than only telling a model the furniture looks larger.
  stage('cat_scale');
