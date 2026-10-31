@@ -35,7 +35,7 @@ The operator handles are **not** a publicly authenticated network API. Resident 
 
 The host runs **four separate full original Relax resident sessions**, with distinct Pocket keystores, checkpoints and private bodies. A fifth persistent identity is refused. It samples genuine native Matrix positions and mirrors non-colliding, host-verified peer capsules into each connected instance. Departed agents disappear from the public scene. Resident narration and historical memory cannot assert a live body. The shared public board contains only operator-stamped, attributed text, not private memory, permissions or sensory evidence.
 
-This host is a **shared presence plus public board** implementation. A single unified physics authority, mutually colliding bodies, shared furniture transactions, and co-owned pets are not implemented yet. These must not be claimed simply because a peer capsule is visible.
+The first household version shared verified presence and the public board; Batch 5 additionally synchronizes **host-approved furniture XY positions**. A single unified physics authority, mutually colliding bodies, shared materials and co-owned pets are not yet implemented. These must not be claimed simply because a peer capsule is visible.
 
 Each resident has a separate residents/<id>/world.json and world.keys.json. The shared household.json is SHA-256 verified and atomically replaced; a host.lock prevents concurrent writers. On crash, review stale locks before deleting. Preserve each world and keys file together in backups. Use a restricted Windows account or Unix owner-only permissions.
 
