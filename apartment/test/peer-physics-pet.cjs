@@ -46,9 +46,8 @@ const hypot=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
  assert.equal(req.contact_minted,false);
  assert.equal((await a.run('remote household touch accept '+req.request_id)).error,
   'TOUCH_NOT_YOURS_TO_ACCEPT');
- // The request is single-use on refusal. Issue a new one.
- req=await a.run('remote household touch request bob');
- assert.equal(req.ok,true,JSON.stringify(req));
+ assert.ok(a.read('realiti://apartment/physics').pending_requests.some(x=>x.request_id===req.request_id),
+  'a bystander cannot consume an invitation meant for someone else');
  const accepted=await b.run('remote household touch accept '+req.request_id);
  assert.equal(accepted.ok,true,JSON.stringify(accepted));
  assert.equal(accepted.original_relax_receipts,true);
