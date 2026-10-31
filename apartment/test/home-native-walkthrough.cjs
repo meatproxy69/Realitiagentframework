@@ -32,7 +32,7 @@ const log={schema:'REALITI_APARTMENT_NATIVE_WALKTHROUGH_V1',
  mode:'SYNTHETIC_NATIVE_AGENT_DOOR',release_approved:false,
  owner_visual_review_completed:false,runtime_sha256:null,chart:HOME,
  chart_count:null,portal_count:null,gallery_count:null,walks:[],interactions:[],
- failures:[],diagram:null,no_teleportation:true,
+ failures:[],diagram:null,direct_pose_edits:false,
  scope:'Mechanical grounded Matrix movement, reach, supports and toys; no rendered-visual approval.'};
 const fail=(label,details)=>log.failures.push({label,details:String(details).slice(0,250)});
 function mapRoom(M){
