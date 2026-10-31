@@ -10,14 +10,19 @@ assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appe
 (async()=>{
  const {adaptCompanions}=await import('../source/companion-adapter.mjs');
  const {adaptWonder,adaptFrontier}=await import('../source/native-wonder-adapter.mjs');
+ const {adaptDynamics,adaptNativePillow}=await import('../source/native-body-adapter.mjs');
  const wonder=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58b-wonder.js'),'utf8');
  const frontier=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58e-frontier.js'),'utf8');
+ const dynamics=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58a-dynamics.js'),'utf8');
+ const pillow=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/63-claude-neural-pass.js'),'utf8');
  const patched=original.replace(nativeSource,adaptCompanions(nativeSource))
    .replace(wonder,adaptWonder(wonder))
-   .replace(frontier,adaptFrontier(frontier));
+   .replace(frontier,adaptFrontier(frontier))
+   .replace(dynamics,adaptDynamics(dynamics))
+   .replace(pillow,adaptNativePillow(pillow));
  assert.notEqual(patched,original,'only anchor-checked Apartment companion and original-engine station shims differ');
  assert.ok(apartment.startsWith(patched.slice(0,patched.lastIndexOf('</body>'))),
-   'every original Relax script remains and only the three checked Apartment source adapters differ');
+   'every original Relax script remains and only the five checked Apartment source adapters differ');
  assert.ok(apartment.includes('realiti-apartment-home-pets'),'the furnished-home script follows full Relax');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-apartment-extras-'));
  const options={htmlPath:html,residentId:'apartment-a',storagePath:path.join(dir,'a.json')};

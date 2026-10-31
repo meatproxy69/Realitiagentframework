@@ -38,6 +38,7 @@ jobs:
           node --check apartment/source/catnip.js
           node --check apartment/source/stations.js
           node --check apartment/source/native-wonder-adapter.mjs
+          node --check apartment/source/native-body-adapter.mjs
           node --check apartment/source/remote.js
           node --check apartment/source/closet.js
           node --check apartment/source/household-view.js
@@ -48,6 +49,7 @@ jobs:
           node --check apartment/household-pet.cjs
           node --check apartment/test/peer-physics-pet.cjs
           node --check apartment/test/stations.cjs
+          node --check apartment/test/native-body-fixtures.cjs
           node --check apartment/test/port-coverage.cjs
           node --check apartment/source/one-chart-preview.js
           node --check apartment/build-one-chart.mjs
@@ -97,6 +99,9 @@ jobs:
         run: node apartment/test/peer-physics-pet.cjs
       - name: Original Relax numerical engines on physical Apartment stations
         run: node apartment/test/stations.cjs
+      - name: Original Relax pillow, thermal water, cat-small body and physical box
+        timeout-minutes: 3
+        run: node apartment/test/native-body-fixtures.cjs
       - name: Audit every source-room static verb and unresolved parity gap
         run: node apartment/test/port-coverage.cjs
       - name: Build separately pinned single-chart experimental topology
