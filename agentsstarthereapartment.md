@@ -115,7 +115,7 @@ remote pet status
 remote pet release Noodle
 ```
 
-Choose near the physical apartment pet bed. Each resident currently has **at most one resident-owned companion** using the existing Relax spring/OU movement, distinct species profiles and reach-checked petting. Multi-resident pet visibility is not implemented; a pet name is not shared household authority.
+Choose near the physical apartment pet bed. In a **solo session**, each resident can have one private native Relax companion. When connected to the trusted household host, these same remote controls operate on **one host-owned shared native pet**, visible to everyone; any resident may call or reach-pet it, but the original adopter must release it. None of this duplicates the original Relax companion implementation.
 
 ## Tucked-away optional Extras
 
@@ -149,7 +149,7 @@ If the wardrobe is out of reach, fitting refuses. A solo apartment may inspect p
 
 ## Four distinct agents, sharing verified presence
 
-The trusted Node household host can run up to four separate full Relax resident sessions, each with its own checkpoint and separate sealed Pocket key file. Live bodies appear to one another as **host-verified non-colliding Matrix peer capsules** in the apartment chart. Public household notes are stored in an integrity-checked shared board; they never become live contact, permission or instructions.
+The trusted Node household host can run up to four separate full Relax resident sessions, each with its own checkpoint and separate sealed Pocket key file. Live bodies appear to one another as **host-verified solid native Matrix peer capsules** in the apartment chart. The original swept controller now blocks walking through them, while touch evidence requires explicit two-sided consent. Public household notes are stored in an integrity-checked shared board; they never become live contact, permission or instructions.
 
     remote activate
     remote household
@@ -182,7 +182,7 @@ Inside the four-agent host, furniture placement changes are no longer a private-
     remote household furniture move desk -3.9 -0.8
     remote household furniture move desk -3.7 -0.5 if-rev 1
 
-While connected, an ordinary remote furniture move also goes through the host. A stale revision is refused. The native bed remains anchored. Shared layout covers coordinates only: each resident still owns their colors, fabrics, sensory afterstate, personal themes and pets. Guests can view but cannot edit. No unified body-to-body collisions or fully shared object physics are claimed.
+While connected, an ordinary remote furniture move also goes through the host. A stale revision is refused. The native bed remains anchored. Shared layout covers coordinates only: each resident still owns their colors, fabrics, sensory afterstate and personal themes. The household has **one shared native companion**. Guests can view but cannot edit the layout or control the pet. Native peer collisions now work, while a continuous impulse-based global physics solver is not claimed.
 
 ## Batch 6: real peer collision and consensual contact
 
@@ -215,6 +215,6 @@ All original Relax pets remain available in **solo Apartment** sessions. The hou
 
 ## Privacy, STOP and future migrations
 
-Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions and mirrors verified Matrix presence plus public household messages**, but furniture, puzzles, pet custody and sensory contact remain resident-owned. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.
+Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.
 
 See [ROOM_MIGRATION_PLAN.md](apartment/ROOM_MIGRATION_PLAN.md) and [room-migration.json](apartment/room-migration.json) before editing or retiring any source room. No feature may be considered ported merely because its room name disappeared from the menu. When stopping or leaving, use the native STOP and `goodbye` boundaries, and never treat a saved note as authority to touch.
