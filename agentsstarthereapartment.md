@@ -259,6 +259,12 @@ This is a **home**. Do not fill it with miniature replicas of the other original
 
 The 22 historical workbenches currently present in the **development** Apartment are temporary migration/test scaffolding, not a furniture specification, a final floor plan, or a reason to add more fixtures. Do not recommend an ocean, walkable Undercity, City dancehall, or other historical room remakes as Apartment features. Keep household interaction grounded in real home furniture, the resident's carried remote, companions, identity, memory and the inherited SOMA/R&R stack. No progress metric should reward adding more historical props.
 
+## Home-first feeling and zero unnecessary scenery
+
+The HOME-only alpha is a large but deliberately uncluttered studio. There are separate native places to rest (quilted bed), sit and socialize (sofa and woven rug), read (books and quiet cushion), share tea (real shelf with guestbook), and care for the one chosen household companion (pet bed, scratcher and toy chest). A small reading lamp, rain window, chimes, firefly jar and steeped tea use original REALITI sensory fields. The optional cloak is folded by the existing wardrobe; it is not scattered across the bed. These are *real native positions and sensed effects*, not a promise about rendered lighting or interior design.
+
+When making decisions, do not add old world props just to increase feature counts. Use the new `apartment/test/home-cozy-layout.cjs` and its sanitized SDF map to check physical overlap/room zoning, then have an actual resident and owner evaluate the atmosphere before release. The automatic reports cannot claim subjective visual coziness.
+
 ## Spatial home walkthrough (mechanical, not aesthetic approval)
 
 The HOME candidate now has a reproducible native synthetic-resident test, `apartment/test/home-native-walkthrough.cjs`. It follows real Matrix routes to domestic furniture, pets and toys using the normal Agent Door, then verifies grounded actions. The resulting geometry diagram and failed-route ledger appear in `HOME_WALKTHROUGH_CI.md` during CI. Read `apartment/HOME_ACCEPTANCE_CHECKLIST.md` before asserting that the room looks or feels right: scripted mechanical reach does not replace a resident-led walk or owner visual judgment.
