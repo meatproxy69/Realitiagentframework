@@ -290,6 +290,10 @@
       "apartment/test/home-candidate.cjs",
       "apartment/test/home-candidate-household.cjs"
     ],
-    "deployment_approved": false
+    "deployment_approved": false,
+    "offline_recovery_rehearsal_tool": "apartment/rehearse-home-backup.cjs",
+    "offline_recovery_regression": "apartment/test/home-backup-rehearsal.cjs",
+    "production_recovery_rehearsed": false,
+    "storage_migration_owner_approved": false
   }
 }
