@@ -103,6 +103,20 @@ The marsh bench maps the original Lorenz RK4 wisp into a nearby native Matrix li
 
 The source-action audit counts the original Nest's four verbs as native retained HOME actions; the still-unported original island-boat controls are explicitly blocked from full release certification. A finished topology preview remains non-release until every historical mechanic is reviewed.
 
+## Original Archipelago as a physically controlled HOME sea table
+
+The apartment now includes an actual glass sea-table fixture and a tiny wooden model boat, both native Matrix objects in `CLOUD_NINE_NEST`. Its **derived-HTML-only, exact-source-checked adapter** uses the original Relax Archipelago's unchanged `h(x,y)` analytic terrain, wind/current, and `stepBoat(dt)` numerical integrator. A bounded `row_to__<island>` command advances at most one second of original world time and moves the model token to the correctly scaled real source coordinates. `board_boat`, `land_boat`, `read_weather` and `island_map` are reachable through the same carried remote source station; reading weather or sampling a source map never creates fictitious body contact.
+
+From the repository root after the normal build:
+
+    node apartment/test/sea-table.cjs
+    node apartment/build-one-chart.mjs
+    node apartment/test/sea-table.cjs preview
+
+The differential test compares original source boat position against a **canonical Relax Archipelago instance** initialized to identical source position, target, and world clock. The original full-sized resident remains in HOME, rather than being secretly teleported into the source's two-kilometre chart. The model's `aboard` bit means that **the model controller is engaged**, not that the resident physically boarded a boat. Native STOP and departure release model control. Source position persists, but control never silently rearms after restart.
+
+**Full parity is still blocked.** The tabletop is not a full-sized boat, two-kilometre navigable ocean, actual island walking, fog-of-war exploration, source chart occupancy, or all historical sea crossing/shore behavior. Static source action-name coverage may reach zero gaps, but this is not release certification. Do not retire source rooms or automatically migrate resident data.
+
 ## Developer source boundaries
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
@@ -119,7 +133,8 @@ The source-action audit counts the original Nest's four verbs as native retained
 - Host-owned shared furniture transactions: `shared-scene.cjs`
 - Native colliding household peer controller: `household-physics.cjs`
 - Shared native Relax companion driver: `household-pet.cjs`
-- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`
+- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`, `source/native-body-adapter.mjs`, `source/native-archipelago-adapter.mjs`
+- Source-faithful HOME sea model controller: `source/sea-table.js`
 - Native engine workbenches: `source/stations.js`
 - Explicit non-release single-chart prototype: `build-one-chart.mjs`, `source/one-chart-preview.js`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
