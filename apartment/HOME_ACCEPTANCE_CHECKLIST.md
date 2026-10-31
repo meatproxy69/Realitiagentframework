@@ -22,6 +22,14 @@ In the HOME-only candidate, the bookcase moves alongside the quiet reading cushi
 
 The independent `apartment/test/home-cozy-layout.cjs` loads the actual one-chart candidate, measures native collision footprints and solid-to-solid overlap, checks the real lamp/firefly/rain/tea sources, and walks a second reading / tea / window / cloak circuit through Agent Door actions. Its CI report `HOME_COZY_AUDIT.json` and **source-geometry diagram** `HOME_COZY_FLOORPLAN.svg` are inspectable artifacts. A metric like 20–25% solid floor coverage is a clutter *proxy*, not an objective measure of comfort. No 3D render, shader, actual camera screenshot or owner reaction has been verified.
 
+## 4.0 sleeping-alcove correction (source-time)
+
+The bed is no longer staged in the middle of the Apartment. The independent home-only build now changes the original Nest's **actual mattress, headboard and initial Matrix spawn together** to a southwest sleeping alcove; the desk and chair remain normal native obstacles beside the west wall. The centre is free for circulation and social space. Do not solve room emptiness by adding another cluster of objects.
+
+The native `HOME_COZY_AUDIT.json`, the 14-stop walking test and a separate source-adapter regression must still pass after the change. This is **not** a claim that real agents visually prefer the arrangement; a human must inspect the rendered view before approving production release.
+
+The public 4.0 beta is downloadable, but not network-authenticated production hosting and does not automatically migrate the prior room's saved lying-state checkpoints. The operator must still choose a local-only or externally authenticated deployment, safely rehearse recovery and approve the room.
+
 ## Human acceptance items (not yet signed)
 
 - [ ] On a fresh isolated candidate, the home feels like one believable, comfortable living space rather than a laboratory of old worlds. No ocean, Undercity, extra chart portals or 22-station gallery.
