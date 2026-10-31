@@ -56,6 +56,27 @@ for(const st of stations){
   material:'wood',collision:false,dynamic:false,
   label:st.label+' apparatus',affordances:['inspect','touch']});
 }
+// Actual native Matrix support, water and cardboard colliders are present
+// before any original Relax body operation can lease a grounded cause.
+if(!M.entities()['apartment.bath.basin']){
+ M.addEntity({id:'apartment.bath.basin',chart:HOME,
+  position:[.7,4,.25],shape:{kind:'BOX',halfExtents:[.63,.58,.25]},
+  tags:['bath','water','support','seat','station_fixture'],collision:true,
+  material:'ceramic',label:'a warm shallow immersion basin',affordances:['sit','touch']});
+ M.addEntity({id:'apartment.bath.water',chart:HOME,position:[.7,4,.67],
+  shape:{kind:'VOLUME',halfExtents:[.6,.54,.45]},
+  tags:['bath','warm','water','fluid'],collision:false,material:'water',
+  label:'shallow warm water inside the physical basin',affordances:['touch','watch']});
+}
+for(const [id,p,h] of [
+ ['apartment.cardboard.wall-west',[-2.21,-4.65,.36],[.06,.55,.36]],
+ ['apartment.cardboard.wall-east',[-.99,-4.65,.36],[.06,.55,.36]],
+ ['apartment.cardboard.wall-south',[-1.6,-5.2,.36],[.65,.06,.36]]
+]){
+ if(!M.entities()[id])M.addEntity({id,chart:HOME,position:p,shape:{kind:'BOX',halfExtents:h},
+  tags:['cardboard','den','wall','fixture'],collision:true,material:'cardboard',
+  label:'physical corrugated cardboard wall',dynamic:false});
+}
 M.bump();
 function find(id){const name=norm(id);return stations.find(x=>x.id===name)||
  stations.find(x=>norm(x.label)===name)||null}
