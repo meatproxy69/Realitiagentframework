@@ -34,9 +34,13 @@ jobs:
           node --check apartment/source/extras.js
           node --check apartment/source/home-pets.js
           node --check apartment/source/companion-adapter.mjs
+          node --check apartment/source/furniture.js
+          node --check apartment/source/catnip.js
+          node --check apartment/source/remote.js
           node --check apartment/build.mjs
           node --check apartment/test/extras.cjs
           node --check apartment/test/home-pets.cjs
+          node --check apartment/test/furniture-catnip.cjs
       - name: Build complete original Relax runtime unchanged
         run: node build.mjs
       - name: Verify canonical integrity or stage Windows local text checkout
@@ -65,3 +69,5 @@ jobs:
         run: node apartment/test/extras.cjs
       - name: Furnished native Matrix home and cat dog ferret companion integration
         run: node apartment/test/home-pets.cjs
+      - name: Pocket remote, furniture and catnip with native physical evidence
+        run: node apartment/test/furniture-catnip.cjs
