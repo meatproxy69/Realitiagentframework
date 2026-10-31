@@ -220,9 +220,10 @@
       "apartment_location": "tabletop sea/weather/boat simulation station; no second chart",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/stations.cjs"
+        "apartment/test/stations.cjs",
+        "apartment/test/sea-table.cjs"
       ],
-      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original ARCHIPELAGO engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
+      "notes": "Original native 2 km analytic terrain h, time-varying rain, wind/current and UNMODIFIED original stepBoat integration are now callable from a real HOME glass sea tray and reachable wooden model boat. The derived-only original source adapter prevents moving the full-sized apartment resident when the model boat is controlled. Real model boarding/landing with terrain refusal, bounded original-world rowing, numerical comparison to canonical Relax, STOP and restart are tested in both the 23-chart developer build and the strict one-chart preview. IMPORTANT: model boarding does NOT physically place the avatar aboard a full-sized boat, source island chart visitation/shore routes/fog-of-war/boat pathfinding/terrain geodesics are not fully ported; this is still PARTIAL, not a release-parity certification. Physically reached native HOME apparatus now exposes a bounded subset of original ARCHIPELAGO engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "MERIDIAN_CITY",
