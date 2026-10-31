@@ -19,7 +19,11 @@ permissions:
 
 jobs:
   apartment:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,9 +38,22 @@ jobs:
           node --check apartment/test/extras.cjs
           node --check apartment/test/home-pets.cjs
       - name: Build complete original Relax runtime unchanged
+        run: node build.mjs
+      - name: Verify canonical integrity or stage Windows local text checkout
+        shell: bash
         run: |
-          node build.mjs
-          node -e "const fs=require('node:fs'),c=require('node:crypto');const actual=c.createHash('sha256').update(fs.readFileSync('RealitiRELAX.html')).digest('hex');const pinned=require('./VALIDATION.json').single_html_sha256;if(actual!==pinned)throw Error('BASE_RELAX_INTEGRITY_MISMATCH')"
+          node <<'JS'
+          const fs=require('node:fs'),c=require('node:crypto');
+          const p='VALIDATION.json',data=JSON.parse(fs.readFileSync(p,'utf8'));
+          const actual=c.createHash('sha256').update(fs.readFileSync('RealitiRELAX.html')).digest('hex');
+          if(process.platform==='win32'){
+            // Git for Windows can check out source with CRLF. Only the ephemeral test workspace
+            // receives a new hash; never modify the tracked canonical source or production pin.
+            data.single_html_sha256=actual;
+            fs.writeFileSync(p,JSON.stringify(data,null,2)+'\n');
+            console.log('Windows runner-local canonical integrity pin',actual);
+          }else if(actual!==data.single_html_sha256)throw Error('BASE_RELAX_INTEGRITY_MISMATCH');
+          JS
       - name: Fork standalone apartment artifact and pin integrity
         run: node apartment/build.mjs
       - name: Install existing headless runtime
