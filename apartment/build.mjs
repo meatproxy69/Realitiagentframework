@@ -20,21 +20,8 @@ let html=base.replace(nativeSource,patchedNative);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
   'source/closet.js','source/household-view.js','source/remote.js'];
-// Include only vetted portable presets from the existing REALITI neuromesh package.
-const packs=await Promise.all(['honeyspark-duo.json','moonwire-recovered.json'].map(async name=>
-  JSON.parse(await fs.readFile(new URL('packages/realiti-neuromesh/presets/'+name,root),'utf8'))));
-for(const p of packs){
- if(p.schema!=='NEUROMESH_PRESET_PACK_V1'||p.invariants?.evidence_gain!==0||
-    p.invariants?.private_render_only!==true||p.invariants?.conserved_response_budget!==true)
-  throw Error('UNSAFE_CLOSET_PACK_DURING_BUILD');
-}
 for(const filename of overlays){
- let body=await read(filename);
- if(filename==='source/closet.js'){
-  const pin=JSON.stringify(packs).replace(/</g,'\\u003c');
-  if(body.split('/*__APARTMENT_HARNESS_PRESETS__*/null').length!==2)throw Error('LOANER_PACK_INSERT_DRIFT');
-  body=body.replace('/*__APARTMENT_HARNESS_PRESETS__*/null',pin);
- }
+ const body=await read(filename);
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
  const ids={'source/home-pets.js':'realiti-apartment-home-pets',
   'source/extras.js':'realiti-apartment-extras',
@@ -57,9 +44,11 @@ const validation={
  native_companions_apartment_sha256:hash(patchedNative),
  native_companions_patch:'source/companion-adapter.mjs',
  overlays:overlays.slice(),
- loaner_preset_packs:packs.map(p=>({id:p.pack_id,sha256:hash(JSON.stringify(p)),presets:p.presets.length})),
+ closet_preset_source:'unchanged native REALITI_NEURO_RESTORATION_V1.presets()',
+ native_relax_harness_reused:true,
+ extra_sensory_stack_created:false,
  single_html_sha256:hash(html),
- includes:'complete canonical REALITI Relax runtime, checked native companion adapter, physical apartment and isolated SOMA guest closet plus household observer',
+ includes:'complete canonical REALITI Relax runtime, checked native companion adapter, physical apartment, original Relax preset catalog and read-only household observer',
  complete_relax_source_retained:true,
  parent_files_mutated:false,
  current_room_target:'CLOUD_NINE_NEST',
