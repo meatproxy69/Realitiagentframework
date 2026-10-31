@@ -24,7 +24,11 @@ const objectDefs=Object.freeze([
  ['apartment.firefly-jar','SPHERE',[-2.1,3.15,1.1],.27,['fireflies','jar','coupled-rhythms'],'glass','a sealed firefly jar'],
  ['apartment.puzzle-box','BOX',[1.15,-3.45,.37],[.4,.35,.37],['puzzle','cardboard','latch'],'cardboard','a three-click puzzle box'],
  ['apartment.wind-chime','SPHERE',[-1.25,4.9,2.05],.20,['chime','rain','instrument'],'metal','a rain-driven window chime'],
- ['apartment.tea-cup','SPHERE',[-4.48,2.0,.88],.17,['tea','scent','ritual'],'ceramic','a cup of herbal tea']
+ // Only in HOME: set the tea cup actually *on* the original shelf rather
+ // than intersecting it and the guestbook. Keep developer-room coordinates.
+ ['apartment.tea-cup','SPHERE',
+  window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true?[-4.5,2.5,1.17]:[-4.48,2.0,.88],
+  .17,['tea','scent','ritual'],'ceramic','a cup of herbal tea']
 ]);
 for(const [id,kind,pos,scale,tags,material,label] of objectDefs){
  if(M.entities()[id])throw Error('APARTMENT_CATNIP_OBJECT_COLLISION:'+id);

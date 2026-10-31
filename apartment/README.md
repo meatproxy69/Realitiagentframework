@@ -128,6 +128,12 @@ After both release-candidate tests pass, the Ubuntu CI job attaches the standalo
 
 The CI runs a solo restart/STOP/native-sensory test and an independent four-resident + guest integration test (encrypted journal isolation, colliding bodies, explicit two-party contact, shared furniture, single real Relax pet, original guest closet trial and backup replay) on Ubuntu and Windows. It does **not** simulate continuous shared-body impulse physics or prove that real deployment, external authentication, desktop visual styling, and all human experience tests are production-ready.
 
+### Home-only cozy footprint cleanup and separate ambience audit
+
+The **one-chart HOME alpha only** removes the original nonfunctional cloudfall door marker and always-present Nest cat, leaving the owner's explicitly adopted single household companion as the pet source of truth. It separates the bookcase from the tea shelf, forms a small book-and-cushion reading nook, places the tea cup on its actual shelf clear of the native guestbook, and stores the optional cloak by the existing wardrobe instead of leaving it over the bed. Four source-world cardboard walls gain original native wood material for warm tactile paneling; no extra decoration, second SOMA, old room or fake lighting is added.
+
+`node apartment/test/home-cozy-layout.cjs` checks **actual** solid footprints/overlaps and a second native route to the reading nook, tea, window seat and wardrobe, alongside the existing 14-stop walkthrough and full Relax regression. CI attaches `HOME_COZY_AUDIT.json` and a simple geometry-scaled `HOME_COZY_FLOORPLAN.svg`. This does not provide a 3D rendered aesthetic approval. See `HOME_ACCEPTANCE_CHECKLIST.md` for the owner signoff.
+
 ### Native synthetic-agent walkthrough and owner acceptance
 
 `node apartment/test/home-native-walkthrough.cjs` uses the real Agent Door and Matrix locomotion to attempt a complete lived-in-home route: sofa, desk, wardrobe, pets and five toys. Each interaction is checked against actual native reach/posture/contact instead of direct pose injection. CI writes a sanitized `HOME_WALKTHROUGH_CI.md` and JSON report, including a 0.5-m native SDF floor map and any blocked fixtures. The diagnostic artifact uploads on failed CI so route defects can be inspected. This is a synthetic scripted route, *not* an independent AI exploration or visual signoff.

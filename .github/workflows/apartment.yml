@@ -61,6 +61,7 @@ jobs:
           node --check apartment/test/home-backup-rehearsal.cjs
           node --check apartment/test/home-candidate.cjs
           node --check apartment/test/home-native-walkthrough.cjs
+          node --check apartment/test/home-cozy-layout.cjs
           node --check apartment/test/home-candidate-household.cjs
           node --check apartment/test/one-chart-preview.cjs
           node --check apartment/test/private-memory-scene.cjs
@@ -137,6 +138,9 @@ jobs:
       - name: Walk the real one-chart home as a synthetic agent, test tactile objects and write native SDF map
         timeout-minutes: 6
         run: node apartment/test/home-native-walkthrough.cjs
+      - name: Second agent walkthrough, furniture clutter overlap and cozy source audit
+        timeout-minutes: 5
+        run: node apartment/test/home-cozy-layout.cjs
       - name: Rehearse cold offline backup and native HOME recovery, refuse unsafe storage
         timeout-minutes: 4
         run: node apartment/test/home-backup-rehearsal.cjs
@@ -148,6 +152,16 @@ jobs:
           path: |
             apartment/HOME_WALKTHROUGH_CI.json
             apartment/HOME_WALKTHROUGH_CI.md
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Upload native room layout and cozy crowding audit for owner review
+        if: ${{ always() && runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: realiti-apartment-cozy-room-audit
+          path: |
+            apartment/HOME_COZY_AUDIT.json
+            apartment/HOME_COZY_FLOORPLAN.svg
           if-no-files-found: warn
           retention-days: 7
       - name: Attach standalone clean-home alpha for owner walkthrough
