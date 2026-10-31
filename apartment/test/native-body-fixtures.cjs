@@ -55,7 +55,8 @@ async function run(){
  assert.equal(out.ok,true,JSON.stringify(out));
  w.eval('b7Advance(0.4)');
  const hold=DYN.state().hold;
- assert.equal(hold.active,false,'room-local legacy hold is not silently relabeled as another chart');
+ assert.equal(hold.active,true,'original sanctuary hold is active only on a real supporting Apartment cushion');
+ assert.ok(hold.zones>=4,'native Relax sanctuary body zones are genuinely leased');
  const waveBefore=DYN.state().wave;
  assert.ok(waveBefore?.age_s>=0);
  const room=M.resident();
