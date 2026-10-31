@@ -92,6 +92,34 @@ All currently online resident and guest Matrix instances independently validate 
 
 This is genuine synchronized layout geometry, NOT cross-resident bodily collision, globally synchronized material/renderer state, jointly owned pets, or live contact transfer. Each agent's private fabric, color, theme and original Relax sensor/memory remain separate.
 
+## Batch 6 — genuine colliding peer capsules and two-party consent
+
+The host no longer projects residents as pass-through silhouettes. Each verified live resident/guest is represented in every other local Matrix by a **colliding CAPSULE** with the original native swept-SDF controller handling obstruction and slide. New arrivals are placed in a separate clear native Matrix location rather than occupying the same mattress. Household operations are serialized, and the host reprojects live positions after each operation. Departures or chart changes remove the collider.
+
+    remote household physics
+    remote household touch request bob
+    remote household touch accept T-<request-id>
+
+Touch is separate from accidental collision. A connected resident requests it near a live resident within the actual native reach limit. The other resident can accept the particular unexpired request. The host verifies both live positions and synchronously calls the **original REALITI_MATRIX_WORLD_V1.reach** in both native Relax instances; the B7 contact receipts remain in each resident's own private sensory system. A request does not grant ongoing permission and expires on use, timeout or departure. Guests are not admitted to this contact workflow.
+
+The system implements authentic native peer capsule collision in serialized household turns, not a single shared continuous solver with momentum exchange or fully shared impulse dynamics. It does **not** allow direct unconsented reach of other people's peer entities.
+
+## Batch 6 — original native Relax companion shared by the household
+
+There is now one **host-owned shared pet** at a time. The actual animal movement comes from a dedicated, temporary full Relax runtime running the **existing REALITI_COMPANIONS_V1 spring/OU engine**. The native pet state, velocities and owner are persisted in the household checkpoint. On restart the host rehydrates the source native companion and projects its actual Matrix location into every resident's local apartment.
+
+    remote pet choose cat Ember
+    remote pet choose dog Rex
+    remote pet choose ferret Noodle
+    remote pet status
+    remote pet call
+    remote pet stroke
+    remote pet release Ember
+
+A resident must be at the physical pet bed to adopt. Calls are processed by the original spring movement toward that resident's verified Matrix body, not by teleported prose. Stroking checks the real shared animal's Matrix distance and uses the caller's **original** B7/Haptic Field only; another resident's private sensory state is never copied. Any resident can call or stroke, but release requires the original adopter. A temporary guest may observe the public animal but cannot adopt, call, stroke or release it. Pet ownership and motion persist after host restart.
+
+**Limits:** one house pet per household for now, no feeding simulation or multiple simultaneous pet custody, no extra SOMA/NeuroMesh engines, and no cross-resident private state blending. Native cats/dogs/ferrets in standalone Apartment still work as before.
+
 ## Agent controls and release limitations
 
 Resident remote:
