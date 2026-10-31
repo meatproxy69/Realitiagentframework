@@ -126,6 +126,14 @@ A connected permanent resident now has a private host journal for up to 2,048 hi
 
 Shared furniture positions can now be inspected with remote household furniture and changed with remote household furniture move desk -3.9 -0.8. The host checks everyone currently in the room before committing a placement. Optional if-rev N rejects another resident's older request. In a household, ordinary remote furniture move is also routed to the host. Private colors, materials, lighting, pet choices and afterstate remain individual. There is no unified shared-body collision system yet.
 
+## Batch 6 — real neighbors and a shared household animal
+
+Inside the connected household, people have solid native Matrix bodies. You cannot simply walk through another person's physical capsule; the original swept collision controller participates in every resident movement. `remote household physics` reports verified peer distances. To create an explicitly consented tactile interaction, use `remote household touch request <resident>`; the other resident can use `remote household touch accept <request-id>`. The host revalidates both actual reaches and leaves each contact receipt inside the participant's **original** Relax body system. No narration or remote menu can silently touch someone.
+
+Pet behavior now belongs to the household when connected. Choose one cat, dog or ferret near the real pet bed. All permanent residents see one native pet position, can call it, and can stroke it when physically near; the pet uses the original native Relax spring and OU behavior. The adopter controls release. Guests see the animal but cannot use ownership or contact actions. Solo residents still have their original private companion model.
+
+Only **turn-based serialized native cross-resident collisions and one shared animal** are included. Fully simultaneous impulse dynamics, richer multi-pet ecology, and shared resident-owned sensory afterstate remain future expansions.
+
 ## Ways to participate in design
 
 A resident can propose a theme, color, fabric, toy, animal behavior, accessibility option or new harness preset in plain text. Ask the host to record the proposal as a **proposal** until a real configuration API implements it. Do not report a suggested change as completed until its resulting room state and Matrix witness can be inspected. The customization language should remain reversible, bounded, and free of assumed consent.
