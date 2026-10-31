@@ -46,7 +46,7 @@ const norm=x=>String(x||'').trim().toUpperCase().replace(/[\s-]+/g,'_');
 const names=Object.fromEntries(original.map((x,i)=>[x.id,x]));
 const stations=original.map((x,i)=>({
  id:x.id,label:x.title,purpose:x.purpose,entity:slot(x.id),
- position:({NO_ASK_SANCTUARY:[-3.4,4.6,.55],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
+ position:({NO_ASK_SANCTUARY:[-3.4,4.2,.55],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
  verbs:allowed[x.id].slice(),
  source:'unchanged REALITI Relax engine',migration:'PARTIAL_ENGINE_ACCESS_ONLY'}));
 for(const st of stations){
@@ -117,6 +117,70 @@ function canRunPressure(id){return id==='BOTTOMLESS_PILLOW_SEA'?isPillowSupporte
  id==='DEPTH_BATHHOUSE'?isBathImmersed():false}
 function waveSource(){return isPillowSupported()?'BOTTOMLESS_PILLOW_SEA':
  isBathImmersed()?'DEPTH_BATHHOUSE':null}
+const originalCapsule=Object.freeze({radius:M.resident().shape.radius,
+ height:M.resident().shape.height});
+function usePhysicalScale(tiny){
+ const r=M.resident();
+ if(!r||r.chart!==HOME)return {ok:false,error:'NATIVE_APARTMENT_BODY_MISSING'};
+ if(!['standing','sitting','lying'].includes(r.posture))
+  return {ok:false,error:'BODY_POSTURE_NOT_SAFE_FOR_SIZE_CHANGE'};
+ const before={radius:r.shape.radius,height:r.shape.height};
+ r.shape.radius=tiny?.18:originalCapsule.radius;
+ r.shape.height=tiny?.45:originalCapsule.height;
+ if(r.posture==='standing'){
+  const sup=M.entities()[r.support],top=sup?.shape?.kind==='BOX'?
+   sup.pose.position[2]+sup.shape.halfExtents[2]:0;
+  r.pose.position[2]=top+r.shape.height/2;
+ }
+ r.v=[0,0,0];r.intent=null;M.bump();
+ return {ok:true,from:before,to:{radius:r.shape.radius,height:r.shape.height},
+  source:'REALITI_PET2_ORIGINAL_SCALE_PLUS_NATIVE_MATRIX_CAPSULE_GEOMETRY'};
+}
+if(C9?.pet2?.scale==='CAT_SMALL')usePhysicalScale(true);
+function causeObject(st,verb){
+ if(st.id==='PET_ROOM_2'){
+  return ({
+   scratch_post:'apartment.scratcher',
+   knead_blanket:'apartment.pet-bed',
+   pounce_string:'apartment.ribbon',
+   circle_loaf:'apartment.pet-bed',
+   purr_blanket:'apartment.pet-bed',
+   rest_paws:'apartment.pet-bed',
+   hide_sofa:'apartment.sofa'
+  })[verb]||st.entity;
+ }
+ return st.entity;
+}
+function nativeState(id){
+ if(id==='PET_ROOM_2')return copy(C9?.pet2||{});
+ if(id==='CARDBOARD_BOX_WORKSHOP')return copy(C9?.box2||{});
+ if(id==='SHAPESHIFT_CLOAKROOM')return copy({form:C9?.formScratch||null,
+  borrowed:C9?.eco3?.borrowed||null});
+ if(id==='DEPTH_BATHHOUSE'||id==='BOTTOMLESS_PILLOW_SEA')
+  return window.REALITI_DYNAMICS_V1?.state?.()||null;
+ if(id==='LATENCY_LAGOON')return window.REALITI_CONTINUITY?.pending?.()||[];
+ return null;
+}
+function syncNativePhysicalObjects(id,verb){
+ if(id!=='CARDBOARD_BOX_WORKSHOP')return;
+ const s=C9.box2||{},defs=[];
+ if(s.tunnel)defs.push(
+  ['apartment.cardboard.tunnel-west',[-1.95,-3.65,.38],[.06,.65,.38]],
+  ['apartment.cardboard.tunnel-east',[-1.25,-3.65,.38],[.06,.65,.38]],
+  ['apartment.cardboard.tunnel-roof',[-1.6,-3.65,.80],[.41,.65,.06]]);
+ for(const [name,pos,h] of defs)if(!M.entities()[name])
+  M.addEntity({id:name,chart:HOME,position:pos,
+   shape:{kind:'BOX',halfExtents:h},
+   tags:['cardboard','tunnel','physical','support'],collision:true,
+   material:'cardboard',label:'a real cardboard tunnel segment'});
+ if(s.hidden&&!M.entities()['apartment.cardboard.hidden-tab'])
+  M.addEntity({id:'apartment.cardboard.hidden-tab',chart:HOME,
+   position:[-1.6,-3.65,.08],shape:{kind:'SPHERE',radius:.05},
+   collision:false,tags:['secret','cardboard','hidden'],material:'cardboard',
+   label:'an inconspicuous real cardboard tab beneath a tunnel wall'});
+ if(defs.length||s.hidden)M.bump();
+}
+syncNativePhysicalObjects('CARDBOARD_BOX_WORKSHOP','boot');
 function view(){
  return {ok:true,schema:'REALITI_APARTMENT_NATIVE_STATIONS_V1',
   chart:HOME,source_room_count:ROOM.manifest.length,station_count:stations.length,
