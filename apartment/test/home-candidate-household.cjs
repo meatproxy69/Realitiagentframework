@@ -61,7 +61,7 @@ const assertRoom=agent=>{
   assert.deepEqual(bob.read('realiti://apartment/scene').positions.desk,[-3.9,-.8]);
   assert.equal((await bob.run('remote furniture accent sofa moss')).ok,true);
   assert.equal(alice.read('realiti://apartment/furniture').fixtures.sofa.accent,'amber',
-   'per-resident style must not inherit another resident's accent');
+   "per-resident style must not inherit another resident's accent");
   assert.equal(bob.read('realiti://apartment/furniture').fixtures.sofa.accent,'moss');
   assert.equal((await alice.run('reach household.peer.bob')).error,
    'EXPLICIT_PEER_TOUCH_CONSENT_REQUIRED');
