@@ -34,14 +34,10 @@ export function adaptFrontier(original){
  patch("if(!inReach('deck.sextant'))",
   "if(!inReach('deck.sextant')&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(DECK))",
   'star_projector_sextant_reach');
- patch("if(!inReach('hall.scroll_'+(i+1)))",
-  "if(!inReach('hall.scroll_'+(i+1))&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(HALL))",
-  'palimpsest_shelf_reach_read');
- // Second identical occurrence must be selected too (the decoder), but the
- // expected count is exactly two in pristine source. Do not grant authority
- // from narration: the new station checks native Matrix reach independently.
- patch("if(!inReach('hall.scroll_'+(i+1)))",
-  "if(!inReach('hall.scroll_'+(i+1))&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(HALL))",
-  'palimpsest_shelf_reach_decode');
+ const scrollGuard="if(!inReach('hall.scroll_'+(i+1)))";
+ const occurrences=patched.split(scrollGuard);
+ if(occurrences.length!==3)throw Error('APARTMENT_FRONTIER_PATCH_DRIFT:palimpsest_read_and_decode');
+ patched=occurrences.join(
+  "if(!inReach('hall.scroll_'+(i+1))&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(HALL))");
  return patched;
 }
