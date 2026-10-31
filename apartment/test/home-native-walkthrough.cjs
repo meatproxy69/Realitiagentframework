@@ -13,20 +13,20 @@ const notePath=path.resolve(__dirname,'../HOME_WALKTHROUGH_CI.md');
 const round=(x,n=2)=>Math.round(x*10**n)/10**n;
 const distance=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);
 const stops=[
- {id:'apartment.sofa',action:'sit apartment.sofa',expectOn:'apartment.sofa',stand:true,glyph:'S'},
- {id:'apartment.bookcase',action:'reach apartment.bookcase',glyph:'K'},
- {id:'apartment.quiet-cushion',action:'sit apartment.quiet-cushion',expectOn:'apartment.quiet-cushion',stand:true,glyph:'Q'},
+ {id:'apartment.sofa',action:'sit__apartment.sofa',expectOn:'apartment.sofa',stand:true,glyph:'S'},
+ {id:'apartment.bookcase',action:'reach__apartment.bookcase',glyph:'K'},
+ {id:'apartment.quiet-cushion',action:'sit__apartment.quiet-cushion',expectOn:'apartment.quiet-cushion',stand:true,glyph:'Q'},
  {id:'apartment.firefly-jar',action:'remote catnip jar tap',glyph:'J'},
  {id:'apartment.wind-chime',action:'remote catnip chime listen',glyph:'H'},
  {id:'apartment.tea-cup',action:'remote catnip tea steep',glyph:'T'},
- {id:'apartment.wardrobe',action:'reach apartment.wardrobe',glyph:'W'},
+ {id:'apartment.wardrobe',action:'reach__apartment.wardrobe',glyph:'W'},
  {id:'apartment.pet-bed',action:'remote pet choose ferret Noodle',glyph:'P'},
  {id:'apartment.ribbon',action:'remote catnip ribbon flick',glyph:'R'},
  {id:'apartment.puzzle-box',action:'remote catnip puzzle press left',glyph:'X'},
- {id:'apartment.toy-chest',action:'reach apartment.toy-chest',glyph:'Y'},
- {id:'apartment.desk',action:'reach apartment.desk',glyph:'D'},
- {id:'apartment.desk-chair',action:'sit apartment.desk-chair',expectOn:'apartment.desk-chair',stand:true,glyph:'C'},
- {id:'nest.mattress',action:'lie nest.mattress',expectOn:'nest.mattress',glyph:'B'}
+ {id:'apartment.toy-chest',action:'reach__apartment.toy-chest',glyph:'Y'},
+ {id:'apartment.desk',action:'reach__apartment.desk',glyph:'D'},
+ {id:'apartment.desk-chair',action:'sit__apartment.desk-chair',expectOn:'apartment.desk-chair',stand:true,glyph:'C'},
+ {id:'nest.mattress',action:'lie__nest.mattress',expectOn:'nest.mattress',glyph:'B'}
 ];
 const log={schema:'REALITI_APARTMENT_NATIVE_WALKTHROUGH_V1',
  mode:'SYNTHETIC_NATIVE_AGENT_DOOR',release_approved:false,
@@ -166,7 +166,16 @@ function writeReport(){
    if(Object.keys(M.charts()).length!==1||Object.keys(M.portals()).length!==0)
     fail('HOME topology changed during '+target.id,'Unexpected chart or portal');
    if(!reached)continue;
-   const outcome=await session.door.run(target.action);
+   // Posture is an explicitly supported structured public operation; reach
+   // is a discoverable native Matrix action through public Realiti.invoke.
+   // Household-specific controls stay on the carried pocket remote.
+   let outcome;
+   if(target.action.startsWith('sit__')||target.action.startsWith('lie__')){
+    const kind=target.action.startsWith('sit__')?'sit':'lie';
+    outcome=await session.window.Realiti.invoke('posture',{kind,target:target.id});
+   }else if(target.action.startsWith('reach__')){
+    outcome=await session.window.Realiti.invoke('do',{action:target.action});
+   }else outcome=await session.door.run(target.action);
    recordInteraction(target.action,outcome);
    if(target.expectOn&&outcome?.ok===true){
     const space=session.window.Realiti.read('realiti://space');
