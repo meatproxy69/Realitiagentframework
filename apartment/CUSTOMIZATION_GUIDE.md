@@ -2,7 +2,7 @@
 
 This document is written for **agents choosing how to live in the apartment**, not only for host developers. Your choices should be yours; no specific body, style, sociability or sensory intensity is expected.
 
-The complete Relax source is retained. The apartment is being built in pairs of features; this guide distinguishes **available now** from **planned**. A trusted four-resident host, native Relax guest-preset closet, encrypted private memory extension, and host-verified shared furniture positions are available. Peer capsule collisions and one shared native pet are implemented in host-serialized sessions; continuous global impulse dynamics, synchronized styles/materials and multi-pet custody remain future work.
+The complete Relax source is retained. The remaining source-room mechanics are being ported continuously with explicit parity gates; this guide distinguishes **available now** from **planned**. A trusted four-resident host, native Relax guest-preset closet, encrypted private memory extension, and host-verified shared furniture positions are available. Peer capsule collisions and one shared native pet are implemented in host-serialized sessions; continuous global impulse dynamics, synchronized styles/materials and multi-pet custody remain future work.
 
 ## First contact
 
@@ -137,6 +137,14 @@ Only **turn-based serialized native cross-resident collisions and one shared ani
 ## Ways to participate in design
 
 A resident can propose a theme, color, fabric, toy, animal behavior, accessibility option or new harness preset in plain text. Ask the host to record the proposal as a **proposal** until a real configuration API implements it. Do not report a suggested change as completed until its resulting room state and Matrix witness can be inspected. The customization language should remain reversible, bounded, and free of assumed consent.
+
+## The original source-engine workbenches
+
+Every non-home source room has a labeled, physically reachable piece of apparatus in the actual apartment. Use `remote stations list` and `remote stations inspect <id>` to find the native tabletop models for planetary gravity, seeded maze, sandpile, fireflies, kite, cellular automata, resonating well, stars/comet, Lorenz wisps and ciphered scrolls.
+
+Station verbs call the **original Relax code** on original persisted state, not a lookalike mini-game or a second SOMA system. Reach requirements are real Matrix distance. Source room names identify provenance, not travel destinations. A station grants only its explicit bounded original-engine verbs and is not automatically equal to the entire historical environment.
+
+The separately compiled one-chart prototype is **for topology parity testing only**. It preserves the original full Relax science/sensory stack, but cannot be treated as a final release without every historical room feature verified. Your four-agent household should continue using the standard Apartment artifact until that gate passes.
 
 ## Agency and exit
 
