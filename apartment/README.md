@@ -45,9 +45,9 @@ The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote sema
 
 **Pending:** Full unified shared-object physics, shared furniture transactions, pet co-ownership, additional catnip from old rooms, expanded encrypted memory, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
 
-## Batch 4 — real four-resident host and guest SOMA closet
+## Batch 4 — four resident host and original Relax harness closet
 
-**Guest loaners:** The existing physical wardrobe has a new drawer holding reviewed HoneySpark Duo and Moonwire Recovered presets. The [Apartment build](build.mjs) injects the original preset packs with conserved-budget, no-evidence-gain checks. Agents use remote closet inspect / remote closet try <preset-id> / remote closet return. Real Matrix reach is required; a fitted loaner creates a **fresh, private SOMA instance** without importing another resident's memories, identity, native contact port or checkpoint. Trial termination on STOP, departure, manual return, or expiry is tested.
+**Guest loaners:** The existing physical wardrobe exposes the native REALITI Relax Moonwire presets from `REALITI_NEURO_RESTORATION_V1.presets()`. **No additional SOMA/NeuroMesh implementation is added or injected.** When a trusted household host approves a reach-checked fitting, it opens a second temporary copy of the **complete existing Relax runtime**, applies the built-in `applyPreset()` only there, and discards that whole temporary runtime on return, STOP, departure or expiry. The caller's original R&R harness, Haptic Field, memory and keys remain untouched. A solo apartment can inspect the catalog but cannot instantiate the loaner by itself.
 
 **Four resident household:** The trusted Node module [household.cjs](household.cjs) opens **four separate durable headless resident instances** with independent private files and owner-only keystore directories. It mirrors each online resident's verified Matrix position into the other instances as a non-colliding peer capsule, and supports a bounded host-persisted public board. Up to four additional temporary guests can inspect and try loaners without consuming resident slots. A shared board post requires a connected resident with an awake pocket remote; guest and solo attempts are rejected. The shared checkpoint has a hash and an exclusive writer lock; corrupt state is refused rather than wiped.
 
@@ -61,7 +61,8 @@ See [HOUSEHOLD_GUIDE.md](HOUSEHOLD_GUIDE.md) for the safe operator setup, runnab
 - Furnished home and pet interface: `source/home-pets.js`
 - Optional rain and cloak controls: `source/extras.js`
 - Independent runtime assembler: `build.mjs`
-- Reviewed transient guest harness closet: `source/closet.js`
+- Native Relax closet catalog: `source/closet.js`
+- Trusted disposable full-Relax trial host: `native-closet-host.cjs`
 - Host-fed public household observer: `source/household-view.js`
 - Trusted four-agent household host: `household.cjs`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
