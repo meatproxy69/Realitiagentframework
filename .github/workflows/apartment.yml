@@ -55,6 +55,7 @@ jobs:
           node --check apartment/source/one-chart-preview.js
           node --check apartment/build-one-chart.mjs
           node --check apartment/build-home-candidate.mjs
+          node --check apartment/source/native-home-boot-adapter.mjs
           node --check apartment/test/home-candidate.cjs
           node --check apartment/test/home-candidate-household.cjs
           node --check apartment/test/one-chart-preview.cjs
