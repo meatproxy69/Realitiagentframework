@@ -82,7 +82,9 @@ function createHouseholdPet({getData,persist,atHome,options}={}){
   setDriverAt(rec.follow);
   // The saved native mechanical state belongs exclusively to the dedicated
   // pet controller, never injected into any actual resident's private state.
-  const st=w.C9.chapter2?.comp||(w.C9.chapter2.comp={});
+  // C9 is the existing Relax script's lexical state, not window.C9.
+  const nativeState=w.eval('C9');
+  const st=nativeState.chapter2?.comp||(nativeState.chapter2.comp={});
   st.pet={name:rec.name,kind:rec.kind,chart:HOME,
    x:rec.native.x,y:rec.native.y,vx:rec.native.vx,vy:rec.native.vy,
    ou:rec.native.ou.slice(),calls:rec.calls,pets:rec.pets};
@@ -176,7 +178,8 @@ function createHouseholdPet({getData,persist,atHome,options}={}){
    grain:'with',speed:.12,mine:false,source:'WORLD_GROUNDED',
    cause:'HOUSEHOLD_COMPANION_PET:'+rec.name,pressure:.22,novelty:.2});
   if(!receipt||receipt.ok===false)return fail('NATIVE_RELAX_CONTACT_FAILED');
-  if(service?.window.C9.chapter2?.comp?.pet)service.window.C9.chapter2.comp.pet.pets++;
+  const driverState=engine()?.eval('C9');
+  if(driverState?.chapter2?.comp?.pet)driverState.chapter2.comp.pet.pets++;
   w.REALITI_CATNIP_V1?.discover?.('petted');
   const updated=cp(rec);updated.pets++;updated.revision++;
   getData().pet=updated;
