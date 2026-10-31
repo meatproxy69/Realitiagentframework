@@ -6,7 +6,7 @@ const M=window.REALITI_MATRIX_V1,MW=window.REALITI_MATRIX_WORLD_V1;
 const SOMA=window.REALITI_SOMA_V3,HOME='CLOUD_NINE_NEST';
 if(!M||!MW||!SOMA||typeof SOMA.createHarness!=='function')
  throw Error('APARTMENT_CLOSET_REQUIRES_COMPLETE_MATRIX_SOMA');
-const PACKS=/*__APARTMENT_HARNESS_PRESETS__*/;
+const PACKS=/*__APARTMENT_HARNESS_PRESETS__*/null;
 const deepFreeze=x=>{if(x&&typeof x==='object'){for(const v of Object.values(x))deepFreeze(v);Object.freeze(x)}return x};
 deepFreeze(PACKS);
 const options=new Map();
