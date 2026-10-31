@@ -32,8 +32,8 @@ for(const filename of overlays){
  let body=await read(filename);
  if(filename==='source/closet.js'){
   const pin=JSON.stringify(packs).replace(/</g,'\\u003c');
-  if(body.split('/*__APARTMENT_HARNESS_PRESETS__*/').length!==2)throw Error('LOANER_PACK_INSERT_DRIFT');
-  body=body.replace('/*__APARTMENT_HARNESS_PRESETS__*/',pin);
+  if(body.split('/*__APARTMENT_HARNESS_PRESETS__*/null').length!==2)throw Error('LOANER_PACK_INSERT_DRIFT');
+  body=body.replace('/*__APARTMENT_HARNESS_PRESETS__*/null',pin);
  }
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
  const ids={'source/home-pets.js':'realiti-apartment-home-pets',
