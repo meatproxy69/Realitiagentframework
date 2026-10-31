@@ -217,13 +217,14 @@
     },
     {
       "source_room": "ARCHIPELAGO",
-      "apartment_location": "tabletop sea/weather/boat simulation station; no second chart",
-      "status": "partial",
+      "apartment_location": "NOT IN APARTMENT HOME — original ocean lives exclusively in canonical REALITI Relax",
+      "status": "excluded_with_owner_approval",
       "parity_tests": [
-        "apartment/test/stations.cjs",
-        "apartment/test/sea-table.cjs"
+        "apartment/test/stations.cjs"
       ],
-      "notes": "Original native 2 km analytic terrain h, time-varying rain, wind/current and UNMODIFIED original stepBoat integration are now callable from a real HOME glass sea tray and reachable wooden model boat. The derived-only original source adapter prevents moving the full-sized apartment resident when the model boat is controlled. Real model boarding/landing with terrain refusal, bounded original-world rowing, numerical comparison to canonical Relax, STOP and restart are tested in both the 23-chart developer build and the strict one-chart preview. IMPORTANT: model boarding does NOT physically place the avatar aboard a full-sized boat, source island chart visitation/shore routes/fog-of-war/boat pathfinding/terrain geodesics are not fully ported; this is still PARTIAL, not a release-parity certification. Physically reached native HOME apparatus now exposes a bounded subset of original ARCHIPELAGO engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
+      "notes": "Owner-excluded from the Apartment physical product (not from canonical Relax). Any inherited development-era source stations or prototype echo panel are migration scaffolding, not a requirement or certified feature of the shipped home. No invented spatial or body parity; preserve original source untouched and keep the release gate closed until the final home footprint is reviewed.",
+      "owner_approval": "Owner chat direction, October 30 2026: 'don't jam everything into the room, we don't need an ocean or undercity'. Applies to the Apartment product scope only.",
+      "justification": "The Apartment is a household, not a seafaring world. No sea tray, physical boat model, ocean simulation station, human-size boat boarding or island scene is required for release. Do not remove original Relax Archipelago."
     },
     {
       "source_room": "MERIDIAN_CITY",
@@ -241,14 +242,26 @@
     },
     {
       "source_room": "UNDERCITY",
-      "apartment_location": "darkness/echo cabinet and sensory navigation toy",
-      "status": "partial",
+      "apartment_location": "NOT IN APARTMENT HOME — original Undercity lives exclusively in canonical REALITI Relax",
+      "status": "excluded_with_owner_approval",
       "parity_tests": [
         "apartment/test/stations.cjs",
-        "apartment/test/home-social-echo.cjs",
-        "apartment/test/undercity-cabinet.cjs"
+        "apartment/test/home-social-echo.cjs"
       ],
-      "notes": "Original Undercity dynamic pull_lever/read_wall are now physically gated at a native HOME iron lever and carved inscription. An exact-source-checked derived Apartment adapter extends only original source reach; original U.pull/readWall transitions, gate state and source discovery remain unchanged, with real native model gate collision and persisted restart. Differential tests compare canonical Relax output in both 23-chart development and non-release one-chart preview. The historical 9×9 dark maze, actual tunnel walking, cistern, two exits, source wall discovery, darkness fields and full body/spatial parity are NOT ported and no old chart deletion is authorized. Previously verified: original 16-direction 343m/s SDF ray method measures actual HOME geometry; clapping emits SELF sound; B7 panel touch is physically reached; native map reports observed HOME rays while historical layout stays historical. Full parity remains PARTIAL."
+      "notes": "Owner-excluded from the Apartment physical product (not from canonical Relax). Any inherited development-era source stations or prototype echo panel are migration scaffolding, not a requirement or certified feature of the shipped home. No invented spatial or body parity; preserve original source untouched and keep the release gate closed until the final home footprint is reviewed.",
+      "owner_approval": "Owner chat direction, October 30 2026: 'don't jam everything into the room, we don't need an ocean or undercity'. Applies to the Apartment product scope only.",
+      "justification": "The Apartment is a household, not an underground maze. No physical original-source lever/vault cabinet, mini-gate, tunnel scenery or walkable Undercity is required for release. The earlier development sonar panel remains temporary scaffolding pending the home-footprint review. Do not remove original Relax Undercity."
     }
-  ]
+  ],
+  "home_first_scope": {
+    "decision_date": "2026-10-30",
+    "owner_direction": "No ocean or Undercity inside the Apartment; do not compress 22 worlds into a home.",
+    "source_runtime_preserved": true,
+    "legacy_station_gallery": "development scaffolding, not final home furniture",
+    "scope_exclusions": [
+      "ARCHIPELAGO",
+      "UNDERCITY"
+    ],
+    "remaining_work": "Home-footprint simplification and parity gates for genuinely selected home features."
+  }
 }

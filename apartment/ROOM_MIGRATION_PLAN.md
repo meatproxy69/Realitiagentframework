@@ -34,17 +34,11 @@ The source-action audit now distinguishes four original Nest verbs that remain i
 
 This does **not** silently approve historical City dancehall geometry, the two-kilometre Archipelago, old boat boarding/landing, genuine Undercity tunnel exploration or other dynamic controls. Original harbor/boat and venue behavior must be ported independently with new actual Matrix objects and equivalent state/physics, or explicitly excluded by owner approval. Keep `partial` status until the complete parity gate passes.
 
-## Archipelago sea-table source parity and remaining island boundaries
+## Owner-approved Apartment scope exclusions and home-first correction
 
-A new physical HOME sea-table and wooden model boat use the original Relax Archipelago's analytic `h(x,y)` topology, wind/current and untouched `stepBoat` numerical core. An anchor-checked adapter exists **only in the separately derived Apartment HTML**. Differential acceptance must compare boat motion under identical source state/time to the canonical two-kilometre Archipelago. The model board and land actions must require real HOME reach and genuine source terrain conditions, not fabricate arrival or bodily contact.
+**October 30, 2026:** The owner explicitly rejected the ocean and Undercity as Apartment room contents. The goal is a small, coherent home, not a museum of source rooms. ARCHIPELAGO and UNDERCITY are **excluded from the target Apartment's physical world experiences**; retain the original worlds and all their real source behavior in canonical REALITI Relax. The newly added sea-table, native wooden model boat, lever/vault model and gate are removed from the Apartment derivative. These exclusions do not erase the source catalogue or user data.
 
-Importantly, **source numerical parity is not spatial/body parity**: a model controller cannot substitute for the full original island chart, actual physically boarded avatar, boats as full-size supports, terrain walking, island exploration, or source fog-of-war. The static action gap audit may report no unlisted static action names while these environmental and dynamic systems are incomplete. All original room statuses must remain `partial` (HOME retained) until owner-reviewed full behavior and state migration criteria pass.
-
-## Undercity original dynamic action parity, without fictitious exploration
-
-The Apartment-only exact-source adapter extends the original Undercity lever/vault reach predicate to a real HOME cabinet. The two original dynamic functions run on actual native Matrix lever and inscription contacts, preserve original source lever/gate/inscription state, and drive a real physically collidable iron model gate. Differential tests compare the source results to an unchanged canonical Relax Undercity instance, exercise refusal and repeat actions, and verify save/restart in both topologies.
-
-**Only these dynamic actions are transferred.** The original 9×9 tunnel's physical exploration, darkness fields, cistern, low clearance, exits, wall topology, and discovery coverage have not been replaced by a cabinet or the current 16 HOME-ray measurement. The original source room remains `partial`, and no chart removal or release certification follows.
+The current 22 source workbench fixtures from the earlier migration phase remain **development-only scaffolding**, not approved home furniture. The next design gate must shrink the final HOME footprint: real furniture and companions in space, personal tools on the carried remote, optional Extras without fabricating grounded contact. Retiring a legacy chart does not imply replaying all of its scenery inside HOME. Functional release acceptance should review the **owner-approved product feature scope**, not demand that every original room be built in miniature. The non-release preview and all original systems stay protected during that design correction.
 
 ## Non-negotiable acceptance checks
 
