@@ -109,7 +109,26 @@ Owner direction: **no ocean and no Undercity attraction in the Apartment**. The 
 
 The current 22 source apparatus in the *development* Apartment predate this correction. They are temporary test scaffolding and **not approved as the final home layout**. They must be consolidated or omitted behind the appropriate personal remote / internal Extras boundaries in a reviewed follow-up. Features that require genuine world contact must not be replaced by invented contact receipts. Scope exclusions never authorize deleting original Relax files or user state. The one-chart build remains experimental, and release approval remains false.
 
-## Developer source boundaries
+## Home-first alpha candidate — no historic world fixtures
+
+The separately generated `RealitiApartmentHomeCandidate.html` is the **actual home-only test candidate**, rather than the older one-chart lab/gallery prototype. Its native `CLOUD_NINE_NEST` world contains existing household furniture, the bed, closet, personal remote, pet, catnip toys and domestic sensory sources. The 22 legacy source-room stations, artificial bathhouse, cardboard tunnel, Undercity panel, sea models and Lorenz wisp are **never instantiated** in this candidate. Historical source engines remain available in canonical REALITI Relax and the unchanged development Apartment. The carried remote intentionally has **no** station-gallery page.
+
+Build from the repository root after installing the existing headless dependency:
+
+    node build.mjs
+    node apartment/build.mjs
+    node apartment/build-one-chart.mjs
+    node apartment/build-home-candidate.mjs
+    node apartment/test/home-candidate.cjs
+    node apartment/test/home-candidate-household.cjs
+
+The independent candidate uses `HOME_CANDIDATE_VALIDATION.json`. Always pass it as `validationPath` to the resident loader or household host; the normal Apartment `VALIDATION.json` belongs to another artifact. It is SHA-256-pinned to its parent Apartment and to the exact one-chart topology gate. The original full 23-chart runtime still initializes before the one-chart gate prunes the old charts, so this is an **alpha**, not the final native one-chart release packaging. No resident data is silently migrated, reset or replaced.
+
+After both release-candidate tests pass, the Ubuntu CI job attaches the standalone generated HTML, its matching SHA-256 manifest and operator notes as a seven-day **alpha test artifact** named `realiti-apartment-home-first-alpha`. The artifact contains no test resident data, key files or private journal. Opening a test artifact is not approval to point it at real household storage.
+
+The CI runs a solo restart/STOP/native-sensory test and an independent four-resident + guest integration test (encrypted journal isolation, colliding bodies, explicit two-party contact, shared furniture, single real Relax pet, original guest closet trial and backup replay) on Ubuntu and Windows. It does **not** simulate continuous shared-body impulse physics or prove that real deployment, external authentication, desktop visual styling, and all human experience tests are production-ready.
+
+Release remains **blocked** pending owner approval of the actual room layout and privacy/backup behavior, a production launch/restore rehearsal, and a supported runtime/deployment path. `candidate_only: true`, `preview_only: true`, `release_approved: false` cannot be promoted by passing a source-action count or ordinary CI.
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
 - Canonical native companion code: `../source/scripts/58o-companions.js`, unchanged

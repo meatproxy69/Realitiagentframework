@@ -263,5 +263,26 @@
       "UNDERCITY"
     ],
     "remaining_work": "Home-footprint simplification and parity gates for genuinely selected home features."
+  },
+  "home_first_candidate": {
+    "artifact": "apartment/RealitiApartmentHomeCandidate.html",
+    "manifest": "apartment/HOME_CANDIDATE_VALIDATION.json",
+    "status": "alpha_nonrelease",
+    "source_runtime_preserved": true,
+    "station_count_in_candidate": 0,
+    "chart_count_after_boot": 1,
+    "preview_only": true,
+    "release_approved": false,
+    "test_sources": [
+      "apartment/test/home-candidate.cjs",
+      "apartment/test/home-candidate-household.cjs"
+    ],
+    "remaining_gates": [
+      "owner_visual_layout_review",
+      "production_deployment_recovery_rehearsal",
+      "external_access_security_review",
+      "native_single_chart_initialization_without_runtime_pruning",
+      "signed_scope_approval"
+    ]
   }
 }

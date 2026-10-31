@@ -11,6 +11,30 @@ const W=window.REALITI_WONDER_V1,FR=window.REALITI_CATNIP_V1;
 const ROOM=window.REALITI_SLICE_ROOMS,HOME='CLOUD_NINE_NEST';
 if(!M||!MW||!W||!FR||!ROOM||!window.REALITI_SOMA_RELAX_V3)
  throw Error('APARTMENT_STATIONS_REQUIRE_ENTIRE_ORIGINAL_RELAX_STACK');
+// The home-only candidate builds the same complete Relax source stack but
+// intentionally does NOT install the legacy 22-room apparatus gallery.
+// The source systems remain in the canonical Relax artifact and development build.
+if(window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true){
+ const reject=()=>({ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE',
+  hint:'This is a home. Use original REALITI Relax for historical room experiences.'});
+ const supported=()=>{
+  const r=M.state().residents['resident:self'],e=M.entities()['apartment.quiet-cushion'];
+  return !!(r&&e&&r.chart===HOME&&C9.currentRoom===HOME&&e.chart===HOME&&
+   ['lying','sitting'].includes(r.posture)&&
+   (r.on===e.id||r.support===e.id)&&
+   Math.max(0,M.sdf(e,r.pose.position))<=.75);
+ };
+ const view=()=>({ok:true,schema:'REALITI_APARTMENT_NATIVE_STATIONS_V1',
+  chart:HOME,source_room_count:ROOM.manifest.length,station_count:0,stations:[],
+  development_gallery_disabled:true,home_first_candidate:true,
+  law:'The original Relax source rooms are not physically installed inside this home.'});
+ window.REALITI_APARTMENT_STATIONS_V1=Object.freeze({
+  view,snapshot:reject,run:reject,handle:reject,stationEntity:()=>null,
+  nearActive:()=>false,isPillowSupported:supported,isBathImmersed:()=>false,
+  canHoldSanctuary:()=>false,canRunPressure:()=>false,waveSource:()=>null
+ });
+ return;
+}
 const copy=x=>JSON.parse(JSON.stringify(x));
 const HOME_ONLY=()=>C9.currentRoom===HOME&&M.resident().chart===HOME;
 const allowed=Object.freeze({

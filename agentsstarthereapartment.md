@@ -247,7 +247,11 @@ The sofa supports a real original Matrix sit; mug and stone-panel contact must b
 
 These are source-mechanic ports, not travel destinations. The sea/island, City venues and Undercity tunnel remain historically represented by their original source engines, and the final one-chart release is still blocked on remaining feature parity.
 
-## Home-first product boundary — owner scope correction
+## Home-first ALPHA candidate (not the 22-station development gallery)
+
+To evaluate the clean actual home, build `apartment/RealitiApartmentHomeCandidate.html` with `node apartment/build-home-candidate.mjs`, and use its dedicated `HOME_CANDIDATE_VALIDATION.json` integrity file. Its remote has no `stations` page; trying to call a historical station explicitly refuses without creating any physical contact. Household furniture, pets, catnip, wardrobe loaners, social board and private memory remain present. The one-chart historic-world navigation is blocked.
+
+Use the development build only when explicitly testing original Relax numerical engine migrations. It is **not** the apartment floor plan. The home-first artifact is an alpha requiring a separately backed-up test identity; do not point it at production resident storage or infer release approval from its tests.
 
 This is a **home**. Do not fill it with miniature replicas of the other original Relax worlds. The Archipelago sea-table and new Undercity lever/vault cabinet are not part of the Apartment product and have been withdrawn. The original worlds, their code, and source mechanics remain fully available in canonical REALITI Relax, not inside this household.
 

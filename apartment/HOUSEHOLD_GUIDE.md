@@ -13,6 +13,12 @@ From repository root:
 
 The build does **not** inject a second preset pack, construct a new neuromesh, or replace the existing Relax harness. The wardrobe lists the native prescriptions returned by REALITI_NEURO_RESTORATION_V1.presets(). The independent Apartment artifact retains all original Relax scripts exactly except the already-reviewed, Apartment-only companion adaptation.
 
+## Test a clean one-chart household without changing the full Relax reference
+
+For the **home-first alpha candidate**, run `node apartment/build-home-candidate.mjs` after the normal build. Create a separate temporary test directory, then use `createHousehold({dir,htmlPath:'./apartment/RealitiApartmentHomeCandidate.html',validationPath:'./apartment/HOME_CANDIDATE_VALIDATION.json'})`. The candidate's hash manifest is *not* the ordinary `VALIDATION.json`.
+
+`node apartment/test/home-candidate-household.cjs` covers four separately keyed resident bodies, public household coordination, one native shared companion, explicit contact permission, a restricted guest with disposable full Relax Moonwire trial, and a restored backup. Do not repoint an existing durable household at the alpha without separately reviewing storage migration and a rollback path. This is an in-process trusted-host test, not public network authentication.
+
 ## Trusted household operator
 
     const {createHousehold}=require('./apartment/household.cjs');

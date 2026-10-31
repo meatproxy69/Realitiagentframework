@@ -7,6 +7,7 @@ const F=window.REALITI_APARTMENT_FURNITURE_V1,C=window.REALITI_APARTMENT_CATNIP_
 const CLOSET=window.REALITI_APARTMENT_CLOSET_V1,H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
 const ST=window.REALITI_APARTMENT_STATIONS_V1;
 const GUEST=window.REALITI_APARTMENT_ROLE==='guest';
+const HOME_FIRST=window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true;
 if(!D||!A||!M||!F||!C||!CLOSET||!H||!ST||!window.REALITI_APARTMENT_HOME_V1||
    !window.REALITI_SOMA_RELAX_V3)throw Error('APARTMENT_REMOTE_MISSING_FULL_RELAX');
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default');
@@ -58,7 +59,7 @@ function menu(){
    'remote pet stroke','remote pet release <name>'],
   furnishings:['remote furniture help','remote furniture list'],
   catnip:['remote catnip help','remote catnip list'],
-  stations:['remote stations help','remote stations list','remote stations inspect <source-id>','remote stations use <source-id> <original-verb>'],
+  ...(HOME_FIRST?{}:{stations:['remote stations help','remote stations list','remote stations inspect <source-id>','remote stations use <source-id> <original-verb>']}),
   extras:['remote extras','remote extras rain','remote extras cloak'],
   closet:['remote closet inspect','remote closet help','remote closet status'],
   household:['remote household','remote household board','remote household furniture',
@@ -87,7 +88,8 @@ function resource(uri){
  if(uri==='realiti://apartment/remote')return status();
  if(uri==='realiti://apartment/furniture')return F.view();
  if(uri==='realiti://apartment/catnip')return C.view();
- if(uri==='realiti://apartment/stations')return ST.view();
+ if(uri==='realiti://apartment/stations')return HOME_FIRST?
+  {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE'}:ST.view();
  if(uri==='realiti://apartment/closet')return CLOSET.inspect();
  if(uri==='realiti://apartment/closet/status')return CLOSET.current();
  if(uri==='realiti://apartment/household')return H.view();
@@ -117,6 +119,8 @@ async function run(raw){
   awake=false;sync();return originalRun(raw)}
  if(s.startsWith('resource realiti://apartment/')){
   const uri=s.slice('resource '.length);
+  if(HOME_FIRST&&uri==='realiti://apartment/stations')
+   return {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE'};
   if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/catnip',
      'realiti://apartment/closet','realiti://apartment/closet/status',
      'realiti://apartment/household','realiti://apartment/board',
@@ -128,6 +132,9 @@ async function run(raw){
  if(s.startsWith('remote ')){
   if(!awake)return {ok:false,error:'REMOTE_ASLEEP',hint:'Use remote activate to wake your carried device.'};
   const command=s.slice(7);
+  if(HOME_FIRST&&(command==='stations'||command.startsWith('stations ')))
+   return {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE',
+    hint:'Only native home furniture, pets, toys and resident tools are in this apartment.'};
   if(command==='help'||command==='menu')return menu();
   if(GUEST&&!/^(?:closet(?:\s|$)|household$|household board$|look$|off$|help$|menu$|status$)/.test(command))
    return {ok:false,error:'GUEST_REMOTE_RESTRICTED'};

@@ -10,16 +10,19 @@ const D=window.REALITI_AGENT_DOOR,A=window.Realiti;
 const NATIVE=window.REALITI_SLICE_ROOMS,ST=window.REALITI_APARTMENT_STATIONS_V1;
 if(!M||!D||!A||!NATIVE||!ST||!window.REALITI_RR_HARNESS_V1||
    !window.REALITI_SOMA_RELAX_V3)throw Error('ONE_CHART_REQUIRES_ENTIRE_NATIVE_RELAX');
+const HOME_FIRST=window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true;
 const initial=Object.keys(M.charts());
-if(initial.length!==23||!M.charts()[HOME]||ST.view().station_count!==22)
+if(initial.length!==23||!M.charts()[HOME]||ST.view().station_count!==(HOME_FIRST?0:22))
  throw Error('ONE_CHART_SOURCE_ATLAS_OR_MECHANICS_NOT_READY');
 const cp=x=>JSON.parse(JSON.stringify(x));
 const only=Object.freeze([{id:HOME,title:'RealitiApartment',
- purpose:'one lived-in apartment; archived Relax numerical engines are available as physical stations'}]);
+ purpose:HOME_FIRST?'one shared home with real furniture, pets and private resident systems':
+ 'one lived-in apartment; archived Relax numerical engines are available as physical stations'}]);
 const safeName=s=>/^(?:CLOUD_NINE_NEST|HOME|NEST|REALITIAPARTMENT|REALITI_APARTMENT)$/i.test(String(s||'').trim());
 const noRoom=place=>({ok:false,error:'LEGACY_ROOM_NOT_WALKABLE',
  requested:String(place||'').slice(0,100),
- hint:'Only RealitiApartment is physically registered. Explore original mechanisms using remote stations, or use the complete Relax reference build.'});
+ hint:HOME_FIRST?'Only the home is registered. Historical worlds remain available in original REALITI Relax.':
+ 'Only RealitiApartment is physically registered. Explore original mechanisms using remote stations, or use the complete Relax reference build.'});
 let retired=0;
 function prune(){
  let changed=false;
@@ -63,7 +66,9 @@ if(typeof DATA!=='undefined'){
  }
 }
 if(typeof FIRST!=='undefined'){
- FIRST.entry_cards=[{target:HOME,label:'RealitiApartment',why:'One physical home with real source-engine stations'}];
+ FIRST.entry_cards=[{target:HOME,label:'RealitiApartment',why:HOME_FIRST?
+  'A single, ordinary shared home with native Relax embodiment and real household fixtures':
+  'One physical home with real source-engine stations'}];
  FIRST.recommended_soft_tour=[HOME];
 }
 const Drun=D.run.bind(D),Dhelp=D.help?.bind(D);
@@ -81,16 +86,19 @@ D.run=async function(raw){
 D.help=()=>{
  const original=Dhelp?.()||{};
  return {...original,commands:['look','feel','where','actions','stay <ms>',
-  'remote activate','remote stations help','remote stations list',
+  'remote activate',...(HOME_FIRST?[]:['remote stations help','remote stations list']),
   'save','stop','goodbye'],
   rooms:cp(only),one_chart_preview:true,
-  note:'Only the apartment chart exists. Legacy science lives in physically reached stations. Full 23-room parity is not yet certified.'};
+  note:HOME_FIRST?
+   'One home, no historical world props or gallery. Alpha candidate; original Relax source intact.':
+   'Only the apartment chart exists. Legacy science lives in physically reached stations. Full 23-room parity is not yet certified.'};
 };
 function capabilities(value){
  const r=cp(value||{});
  r.rooms=cp(only);
  r.apartment_topology={chart:HOME,charts:1,portals:0,
-  preview_only:true,legacy_mechanics_not_yet_parity_certified:true};
+  preview_only:true,home_first_candidate:HOME_FIRST,
+  legacy_mechanics_not_yet_parity_certified:true};
  r.operations=(r.operations||[]).filter(op=>op!=='through');
  return r;
 }
@@ -113,11 +121,14 @@ function status(){
  chart:HOME,charts:Object.keys(M.charts()),portals:Object.keys(M.portals()).length,
  legacy_matrix_entities:Object.values(M.entities()).filter(e=>e.chart!==HOME).length,
  live_source_engine_stations:ST.view().station_count,
+ home_first_candidate:HOME_FIRST,legacy_station_gallery_disabled:HOME_FIRST,
  source_room_names_are_not_walkable:true,
  retired_at_boot:initial.length-1,
  original_relax_untouched:true,
  preview_only:true,mechanical_parity_certified:false,
- law:'This candidate proves physical one-chart topology only. Historical source engines still need individual behavior/causal equivalence review before release.'};
+ law:HOME_FIRST?
+ 'One-chart home with original Relax systems; manual product approval and restoration gates still required.':
+ 'This candidate proves physical one-chart topology only. Historical source engines still need individual behavior/causal equivalence review before release.'};
 }
 window.Realiti=Object.freeze({...A,read,invoke,run,
  rooms:()=>cp(only),help:D.help});
