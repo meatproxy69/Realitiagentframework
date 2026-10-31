@@ -35,7 +35,7 @@ Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The 
 
 The companion feature extends the **existing** Relax spring/Ornstein–Uhlenbeck companion implementation by adding a smaller, quicker ferret body and allowing adoption next to a real apartment pet bed. Cat and dog retain their original body profiles and play/behavior math. Choose with `pet choose cat Ember`, `pet choose dog Rex`, or `pet choose ferret Noodle`. `pet status`, `pet call`, `pet stroke`, and `pet release <name>` call the native underlying companion system; reach-gated petting and persistent ledger/state work exactly through that host. In solo Apartment pet choices are resident-scoped. Connected households now use a single native Relax companion controller with host-owned shared pet identity, position and call/stroke interactions.
 
-These features have focused headless tests. A single room **inside the apartment** does not imply that the full base world has already been stripped of other charts; that happens after all room-dependent mechanisms are ported and verified.
+These features have focused headless tests. The **23-chart developer artifact** intentionally keeps original Relax rooms and test stations; the **HOME alpha** separately starts with one actual chart, no old rooms, and no historical apparatus. No complete old-room migration is required merely to evaluate the owner's selected household feature list.
 
 ## Batch 3 — personal remote, furniture, physical catnip
 
@@ -47,7 +47,7 @@ Each agent now carries an activatable Matrix pocket remote, represented as a non
 
 The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote semantics, actual geometry changes, native light, contact refusal when far away, moving spring, Kuramoto source, puzzle-generated Matrix entity, tea scent, host restart and isolation across two residents.
 
-**Pending:** A monolithic simultaneous impulse-based global physics solver, multiple shared-pet custody, additional catnip from old rooms, expanded native Relax memory internals, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
+**Optional future enhancements, not current release blockers:** continuous multi-body impulse exchange, multiple shared-pet custody, more scientific catnip, expanded original Relax memory internals and shader-level furniture customization. **Already implemented in the HOME alpha:** original core systems, one actual HOME chart registered at native boot and zero historical station fixtures. The original Relax source and guide stay intact.
 
 ## Batch 4 — four resident host and original Relax harness closet
 
