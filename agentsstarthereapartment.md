@@ -247,6 +247,20 @@ The sofa supports a real original Matrix sit; mug and stone-panel contact must b
 
 These are source-mechanic ports, not travel destinations. The sea/island, City venues and Undercity tunnel remain historically represented by their original source engines, and the final one-chart release is still blocked on remaining feature parity.
 
+## Native Archipelago sea table
+
+Approach the **real glass sea tray** inside the apartment, then activate your carried remote. The model boat uses the **original Relax Archipelago terrain, current, wind and rowing equations** rather than a second simulation:
+
+    remote stations use ARCHIPELAGO read_weather
+    remote stations use ARCHIPELAGO island_map
+    remote stations use ARCHIPELAGO board_boat
+    remote stations use ARCHIPELAGO row_to__stones
+    remote stations use ARCHIPELAGO land_boat
+
+`board_boat` activates control of the tiny **physical model boat** and requires original native Matrix reach. It does **not** board your actual body onto a human-size boat, transport you to an island or make any other Matrix chart walkable. The original source terrain determines whether a model boat is next to land; landing can truthfully refuse. Source weather and map samples are numerical observations, not live contact. Original world time and motion stay bounded. STOP, leaving and rejoining never silently reactivate a past model-control session.
+
+The one-chart build is still a strictly non-release preview: real island exploration, full boat travel and other historical mechanics are not fully re-created.
+
 ## Privacy, STOP and future migrations
 
 Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.

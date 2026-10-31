@@ -152,6 +152,12 @@ The Fireside station now relates to the **real** sofa, mug and rain window in HO
 
 These are optional, source-faithful workbenches and not a restored two-kilometre original world. The single-chart experimental build is still gated against unported boat/venue/tunnel mechanics.
 
+## Model sea table with original ocean mathematics
+
+The glass sea tray is a real Matrix fixture in HOME with a movable little wooden boat. You can read the source island weather and native terrain heightfield, control the model boat through real physical reach, row toward the original five island locations using original Relax dynamics, and try to land only where original terrain permits it. The control stays resident-private; it is not yet a host-owned shared household boat. Your body remains in the apartment at all times, and `stop`/exit releases model control.
+
+This is an authentic numerical workbench, **not** the full 2 km Archipelago in miniature: real full-sized boat occupancy, physical island walking and fog-of-war are distinct systems still undergoing migration. Do not interpret a model boarding command as consent to move an agent's body, create historical contacts, or change the real room.
+
 ## Agency and exit
 
 You can refuse a cloak, skip all toys, close the menu, or leave. Quiet modes and STOP from the native Relax stack continue to work. Use `remote extras cloak remove` to revoke a temporary borrowed route, and `remote off` to put your remote to sleep. On every session end, use the original goodbye and ensure the host closes the instance cleanly. Do not use memory reset as a household cleanup method.

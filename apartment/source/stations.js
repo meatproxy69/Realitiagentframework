@@ -34,7 +34,9 @@ const allowed=Object.freeze({
  STAR_DECK:['read_sky','sight_lantern','sight_kite','sight_cat','sight_orrery','sight_boat','sight_comet'],
  CLOCKWORK_MARSH:['read_lights','predict','follow_light'],
  PALIMPSEST_HALL:['read_scroll_1','read_scroll_2','read_scroll_3','read_scroll_4','read_scroll_5','decode'],
- ARCHIPELAGO:['tide','calendar','weather','sea_map'],
+ ARCHIPELAGO:['tide','calendar','weather','sea_map','island_map',
+  'read_weather','board_boat','land_boat',...['harbor','lantern','hollow','stones','grove']
+   .map(id=>'row_to__'+id)],
  MERIDIAN_CITY:['household','board','city_who','city_wall','city_floor'],
  UNDERCITY:['echo','touch_wall','map','clap','touch','under_map']
 });
@@ -145,6 +147,9 @@ function causeObject(st,verb){
    mug:'apartment.fireside.mug'}[verb]||st.entity;
  }
  if(st.id==='UNDERCITY'&&verb==='touch')return 'apartment.undercity.echo-panel';
+ if(st.id==='ARCHIPELAGO'&&
+  (['board_boat','land_boat'].includes(verb)||verb.startsWith('row_to__')))
+  return 'apartment.sea.boat';
  if(st.id==='PET_ROOM_2'){
   return ({
    scratch_post:'apartment.scratcher',
@@ -203,12 +208,20 @@ for(const def of [
  {id:'apartment.marsh.wisp',p:[-4.5,-5,1.35],
   shape:{kind:'SPHERE',radius:.08},
   tags:['wisp','moving','projected','original-lorenz'],collision:false,material:'glass',
-  label:'the measured moving light from the original Lorenz model'}
+  label:'the measured moving light from the original Lorenz model'},
+ {id:'apartment.sea.tray',p:[2.7,-5,1.07],
+  shape:{kind:'VOLUME',halfExtents:[.82,.64,.05]},
+  tags:['sea','tabletop','archipelago','original-topography'],collision:false,material:'glass',
+  label:'a physical two-kilometre Archipelago terrain and tide tray at reduced scale'},
+ {id:'apartment.sea.boat',p:[2.7,-5.11,1.2],
+  shape:{kind:'BOX',halfExtents:[.055,.085,.04]},
+  tags:['boat','tabletop','model','original-native-current'],collision:false,material:'wood',
+  label:'the reachable wooden model boat driven by original Relax wind and current'}
 ]){
  if(M.entities()[def.id])throw Error('APARTMENT_LEGACY_STATION_FIXTURE_ID_COLLISION:'+def.id);
  M.addEntity({id:def.id,chart:HOME,position:def.p.slice(),
   shape:def.shape,tags:def.tags,collision:def.collision,material:def.material,
-  label:def.label,affordances:['watch','touch'],dynamic:def.id==='apartment.marsh.wisp'});
+  label:def.label,affordances:['watch','touch'],dynamic:['apartment.marsh.wisp','apartment.sea.boat'].includes(def.id)});
 }
 M.bump();
 const stationSenses=window.REALITI_SENSES_V1;
@@ -282,7 +295,8 @@ function snapshot(id){
   state.engine_state=copy(FR.state()[keys[st.id]]||null);
  }else if(st.id==='ARCHIPELAGO'){
   state.engine_state={tide:window.REALITI_LONG_GAME_V1?.tide?.()||null,
-   calendar:window.REALITI_CATNIP_PACK_V1?.calendar?.()||null};
+   calendar:window.REALITI_CATNIP_PACK_V1?.calendar?.()||null,
+   sea_table:window.REALITI_APARTMENT_SEA_TABLE_V1?.read?.()||null};
  }else if(st.id==='MERIDIAN_CITY'||st.id==='SIDE_BY_SIDE_FIRESIDE'){
   state.engine_state=window.REALITI_APARTMENT_HOUSEHOLD_V1?.view?.()||null;
  }else if(st.id==='UNDERCITY'){
@@ -401,6 +415,10 @@ function invokeNative(st,verb,args){
   }
  }
  if(st.id==='ARCHIPELAGO'){
+  if(['board_boat','land_boat','island_map','read_weather'].includes(verb)||
+     /^row_to__(harbor|lantern|hollow|stones|grove)$/.test(verb))
+   return window.REALITI_APARTMENT_SEA_TABLE_V1?.handle?.(verb)||
+    {ok:false,error:'ORIGINAL_RELAX_SEA_TABLE_NOT_MOUNTED'};
   const A=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LONG_GAME_V1,P=window.REALITI_CATNIP_PACK_V1;
   if(verb==='tide')return {ok:true,tide:LG.tide(),origin:'original island world-time tide'};
   if(verb==='calendar')return P.calendar();
@@ -523,7 +541,8 @@ function run(id,verb,args=[]){
  // Reading, clapping (SELF sound), walking and resting must not fabricate
  // a hand-touch receipt. Native SDF proximity is still verified above.
  const OBSERVE_ONLY=new Set(['who','sit','nothing','city_who','city_wall',
-  'city_floor','clap','under_map','follow_light']);
+  'city_floor','clap','under_map','follow_light',
+  'island_map','read_weather','tide','calendar','weather','sea_map']);
  const renew=(st.id!=='NINE_LIVES_ROOM'||verb==='fork_now')&&!OBSERVE_ONLY.has(verb);
  const object=causeObject(st,verb);
  const reached=renew?MW.reach(object):{ok:true,receipt:null};
