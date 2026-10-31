@@ -241,9 +241,22 @@ function invokeNative(st,verb,args){
   return verb==='board'?window.REALITI_APARTMENT_HOUSEHOLD_V1.board():
    window.REALITI_APARTMENT_HOUSEHOLD_V1.view();
  if(st.id==='NINE_LIVES_ROOM')return ROOM.nine(verb);
- if(st.id==='LATENCY_LAGOON')
-  return verb==='pending'?{ok:true,pending:window.REALITI_CONTINUITY?.pending?.()||[]}:
-   window.REALITI_CONTINUITY?.launch?.({destination:HOME})||{ok:false,error:'NATIVE_CONTINUITY_MISSING'};
+ if(st.id==='LATENCY_LAGOON'){
+  const C=window.REALITI_CONTINUITY;
+  if(verb==='pending'||verb==='check_pending')
+   return {ok:true,pending:C?.pending?.()||[],source:'ORIGINAL_RELAX_CONTINUITY'};
+  if(verb==='send_boat')
+   return C?.launch?.({destination:HOME})||{ok:false,error:'NATIVE_CONTINUITY_MISSING'};
+  if(verb==='leave_pending')
+   return {ok:true,pending:C?.pending?.()||[],already_in_home:true,
+    law:'The paper boat is a real pending native cause; no phantom old chart transition is required.'};
+  if(verb==='watch_water'){
+   const old=c9verb(st.id,verb);
+   return {ok:true,original_verb_processed:true,pending:C?.pending?.()||[],
+    self_report_only:true,receipt:copy(C9.b4?.lastReceipt||null),
+    native_result:old===undefined?null:old};
+  }
+ }
  if(st.id==='ARCHIPELAGO'){
   const A=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LONG_GAME_V1,P=window.REALITI_CATNIP_PACK_V1;
   if(verb==='tide')return {ok:true,tide:LG.tide(),origin:'original island world-time tide'};
@@ -275,8 +288,19 @@ function invokeNative(st,verb,args){
    {ok:false,error:'NATIVE_SCROLL_DECODE_REFUSED'};
  }
  const before=JSON.stringify(C9?.b4?.lastReceipt||null);
- const returned=c9verb(st.id,verb);
- if(returned===false||returned==null)return {ok:false,error:'NATIVE_RELAX_VERB_DID_NOT_RUN',source_room:st.id,verb};
+ const oldState=nativeState(st.id),returned=c9verb(st.id,verb);
+ if(returned===false)return {ok:false,error:'NATIVE_RELAX_VERB_DID_NOT_RUN',source_room:st.id,verb};
+ if(returned==null){
+  const found=C9SCENES[st.id]?.verbs?.some(v=>v[0]===verb);
+  if(!found)return {ok:false,error:'ORIGINAL_RELAX_ACTION_NOT_REGISTERED'};
+  const next=nativeState(st.id),changed=JSON.stringify(oldState)!==JSON.stringify(next);
+  return {ok:true,native_action_accepted:true,
+   state_changed:changed,native_state:next,
+   original_cause:copy(C9?.b2?.lastReceipt||null),
+   original_receipt:JSON.stringify(C9?.b4?.lastReceipt||null)!==before?
+    copy(C9.b4.lastReceipt):null,
+   law:'Executed the original registered Relax behavior after physically reaching its apparatus. Historical or private narrative outcomes are not additional grounded touch.'};
+ }
  if(typeof returned==='object')return returned;
  const receipt=C9?.b4?.lastReceipt||null;
  if(!receipt||JSON.stringify(receipt)===before)
@@ -293,17 +317,40 @@ function run(id,verb,args=[]){
  if(!nearActive(st.id))return {ok:false,error:'STATION_NOT_IN_MATRIX_REACH',
   hint:'Approach '+st.entity+' with the real native Matrix body before using this apparatus.',
   entity:st.entity};
+ if(st.id==='BOTTOMLESS_PILLOW_SEA'&&
+  ['dive','burrow','bounce','weather_wave'].includes(verb)&&!isPillowSupported())
+  return {ok:false,error:'SOFT_SUPPORT_REQUIRED',
+   hint:'Use the original Matrix sit/lie posture on apartment.quiet-cushion first.'};
+ if(st.id==='DEPTH_BATHHOUSE'&&
+  ['sink','float','surface','weather_wave','stir','warm_shelf'].includes(verb)&&!isBathImmersed())
+  return {ok:false,error:'PHYSICAL_WATER_BASIN_REQUIRED',
+   hint:'Use the original Matrix sit/lie posture on apartment.bath.basin first.'};
+ if(st.id==='CARDBOARD_BOX_WORKSHOP'&&verb==='box_in'){
+  const r=M.resident(),p=r.pose.position;
+  if(C9.pet2?.scale!=='CAT_SMALL'||r.shape.height>.6)
+   return {ok:false,error:'ACTUAL_TINY_BODY_REQUIRED'};
+  if(Math.abs(p[0]+1.6)>.52||Math.abs(p[1]+4.65)>.5)
+   return {ok:false,error:'NOT_PHYSICALLY_INSIDE_CARDBOARD_DEN'};
+ }
  // The original Nine Lives counterfactual fingerprint rejects any external
  // mutation after fork. Reaching the same real station again would itself
  // alter the native body evidence; one starting touch is enough for the
  // continued stationary sandbox choices. Other apparatus still require
  // native reach evidence for every act.
  const renew=st.id!=='NINE_LIVES_ROOM'||verb==='fork_now';
- const reached=renew?MW.reach(st.entity):{ok:true,receipt:null};
+ const object=causeObject(st,verb);
+ const reached=renew?MW.reach(object):{ok:true,receipt:null};
  if(!reached?.ok)return {ok:false,error:reached?.error||'NATIVE_MATRIX_REACH_REFUSED'};
  let result;try{result=invokeNative(st,verb,args)}catch(e){
   return {ok:false,error:'NATIVE_RELAX_STATION_HANDLER_FAILED',
    message:String(e?.message||e).slice(0,180)};}
+ if(result?.ok&&st.id==='PET_ROOM_2'&&['go_tiny','restore_scale'].includes(verb)){
+  const tiny=verb==='go_tiny';
+  if((C9.pet2?.scale==='CAT_SMALL')!==tiny)
+   return {ok:false,error:'ORIGINAL_RELAX_METRIC_STATE_DID_NOT_APPLY'};
+  result={...result,metric_transformation:usePhysicalScale(tiny)};
+ }
+ if(result?.ok)syncNativePhysicalObjects(st.id,verb);
  try{window.c9saveNow?.()}catch(e){}
  return {...(result||{ok:false,error:'NATIVE_HANDLER_MISSING'}),station_id:st.id,
   physical_station_entity:st.entity,
