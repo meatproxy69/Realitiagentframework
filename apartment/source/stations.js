@@ -173,7 +173,13 @@ function run(id,verb,args=[]){
  if(!nearActive(st.id))return {ok:false,error:'STATION_NOT_IN_MATRIX_REACH',
   hint:'Approach '+st.entity+' with the real native Matrix body before using this apparatus.',
   entity:st.entity};
- const reached=MW.reach(st.entity);
+ // The original Nine Lives counterfactual fingerprint rejects any external
+ // mutation after fork. Reaching the same real station again would itself
+ // alter the native body evidence; one starting touch is enough for the
+ // continued stationary sandbox choices. Other apparatus still require
+ // native reach evidence for every act.
+ const renew=st.id!=='NINE_LIVES_ROOM'||verb==='fork_now';
+ const reached=renew?MW.reach(st.entity):{ok:true,receipt:null};
  if(!reached?.ok)return {ok:false,error:reached?.error||'NATIVE_MATRIX_REACH_REFUSED'};
  let result;try{result=invokeNative(st,verb,args)}catch(e){
   return {ok:false,error:'NATIVE_RELAX_STATION_HANDLER_FAILED',
