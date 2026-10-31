@@ -98,7 +98,7 @@ async function run(raw){
   awake=false;sync();return {ok:true,activated:false,carried:true};
  }
  if(['stop','goodbye','bye','leave','exit'].includes(s)){
-  CLOSET.returnHarness('resident_departure');awake=false;sync();return originalRun(raw)}
+  awake=false;sync();return originalRun(raw)}
  if(s.startsWith('resource realiti://apartment/')){
   const uri=s.slice('resource '.length);
   if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/catnip',
