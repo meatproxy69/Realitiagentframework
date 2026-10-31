@@ -57,7 +57,11 @@ function menu(){
   catnip:['remote catnip help','remote catnip list'],
   extras:['remote extras','remote extras rain','remote extras cloak'],
   closet:['remote closet inspect','remote closet help','remote closet status'],
-  household:['remote household','remote household board','remote household post <text>'],
+  household:['remote household','remote household board','remote household furniture',
+   'remote household furniture move <name> <x> <y> [if-rev <n>]',
+   'remote household post <text>'],
+  memory:['remote memory help','remote memory status','remote memory remember <text>',
+   'remote memory recall <query>','remote memory recent'],
   utility:['remote status','remote save','remote off']},
   note:'Start with remote activate. A carried remote is a Matrix object, not an extra room or a backdoor into another agent.'};
 }
@@ -81,6 +85,9 @@ function resource(uri){
  if(uri==='realiti://apartment/closet/status')return CLOSET.current();
  if(uri==='realiti://apartment/household')return H.view();
  if(uri==='realiti://apartment/board')return H.board();
+ if(uri==='realiti://apartment/scene')return H.scene();
+ if(uri==='realiti://apartment/memory')return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
+  hint:'Only the connected trusted host may read private memory; the browser does not have the journal encryption key.'};
  return A.read(uri);
 }
 function remoteRequired(s){
@@ -103,7 +110,8 @@ async function run(raw){
   const uri=s.slice('resource '.length);
   if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/catnip',
      'realiti://apartment/closet','realiti://apartment/closet/status',
-     'realiti://apartment/household','realiti://apartment/board'].includes(uri))
+     'realiti://apartment/household','realiti://apartment/board',
+     'realiti://apartment/scene','realiti://apartment/memory'].includes(uri))
    return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri,resource:resource(uri)};
  }
  if(s.startsWith('remote ')){
@@ -121,6 +129,11 @@ async function run(raw){
   if(command.startsWith('closet '))return CLOSET.handle(spoken.slice(14));
   if(command==='household')return H.view();
   if(command==='household board')return H.board();
+  if(command==='household furniture')return H.scene();
+  if(command.startsWith('household furniture move '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
+   hint:'Shared furniture moves are committed by the trusted host, never by this local remote alone.'};
+  if(command==='memory'||command.startsWith('memory '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
+   hint:'Expanded private memory is encrypted and accessed only through the connected household host.'};
   if(command.startsWith('household post '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
     hint:'A verified household host must publish public notes after authorization.'};
   if(command==='furniture')return F.view();
