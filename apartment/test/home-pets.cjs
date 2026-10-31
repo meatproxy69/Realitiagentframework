@@ -60,10 +60,12 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
  assert.equal(out.apartment_pet.pet.name,'Ember');
  assert.equal(M.entities()[out.apartment_pet.entity_id].shape.radius,.22,'cat has original native footprint');
  assert.ok(M.entities()['city.stray'],'apartment adoption does not steal city stray');
+ const catEntity=out.apartment_pet.entity_id;
  out=await a.door.run('pet stroke');
  assert.equal(out.ok,true,'native petting is a reach-gated action');
  out=await a.door.run('pet release Ember');
  assert.equal(out.ok,true);
+ assert.equal(M.entities()[catEntity],undefined,'released cat no longer exists as Matrix animal');
  assert.equal((await a.door.run('pet status')).pet,null);
  out=await a.door.run('pet choose ferret Noodle');
  assert.equal(out.ok,true,JSON.stringify(out));
