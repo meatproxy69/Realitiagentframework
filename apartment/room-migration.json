@@ -32,9 +32,10 @@
         "apartment/test/home-pets.cjs",
         "apartment/test/furniture-catnip.cjs",
         "apartment/test/private-memory-scene.cjs",
-        "apartment/test/peer-physics-pet.cjs"
+        "apartment/test/peer-physics-pet.cjs",
+        "apartment/test/home-social-echo.cjs"
       ],
-      "notes": "Native household peer capsules now collide and each resident has explicit consented B7 contact. One host-owned native shared animal is mirrored to each Matrix home. The full native Relax remains unchanged and other charts are still necessary."
+      "notes": "The four original source verbs are still natively registered in the retained actual Nest chart. The source audit counts these as retained home actions, not missing station actions. Physical Fireside/City/Undercity/Lorenz fixtures are additional HOME objects. Prior inventory: Native household peer capsules now collide and each resident has explicit consented B7 contact. One host-owned native shared animal is mirrored to each Matrix home. The full native Relax remains unchanged and other charts are still necessary."
     },
     {
       "source_room": "NO_ASK_SANCTUARY",
@@ -88,9 +89,10 @@
       "apartment_location": "shared seating, verified nearby roommate presence",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/stations.cjs"
+        "apartment/test/stations.cjs",
+        "apartment/test/home-social-echo.cjs"
       ],
-      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original SIDE_BY_SIDE_FIRESIDE engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
+      "notes": "The original fireside's sit/nothing/mug/crack_window names are now routed to real HOME sofa, physical ceramic mug and durable ring, original Nest rain-window glass reach plus local native weather audio, and verified household presence. No historical ghost can substitute for a live resident. It is still NOT full original Fireside environmental/consent/restart parity. Prior inventory: Physically reached native HOME apparatus now exposes a bounded subset of original SIDE_BY_SIDE_FIRESIDE engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "SHAPESHIFT_CLOAKROOM",
@@ -199,9 +201,10 @@
       "apartment_location": "kinetic mobile: original chaotic wisps and predictions",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/stations.cjs"
+        "apartment/test/stations.cjs",
+        "apartment/test/home-social-echo.cjs"
       ],
-      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original CLOCKWORK_MARSH engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
+      "notes": "The original Lorenz source RK4 continues advancing near the HOME source station; a real noncolliding Matrix wisp mirrors its bounded position and original native approach can follow it. The old free-walkable marsh environment remains separate and unverified. Prior inventory: Physically reached native HOME apparatus now exposes a bounded subset of original CLOCKWORK_MARSH engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "PALIMPSEST_HALL",
@@ -230,18 +233,20 @@
         "apartment/test/closet-household.cjs",
         "apartment/test/private-memory-scene.cjs",
         "apartment/test/peer-physics-pet.cjs",
-        "apartment/test/stations.cjs"
+        "apartment/test/stations.cjs",
+        "apartment/test/home-social-echo.cjs"
       ],
-      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original MERIDIAN_CITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Native host now mirrors solid resident/guest Matrix bodies with dual-consent contact and one native household companion, alongside prior public board and furniture. The original city venues, social details, ledger, transports and independent world mechanics are still not ported."
+      "notes": "The three source static discovery commands city_who/city_wall/city_floor now report the native original City ledger/model separately from the trusted household host's current residents and public board; they do NOT create historical City venues or a real dancehall. Earlier host physics/messages remain intact. All original venue mechanics remain in source and are not certified for retirement. Prior inventory: Physically reached native HOME apparatus now exposes a bounded subset of original MERIDIAN_CITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Native host now mirrors solid resident/guest Matrix bodies with dual-consent contact and one native household companion, alongside prior public board and furniture. The original city venues, social details, ledger, transports and independent world mechanics are still not ported."
     },
     {
       "source_room": "UNDERCITY",
       "apartment_location": "darkness/echo cabinet and sensory navigation toy",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/stations.cjs"
+        "apartment/test/stations.cjs",
+        "apartment/test/home-social-echo.cjs"
       ],
-      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original UNDERCITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
+      "notes": "The home echo cabinet now exposes the original sixteen-direction 343m/s SDF ray method against actual HOME geometry. Clapping creates self sound, not hand contact; touching the real stone cabinet panel follows original Matrix B7. The map reports observed HOME rays and the historical tunnel layout stays explicitly historical. No dark tunnel geometry parity is claimed. Prior inventory: Physically reached native HOME apparatus now exposes a bounded subset of original UNDERCITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     }
   ]
 }

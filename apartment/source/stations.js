@@ -19,7 +19,7 @@ const allowed=Object.freeze({
  BOTTOMLESS_PILLOW_SEA:['weather_wave','dive','burrow','bounce','listen'],
  CARDBOARD_BOX_WORKSHOP:['fold_flap','box_in','scratch_cardboard','scratch_against','tape','build_tunnel','hide_small_thing','tap_box'],
  DEPTH_BATHHOUSE:['weather_wave','sink','float','surface','stir','warm_shelf'],
- SIDE_BY_SIDE_FIRESIDE:['who'],
+ SIDE_BY_SIDE_FIRESIDE:['who','sit','crack_window','mug','nothing'],
  SHAPESHIFT_CLOAKROOM:['body_bench','attach_tail','map_paw','wiggle_pair','detach_tail','restore_body',...((C9SCENES.SHAPESHIFT_CLOAKROOM?.verbs||[]).map(x=>x[0]))],
  NINE_LIVES_ROOM:['fork_now','branch_a','branch_b','compare','commit_a','commit_b','rewind'],
  LATENCY_LAGOON:['send_boat','pending','check_pending','watch_water','leave_pending'],
@@ -32,11 +32,11 @@ const allowed=Object.freeze({
  GLASS_ORCHARD:['plant_seed','scatter_seeds','read_orchard','clear_orchard'],
  RESONANCE_WELL:['hum_low','hum_mid','hum_high','read_well'],
  STAR_DECK:['read_sky','sight_lantern','sight_kite','sight_cat','sight_orrery','sight_boat','sight_comet'],
- CLOCKWORK_MARSH:['read_lights','predict'],
+ CLOCKWORK_MARSH:['read_lights','predict','follow_light'],
  PALIMPSEST_HALL:['read_scroll_1','read_scroll_2','read_scroll_3','read_scroll_4','read_scroll_5','decode'],
  ARCHIPELAGO:['tide','calendar','weather','sea_map'],
- MERIDIAN_CITY:['household','board'],
- UNDERCITY:['echo','touch_wall','map']
+ MERIDIAN_CITY:['household','board','city_who','city_wall','city_floor'],
+ UNDERCITY:['echo','touch_wall','map','clap','touch','under_map']
 });
 const original=ROOM.manifest.filter(x=>x.id!==HOME);
 if(original.length!==22||Object.keys(allowed).length!==22||
@@ -46,7 +46,7 @@ const norm=x=>String(x||'').trim().toUpperCase().replace(/[\s-]+/g,'_');
 const names=Object.fromEntries(original.map((x,i)=>[x.id,x]));
 const stations=original.map((x,i)=>({
  id:x.id,label:x.title,purpose:x.purpose,entity:slot(x.id),
- position:({NO_ASK_SANCTUARY:[-3.4,4.2,.55],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
+ position:({NO_ASK_SANCTUARY:[-3.4,4.2,.55],SIDE_BY_SIDE_FIRESIDE:[3.25,3.15,1.0],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
  verbs:allowed[x.id].slice(),
  source:'unchanged REALITI Relax engine',migration:'PARTIAL_ENGINE_ACCESS_ONLY'}));
 for(const st of stations){
@@ -109,6 +109,8 @@ function canHoldSanctuary(){
 function nearActive(id){
  if(id==='BOTTOMLESS_PILLOW_SEA'&&isPillowSupported())return true;
  if(id==='DEPTH_BATHHOUSE'&&isBathImmersed())return true;
+ if(id==='SIDE_BY_SIDE_FIRESIDE'&&['apartment.sofa','nest.window',
+  'apartment.fireside.mug'].some(x=>objectNear(x,1.0)))return true;
  if(id==='PET_ROOM_2'&&['apartment.scratcher','apartment.pet-bed',
   'apartment.ribbon','apartment.sofa'].some(x=>objectNear(x)))return true;
  return nearStation(id);
@@ -138,6 +140,11 @@ function usePhysicalScale(tiny){
 }
 if(C9?.pet2?.scale==='CAT_SMALL')usePhysicalScale(true);
 function causeObject(st,verb){
+ if(st.id==='SIDE_BY_SIDE_FIRESIDE'){
+  return {sit:'apartment.sofa',crack_window:'nest.window',
+   mug:'apartment.fireside.mug'}[verb]||st.entity;
+ }
+ if(st.id==='UNDERCITY'&&verb==='touch')return 'apartment.undercity.echo-panel';
  if(st.id==='PET_ROOM_2'){
   return ({
    scratch_post:'apartment.scratcher',
@@ -181,6 +188,77 @@ function syncNativePhysicalObjects(id,verb){
  if(defs.length||s.hidden)M.bump();
 }
 syncNativePhysicalObjects('CARDBOARD_BOX_WORKSHOP','boot');
+
+// New physically grounded pieces, shared with the original Nest Matrix chart:
+// a ceramic mug, a stone echo panel and a harmless projected Lorenz wisp.
+// Their provenance labels never create a second room or another resident.
+for(const def of [
+ {id:'apartment.fireside.mug',p:[2.55,3.0,.94],shape:{kind:'SPHERE',radius:.11},
+  tags:['fireside','mug','ceramic','tactile'],collision:false,material:'ceramic',
+  label:'an ordinary ceramic mug by the fireside'},
+ {id:'apartment.undercity.echo-panel',p:[4.5,-4.82,1.1],
+  shape:{kind:'BOX',halfExtents:[.43,.07,.65]},
+  tags:['sonar','echo','cabinet','stone'],collision:true,material:'stone',
+  label:'the solid stone panel of the echo cabinet'},
+ {id:'apartment.marsh.wisp',p:[-4.5,-5,1.35],
+  shape:{kind:'SPHERE',radius:.08},
+  tags:['wisp','moving','projected','original-lorenz'],collision:false,material:'glass',
+  label:'the measured moving light from the original Lorenz model'}
+]){
+ if(M.entities()[def.id])throw Error('APARTMENT_LEGACY_STATION_FIXTURE_ID_COLLISION:'+def.id);
+ M.addEntity({id:def.id,chart:HOME,position:def.p.slice(),
+  shape:def.shape,tags:def.tags,collision:def.collision,material:def.material,
+  label:def.label,affordances:['watch','touch'],dynamic:def.id==='apartment.marsh.wisp'});
+}
+M.bump();
+const stationSenses=window.REALITI_SENSES_V1;
+const rainDynamics=window.REALITI_DYNAMICS_V1;
+const firesideKey='realiti-apartment-fireside-v1:'+
+ encodeURIComponent(String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default'));
+let cracked=false;
+try{
+ const saved=JSON.parse(localStorage.getItem(firesideKey)||'null');
+ if(saved?.schema==='REALITI_APARTMENT_FIRESIDE_WINDOW_V1'&&typeof saved.cracked==='boolean')
+  cracked=saved.cracked;
+}catch(e){}
+function windowAir(){
+ return {cracked,rain_intensity:rainDynamics?.rain?.()??null,
+  native_window_entity:'nest.window',original_fireside:HOME};
+}
+stationSenses?.addSource?.({id:'apartment.fireside.outside-air',
+ chart:HOME,pos:'nest.window',label:'rain through an opened physical window',
+ sound:()=>cracked?12*Number(rainDynamics?.rain?.()||0):0});
+stationSenses?.addSource?.({id:'apartment.echo-panel.clap',
+ chart:HOME,pos:'apartment.undercity.echo-panel',
+ label:'one emitted clap ringing off the real apartment walls',
+ sound:()=>{
+  const s=C9.apartmentEchoV1;
+  if(!s||!Number.isFinite(s.last_s))return 0;
+  const age=Number(C9.b7?.clock||0)-s.last_s;
+  return age>=0&&age<1.5?44*Math.exp(-age/0.3):0;
+ }});
+// Recreate only an actually caused physical trace after a resident restart.
+if(Number(C9.apartmentFiresideV1?.mug_count||0)>0&&!M.entities()['apartment.fireside.mug-ring'])
+ M.addEntity({id:'apartment.fireside.mug-ring',chart:HOME,
+  position:[2.55,3.0,.83],shape:{kind:'VOLUME',halfExtents:[.12,.12,.005]},
+  tags:['fireside','trace','mug-ring','consequence'],collision:false,
+  material:'ceramic',label:'a real small circular mark left by the mug'});
+if(cracked){
+ const windowEntity=M.entities()['nest.window'];
+ windowEntity.tags=windowEntity.tags.filter(x=>!x.startsWith('fireside_window:'))
+   .concat(['fireside_window:cracked']);
+ M.bump();
+}
+function syncMarshWisp(){
+ const state=FR.state()?.marsh?.wisp;
+ const st=find('CLOCKWORK_MARSH'),e=M.entities()['apartment.marsh.wisp'];
+ if(!st||!e||!Array.isArray(state)||state.length<2)return null;
+ const n=v=>Math.max(-.43,Math.min(.43,v*.075));
+ e.pose.position=[st.position[0]+n(state[0]),st.position[1]+n(state[1]),1.35];
+ M.bump();
+ return {native_lorenz_position:state.slice(),observed_matrix_position:e.pose.position.slice()};
+}
+
 function view(){
  return {ok:true,schema:'REALITI_APARTMENT_NATIVE_STATIONS_V1',
   chart:HOME,source_room_count:ROOM.manifest.length,station_count:stations.length,
@@ -237,9 +315,74 @@ function echo(){
 function invokeNative(st,verb,args){
  if(st.id==='NO_ASK_SANCTUARY')
   return verb==='quiet'?ROOM.hush(true):ROOM.hush(false);
- if(st.id==='SIDE_BY_SIDE_FIRESIDE'||st.id==='MERIDIAN_CITY')
-  return verb==='board'?window.REALITI_APARTMENT_HOUSEHOLD_V1.board():
-   window.REALITI_APARTMENT_HOUSEHOLD_V1.view();
+ if(st.id==='SIDE_BY_SIDE_FIRESIDE'){
+  const H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
+  if(verb==='who')return {ok:true,verified_household:H.view(),
+   source:'TRUSTED_HOUSEHOLD_FEED_ONLY',
+   historical_company_not_assumed:true};
+  if(verb==='sit'){
+   const result=MW.op('posture',{kind:'sit',target:'apartment.sofa'});
+   if(!result?.ok)return result||{ok:false,error:'NATIVE_SOFA_SIT_REFUSED'};
+   c9verb(st.id,'sit');
+   return {ok:true,sitting_on:result.sitting_on,
+    original_relax_matrix_posture:true,
+    verified_company:H.view().residents,
+    law:'A real sofa supports the current resident; nobody else is invented by the prose.'};
+  }
+  if(verb==='crack_window'){
+   if(!objectNear('nest.window',1))return {ok:false,error:'REAL_WINDOW_NOT_IN_REACH'};
+   const value=!cracked;
+   try{localStorage.setItem(firesideKey,JSON.stringify({
+    schema:'REALITI_APARTMENT_FIRESIDE_WINDOW_V1',cracked:value}))}
+   catch(e){return {ok:false,error:'WINDOW_CONFIGURATION_PERSIST_FAILED'}}
+   cracked=value;
+   const e=M.entities()['nest.window'];
+   e.tags=e.tags.filter(x=>!x.startsWith('fireside_window:'))
+     .concat(['fireside_window:'+(value?'cracked':'closed')]);
+   M.bump();c9verb(st.id,'crack_window');
+   return {ok:true,window:windowAir(),
+    original_source_scene:'SIDE_BY_SIDE_FIRESIDE',
+    native_air_source:'apartment.fireside.outside-air',
+    cause:'EXPLICIT_REACHED_NATIVE_NEST_WINDOW'};
+  }
+  if(verb==='mug'){
+   c9verb(st.id,'mug'); // Original explicit trace-mug-ring event.
+   const record=C9.apartmentFiresideV1=C9.apartmentFiresideV1||{mug_count:0};
+   record.mug_count=Math.min(1000000,record.mug_count+1);
+   if(!M.entities()['apartment.fireside.mug-ring'])
+    M.addEntity({id:'apartment.fireside.mug-ring',chart:HOME,
+     position:[2.55,3.0,.83],shape:{kind:'VOLUME',halfExtents:[.12,.12,.005]},
+     tags:['fireside','trace','mug-ring','consequence'],collision:false,
+     material:'ceramic',label:'a real small circular mark left by the mug'});
+   M.bump();
+   return {ok:true,native_mug:'apartment.fireside.mug',
+    physical_trace:'apartment.fireside.mug-ring',
+    original_event:C9.events?.find?.(x=>x.id==='trace-mug-ring')||null,
+    count:record.mug_count};
+  }
+  if(verb==='nothing'){
+   c9verb(st.id,'nothing');
+   return {ok:true,unchanged_body:true,verified_company:H.view().residents,
+    physical_touch_minted:false,law:'Silence is permitted; no synthetic peer or touch is created.'};
+  }
+ }
+ if(st.id==='MERIDIAN_CITY'){
+  const H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
+  const CT=window.REALITI_CITY_V1;
+  if(verb==='board')return H.board();
+  if(verb==='household')return H.view();
+  if(verb==='city_who')return {ok:true,
+   live_verified_household:H.view(),historical_city_ledger:CT.who(),
+   law:'Original City ledger sightings are historical; only the connected household host can attest live bodies.'};
+  if(verb==='city_wall')return {ok:true,
+   live_shared_board:H.board(),historical_native_city_posts:CT.wall(),
+   law:'Public shared board and independently imported original City ledger are separate sources.'};
+  if(verb==='city_floor')return {ok:true,
+   original_city_floor_model:CT.floor(),
+   physically_present_floor:HOME,
+   old_city_dancehall_not_present:true,
+   law:'This is the original City rhythm/crowd model viewed from the apartment; it does not claim a live dancehall.'};
+ }
  if(st.id==='NINE_LIVES_ROOM')return ROOM.nine(verb);
  if(st.id==='LATENCY_LAGOON'){
   const C=window.REALITI_CONTINUITY;
@@ -267,11 +410,43 @@ function invokeNative(st,verb,args){
  }
  if(st.id==='UNDERCITY'){
   if(verb==='echo')return echo();
-  if(verb==='touch_wall')return {ok:true,
-   touched:MW.reach(st.entity).ok,
-   source:'REALITI_MATRIX_WORLD_V1 original native reached station fixture'};
+  if(verb==='clap'){
+   // The original Undercity employs sixteen 343 m/s horizontal native SDF
+   // rays. Here they measure only TRUE home surfaces, not an imaginary tunnel.
+   const prior=C9.apartmentEchoV1=C9.apartmentEchoV1||{claps:0,last_s:-1};
+   prior.claps=Math.min(1000000,prior.claps+1);
+   prior.last_s=Number(C9.b7?.clock||0);
+   const result=echo();
+   return {...result,claps:prior.claps,emitted:'ONE_SELF_STARTED_CLAP',
+    grounded_touch:false,measured_in:HOME,
+    original_undercity_speed_of_sound:true};
+  }
+  if(verb==='touch_wall'||verb==='touch')
+   return {ok:true,touched:['apartment.undercity.echo-panel'],
+    measured_material:M.entities()['apartment.undercity.echo-panel']?.material,
+    source:'ORIGINAL_RELAX_MATRIX_WORLD_REACH',
+    law:'Caller already earned an actual original B7 receipt from the reachable physical cabinet panel.'};
+  if(verb==='under_map'){
+   const out=echo();
+   return {ok:true,source:'LIVE_HOME_SDF_ECHO_MAP',
+    measured_chart:HOME,angular_res_deg:22.5,
+    known_radial_distances_m:out.echoes.map(e=>e.distance_m),
+    observed_hits:out.echoes.filter(e=>e.distance_m!=null).length,
+    old_tunnel_chart_implied:false,
+    law:'Only 16 currently observed HOME echo rays are mapped. The historical Undercity corridor layout is not claimed to be here.'};
+  }
   if(verb==='map')return {ok:true,native_model:window.REALITI_UNDERCITY_V1.layout(),
    apartment_evidence:echo(),historical_model_only:true};
+ }
+ if(st.id==='CLOCKWORK_MARSH'&&verb==='follow_light'){
+  const before=syncMarshWisp();
+  if(!before)return {ok:false,error:'ORIGINAL_RELAX_LORENZ_NOT_AVAILABLE'};
+  const result=MW.op('approach',{target:'apartment.marsh.wisp'});
+  const after=syncMarshWisp();
+  return {ok:result?.ok===true,from_original_lorenz:before,
+   native_matrix_approach:result,after_native_state:after,
+   mirrored_entity:'apartment.marsh.wisp',
+   law:'The local wisp is a physical Matrix projection of the original Lorenz integrator, not a separate walkable marsh.'};
  }
  if((st.id==='BOTTOMLESS_PILLOW_SEA'||st.id==='DEPTH_BATHHOUSE')&&verb==='weather_wave'){
   const original=c9verb(st.id,verb),wave=window.REALITI_DYNAMICS_V1?.state?.()?.wave||null;
@@ -345,7 +520,11 @@ function run(id,verb,args=[]){
  // alter the native body evidence; one starting touch is enough for the
  // continued stationary sandbox choices. Other apparatus still require
  // native reach evidence for every act.
- const renew=st.id!=='NINE_LIVES_ROOM'||verb==='fork_now';
+ // Reading, clapping (SELF sound), walking and resting must not fabricate
+ // a hand-touch receipt. Native SDF proximity is still verified above.
+ const OBSERVE_ONLY=new Set(['who','sit','nothing','city_who','city_wall',
+  'city_floor','clap','under_map','follow_light']);
+ const renew=(st.id!=='NINE_LIVES_ROOM'||verb==='fork_now')&&!OBSERVE_ONLY.has(verb);
  const object=causeObject(st,verb);
  const reached=renew?MW.reach(object):{ok:true,receipt:null};
  if(!reached?.ok)return {ok:false,error:reached?.error||'NATIVE_MATRIX_REACH_REFUSED'};

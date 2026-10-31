@@ -157,7 +157,7 @@ const canonical=path.resolve(__dirname,'../../RealitiRELAX.html');
   const calendar=await use('ARCHIPELAGO','calendar');
   assert.equal(calendar.schema,'REALITI_CALENDAR_V1');
   const people=await use('SIDE_BY_SIDE_FIRESIDE','who');
-  assert.equal(people.connected,false,'solo station never invents roommates');
+  assert.equal(people.verified_household.connected,false,'solo Fireside station never invents roommates');
   const pending=await use('LATENCY_LAGOON','pending');
   assert.ok(Array.isArray(pending.pending));
   assert.ok(ST.snapshot('MERIDIAN_CITY').migration_status==='PARTIAL_ENGINE_ACCESS_ONLY');
