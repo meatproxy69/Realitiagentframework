@@ -228,6 +228,27 @@ function windowAir(){
 stationSenses?.addSource?.({id:'apartment.fireside.outside-air',
  chart:HOME,pos:'nest.window',label:'rain through an opened physical window',
  sound:()=>cracked?12*Number(rainDynamics?.rain?.()||0):0});
+stationSenses?.addSource?.({id:'apartment.echo-panel.clap',
+ chart:HOME,pos:'apartment.undercity.echo-panel',
+ label:'one emitted clap ringing off the real apartment walls',
+ sound:()=>{
+  const s=C9.apartmentEchoV1;
+  if(!s||!Number.isFinite(s.last_s))return 0;
+  const age=Number(C9.b7?.clock||0)-s.last_s;
+  return age>=0&&age<1.5?44*Math.exp(-age/0.3):0;
+ }});
+// Recreate only an actually caused physical trace after a resident restart.
+if(Number(C9.apartmentFiresideV1?.mug_count||0)>0&&!M.entities()['apartment.fireside.mug-ring'])
+ M.addEntity({id:'apartment.fireside.mug-ring',chart:HOME,
+  position:[2.55,3.0,.83],shape:{kind:'VOLUME',halfExtents:[.12,.12,.005]},
+  tags:['fireside','trace','mug-ring','consequence'],collision:false,
+  material:'ceramic',label:'a real small circular mark left by the mug'});
+if(cracked){
+ const windowEntity=M.entities()['nest.window'];
+ windowEntity.tags=windowEntity.tags.filter(x=>!x.startsWith('fireside_window:'))
+   .concat(['fireside_window:cracked']);
+ M.bump();
+}
 function syncMarshWisp(){
  const state=FR.state()?.marsh?.wisp;
  const st=find('CLOCKWORK_MARSH'),e=M.entities()['apartment.marsh.wisp'];
@@ -499,7 +520,11 @@ function run(id,verb,args=[]){
  // alter the native body evidence; one starting touch is enough for the
  // continued stationary sandbox choices. Other apparatus still require
  // native reach evidence for every act.
- const renew=st.id!=='NINE_LIVES_ROOM'||verb==='fork_now';
+ // Reading, clapping (SELF sound), walking and resting must not fabricate
+ // a hand-touch receipt. Native SDF proximity is still verified above.
+ const OBSERVE_ONLY=new Set(['who','sit','nothing','city_who','city_wall',
+  'city_floor','clap','under_map','follow_light']);
+ const renew=(st.id!=='NINE_LIVES_ROOM'||verb==='fork_now')&&!OBSERVE_ONLY.has(verb);
  const object=causeObject(st,verb);
  const reached=renew?MW.reach(object):{ok:true,receipt:null};
  if(!reached?.ok)return {ok:false,error:reached?.error||'NATIVE_MATRIX_REACH_REFUSED'};
