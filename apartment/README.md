@@ -103,30 +103,11 @@ The marsh bench maps the original Lorenz RK4 wisp into a nearby native Matrix li
 
 The source-action audit counts the original Nest's four verbs as native retained HOME actions; the still-unported original island-boat controls are explicitly blocked from full release certification. A finished topology preview remains non-release until every historical mechanic is reviewed.
 
-## Original Archipelago as a physically controlled HOME sea table
+## Home-first scope — avoid stuffing old worlds into HOME
 
-The apartment now includes an actual glass sea-table fixture and a tiny wooden model boat, both native Matrix objects in `CLOUD_NINE_NEST`. Its **derived-HTML-only, exact-source-checked adapter** uses the original Relax Archipelago's unchanged `h(x,y)` analytic terrain, wind/current, and `stepBoat(dt)` numerical integrator. A bounded `row_to__<island>` command advances at most one second of original world time and moves the model token to the correctly scaled real source coordinates. `board_boat`, `land_boat`, `read_weather` and `island_map` are reachable through the same carried remote source station; reading weather or sampling a source map never creates fictitious body contact.
+Owner direction: **no ocean and no Undercity attraction in the Apartment**. The standalone canonical REALITI Relax still contains those original worlds and their physics. The added miniature ocean, boat-control model and physical Undercity lever/vault gate from earlier migration PRs have been removed from the Apartment derivative. The Apartment uses the original Relax foundation for memory, embodiment, sensory grounding and resident safety; it is not required to physically re-create 22 historical destinations.
 
-From the repository root after the normal build:
-
-    node apartment/test/sea-table.cjs
-    node apartment/build-one-chart.mjs
-    node apartment/test/sea-table.cjs preview
-
-The differential test compares original source boat position against a **canonical Relax Archipelago instance** initialized to identical source position, target, and world clock. The original full-sized resident remains in HOME, rather than being secretly teleported into the source's two-kilometre chart. The model's `aboard` bit means that **the model controller is engaged**, not that the resident physically boarded a boat. Native STOP and departure release model control. Source position persists, but control never silently rearms after restart.
-
-**Full parity is still blocked.** The tabletop is not a full-sized boat, two-kilometre navigable ocean, actual island walking, fog-of-war exploration, source chart occupancy, or all historical sea crossing/shore behavior. Static source action-name coverage may reach zero gaps, but this is not release certification. Do not retire source rooms or automatically migrate resident data.
-
-## Original Undercity lever and vault inscription on a real HOME cabinet
-
-The physical Undercity cabinet now contains a real iron lever, a collision-bearing movable gate and a carved stone inscription. Reach them through the carried remote:
-
-    remote stations use UNDERCITY pull_lever
-    remote stations use UNDERCITY read_wall
-
-These invoke the **original, unmodified** `REALITI_UNDERCITY_V1.pull()` and `readWall()` source transitions, using a source-anchor-checked Apartment-only native reach adapter. Pulling the real model lever changes the original source gate state and the actual HOME model gate collision. Repeated pulls preserve the original idempotence; restart restores both original source history and visible HOME collision. The tests compare outcomes with an unchanged canonical Relax Undercity resident, in both development and the non-release one-chart preview.
-
-**This is a cabinet, not an underground maze.** The original 9×9 dark tunnels, true walkable flagstones, two exits, cistern navigation, original echo exploration, and full body movement are still not ported into HOME and cannot be inferred from the model action. Historical rooms remain protected.
+The current 22 source apparatus in the *development* Apartment predate this correction. They are temporary test scaffolding and **not approved as the final home layout**. They must be consolidated or omitted behind the appropriate personal remote / internal Extras boundaries in a reviewed follow-up. Features that require genuine world contact must not be replaced by invented contact receipts. Scope exclusions never authorize deleting original Relax files or user state. The one-chart build remains experimental, and release approval remains false.
 
 ## Developer source boundaries
 
@@ -144,9 +125,7 @@ These invoke the **original, unmodified** `REALITI_UNDERCITY_V1.pull()` and `rea
 - Host-owned shared furniture transactions: `shared-scene.cjs`
 - Native colliding household peer controller: `household-physics.cjs`
 - Shared native Relax companion driver: `household-pet.cjs`
-- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`, `source/native-body-adapter.mjs`, `source/native-archipelago-adapter.mjs`, `source/native-undercity-adapter.mjs`
-- Source-faithful HOME sea model controller: `source/sea-table.js`
-- Real native HOME Undercity cabinet and original source dynamic lever/vault: `source/undercity-cabinet.js`
+- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`
 - Native engine workbenches: `source/stations.js`
 - Explicit non-release single-chart prototype: `build-one-chart.mjs`, `source/one-chart-preview.js`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`

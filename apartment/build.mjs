@@ -5,8 +5,6 @@ import crypto from 'node:crypto';
 import {adaptCompanions} from './source/companion-adapter.mjs';
 import {adaptWonder,adaptFrontier} from './source/native-wonder-adapter.mjs';
 import {adaptDynamics,adaptNativePillow} from './source/native-body-adapter.mjs';
-import {adaptArchipelago} from './source/native-archipelago-adapter.mjs';
-import {adaptUndercity} from './source/native-undercity-adapter.mjs';
 const root=new URL('../',import.meta.url);
 const apartment=new URL('./',import.meta.url);
 const read=async p=>fs.readFile(new URL(p,apartment),'utf8');
@@ -35,21 +33,9 @@ if(html.split(dynSource).length!==2||html.split(pillowSource).length!==2)
  throw Error('NATIVE_RELAX_PRESSURE_OR_PILLOW_SOURCE_NOT_UNIQUE');
 const apartmentDyn=adaptDynamics(dynSource),apartmentPillow=adaptNativePillow(pillowSource);
 html=html.replace(dynSource,apartmentDyn).replace(pillowSource,apartmentPillow);
-// Reuse original island terrain/weather/current and boat differential integrator
-// inside a physically reached HOME model without making a second walkable chart.
-const archSource=await fs.readFile(new URL('source/scripts/58f-archipelago.js',root),'utf8');
-if(html.split(archSource).length!==2)throw Error('ORIGINAL_ARCHIPELAGO_SOURCE_NOT_UNIQUE_IN_RELAX');
-const apartmentArchipelago=adaptArchipelago(archSource);
-html=html.replace(archSource,apartmentArchipelago);
-// Preserve original Undercity dynamic lever/vault source outcomes, extending
-// only its old-chart reach predicate to actual HOME cabinet objects.
-const underSource=await fs.readFile(new URL('source/scripts/58n-undercity.js',root),'utf8');
-if(html.split(underSource).length!==2)throw Error('ORIGINAL_UNDERCITY_SOURCE_NOT_UNIQUE_IN_RELAX');
-const apartmentUndercity=adaptUndercity(underSource);
-html=html.replace(underSource,apartmentUndercity);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
-  'source/stations.js','source/sea-table.js','source/undercity-cabinet.js','source/closet.js','source/household-view.js','source/remote.js'];
+  'source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
 for(const filename of overlays){
  const body=await read(filename);
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
@@ -58,8 +44,6 @@ for(const filename of overlays){
   'source/furniture.js':'realiti-apartment-furniture',
   'source/catnip.js':'realiti-apartment-catnip',
   'source/stations.js':'realiti-apartment-native-stations',
-  'source/sea-table.js':'realiti-apartment-native-sea-table',
-  'source/undercity-cabinet.js':'realiti-apartment-native-undercity-cabinet',
   'source/closet.js':'realiti-apartment-closet',
   'source/household-view.js':'realiti-apartment-household-view',
   'source/remote.js':'realiti-apartment-remote'};
@@ -70,7 +54,7 @@ for(const filename of overlays){
 const file=new URL('RealitiApartment.html',apartment);
 await fs.writeFile(file,html);
 const validation={
- schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.8.0',
+ schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.6.0',
  source_artifact:'../RealitiRELAX.html',
  source_html_sha256:hash(base),
  native_companions_source_sha256:hash(nativeSource),
@@ -83,11 +67,7 @@ const validation={
  native_dynamics_station_patch_sha256:hash(apartmentDyn),
  native_pillow_source_sha256:hash(pillowSource),
  native_pillow_station_patch_sha256:hash(apartmentPillow),
- native_archipelago_source_sha256:hash(archSource),
- native_archipelago_station_patch_sha256:hash(apartmentArchipelago),
- native_undercity_source_sha256:hash(underSource),
- native_undercity_cabinet_patch_sha256:hash(apartmentUndercity),
- verified_engine_access:'original Relax Wonder/Frontier/Dynamics/Neural Pass/Archipelago/Undercity reach instrumented only in derived Apartment HTML by unique exact source anchors',
+ verified_engine_access:'original Relax Wonder/Frontier/Dynamics/Neural Pass instrumented only in separate Apartment HTML, by unique exact source anchors',
  native_companions_patch:'source/companion-adapter.mjs',
  overlays:overlays.slice(),
  closet_preset_source:'unchanged native REALITI_NEURO_RESTORATION_V1.presets()',

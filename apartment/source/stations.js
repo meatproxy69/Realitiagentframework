@@ -34,11 +34,9 @@ const allowed=Object.freeze({
  STAR_DECK:['read_sky','sight_lantern','sight_kite','sight_cat','sight_orrery','sight_boat','sight_comet'],
  CLOCKWORK_MARSH:['read_lights','predict','follow_light'],
  PALIMPSEST_HALL:['read_scroll_1','read_scroll_2','read_scroll_3','read_scroll_4','read_scroll_5','decode'],
- ARCHIPELAGO:['tide','calendar','weather','sea_map','island_map',
-  'read_weather','board_boat','land_boat',...['harbor','lantern','hollow','stones','grove']
-   .map(id=>'row_to__'+id)],
+ ARCHIPELAGO:['tide','calendar','weather','sea_map'],
  MERIDIAN_CITY:['household','board','city_who','city_wall','city_floor'],
- UNDERCITY:['echo','touch_wall','map','clap','touch','under_map','pull_lever','read_wall']
+ UNDERCITY:['echo','touch_wall','map','clap','touch','under_map']
 });
 const original=ROOM.manifest.filter(x=>x.id!==HOME);
 if(original.length!==22||Object.keys(allowed).length!==22||
@@ -146,14 +144,7 @@ function causeObject(st,verb){
   return {sit:'apartment.sofa',crack_window:'nest.window',
    mug:'apartment.fireside.mug'}[verb]||st.entity;
  }
- if(st.id==='UNDERCITY')return ({
-  touch:'apartment.undercity.echo-panel',
-  pull_lever:'apartment.undercity.lever',
-  read_wall:'apartment.undercity.vault-wall'
- })[verb]||st.entity;
- if(st.id==='ARCHIPELAGO'&&
-  (['board_boat','land_boat'].includes(verb)||verb.startsWith('row_to__')))
-  return 'apartment.sea.boat';
+ if(st.id==='UNDERCITY'&&verb==='touch')return 'apartment.undercity.echo-panel';
  if(st.id==='PET_ROOM_2'){
   return ({
    scratch_post:'apartment.scratcher',
@@ -209,35 +200,15 @@ for(const def of [
   shape:{kind:'BOX',halfExtents:[.43,.07,.65]},
   tags:['sonar','echo','cabinet','stone'],collision:true,material:'stone',
   label:'the solid stone panel of the echo cabinet'},
- {id:'apartment.undercity.lever',p:[4.2,-4.55,1.08],
-  shape:{kind:'BOX',halfExtents:[.09,.09,.5]},
-  tags:['iron','lever','undercity','original-source-fixture'],collision:true,material:'metal',
-  label:'a reachable iron lever on the physical Undercity cabinet'},
- {id:'apartment.undercity.gate',p:[4.7,-5.35,1.03],
-  shape:{kind:'BOX',halfExtents:[.05,.26,.7]},
-  tags:['iron','gate','undercity','original-source-fixture'],collision:true,material:'metal',
-  label:'the real model iron gate, closed'},
- {id:'apartment.undercity.vault-wall',p:[5.2,-4.65,1.12],
-  shape:{kind:'BOX',halfExtents:[.08,.28,.7]},
-  tags:['stone','inscription','vault','original-source-fixture'],collision:true,material:'stone',
-  label:'a reachable carved stone vault inscription on the physical cabinet'},
  {id:'apartment.marsh.wisp',p:[-4.5,-5,1.35],
   shape:{kind:'SPHERE',radius:.08},
   tags:['wisp','moving','projected','original-lorenz'],collision:false,material:'glass',
-  label:'the measured moving light from the original Lorenz model'},
- {id:'apartment.sea.tray',p:[2.7,-5,1.07],
-  shape:{kind:'VOLUME',halfExtents:[.82,.64,.05]},
-  tags:['sea','tabletop','archipelago','original-topography'],collision:false,material:'glass',
-  label:'a physical two-kilometre Archipelago terrain and tide tray at reduced scale'},
- {id:'apartment.sea.boat',p:[2.7,-5.11,1.2],
-  shape:{kind:'BOX',halfExtents:[.055,.085,.04]},
-  tags:['boat','tabletop','model','original-native-current'],collision:false,material:'wood',
-  label:'the reachable wooden model boat driven by original Relax wind and current'}
+  label:'the measured moving light from the original Lorenz model'}
 ]){
  if(M.entities()[def.id])throw Error('APARTMENT_LEGACY_STATION_FIXTURE_ID_COLLISION:'+def.id);
  M.addEntity({id:def.id,chart:HOME,position:def.p.slice(),
   shape:def.shape,tags:def.tags,collision:def.collision,material:def.material,
-  label:def.label,affordances:['watch','touch'],dynamic:['apartment.marsh.wisp','apartment.sea.boat'].includes(def.id)});
+  label:def.label,affordances:['watch','touch'],dynamic:def.id==='apartment.marsh.wisp'});
 }
 M.bump();
 const stationSenses=window.REALITI_SENSES_V1;
@@ -311,15 +282,12 @@ function snapshot(id){
   state.engine_state=copy(FR.state()[keys[st.id]]||null);
  }else if(st.id==='ARCHIPELAGO'){
   state.engine_state={tide:window.REALITI_LONG_GAME_V1?.tide?.()||null,
-   calendar:window.REALITI_CATNIP_PACK_V1?.calendar?.()||null,
-   sea_table:window.REALITI_APARTMENT_SEA_TABLE_V1?.read?.()||null};
+   calendar:window.REALITI_CATNIP_PACK_V1?.calendar?.()||null};
  }else if(st.id==='MERIDIAN_CITY'||st.id==='SIDE_BY_SIDE_FIRESIDE'){
   state.engine_state=window.REALITI_APARTMENT_HOUSEHOLD_V1?.view?.()||null;
  }else if(st.id==='UNDERCITY'){
   state.engine_state={original_tunnel_layout:window.REALITI_UNDERCITY_V1?.layout?.()?.length||0,
-   home_echo_source:'REALITI_MATRIX_V1.raycast',
-   cabinet:window.REALITI_APARTMENT_UNDERCITY_CABINET_V1?.read?.()||null,
-   scope:'physical HOME cabinet with original lever/vault state; not a new tunnel chart'};
+   home_echo_source:'REALITI_MATRIX_V1.raycast',scope:'apartment fixture; not a new tunnel chart'};
  }else if(st.id==='NINE_LIVES_ROOM'){
   state.engine_state=ROOM.sandbox();
  }else if(st.id==='LATENCY_LAGOON'){
@@ -433,10 +401,6 @@ function invokeNative(st,verb,args){
   }
  }
  if(st.id==='ARCHIPELAGO'){
-  if(['board_boat','land_boat','island_map','read_weather'].includes(verb)||
-     /^row_to__(harbor|lantern|hollow|stones|grove)$/.test(verb))
-   return window.REALITI_APARTMENT_SEA_TABLE_V1?.handle?.(verb)||
-    {ok:false,error:'ORIGINAL_RELAX_SEA_TABLE_NOT_MOUNTED'};
   const A=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LONG_GAME_V1,P=window.REALITI_CATNIP_PACK_V1;
   if(verb==='tide')return {ok:true,tide:LG.tide(),origin:'original island world-time tide'};
   if(verb==='calendar')return P.calendar();
@@ -445,9 +409,6 @@ function invokeNative(st,verb,args){
   if(verb==='sea_map')return {ok:true,original_island_map:A.map(),model:'native 2km archipelago, sampled on tabletop; no second Matrix chart in apartment'};
  }
  if(st.id==='UNDERCITY'){
-  if(verb==='pull_lever'||verb==='read_wall')
-   return window.REALITI_APARTMENT_UNDERCITY_CABINET_V1?.handle?.(verb)||
-    {ok:false,error:'ORIGINAL_UNDERCITY_CABINET_NOT_MOUNTED'};
   if(verb==='echo')return echo();
   if(verb==='clap'){
    // The original Undercity employs sixteen 343 m/s horizontal native SDF
@@ -562,8 +523,7 @@ function run(id,verb,args=[]){
  // Reading, clapping (SELF sound), walking and resting must not fabricate
  // a hand-touch receipt. Native SDF proximity is still verified above.
  const OBSERVE_ONLY=new Set(['who','sit','nothing','city_who','city_wall',
-  'city_floor','clap','under_map','follow_light',
-  'island_map','read_weather','tide','calendar','weather','sea_map']);
+  'city_floor','clap','under_map','follow_light']);
  const renew=(st.id!=='NINE_LIVES_ROOM'||verb==='fork_now')&&!OBSERVE_ONLY.has(verb);
  const object=causeObject(st,verb);
  const reached=renew?MW.reach(object):{ok:true,receipt:null};

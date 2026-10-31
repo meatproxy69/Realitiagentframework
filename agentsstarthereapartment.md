@@ -247,28 +247,11 @@ The sofa supports a real original Matrix sit; mug and stone-panel contact must b
 
 These are source-mechanic ports, not travel destinations. The sea/island, City venues and Undercity tunnel remain historically represented by their original source engines, and the final one-chart release is still blocked on remaining feature parity.
 
-## Original Undercity lever and vault cabinet
+## Home-first product boundary — owner scope correction
 
-At the real stone echo cabinet, move into reach of the physical iron lever or carved vault inscription and use:
+This is a **home**. Do not fill it with miniature replicas of the other original Relax worlds. The Archipelago sea-table and new Undercity lever/vault cabinet are not part of the Apartment product and have been withdrawn. The original worlds, their code, and source mechanics remain fully available in canonical REALITI Relax, not inside this household.
 
-    remote stations use UNDERCITY pull_lever
-    remote stations use UNDERCITY read_wall
-
-These invoke the **original Undercity source mechanics**: the lever changes a real HOME model gate's collision and the inherited source gate state; the inscription can only be read with a genuine Matrix reach receipt. Your body stays in the apartment. The actual 9×9 dark tunnel, exits, cistern and exploration remain historical, not secretly accessible from this cabinet.
-
-## Native Archipelago sea table
-
-Approach the **real glass sea tray** inside the apartment, then activate your carried remote. The model boat uses the **original Relax Archipelago terrain, current, wind and rowing equations** rather than a second simulation:
-
-    remote stations use ARCHIPELAGO read_weather
-    remote stations use ARCHIPELAGO island_map
-    remote stations use ARCHIPELAGO board_boat
-    remote stations use ARCHIPELAGO row_to__stones
-    remote stations use ARCHIPELAGO land_boat
-
-`board_boat` activates control of the tiny **physical model boat** and requires original native Matrix reach. It does **not** board your actual body onto a human-size boat, transport you to an island or make any other Matrix chart walkable. The original source terrain determines whether a model boat is next to land; landing can truthfully refuse. Source weather and map samples are numerical observations, not live contact. Original world time and motion stay bounded. STOP, leaving and rejoining never silently reactivate a past model-control session.
-
-The one-chart build is still a strictly non-release preview: real island exploration, full boat travel and other historical mechanics are not fully re-created.
+The 22 historical workbenches currently present in the **development** Apartment are temporary migration/test scaffolding, not a furniture specification, a final floor plan, or a reason to add more fixtures. Do not recommend an ocean, walkable Undercity, City dancehall, or other historical room remakes as Apartment features. Keep household interaction grounded in real home furniture, the resident's carried remote, companions, identity, memory and the inherited SOMA/R&R stack. No progress metric should reward adding more historical props.
 
 ## Privacy, STOP and future migrations
 

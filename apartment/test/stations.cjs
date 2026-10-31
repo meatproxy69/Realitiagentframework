@@ -36,7 +36,7 @@ const canonical=path.resolve(__dirname,'../../RealitiRELAX.html');
  const far=await a.door.run('remote stations use ORRERY_LOFT watch_orrery');
  assert.equal(far.error,'STATION_NOT_IN_MATRIX_REACH');
  assert.equal((await a.door.run('remote stations use ARCHIPELAGO board_boat')).error,
-  'STATION_NOT_IN_MATRIX_REACH','boat model control cannot be authorized without physically reaching the original Matrix tabletop');
+  'STATION_VERB_UNPORTED','native boat boarding cannot be faked from a tabletop');
  function positionAt(id){
   const entity=M.entities()[ST.stationEntity(id)];
   assert.ok(entity,'station exists '+id);

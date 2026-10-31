@@ -38,10 +38,6 @@ jobs:
           node --check apartment/source/catnip.js
           node --check apartment/source/stations.js
           node --check apartment/source/native-wonder-adapter.mjs
-          node --check apartment/source/native-archipelago-adapter.mjs
-          node --check apartment/source/sea-table.js
-          node --check apartment/source/native-undercity-adapter.mjs
-          node --check apartment/source/undercity-cabinet.js
           node --check apartment/source/native-body-adapter.mjs
           node --check apartment/source/remote.js
           node --check apartment/source/closet.js
@@ -53,8 +49,6 @@ jobs:
           node --check apartment/household-pet.cjs
           node --check apartment/test/peer-physics-pet.cjs
           node --check apartment/test/stations.cjs
-          node --check apartment/test/sea-table.cjs
-          node --check apartment/test/undercity-cabinet.cjs
           node --check apartment/test/home-social-echo.cjs
           node --check apartment/test/native-body-fixtures.cjs
           node --check apartment/test/port-coverage.cjs
@@ -106,20 +100,12 @@ jobs:
         run: node apartment/test/peer-physics-pet.cjs
       - name: Original Relax numerical engines on physical Apartment stations
         run: node apartment/test/stations.cjs
-      - name: Compare original Relax boat physics against native HOME sea tabletop model
-        run: node apartment/test/sea-table.cjs
-      - name: Compare native reached Undercity lever and vault against unchanged source mechanics
-        run: node apartment/test/undercity-cabinet.cjs
       - name: Real physical fireside, 16-ray sonar, live City ledger separation and native Lorenz tracking
         run: node apartment/test/home-social-echo.cjs
       - name: Build separately pinned single-chart experimental topology
         run: node apartment/build-one-chart.mjs
       - name: Recheck physical social and source-engine actions inside real one-chart preview
         run: node apartment/test/home-social-echo.cjs preview
-      - name: Verify source-equivalent bounded original sea boat physics with exactly one real Matrix chart
-        run: node apartment/test/sea-table.cjs preview
-      - name: Verify original Undercity lever and vault with exactly one real Matrix chart
-        run: node apartment/test/undercity-cabinet.cjs preview
       - name: Original Relax pillow, thermal water, cat-small body and physical box
         timeout-minutes: 3
         run: node apartment/test/native-body-fixtures.cjs
