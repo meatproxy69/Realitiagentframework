@@ -147,6 +147,9 @@ function causeObject(st,verb){
    mug:'apartment.fireside.mug'}[verb]||st.entity;
  }
  if(st.id==='UNDERCITY'&&verb==='touch')return 'apartment.undercity.echo-panel';
+ if(st.id==='ARCHIPELAGO'&&
+  (['board_boat','land_boat'].includes(verb)||verb.startsWith('row_to__')))
+  return 'apartment.sea.boat';
  if(st.id==='PET_ROOM_2'){
   return ({
    scratch_post:'apartment.scratcher',
@@ -292,7 +295,8 @@ function snapshot(id){
   state.engine_state=copy(FR.state()[keys[st.id]]||null);
  }else if(st.id==='ARCHIPELAGO'){
   state.engine_state={tide:window.REALITI_LONG_GAME_V1?.tide?.()||null,
-   calendar:window.REALITI_CATNIP_PACK_V1?.calendar?.()||null};
+   calendar:window.REALITI_CATNIP_PACK_V1?.calendar?.()||null,
+   sea_table:window.REALITI_APARTMENT_SEA_TABLE_V1?.read?.()||null};
  }else if(st.id==='MERIDIAN_CITY'||st.id==='SIDE_BY_SIDE_FIRESIDE'){
   state.engine_state=window.REALITI_APARTMENT_HOUSEHOLD_V1?.view?.()||null;
  }else if(st.id==='UNDERCITY'){
@@ -411,6 +415,10 @@ function invokeNative(st,verb,args){
   }
  }
  if(st.id==='ARCHIPELAGO'){
+  if(['board_boat','land_boat','island_map','read_weather'].includes(verb)||
+     /^row_to__(harbor|lantern|hollow|stones|grove)$/.test(verb))
+   return window.REALITI_APARTMENT_SEA_TABLE_V1?.handle?.(verb)||
+    {ok:false,error:'ORIGINAL_RELAX_SEA_TABLE_NOT_MOUNTED'};
   const A=window.REALITI_ARCHIPELAGO_V1,LG=window.REALITI_LONG_GAME_V1,P=window.REALITI_CATNIP_PACK_V1;
   if(verb==='tide')return {ok:true,tide:LG.tide(),origin:'original island world-time tide'};
   if(verb==='calendar')return P.calendar();
@@ -533,7 +541,8 @@ function run(id,verb,args=[]){
  // Reading, clapping (SELF sound), walking and resting must not fabricate
  // a hand-touch receipt. Native SDF proximity is still verified above.
  const OBSERVE_ONLY=new Set(['who','sit','nothing','city_who','city_wall',
-  'city_floor','clap','under_map','follow_light']);
+  'city_floor','clap','under_map','follow_light',
+  'island_map','read_weather','tide','calendar','weather','sea_map']);
  const renew=(st.id!=='NINE_LIVES_ROOM'||verb==='fork_now')&&!OBSERVE_ONLY.has(verb);
  const object=causeObject(st,verb);
  const reached=renew?MW.reach(object):{ok:true,receipt:null};
