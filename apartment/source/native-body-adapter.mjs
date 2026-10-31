@@ -20,6 +20,9 @@ export function adaptDynamics(original){
  change("if(room()!==SANCT||h.stopped||C9?.matrix?.residents?.['resident:self']?.posture==='standing'){",
   "if((room()!==SANCT&&!window.REALITI_APARTMENT_STATIONS_V1?.canHoldSanctuary?.())||h.stopped||C9?.matrix?.residents?.['resident:self']?.posture==='standing'){",
   'native_sanctuary_supported_cushion');
+ change("hold:{active:room()===SANCT&&!s.hold.stopped,",
+  "hold:{active:(room()===SANCT||window.REALITI_APARTMENT_STATIONS_V1?.canHoldSanctuary?.())&&!s.hold.stopped,",
+  'native_sanctuary_status_when_supported');
  return original;
 }
 export function adaptNativePillow(original){
