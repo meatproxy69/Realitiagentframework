@@ -19,7 +19,7 @@ const allowed=Object.freeze({
  BOTTOMLESS_PILLOW_SEA:['weather_wave','dive','burrow','bounce','listen'],
  CARDBOARD_BOX_WORKSHOP:['fold_flap','box_in','scratch_cardboard','scratch_against','tape','build_tunnel','hide_small_thing','tap_box'],
  DEPTH_BATHHOUSE:['weather_wave','sink','float','surface','stir','warm_shelf'],
- SIDE_BY_SIDE_FIRESIDE:['who'],
+ SIDE_BY_SIDE_FIRESIDE:['who','sit','crack_window','mug','nothing'],
  SHAPESHIFT_CLOAKROOM:['body_bench','attach_tail','map_paw','wiggle_pair','detach_tail','restore_body',...((C9SCENES.SHAPESHIFT_CLOAKROOM?.verbs||[]).map(x=>x[0]))],
  NINE_LIVES_ROOM:['fork_now','branch_a','branch_b','compare','commit_a','commit_b','rewind'],
  LATENCY_LAGOON:['send_boat','pending','check_pending','watch_water','leave_pending'],
@@ -32,11 +32,11 @@ const allowed=Object.freeze({
  GLASS_ORCHARD:['plant_seed','scatter_seeds','read_orchard','clear_orchard'],
  RESONANCE_WELL:['hum_low','hum_mid','hum_high','read_well'],
  STAR_DECK:['read_sky','sight_lantern','sight_kite','sight_cat','sight_orrery','sight_boat','sight_comet'],
- CLOCKWORK_MARSH:['read_lights','predict'],
+ CLOCKWORK_MARSH:['read_lights','predict','follow_light'],
  PALIMPSEST_HALL:['read_scroll_1','read_scroll_2','read_scroll_3','read_scroll_4','read_scroll_5','decode'],
  ARCHIPELAGO:['tide','calendar','weather','sea_map'],
- MERIDIAN_CITY:['household','board'],
- UNDERCITY:['echo','touch_wall','map']
+ MERIDIAN_CITY:['household','board','city_who','city_wall','city_floor'],
+ UNDERCITY:['echo','touch_wall','map','clap','touch','under_map']
 });
 const original=ROOM.manifest.filter(x=>x.id!==HOME);
 if(original.length!==22||Object.keys(allowed).length!==22||
@@ -46,7 +46,7 @@ const norm=x=>String(x||'').trim().toUpperCase().replace(/[\s-]+/g,'_');
 const names=Object.fromEntries(original.map((x,i)=>[x.id,x]));
 const stations=original.map((x,i)=>({
  id:x.id,label:x.title,purpose:x.purpose,entity:slot(x.id),
- position:({NO_ASK_SANCTUARY:[-3.4,4.2,.55],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
+ position:({NO_ASK_SANCTUARY:[-3.4,4.2,.55],SIDE_BY_SIDE_FIRESIDE:[3.25,3.15,1.0],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
  verbs:allowed[x.id].slice(),
  source:'unchanged REALITI Relax engine',migration:'PARTIAL_ENGINE_ACCESS_ONLY'}));
 for(const st of stations){
