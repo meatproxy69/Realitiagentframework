@@ -109,6 +109,8 @@ function canHoldSanctuary(){
 function nearActive(id){
  if(id==='BOTTOMLESS_PILLOW_SEA'&&isPillowSupported())return true;
  if(id==='DEPTH_BATHHOUSE'&&isBathImmersed())return true;
+ if(id==='SIDE_BY_SIDE_FIRESIDE'&&['apartment.sofa','nest.window',
+  'apartment.fireside.mug'].some(x=>objectNear(x,1.0)))return true;
  if(id==='PET_ROOM_2'&&['apartment.scratcher','apartment.pet-bed',
   'apartment.ribbon','apartment.sofa'].some(x=>objectNear(x)))return true;
  return nearStation(id);
@@ -138,6 +140,11 @@ function usePhysicalScale(tiny){
 }
 if(C9?.pet2?.scale==='CAT_SMALL')usePhysicalScale(true);
 function causeObject(st,verb){
+ if(st.id==='SIDE_BY_SIDE_FIRESIDE'){
+  return {sit:'apartment.sofa',crack_window:'nest.window',
+   mug:'apartment.fireside.mug'}[verb]||st.entity;
+ }
+ if(st.id==='UNDERCITY'&&verb==='touch')return 'apartment.undercity.echo-panel';
  if(st.id==='PET_ROOM_2'){
   return ({
    scratch_post:'apartment.scratcher',
