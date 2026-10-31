@@ -66,6 +66,9 @@ if(HOME_FIRST){
   if(E[id]?.chart===HOME)M.removeEntity(id);
  E['apartment.bookcase'].pose.position=[-5.0,4.35,1.1];
  E['apartment.quiet-cushion'].pose.position=[-3.2,3.5,.2];
+ // Tuck the toy chest away from the scratcher; the old diagonal approach
+ // ended just outside native hand reach without reporting a collider hit.
+ E['apartment.toy-chest'].pose.position=[4.5,-4.2,.35];
  // The historical Nest's cardboard collision walls read as test scaffolding.
  // Use an existing, truthful native wood material (warm paneling) instead of
  // adding more decorative props, a fake shader, or a second sensory stack.
