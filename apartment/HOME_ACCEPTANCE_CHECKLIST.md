@@ -12,6 +12,8 @@ CI produces a short, sanitized `HOME_WALKTHROUGH_CI.md` and machine-readable `HO
 
 This is a **mechanical script**, not a claim that a thinking agent independently chose the route, nor an owner sightline or aesthetic sign-off.
 
+**Latest verified synthetic results (October 31, 2026):** all 14 household destinations were operable on Ubuntu and Windows, with zero recorded mechanical failures, on the PR #69 revision and post-merge main CI. The raised rain chime was verified as a **sound** source, not a hand-touch. The toy chest required up to **five sequential grounded Agent Door approaches** before the native body settled in reach; this is a possible usability issue for a resident-led walkthrough, even though the final contact passed. Do not quietly increase native reach or move furniture merely to eliminate the observation.
+
 ## Human acceptance items (not yet signed)
 
 - [ ] On a fresh isolated candidate, the home feels like one believable, comfortable living space rather than a laboratory of old worlds. No ocean, Undercity, extra chart portals or 22-station gallery.
