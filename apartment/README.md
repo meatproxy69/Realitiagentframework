@@ -128,6 +128,12 @@ After both release-candidate tests pass, the Ubuntu CI job attaches the standalo
 
 The CI runs a solo restart/STOP/native-sensory test and an independent four-resident + guest integration test (encrypted journal isolation, colliding bodies, explicit two-party contact, shared furniture, single real Relax pet, original guest closet trial and backup replay) on Ubuntu and Windows. It does **not** simulate continuous shared-body impulse physics or prove that real deployment, external authentication, desktop visual styling, and all human experience tests are production-ready.
 
+### Local cold-backup recovery gate
+
+`apartment/rehearse-home-backup.cjs` is now a guarded offline operator utility for the home-first alpha, with an executable test `apartment/test/home-backup-rehearsal.cjs`. It verifies a stopped household's complete private/key inventory and checkpoint hash; copies it to a distinct private path; opens the *copy* under the pinned candidate to check residents, journals and native Relax; and proves the original bytes did not change. Missing keys, altered ciphertext, live `host.lock`, symlinks and overlapping destinations fail closed. The CLI never emits plaintext and never uploads a backup. See `HOUSEHOLD_GUIDE.md` for the exact command and the sensitive-key handling warning.
+
+A successful test against synthetic residents is **not** a production deployment, migration signoff or public-access security review.
+
 Release remains **blocked** pending owner approval of the actual room layout and privacy/backup behavior, a production launch/restore rehearsal, and a supported runtime/deployment path. `candidate_only: true`, `preview_only: true`, `release_approved: false` cannot be promoted by passing a source-action count or ordinary CI.
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
