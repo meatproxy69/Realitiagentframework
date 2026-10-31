@@ -389,11 +389,43 @@ function invokeNative(st,verb,args){
  }
  if(st.id==='UNDERCITY'){
   if(verb==='echo')return echo();
-  if(verb==='touch_wall')return {ok:true,
-   touched:MW.reach(st.entity).ok,
-   source:'REALITI_MATRIX_WORLD_V1 original native reached station fixture'};
+  if(verb==='clap'){
+   // The original Undercity employs sixteen 343 m/s horizontal native SDF
+   // rays. Here they measure only TRUE home surfaces, not an imaginary tunnel.
+   const prior=C9.apartmentEchoV1=C9.apartmentEchoV1||{claps:0,last_s:-1};
+   prior.claps=Math.min(1000000,prior.claps+1);
+   prior.last_s=Number(C9.b7?.clock||0);
+   const result=echo();
+   return {...result,claps:prior.claps,emitted:'ONE_SELF_STARTED_CLAP',
+    grounded_touch:false,measured_in:HOME,
+    original_undercity_speed_of_sound:true};
+  }
+  if(verb==='touch_wall'||verb==='touch')
+   return {ok:true,touched:['apartment.undercity.echo-panel'],
+    measured_material:M.entities()['apartment.undercity.echo-panel']?.material,
+    source:'ORIGINAL_RELAX_MATRIX_WORLD_REACH',
+    law:'Caller already earned an actual original B7 receipt from the reachable physical cabinet panel.'};
+  if(verb==='under_map'){
+   const out=echo();
+   return {ok:true,source:'LIVE_HOME_SDF_ECHO_MAP',
+    measured_chart:HOME,angular_res_deg:22.5,
+    known_radial_distances_m:out.echoes.map(e=>e.distance_m),
+    observed_hits:out.echoes.filter(e=>e.distance_m!=null).length,
+    old_tunnel_chart_implied:false,
+    law:'Only 16 currently observed HOME echo rays are mapped. The historical Undercity corridor layout is not claimed to be here.'};
+  }
   if(verb==='map')return {ok:true,native_model:window.REALITI_UNDERCITY_V1.layout(),
    apartment_evidence:echo(),historical_model_only:true};
+ }
+ if(st.id==='CLOCKWORK_MARSH'&&verb==='follow_light'){
+  const before=syncMarshWisp();
+  if(!before)return {ok:false,error:'ORIGINAL_RELAX_LORENZ_NOT_AVAILABLE'};
+  const result=MW.op('approach',{target:'apartment.marsh.wisp'});
+  const after=syncMarshWisp();
+  return {ok:result?.ok===true,from_original_lorenz:before,
+   native_matrix_approach:result,after_native_state:after,
+   mirrored_entity:'apartment.marsh.wisp',
+   law:'The local wisp is a physical Matrix projection of the original Lorenz integrator, not a separate walkable marsh.'};
  }
  if((st.id==='BOTTOMLESS_PILLOW_SEA'||st.id==='DEPTH_BATHHOUSE')&&verb==='weather_wave'){
   const original=c9verb(st.id,verb),wave=window.REALITI_DYNAMICS_V1?.state?.()?.wave||null;
