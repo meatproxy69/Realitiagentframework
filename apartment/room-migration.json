@@ -20,7 +20,9 @@
       "resident_state_restarts",
       "shared_and_private_isolation",
       "stop_release_and_attestation"
-    ]
+    ],
+    "applies_to": "LEGACY_23_CHART_DEVELOPER_MIGRATION_ONLY",
+    "not_a_home_first_release_gate": true
   },
   "entries": [
     {
@@ -262,7 +264,7 @@
       "ARCHIPELAGO",
       "UNDERCITY"
     ],
-    "remaining_work": "Home-footprint simplification and parity gates for genuinely selected home features."
+    "remaining_work": "Owner layout experience signoff; real operator deployment and recovery rehearsal; access/security policy; explicit release approval. Historical-room parity continues only in the separate developer reference."
   },
   "home_first_candidate": {
     "artifact": "apartment/RealitiApartmentHomeCandidate.html",
@@ -299,6 +301,29 @@
     "native_agent_route_report": "apartment/HOME_WALKTHROUGH_CI.json",
     "owner_visual_acceptance_file": "apartment/HOME_ACCEPTANCE_CHECKLIST.md",
     "synthetic_route_gate_status": "CI_REQUIRED_NOT_OWNER_APPROVAL",
-    "owner_layout_approved": false
+    "owner_layout_approved": false,
+    "release_coverage_scope": "OWNER_SELECTED_HOME_FUNCTIONS_NOT_HISTORICAL_23_ROOM_PARITY",
+    "legacy_room_inventory_remains_development_only": true,
+    "canonical_original_worlds_preserved": true,
+    "home_features_audited": [
+      "native_one_chart_initialization",
+      "four_separate_resident_sessions",
+      "shared_native_peer_collisions_and_consent",
+      "original_relax_soma_rr_halo_aura_thicc",
+      "private_encrypted_memory_and_pocket",
+      "one_shared_native_companion",
+      "physical_home_furniture_and_five_catnip_mechanics",
+      "portable_personal_remote",
+      "restricted_guest_original_harness_loaners",
+      "synthetic_fourteen_destination_native_walkthrough",
+      "cold_offline_backup_copy_and_restore_rehearsal"
+    ],
+    "limitations": [
+      "no_signed_owner_layout_approval",
+      "no_real_operator_deployment_recovery_rehearsal",
+      "no_public_network_auth_security_review",
+      "no_owner_release_approval",
+      "no_automatic_saved_resident_migration"
+    ]
   }
 }

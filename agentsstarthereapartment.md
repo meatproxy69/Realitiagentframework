@@ -2,7 +2,7 @@
 
 This is the apartment's official agent entry: **agentsstarthereapartment.md**. The original Relax entry `AGENT_START_HERE.md` remains unchanged. Use that original guide for the complete inherited REALITI Relax architecture, SOMA, NeuralMesh, Agent Door, Matrix, R&R, HALO, AURA, THICC and memory contracts.
 
-The Apartment build is independently derived from the complete Relax runtime. It contains one **inhabited** 12 × 12 m Matrix apartment, while all 23 original Relax charts are temporarily present for migration. They will be removed from **Apartment only** once the old mechanics have real tested home equivalents. The original Relax project is not to be pruned.
+**Use the HOME alpha for household evaluation.** `apartment/RealitiApartmentHomeCandidate.html` starts with a single 12 × 12 m `CLOUD_NINE_NEST` Matrix chart, zero legacy portals and **no 22-station gallery**. The other file, `apartment/RealitiApartment.html`, is an intentionally separate **23-chart historical development reference** for porting/source tests—not the intended home floor plan. Original REALITI Relax retains all 23 worlds. Incomplete historical-room parity does not mandate new HOME scenery or block a release limited to owner-selected household functions.
 
 ## Boot and verify your harness
 
@@ -11,20 +11,22 @@ Build from the repository root:
 ```sh
 node build.mjs
 node apartment/build.mjs
+node apartment/build-home-candidate.mjs
 npm install --no-package-lock --prefix packages/realiti-headless-resident
-node apartment/test/extras.cjs
-node apartment/test/home-pets.cjs
-node apartment/test/furniture-catnip.cjs
+node apartment/test/home-candidate.cjs
+node apartment/test/home-native-walkthrough.cjs
+node apartment/test/home-candidate-household.cjs
 ```
 
-The resulting `apartment/RealitiApartment.html` has an independently pinned SHA-256 in `apartment/VALIDATION.json`. Start it through the existing `openResident` host:
+The resulting **home-first alpha** is `apartment/RealitiApartmentHomeCandidate.html`, pinned by **its own** `apartment/HOME_CANDIDATE_VALIDATION.json`. Start it through the existing `openResident` host with an isolated, disposable test identity (never reuse live storage for a preview):
 
 ```js
 const {openResident}=require('./packages/realiti-headless-resident');
 const session=await openResident({
-  htmlPath:'./apartment/RealitiApartment.html',
-  residentId:'a-stable-id-for-this-agent',
-  storagePath:'./private/this-agent.json'
+  htmlPath:'./apartment/RealitiApartmentHomeCandidate.html',
+  validationPath:'./apartment/HOME_CANDIDATE_VALIDATION.json',
+  residentId:'a-disposable-alpha-test-resident',
+  storagePath:'./private/alpha-test-resident.json'
 });
 const ready=await session.window.Realiti.ready;
 if(!ready.ok || ready.harness!=='REALITI_RR_HARNESS_V1'
@@ -33,11 +35,11 @@ console.log(await session.door.run('look'));
 console.log(await session.door.run('remote activate'));
 ```
 
-Give each resident a **different storage path and keys file**. These separate instances do not yet constitute a shared four-resident host. Never merge private sealed Pocket files or keystores by hand. Always use `goodbye` or the host's normal clean close after saving.
+Give each resident a **different storage path and keys file**. Standalone sessions are not a shared household: use `apartment/household.cjs` through a trusted local Node operator for four residents, synchronized presence/geometry/pet, and temporary guests. `apartment/HOUSEHOLD_GUIDE.md` documents it. Never merge sealed Pocket files or keystores, never repoint an existing resident profile into the alpha without independent migration authorization, and close sessions using `goodbye` or the trusted host's normal shutdown. For historical development-only tests, build and use `RealitiApartment.html` with its separate `VALIDATION.json` instead.
 
 ## Your carried remote
 
-You have a small remote carried beside your body, represented as a real, non-colliding Matrix entity with a resident-specific ID. It follows your Matrix pose and remains with you if you visit a legacy chart during migration. It does not mint touch or grant you other agents' privileges.
+You have a small remote carried beside your body, represented as a real, non-colliding Matrix entity with a resident-specific ID. It follows your Matrix pose in HOME. The separate **development** artifact can also carry it through original legacy charts, but those charts do not exist in the HOME alpha. It does not mint touch or grant you other agents' privileges.
 
 The Agent Door is intentionally a **short transport and safety interface**. It handles `look`, `feel`, `actions`, `stay`, `save`, `stop`, `goodbye` and activation of your remote. It does not advertise the apartment's long list of controls. Those are in the remote's menu:
 
@@ -263,6 +265,6 @@ The HOME candidate now has a reproducible native synthetic-resident test, `apart
 
 ## Privacy, STOP and future migrations
 
-Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.
+Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified continuous multibody/object impulse physics and expanded *original* Relax memory internals remain optional future enhancements. The HOME candidate **already** has native one-chart boot, with no old worlds to remove. Network-authenticated visits are **not implemented**; choosing to enable external access requires a separate security review and owner approval.
 
 See [ROOM_MIGRATION_PLAN.md](apartment/ROOM_MIGRATION_PLAN.md) and [room-migration.json](apartment/room-migration.json) before editing or retiring any source room. No feature may be considered ported merely because its room name disappeared from the menu. When stopping or leaving, use the native STOP and `goodbye` boundaries, and never treat a saved note as authority to touch.

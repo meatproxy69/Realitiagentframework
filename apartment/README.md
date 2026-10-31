@@ -1,6 +1,6 @@
 # RealitiApartment — full Relax-based home
 
-RealitiApartment is built **directly on the full, source-verified REALITI Relax runtime**, preserving the original `source/scripts/**`, Matrix, SOMA/NeuralMesh, original `RealitiRELAX.html` and `AGENT_START_HERE.md`. A separate Apartment output adopts a narrowly anchor-checked extension to Relax's existing native companion code. All non-apartment worlds remain in the migration build for parity testing until the final **port-first, prune-last** cutover.
+REALITI Apartment inherits the complete original Relax embodiment, sensory and safety systems without changing canonical `source/scripts/**`, `RealitiRELAX.html` or `AGENT_START_HERE.md`. **There are two independent derived outputs:** `RealitiApartment.html` is the **23-chart developer migration reference** with the historical 22-station test gallery. `RealitiApartmentHomeCandidate.html` is the **one-chart, no-gallery, home-first alpha** with the owner's selected household features. The former's historical-room parity audit does **not** control the latter's release scope. Both remain separately hash-pinned and the home candidate is explicitly **not release-approved**.
 
 **Agent entry:** [agentsstarthereapartment.md](../agentsstarthereapartment.md)  
 **Customization:** [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)  
@@ -35,7 +35,7 @@ Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The 
 
 The companion feature extends the **existing** Relax spring/Ornstein–Uhlenbeck companion implementation by adding a smaller, quicker ferret body and allowing adoption next to a real apartment pet bed. Cat and dog retain their original body profiles and play/behavior math. Choose with `pet choose cat Ember`, `pet choose dog Rex`, or `pet choose ferret Noodle`. `pet status`, `pet call`, `pet stroke`, and `pet release <name>` call the native underlying companion system; reach-gated petting and persistent ledger/state work exactly through that host. In solo Apartment pet choices are resident-scoped. Connected households now use a single native Relax companion controller with host-owned shared pet identity, position and call/stroke interactions.
 
-These features have focused headless tests. A single room **inside the apartment** does not imply that the full base world has already been stripped of other charts; that happens after all room-dependent mechanisms are ported and verified.
+These features have focused headless tests. The **23-chart developer artifact** intentionally keeps original Relax rooms and test stations; the **HOME alpha** separately starts with one actual chart, no old rooms, and no historical apparatus. No complete old-room migration is required merely to evaluate the owner's selected household feature list.
 
 ## Batch 3 — personal remote, furniture, physical catnip
 
@@ -47,7 +47,7 @@ Each agent now carries an activatable Matrix pocket remote, represented as a non
 
 The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote semantics, actual geometry changes, native light, contact refusal when far away, moving spring, Kuramoto source, puzzle-generated Matrix entity, tea scent, host restart and isolation across two residents.
 
-**Pending:** A monolithic simultaneous impulse-based global physics solver, multiple shared-pet custody, additional catnip from old rooms, expanded native Relax memory internals, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
+**Optional future enhancements, not current release blockers:** continuous multi-body impulse exchange, multiple shared-pet custody, more scientific catnip, expanded original Relax memory internals and shader-level furniture customization. **Already implemented in the HOME alpha:** original core systems, one actual HOME chart registered at native boot and zero historical station fixtures. The original Relax source and guide stay intact.
 
 ## Batch 4 — four resident host and original Relax harness closet
 
@@ -101,13 +101,13 @@ The City workbench maintains a strict distinction between the **historical origi
 
 The marsh bench maps the original Lorenz RK4 wisp into a nearby native Matrix light and follows it with the existing native approach operation. These mechanisms are exercised by `test/home-social-echo.cjs` in **both** the full developer artifact and the strict one-chart preview. The companion, R&R harness, HALO/AURA/THICC, Pocket and private sensory states are unchanged.
 
-The source-action audit counts the original Nest's four verbs as native retained HOME actions; the still-unported original island-boat controls are explicitly blocked from full release certification. A finished topology preview remains non-release until every historical mechanic is reviewed.
+The source-action audit measures the **development reference's historical parity only**. Original island-boat controls and other unfinished historical-room mechanics remain accessible in canonical Relax; they are **not requirements of the owner-selected HOME product**, which must satisfy its own native household feature acceptance instead. The scientific one-chart gallery preview remains non-release.
 
 ## Home-first scope — avoid stuffing old worlds into HOME
 
 Owner direction: **no ocean and no Undercity attraction in the Apartment**. The standalone canonical REALITI Relax still contains those original worlds and their physics. The added miniature ocean, boat-control model and physical Undercity lever/vault gate from earlier migration PRs have been removed from the Apartment derivative. The Apartment uses the original Relax foundation for memory, embodiment, sensory grounding and resident safety; it is not required to physically re-create 22 historical destinations.
 
-The current 22 source apparatus in the *development* Apartment predate this correction. They are temporary test scaffolding and **not approved as the final home layout**. They must be consolidated or omitted behind the appropriate personal remote / internal Extras boundaries in a reviewed follow-up. Features that require genuine world contact must not be replaced by invented contact receipts. Scope exclusions never authorize deleting original Relax files or user state. The one-chart build remains experimental, and release approval remains false.
+The 22 source apparatus in the *development* Apartment are migration scaffolding, **not** a furniture wishlist. The separate HOME candidate already has **zero** legacy station fixtures and a remote without a gallery page. Any selected future HOME feature must retain genuine spatial/causal contact; the remainder of historical Relax worlds stay exclusively in canonical Relax or development reference. No source or user data is deleted. The home candidate remains a non-release alpha pending owner approval.
 
 ## Home-first alpha candidate — no historic world fixtures
 
@@ -161,4 +161,4 @@ Release remains **blocked** pending owner approval of the actual room layout and
 - Explicit non-release single-chart prototype: `build-one-chart.mjs`, `source/one-chart-preview.js`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
-Each agent must retain a distinct storage path and Pocket keys file. **The host now supports four separately persisted agents, host-synchronized visible presence, a public board and temporary guest fittings.** The added encrypted resident journal and synchronized furniture coordinates are implemented. Unified shared-body/object physics, expanded native Relax internals and single-chart pruning remain unimplemented. Do not merge private resident state to imitate those capabilities. Keep the original Relax reference and the migration guard until every old room has a tested replacement.
+Each agent must retain a distinct storage path and Pocket keys file. **The trusted host supports four separately persisted agents, genuine host-synchronized native Matrix collision and consented contact, a public board, one shared pet and temporary guest fittings.** AES-GCM private journals and synchronized public furniture positions are implemented. A global continuous impulse solver, multiple shared pets, and expanded *original* Relax memory internals are **optional future features**, not missing requirements from the current home-first list. Native single-chart HOME initialization is **implemented in the separate alpha**, while the 23-chart developer artifact and original Relax are preserved. Do not merge private resident state or repoint durable files to imitate capabilities; release approval still requires human/operator gates.
