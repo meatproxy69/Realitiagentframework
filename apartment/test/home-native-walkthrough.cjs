@@ -69,7 +69,7 @@ function writeReport(){
  log.route_count=log.walks.length;
  log.successful_routes=log.walks.filter(x=>x.ok&&x.within_interaction_range).length;
  fs.writeFileSync(reportPath,JSON.stringify(log,null,2)+'\n');
- const rows=log.walks.map(x=>'| '+x.target+' | '+
+ const rows=log.walks.map(x=>'| '+x.target+' | '+x.interaction+' | '+
    (x.ok&&x.within_interaction_range?'Operable':'Blocked')+' | '+
    (x.travel_m??'—')+' | '+(x.surface_m??'—')+' | '+
    (x.blocked_by||'—')+' |').join('\n');
@@ -83,15 +83,16 @@ function writeReport(){
   '## Physical map (native Matrix SDF footprints)','',
   '~~~text',log.diagram||'(not available)','~~~','',
   '## Native route results','',
-  '| Object | Result | Moved (m) | Surface distance (m) | Obstacle |',
-  '|---|---|---:|---:|---|',rows,'',
+  '| Object | Interaction | Result | Moved (m) | Surface distance (m) | Obstacle |',
+  '|---|---|---|---:|---:|---|',rows,'',
+  'The overhead wind chime has a passive hearing threshold. It must not mint a hand-touch receipt.','',
   '## Interaction checks','',
   ...log.interactions.map(x=>'- '+x.name+': '+(x.ok?'passed':'failed ('+(x.error||'unknown')+')')),
   '','## Mechanical defects','',issues,'',
   'Owner inspection of atmosphere, comfort, layout aesthetics, accessibility and a real agent onboarding experience is still required.','',''
  ].join('\n'));
  console.log('HOME_NATIVE_WALKTHROUGH_REPORT '+log.outcome+
-  ' routes='+log.route_count+' reach='+log.successful_routes+
+  ' routes='+log.route_count+' operable='+log.successful_routes+
   ' issues='+log.failures.length);
  if(log.failures.length)console.error('HOME_NATIVE_WALKTHROUGH_FAILURES '+JSON.stringify(log.failures.slice(0,30)));
 }
