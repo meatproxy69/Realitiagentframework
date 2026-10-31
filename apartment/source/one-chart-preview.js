@@ -108,7 +108,7 @@ D.help=()=>{
   'save','stop','goodbye'],
   rooms:cp(only),one_chart_preview:true,
   note:HOME_FIRST?
-   'One home, no historical world props or gallery. Alpha candidate; original Relax source intact.':
+   'REALITI 4.0 public beta: one comfortable HOME, no old-world gallery. Local trusted-host use only; original Relax remains intact.':
    'Only the apartment chart exists. Legacy science lives in physically reached stations. Full 23-room parity is not yet certified.'};
 };
 function capabilities(value){
@@ -140,6 +140,7 @@ function status(){
  legacy_matrix_entities:Object.values(M.entities()).filter(e=>e.chart!==HOME).length,
  live_source_engine_stations:ST.view().station_count,
  home_first_candidate:HOME_FIRST,legacy_station_gallery_disabled:HOME_FIRST,
+ public_beta_version:HOME_FIRST?'4.0.0-beta.1':null,
  native_single_chart_initialization:NATIVE_BOOT,
  initial_charts_at_boot:initial.length,
  no_post_startup_pruning:NATIVE_BOOT,
@@ -148,7 +149,7 @@ function status(){
  original_relax_untouched:true,
  preview_only:true,mechanical_parity_certified:false,
  law:HOME_FIRST?
- 'Only HOME is registered from source boot; no late pruning or quiet checkpoint conversion. Original Relax retained; owner release review still required.':
+ 'REALITI 4.0 public beta: HOME registered at native boot, no silent checkpoint conversion. Canonical Relax intact; production deployment/owner approvals still required.':
  'This candidate proves physical one-chart topology only. Historical source engines still need individual behavior/causal equivalence review before release.'};
 }
 window.Realiti=Object.freeze({...A,read,invoke,run,
