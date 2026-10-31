@@ -39,6 +39,11 @@ function clean(w){
  assert.ok(w.Realiti.read('realiti://soma/harness'));
  const topology=w.Realiti.read('realiti://apartment/topology');
  assert.equal(topology.home_first_candidate,true);
+ assert.equal(topology.native_single_chart_initialization,true);
+ assert.equal(topology.initial_charts_at_boot,1);
+ assert.equal(topology.retired_at_boot,0);
+ assert.equal(topology.no_post_startup_pruning,true);
+ assert.equal(w.REALITI_APARTMENT_NATIVE_BOOT_V1?.mode,'PRE_REGISTRATION_HOME_ONLY');
  assert.equal(topology.live_source_engine_stations,0);
  assert.equal(topology.mechanical_parity_certified,false);
  assert.equal(topology.preview_only,true);
@@ -50,6 +55,8 @@ function clean(w){
  assert.equal(manifest.schema,'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1');
  assert.equal(manifest.release_approved,false,'do not silently turn an alpha into a release');
  assert.equal(manifest.expected_legacy_station_count,0);
+ assert.equal(manifest.native_single_chart_initialization,true);
+ assert.equal(manifest.no_post_startup_pruning_required,true);
  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(html)).digest('hex'),
   manifest.single_html_sha256);
  const work=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-home-first-solo-'));
@@ -59,6 +66,17 @@ function clean(w){
  assert.equal(s.integrity.status,'VERIFIED');
  assert.equal(s.ready.harness,'REALITI_RR_HARNESS_V1');
  clean(s.window);
+ // Probe the actual boot-time Matrix registration boundary. Nothing may mint
+ // an unapproved chart, historical room entity, or portal through its API.
+ const M=s.window.REALITI_MATRIX_V1;
+ assert.equal(M.define('UNDERCITY',{bounds:{kind:'BOX',center:[0,0,1],halfExtents:[1,1,1]},spawn:{position:[0,0,.85]}}),null);
+ assert.equal(M.addEntity({id:'probe.legacy-entity',chart:'UNDERCITY',position:[0,0,0],
+  shape:{kind:'SPHERE',radius:.1},tags:['probe']}),null);
+ assert.equal(M.definePortal({id:'probe.to.undercity',from:HOME,to:'UNDERCITY',
+  entry:[0,0,.85],exit:[0,0,.85]}),null);
+ assert.equal(M.entities()['probe.legacy-entity'],undefined);
+ assert.equal(M.charts().UNDERCITY,undefined);
+ assert.equal(Object.keys(M.portals()).length,0);
  assert.equal((await s.door.run('go UNDERCITY')).error,'LEGACY_ROOM_NOT_WALKABLE');
  assert.equal((await s.door.run('go ARCHIPELAGO')).error,'LEGACY_ROOM_NOT_WALKABLE');
  assert.equal((await s.door.run('through__nest_to_sanctuary')).error,'LEGACY_ROOM_NOT_WALKABLE');
@@ -105,5 +123,5 @@ function clean(w){
  const source=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../VALIDATION.json'),'utf8'));
  assert.equal(source.single_html_sha256,manifest.parent_apartment_sha256);
  assert.notEqual(source.single_html_sha256,manifest.single_html_sha256);
- console.log('HOME-FIRST SOLO CANDIDATE PASS: verified alpha hash, one real chart, zero source station fixtures, preserved domestic furniture/pets/catnip/full Relax, hidden obsolete commands, native STOP and restart');
+ console.log('HOME-FIRST SOLO CANDIDATE PASS: verified native one-chart initialization without late prune, zero source station fixtures, preserved domestic furniture/pets/catnip/full Relax, hidden obsolete commands, native STOP and restart');
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
