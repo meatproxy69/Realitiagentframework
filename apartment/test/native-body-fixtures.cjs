@@ -5,6 +5,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {openResident}=require('../../packages/realiti-headless-resident/index.cjs');
 const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartment.html'));
+const stage=s=>console.log('NATIVE_BODY_STAGE:'+s);
 async function run(){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-native-body-'));
  const opts={htmlPath:html,residentId:'native-bodysupport',storagePath:path.join(root,'body.json')};
@@ -26,6 +27,7 @@ async function run(){
   return r;
  };
  // Bounded, actual standing supports rather than a storytelling-only bath.
+ stage('pillow_attempt');
  move('apartment.station.bottomless_pillow_sea');
  let out=await a.door.run('remote stations use BOTTOMLESS_PILLOW_SEA dive');
  assert.equal(out.error,'SOFT_SUPPORT_REQUIRED');
@@ -34,6 +36,7 @@ async function run(){
  assert.equal(seated.ok,true,JSON.stringify(seated));
  assert.equal(M.resident().on,'apartment.quiet-cushion');
  assert.equal(ST.isPillowSupported(),true);
+ stage('pillow_supported_dive');
  out=await a.door.run('remote stations use BOTTOMLESS_PILLOW_SEA dive');
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.equal(out.receipt.type,'PILLOW_SUPPORT_ENVELOPE');
@@ -45,12 +48,14 @@ async function run(){
  out=await a.door.run('remote stations use BOTTOMLESS_PILLOW_SEA weather_wave');
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.equal(out.native_wave.room,'BOTTOMLESS_PILLOW_SEA');
+ stage('pillow_wave_tick');
  w.eval('b7Advance(0.3)');
  assert.ok(DYN.state().wave!=null,'original wave still evolves at physical HOME station');
  const m=w.REALITI_HAPTIC_FIELD_V20.exact();
  assert.ok(m.m.some(Boolean),'original Relax haptics receive actual support on physical cushion');
  // Sanctuary is the original slow support function with a real cushion under
  // the body. No agent permission inferred from the word "quiet".
+ stage('sanctuary_hold');
  out=await a.door.run('remote stations use NO_ASK_SANCTUARY quiet');
  assert.equal(out.ok,true,JSON.stringify(out));
  w.eval('b7Advance(0.4)');
@@ -66,6 +71,7 @@ async function run(){
  assert.equal(DYN.state().wave,null,'moving off real support revokes the original wave');
  // Native bath thermal leases require the actual resident sitting in the
  // real liquid-volume/ceramic support, not standing near an icon.
+ stage('bath_start');
  move('apartment.station.depth_bathhouse');
  out=await a.door.run('remote stations use DEPTH_BATHHOUSE sink');
  assert.equal(out.error,'PHYSICAL_WATER_BASIN_REQUIRED');
@@ -76,6 +82,7 @@ async function run(){
  out=await a.door.run('remote stations use DEPTH_BATHHOUSE sink');
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.ok(out.native_state?.bath||DYN.state().bath,'native thermal bath state is surfaced');
+ stage('bath_integrate');
  w.eval('b7Advance(.9)');
  const bath=DYN.state().bath;
  assert.ok(bath.depth>.05,'original first-order bath-depth model actually integrates');
@@ -86,12 +93,14 @@ async function run(){
  assert.equal(out.native_wave.room,'DEPTH_BATHHOUSE');
  out=await a.door.run('remote stations use DEPTH_BATHHOUSE surface');
  assert.equal(out.ok,true,JSON.stringify(out));
+ stage('bath_surface');
  w.eval('b7Advance(1.4)');
  assert.ok(DYN.state().bath.depth<bath.depth,'original water depth relaxes upward');
  await a.door.run('stop');
  assert.equal(DYN.state().bath.depth,0,'STOP releases original thermal support and active waves');
  // Original CAT_SMALL changes the real native Matrix capsule geometry, rather
  // than only telling a model the furniture looks larger.
+ stage('cat_scale');
  move('apartment.station.pet_room_2');
  out=await a.door.run('remote stations use PET_ROOM_2 go_tiny');
  assert.equal(out.ok,true,JSON.stringify(out));
@@ -113,6 +122,7 @@ async function run(){
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.ok(w.eval('C9.pet2.kneads')>=1);
  // Physical den: narrow walls, real tiny capsule fits, old source box memory.
+ stage('cardboard_den');
  const r=M.resident();
  r.pose.position=[-1.6,-4.65,.225];r.posture='standing';
  r.on=null;r.support='CLOUD_NINE_NEST.floor';r.intent=null;M.bump();
@@ -134,6 +144,7 @@ async function run(){
  assert.ok(M.entities()['apartment.cardboard.hidden-tab']);
  // The original borrowed-limb and route methods stay callable through the
  // actual station. No extra SOMA layers are inserted.
+ stage('shapeshift_original');
  move('apartment.station.shapeshift_cloakroom');
  out=await a.door.run('remote stations use SHAPESHIFT_CLOAKROOM mesh_handshake');
  assert.equal(out.ok,true,JSON.stringify(out));
@@ -145,6 +156,7 @@ async function run(){
  assert.equal(w.eval('C9.pet2.scale'),'NORMAL');
  assert.equal(M.resident().shape.radius,.35);
  assert.equal(M.resident().shape.height,1.7);
+ stage('restart');
  await a.door.run('goodbye');a.close();
  a=await openResident(opts);
  assert.equal(a.window.REALITI_RR_HARNESS_V1.boot().ok,true);
