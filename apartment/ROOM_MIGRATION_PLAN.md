@@ -34,6 +34,12 @@ The source-action audit now distinguishes four original Nest verbs that remain i
 
 This does **not** silently approve historical City dancehall geometry, the two-kilometre Archipelago, old boat boarding/landing, genuine Undercity tunnel exploration or other dynamic controls. Original harbor/boat and venue behavior must be ported independently with new actual Matrix objects and equivalent state/physics, or explicitly excluded by owner approval. Keep `partial` status until the complete parity gate passes.
 
+## Archipelago sea-table source parity and remaining island boundaries
+
+A new physical HOME sea-table and wooden model boat use the original Relax Archipelago's analytic `h(x,y)` topology, wind/current and untouched `stepBoat` numerical core. An anchor-checked adapter exists **only in the separately derived Apartment HTML**. Differential acceptance must compare boat motion under identical source state/time to the canonical two-kilometre Archipelago. The model board and land actions must require real HOME reach and genuine source terrain conditions, not fabricate arrival or bodily contact.
+
+Importantly, **source numerical parity is not spatial/body parity**: a model controller cannot substitute for the full original island chart, actual physically boarded avatar, boats as full-size supports, terrain walking, island exploration, or source fog-of-war. The static action gap audit may report no unlisted static action names while these environmental and dynamic systems are incomplete. All original room statuses must remain `partial` (HOME retained) until owner-reviewed full behavior and state migration criteria pass.
+
 ## Non-negotiable acceptance checks
 
 1. **Single spatial truth:** Exactly one `M.charts()` entry, the apartment chart, with zero outgoing portals and no non-home residents; the spatial footprint and bed/window/closet entities are inspectable.
