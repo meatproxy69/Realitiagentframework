@@ -15,14 +15,14 @@ const copy=x=>JSON.parse(JSON.stringify(x));
 const HOME_ONLY=()=>C9.currentRoom===HOME&&M.resident().chart===HOME;
 const allowed=Object.freeze({
  NO_ASK_SANCTUARY:['quiet','normal'],
- PET_ROOM_2:['view_skeletons','fault_receipt'],
- BOTTOMLESS_PILLOW_SEA:['weather_wave'],
- CARDBOARD_BOX_WORKSHOP:['fold_flap'],
- DEPTH_BATHHOUSE:['weather_wave'],
+ PET_ROOM_2:['view_skeletons','fault_receipt','go_tiny','restore_scale','scratch_post','knead_blanket','pounce_string','circle_loaf','purr_blanket','rest_paws','hide_sofa','near_collision','neuromesh_handshake'],
+ BOTTOMLESS_PILLOW_SEA:['weather_wave','dive','burrow','bounce','listen'],
+ CARDBOARD_BOX_WORKSHOP:['fold_flap','box_in','scratch_cardboard','scratch_against','tape','build_tunnel','hide_small_thing','tap_box'],
+ DEPTH_BATHHOUSE:['weather_wave','sink','float','surface','stir','warm_shelf'],
  SIDE_BY_SIDE_FIRESIDE:['who'],
- SHAPESHIFT_CLOAKROOM:['body_bench','attach_tail','map_paw','wiggle_pair','detach_tail','restore_body'],
+ SHAPESHIFT_CLOAKROOM:['body_bench','attach_tail','map_paw','wiggle_pair','detach_tail','restore_body',...((C9SCENES.SHAPESHIFT_CLOAKROOM?.verbs||[]).map(x=>x[0]))],
  NINE_LIVES_ROOM:['fork_now','branch_a','branch_b','compare','commit_a','commit_b','rewind'],
- LATENCY_LAGOON:['send_boat','pending'],
+ LATENCY_LAGOON:['send_boat','pending','check_pending','watch_water','leave_pending'],
  ORRERY_LOFT:['watch_orrery','reset_orrery',...((C9SCENES.ORRERY_LOFT?.verbs||[])
    .map(x=>x[0]).filter(x=>/^(?:nudge|brake)_/.test(x)))],
  LANTERN_MAZE:['maze_map','step_north','step_east','step_south','step_west','light_lantern'],
@@ -46,7 +46,7 @@ const norm=x=>String(x||'').trim().toUpperCase().replace(/[\s-]+/g,'_');
 const names=Object.fromEntries(original.map((x,i)=>[x.id,x]));
 const stations=original.map((x,i)=>({
  id:x.id,label:x.title,purpose:x.purpose,entity:slot(x.id),
- position:[-4.5+(i%11)*.9,i<11?5:-5,1.25],
+ position:({NO_ASK_SANCTUARY:[-3.4,4.6,.55],BOTTOMLESS_PILLOW_SEA:[-3.4,3.6,.55],DEPTH_BATHHOUSE:[.7,4,.9],PET_ROOM_2:[3.65,-3.25,.8],CARDBOARD_BOX_WORKSHOP:[-1.6,-4.6,.9]})[x.id]||[-4.5+(i%11)*.9,i<11?5:-5,1.25],
  verbs:allowed[x.id].slice(),
  source:'unchanged REALITI Relax engine',migration:'PARTIAL_ENGINE_ACCESS_ONLY'}));
 for(const st of stations){
