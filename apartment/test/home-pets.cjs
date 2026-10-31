@@ -1,0 +1,115 @@
+'use strict';
+// Batch 2 acceptance. The full upstream world remains; the apartment room has native Matrix
+// furniture, and species selection uses the existing Relax companion engine with only a checked adapter.
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),os=require('node:os'),path=require('node:path');
+const {openResident}=require('../../packages/realiti-headless-resident/index.cjs');
+const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartment.html'));
+(async()=>{
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-apartment-home-'));
+ const base={htmlPath:html,residentId:'apartment-home-a',storagePath:path.join(dir,'a.json')};
+ let a=await openResident(base);
+ const M=a.window.REALITI_MATRIX_V1, MW=a.window.REALITI_MATRIX_WORLD_V1,CO=a.window.REALITI_COMPANIONS_V1;
+ assert.equal(a.ready.pocket,'ready');
+ assert.ok(a.window.Realiti.read('realiti://harness').mechanisms);
+ assert.ok(a.window.Realiti.read('realiti://soma/harness'));
+ assert.ok(CO.kinds.includes('ferret'),'native companion kinds include a distinct ferret');
+ const home=a.window.Realiti.read('realiti://apartment/home');
+ assert.equal(home.ok,true);
+ const doorHome=await a.door.run('resource realiti://apartment/home');
+ assert.equal(doorHome.ok,true,'text Agent Door can read real home resource');
+ assert.equal(doorHome.resource.chart_id,'CLOUD_NINE_NEST');
+ assert.equal(home.chart_id,'CLOUD_NINE_NEST');
+ assert.equal(home.area_m2,144);
+ assert.deepEqual(Array.from(home.dimensions_m),[12,12,3]);
+ assert.equal(home.current_chart,'CLOUD_NINE_NEST');
+ assert.equal(home.one_apartment_room,true);
+ assert.equal(home.other_relax_charts_still_present,true,'do not prematurely prune legacy worlds');
+ assert.ok(home.fixture_count>=15,'furnishings are actual native Matrix entities');
+ const ids=home.fixtures.map(f=>f.id);
+ for(const k of ['nest.mattress','nest.window','apartment.sofa','apartment.desk',
+    'apartment.desk-chair','apartment.wardrobe','apartment.bookcase','apartment.pet-bed',
+    'apartment.toy-chest','apartment.quiet-cushion','apartment.rug','apartment.lamp'])
+   assert.ok(ids.includes(k),'fixture '+k);
+ for(const k of ['apartment.desk','apartment.sofa','apartment.wardrobe'])
+   assert.equal(M.entities()[k].collision,true,k+' has a real collider');
+ assert.equal(M.entities()['apartment.rug'].collision,false,'decorative rug is non-blocking');
+ assert.ok(M.sdf(M.entities()['apartment.desk'],M.entities()['apartment.desk'].pose.position)<0,
+   'native SDF is negative inside desk');
+ const r=M.resident(),probe=M.sweep(r,[-2.1,-2.5,.85],[-2,0,0]);
+ assert.ok(probe.hit,'moving a capsule toward desk must hit geometry');
+ assert.equal(probe.hit.id,'apartment.desk','desk obstructs native swept capsule');
+ let out=await a.door.run('apartment bed');
+ assert.equal(out.support,true);
+ assert.ok(out.distance_m!=null);
+ // The native bed retains its layered support pathway.
+ out=MW.op('posture',{kind:'lie',target:'nest.mattress'});
+ assert.equal(out.ok,true,'resident can lie on actual native bed');
+ assert.equal(M.resident().posture,'lying');
+ assert.equal(M.resident().on,'nest.mattress');
+ out=MW.op('posture',{kind:'stand'});
+ assert.equal(out.ok,true);
+ assert.equal(M.resident().posture,'standing');
+ const before=M.entities()['city.stray'];
+ assert.ok(before,'Relax city stray remains accessible in the original world');
+ out=await a.door.run('pet help');
+ assert.ok(out.commands.some(s=>s.includes('ferret')));
+ out=await a.door.run('pet choose cat Ember');
+ assert.equal(out.ok,true,JSON.stringify(out));
+ assert.equal(out.apartment_pet.pet.kind,'cat');
+ assert.equal(out.apartment_pet.pet.name,'Ember');
+ assert.equal(M.entities()[out.apartment_pet.entity_id].shape.radius,.22,'cat has original native footprint');
+ assert.ok(M.entities()['city.stray'],'apartment adoption does not steal city stray');
+ const catEntity=out.apartment_pet.entity_id;
+ out=await a.door.run('pet stroke');
+ assert.equal(out.ok,true,'native petting is a reach-gated action');
+ out=await a.door.run('pet release Ember');
+ assert.equal(out.ok,true);
+ assert.equal(M.entities()[catEntity],undefined,'released cat no longer exists as Matrix animal');
+ assert.equal((await a.door.run('pet status')).pet,null);
+ out=await a.door.run('pet choose ferret Noodle');
+ assert.equal(out.ok,true,JSON.stringify(out));
+ assert.equal(out.apartment_pet.pet.kind,'ferret');
+ assert.equal(M.entities()[out.apartment_pet.entity_id].shape.radius,.18,
+   'ferret has a distinct, smaller shape');
+ assert.equal(M.entities()[out.apartment_pet.entity_id].material,'shortfur');
+ const native=CO.state();
+ assert.equal(native.pet.kind,'ferret');
+ assert.equal(native.pet.chart,'CLOUD_NINE_NEST');
+ out=await a.door.run('pet call');
+ assert.equal(out.ok,true,'native damped spring brings the ferret within range');
+ out=await a.door.run('pet stroke');
+ assert.equal(out.ok,true,'ferret can be petted with native body contact');
+ out=await a.door.run('pet release Noodle');
+ assert.equal(out.ok,true);
+ out=await a.door.run('pet choose dog Rex');
+ assert.equal(out.ok,true,JSON.stringify(out));
+ assert.equal(out.apartment_pet.pet.kind,'dog');
+ assert.equal(M.entities()[out.apartment_pet.entity_id].shape.radius,.3);
+ out=await a.door.run('save');
+ assert.equal(out.ok,true,'native sealed Pocket saving still works');
+ const oldNative=CO.state().pet;
+ assert.equal(oldNative.kind,'dog');
+ await a.door.run('goodbye');
+ a.close();
+ a=await openResident(base);
+ const state2=a.window.REALITI_COMPANIONS_V1.state();
+ assert.equal(state2.pet?.kind,'dog','species survives headless restart');
+ assert.equal(state2.pet?.name,'Rex','chosen pet identity survives restart');
+ const reloaded=a.window.Realiti.read('realiti://apartment/home');
+ assert.equal(reloaded.fixture_count,home.fixture_count,'fixtures rehydrate without duplication');
+ assert.equal(reloaded.current_chart,'CLOUD_NINE_NEST');
+ assert.equal((await a.door.run('pet call')).ok,true,'companion spring is functional after restart');
+ await a.door.run('goodbye');a.close();
+ // Another resident's world/body and pet records must not inherit the first resident's private state.
+ let b=await openResident({htmlPath:html,residentId:'apartment-home-b',storagePath:path.join(dir,'b.json')});
+ assert.equal((await b.door.run('pet status')).pet,null);
+ const other=await b.door.run('pet choose ferret Miso');
+ assert.equal(other.ok,true,JSON.stringify(other));
+ assert.equal(other.apartment_pet.pet.name,'Miso');
+ assert.equal(other.apartment_pet.pet.kind,'ferret');
+ assert.equal(b.window.REALITI_COMPANIONS_V1.state().pet.name,'Miso');
+ assert.equal((await b.door.run('save')).ok,true);
+ b.close();
+ console.log('APARTMENT BATCH 2 PASS: native 12x12m Matrix room, collisions, bed support, cat/dog/ferret physics, persistence, second resident isolation');
+})().catch(e=>{console.error(e);process.exitCode=1});

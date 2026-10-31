@@ -80,6 +80,8 @@ function cloak(verb){
 }
 function handle(raw){
  const s=clean(raw);
+ const res=/^resource (realiti:\/\/apartment\/(?:extras|rain))$/.exec(s);
+ if(res)return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri:res[1],resource:read(res[1])};
  if(s==='extras'){opened=true;return explain();}
  if(s==='extras close'){opened=false;return {ok:true,open:false};}
  if(!s.startsWith('extras '))return null;

@@ -5,9 +5,15 @@ const {openResident}=require('../../packages/realiti-headless-resident/index.cjs
 const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartment.html'));
 const original=fs.readFileSync(path.resolve(__dirname,'../../RealitiRELAX.html'),'utf8');
 const apartment=fs.readFileSync(html,'utf8');
-assert.ok(apartment.startsWith(original.slice(0,original.lastIndexOf('</body>'))),'entire original Relax runtime is copied, not replaced');
+const nativeSource=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58o-companions.js'),'utf8');
 assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appended');
 (async()=>{
+ const {adaptCompanions}=await import('../source/companion-adapter.mjs');
+ const patched=original.replace(nativeSource,adaptCompanions(nativeSource));
+ assert.notEqual(patched,original,'only native companion adaptation should differ from upstream');
+ assert.ok(apartment.startsWith(patched.slice(0,patched.lastIndexOf('</body>'))),
+   'all Relax scripts are present; only the checked native companion patch differs');
+ assert.ok(apartment.includes('realiti-apartment-home-pets'),'the furnished-home script follows full Relax');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-apartment-extras-'));
  const options={htmlPath:html,residentId:'apartment-a',storagePath:path.join(dir,'a.json')};
  let s=await openResident(options);
@@ -26,6 +32,12 @@ assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appe
  assert.equal(result.ok,true);
  assert.equal(result.native_rain,true);
  assert.equal(result.native_sound_source,true);
+ const doorRain=await s.door.run('resource realiti://apartment/rain');
+ assert.equal(doorRain.ok,true);
+ assert.equal(doorRain.resource.native_rain,true);
+ const doorExtras=await s.door.run('resource realiti://apartment/extras');
+ assert.equal(doorExtras.ok,true);
+ assert.equal(doorExtras.resource.open,true);
  assert.equal(result.entity_id,'nest.window');
  assert.ok(Number.isFinite(result.density));
  result=await s.door.run('extras rain touch');

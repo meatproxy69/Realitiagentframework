@@ -1,27 +1,46 @@
-// REALITI Apartment standalone artifact. Build from the COMPLETE Relax HTML;
-// insert only this product's additive overlay. All upstream slices remain present.
+// REALITI Apartment standalone artifact: entire canonical Relax runtime + reviewed, narrowly scoped
+// native companion adaptation + apartment-only home and Extras overlays. Parent source is never modified.
 import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
+import {adaptCompanions} from './source/companion-adapter.mjs';
 const root=new URL('../',import.meta.url);
 const apartment=new URL('./',import.meta.url);
+const read=async p=>fs.readFile(new URL(p,apartment),'utf8');
+const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const base=await fs.readFile(new URL('RealitiRELAX.html',root),'utf8');
-const overlay=await fs.readFile(new URL('source/extras.js',apartment),'utf8');
+const nativeSource=await fs.readFile(new URL('source/scripts/58o-companions.js',root),'utf8');
+const patchedNative=adaptCompanions(nativeSource);
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(base))throw Error('RELAX_BODY_END_NOT_FOUND');
 if(base.includes('realiti-apartment-extras'))throw Error('ALREADY_AN_APARTMENT_ARTIFACT');
-if(!base.includes('REALITI_SOMA_HARNESS_V3')||!base.includes('REALITI_MATRIX'))throw Error('RELAX_FULL_HARNESS_OR_MATRIX_NOT_FOUND');
-if(/<\/script/i.test(overlay))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED');
-const html=base.replace(end,()=>'<script id="realiti-apartment-extras">\n'+overlay+'\n</script>\n</body></html>');
+if(!base.includes('REALITI_SOMA_HARNESS_V3')||!base.includes('REALITI_MATRIX'))
+ throw Error('RELAX_FULL_HARNESS_OR_MATRIX_NOT_FOUND');
+if(base.split(nativeSource).length!==2)throw Error('RELAX_COMPANION_SOURCE_NOT_UNIQUE_IN_HTML');
+let html=base.replace(nativeSource,patchedNative);
+const overlays=['source/home-pets.js','source/extras.js'];
+for(const filename of overlays){
+ const body=await read(filename);
+ if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
+ const id=filename==='source/home-pets.js'?'realiti-apartment-home-pets':'realiti-apartment-extras';
+ if(!end.test(html))throw Error('RELAX_BODY_END_MISSING_WHILE_ASSEMBLING');
+ html=html.replace(end,()=>'<script id="'+id+'">\n'+body+'\n</script>\n</body></html>');
+}
 const file=new URL('RealitiApartment.html',apartment);
 await fs.writeFile(file,html);
-const digest=crypto.createHash('sha256').update(html).digest('hex');
 const validation={
-  schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.1.0',
-  source_artifact:'../RealitiRELAX.html',
-  source_html_sha256:crypto.createHash('sha256').update(base).digest('hex'),
-  single_html_sha256:digest,
-  includes:'entire REALITI Relax HTML plus apartment/source/extras.js',
-  complete_relax_source_retained:true
+ schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.2.0',
+ source_artifact:'../RealitiRELAX.html',
+ source_html_sha256:hash(base),
+ native_companions_source_sha256:hash(nativeSource),
+ native_companions_apartment_sha256:hash(patchedNative),
+ native_companions_patch:'source/companion-adapter.mjs',
+ overlays:overlays.slice(),
+ single_html_sha256:hash(html),
+ includes:'complete canonical REALITI Relax runtime with only a checked companion adapter plus apartment home/Extras scripts',
+ complete_relax_source_retained:true,
+ parent_files_mutated:false,
+ current_room_target:'CLOUD_NINE_NEST',
+ legacy_rooms_retained_during_migration:true
 };
 await fs.writeFile(new URL('VALIDATION.json',apartment),JSON.stringify(validation,null,2)+'\n');
-console.log('Built apartment/RealitiApartment.html, SHA-256 '+digest);
+console.log('Built apartment/RealitiApartment.html, SHA-256 '+validation.single_html_sha256);
