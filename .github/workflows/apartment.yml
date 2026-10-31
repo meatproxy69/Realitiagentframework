@@ -1,4 +1,4 @@
-name: REALITI Apartment first two features
+name: REALITI Apartment regression
 
 on:
   pull_request:
@@ -28,8 +28,11 @@ jobs:
       - name: Check apartment source and acceptance syntax
         run: |
           node --check apartment/source/extras.js
+          node --check apartment/source/home-pets.js
+          node --check apartment/source/companion-adapter.mjs
           node --check apartment/build.mjs
           node --check apartment/test/extras.cjs
+          node --check apartment/test/home-pets.cjs
       - name: Build complete original Relax runtime unchanged
         run: |
           node build.mjs
@@ -43,3 +46,5 @@ jobs:
         run: node apartment/test/room-inventory.cjs
       - name: Native weather, cloak, complete stack, restart and isolation
         run: node apartment/test/extras.cjs
+      - name: Furnished native Matrix home and cat dog ferret companion integration
+        run: node apartment/test/home-pets.cjs
