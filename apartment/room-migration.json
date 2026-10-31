@@ -324,6 +324,17 @@
       "no_public_network_auth_security_review",
       "no_owner_release_approval",
       "no_automatic_saved_resident_migration"
-    ]
+    ],
+    "cozy_layout_audit": "apartment/test/home-cozy-layout.cjs",
+    "cozy_layout_report": "apartment/HOME_COZY_AUDIT.json",
+    "cozy_floorplan": "apartment/HOME_COZY_FLOORPLAN.svg",
+    "home_only_layout_cleanup": true,
+    "legacy_developer_layout_preserved": true,
+    "owner_visual_approval_still_required": true,
+    "retired_phantom_props_in_home_only": [
+      "nest.cloudfall",
+      "nest.cat"
+    ],
+    "retained_owner_selected_pet_engine": "REALITI_COMPANIONS_V1"
   }
 }
