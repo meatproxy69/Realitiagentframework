@@ -18,6 +18,7 @@ node apartment/test/room-inventory.cjs
 node apartment/test/extras.cjs
 node apartment/test/home-pets.cjs
 node apartment/test/furniture-catnip.cjs
+node apartment/test/closet-household.cjs
 ```
 
 Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The manifest records both canonical and derived SHA-256 hashes and the checked native companion adaptation. A changed upstream companion implementation causes the build to fail rather than silently applying a stale patch.
@@ -42,7 +43,15 @@ Each agent now carries an activatable Matrix pocket remote, represented as a non
 
 The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote semantics, actual geometry changes, native light, contact refusal when far away, moving spring, Kuramoto source, puzzle-generated Matrix entity, tea scent, host restart and isolation across two residents.
 
-**Pending:** Real four-agent household authority, additional catnip from old rooms, expanded encrypted memory, guest harness closet, new display customization, then audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
+**Pending:** Full unified shared-object physics, shared furniture transactions, pet co-ownership, additional catnip from old rooms, expanded encrypted memory, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
+
+## Batch 4 — real four-resident host and guest SOMA closet
+
+**Guest loaners:** The existing physical wardrobe has a new drawer holding reviewed HoneySpark Duo and Moonwire Recovered presets. The [Apartment build](build.mjs) injects the original preset packs with conserved-budget, no-evidence-gain checks. Agents use remote closet inspect / remote closet try <preset-id> / remote closet return. Real Matrix reach is required; a fitted loaner creates a **fresh, private SOMA instance** without importing another resident's memories, identity, native contact port or checkpoint. Trial termination on STOP, departure, manual return, or expiry is tested.
+
+**Four resident household:** The trusted Node module [household.cjs](household.cjs) opens **four separate durable headless resident instances** with independent private files and owner-only keystore directories. It mirrors each online resident's verified Matrix position into the other instances as a non-colliding peer capsule, and supports a bounded host-persisted public board. Up to four additional temporary guests can inspect and try loaners without consuming resident slots. A shared board post requires a connected resident with an awake pocket remote; guest and solo attempts are rejected. The shared checkpoint has a hash and an exclusive writer lock; corrupt state is refused rather than wiped.
+
+See [HOUSEHOLD_GUIDE.md](HOUSEHOLD_GUIDE.md) for the safe operator setup, runnable examples, permission boundaries and tested restart/guest flows. This is genuine host-synchronized **shared presence and public text**, not yet a single unified collision/body/contact simulation. Resident furniture, pet state and private neuromesh are independent. The [regression test](test/closet-household.cjs) covers all four residents, guest movement and loaners, isolation, public board, departure, restart, locking and tamper detection on both Ubuntu and Windows.
 
 ## Developer source boundaries
 
@@ -52,6 +61,9 @@ The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote sema
 - Furnished home and pet interface: `source/home-pets.js`
 - Optional rain and cloak controls: `source/extras.js`
 - Independent runtime assembler: `build.mjs`
+- Reviewed transient guest harness closet: `source/closet.js`
+- Host-fed public household observer: `source/household-view.js`
+- Trusted four-agent household host: `household.cjs`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
-Each agent must retain a distinct storage path and Pocket keys file. **A shared four-agent household, multi-agent spatial presence, larger memory and guest harness closet remain unimplemented**; no private resident state may be merged to imitate those capabilities. Keep the Relax reference and the migration guard until every old room has a tested replacement. This product is currently an incremental apartment preview, not the final release.
+Each agent must retain a distinct storage path and Pocket keys file. **The host now supports four separately persisted agents, host-synchronized visible presence, a public board and temporary guest fittings.** Expanded resident memory capacity, a unified shared object/physics layer and single-chart pruning remain unimplemented. Do not merge private resident state to imitate those capabilities. Keep the original Relax reference and the migration guard until every old room has a tested replacement.
