@@ -16,9 +16,16 @@ try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s?.schema==='REALIT
 function save(){localStorage.setItem(KEY,JSON.stringify({schema:'REALITI_APARTMENT_EXTRAS_V1',curtains}));}
 function place(){
  const e=M.entities()[CLOAK];
- if(!e)M.addEntity({id:CLOAK,chart:HOME,position:[.55,-1.35,1.05],shape:{kind:'SPHERE',radius:.22},
+ // The optional cloak belongs at the wardrobe in the home, never laid over
+ // the resident's bed. Its native collision/reach rules remain unchanged.
+ if(!e)M.addEntity({id:CLOAK,chart:HOME,
+    position:window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true?
+      [3.95,-.45,1.35]:[.55,-1.35,1.05],
+    shape:{kind:'SPHERE',radius:.22},
     tags:['closet','shapeshift','borrowed','optional'],collision:false,material:'felt',
-    label:'a folded shapeshifter cloak',affordances:['touch','wear'],dynamic:false});
+    label:window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true?
+      'folded optional cloak hanging in wardrobe':'a folded shapeshifter cloak',
+    affordances:['touch','wear'],dynamic:false});
  const w=M.entities()[WINDOW];
  if(!w)throw Error('APARTMENT_NATIVE_RAIN_WINDOW_MISSING');
  w.label='rain window (curtains '+curtains+')';
