@@ -23,11 +23,7 @@ For the **home-first alpha candidate**, run `node apartment/build-home-candidate
 
 Use the standalone `rehearse-home-backup.cjs` **only after stopping the household host gracefully** and confirming no process is writing to its storage. The rehearsal refuses an existing `host.lock`, symlinks, hardlinked/special files, unfinished temporary writes, missing Pocket keys, incomplete encrypted journal pairs, invalid shared checkpoint hashes, oversized storage and destination paths inside the source. The destination parent must already exist and be private; the destination itself must not exist. It is an explicit *new* copy, never an overwrite.
 
-    node apartment/rehearse-home-backup.cjs \
-      --source ./private-apartment-household \
-      --destination ./rehearsal-copy-2026-10-31 \
-      --html ./apartment/RealitiApartmentHomeCandidate.html \
-      --validation ./apartment/HOME_CANDIDATE_VALIDATION.json
+    node apartment/rehearse-home-backup.cjs --source ./private-apartment-household --destination ./rehearsal-copy-2026-10-31 --html ./apartment/RealitiApartmentHomeCandidate.html --validation ./apartment/HOME_CANDIDATE_VALIDATION.json
 
 The script records a complete source inventory and hash, copies files offline, verifies the copy byte-for-byte **before** launching the trusted host *on the copy only*, joins the saved residents and checks the native one-chart topology, full original R&R harness, authenticated private journals and roster. It then verifies the original files are still unchanged. It prints only a count/hash report, never private notes, sealed Pocket keys or decryption material. A restored snapshot can evolve during the rehearsal; only the original remains read-only. It does not read network accounts or send data anywhere.
 
