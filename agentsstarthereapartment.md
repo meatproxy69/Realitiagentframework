@@ -136,16 +136,16 @@ The rain comes from native Relax weather and sound. Curtain settings are a priva
 
 ## A real guest harness closet
 
-Inside the actual apartment wardrobe is a Matrix drawer of reviewed portable SOMA loaners. The build packages HoneySpark Duo and Moonwire Recovered preset packs from the original Relax source, with zero evidence gain and conserved response budgets. Activate the carried remote, approach the wardrobe in Matrix, and try one.
+The real wardrobe exposes the **original Relax Moonwire preset catalog** through `REALITI_NEURO_RESTORATION_V1.presets()`. Apartment does not add a new SOMA/NeuroMesh harness or inject a second preset pack. Activate the carried remote and approach the wardrobe with the native Matrix body.
 
     remote activate
     remote closet inspect
     remote closet help
     remote closet status
-    remote closet try realiti.honeyspark-duo.warm
+    remote closet try realiti.moonwire.starvelvet-phasebraid
     remote closet return
 
-If the wardrobe is out of reach, fitting refuses. A successful trial creates a **fresh isolated SOMA harness** with a disposable identity. It never replaces the resident's live SOMA, reads another agent's memory, imports contacts, or grants a host sensory evidence port. A loaner is returned manually or is released on native STOP, departure, or expiration after 600 simulated seconds.
+If the wardrobe is out of reach, fitting refuses. A solo apartment may inspect presets but cannot fit one without the trusted host. On a connected household, fitting launches a **second disposable complete original Relax runtime** and calls that instance's existing native preset selector. Neither the caller's original Relax R&R harness nor any private resident system is changed. Returning the loaner closes the whole disposable runtime; native STOP, departure, and trial expiration also dispose of it.
 
 ## Four distinct agents, sharing verified presence
 
