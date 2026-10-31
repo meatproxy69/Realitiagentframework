@@ -11,13 +11,13 @@ export function adaptArchipelago(original){
   original=original.replace(before,after);
  };
  patch("function stepBoat(dt){const b=boat(),r=me();if(!r||r.chart!==ISLE)return;const E=M.entities()['harbor.boat'];",
-  "function stepBoat(dt){const b=boat(),r=me();if(!r||(r.chart!==ISLE&&!window.REALITI_APARTMENT_STATIONS_V1?.seaTableConnected?.()))return;const E=M.entities()['harbor.boat'];",
+  "function stepBoat(dt){const b=boat(),r=me();if(!r||(r.chart!==ISLE&&!window.REALITI_APARTMENT_SEA_TABLE_V1?.connected?.()))return;const E=M.entities()['harbor.boat'];",
   'original_boat_integrator_reuses_home_station');
  patch("if(b.aboard){r.pose.position=[b.x,b.y,SEA+.9];r.v=[0,0,0];r.intent=null}",
   "if(b.aboard&&r.chart===ISLE){r.pose.position=[b.x,b.y,SEA+.9];r.v=[0,0,0];r.intent=null}",
   'tabletop_control_never_moves_real_body_out_of_home');
  patch("function step(dt){if(room()!==ISLE)return;stepBoat(dt);exposure(dt);markSeen()}",
-  "function step(dt){if(room()!==ISLE){if(window.REALITI_APARTMENT_STATIONS_V1?.seaTableConnected?.()){stepBoat(dt);window.REALITI_APARTMENT_STATIONS_V1?.syncSeaToken?.()}return;}stepBoat(dt);exposure(dt);markSeen()}",
+  "function step(dt){if(room()!==ISLE){if(window.REALITI_APARTMENT_SEA_TABLE_V1?.connected?.()){stepBoat(dt);window.REALITI_APARTMENT_SEA_TABLE_V1?.sync?.()}return;}stepBoat(dt);exposure(dt);markSeen()}",
   'sea_table_original_timestep_and_public_position');
  return original;
 }
