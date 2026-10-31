@@ -15,13 +15,33 @@ export function adaptWonder(original){
  match('if(!k.up||room()!==FIELD){',
   'if(!k.up||(room()!==FIELD&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(FIELD))){',
   'kite_ou_original_step');
- return original;
+ match('if(mazeBridge.step){',
+  'if(mazeBridge.step&&room()===MAZE){',
+  'maze_tabletop_uses_original_state_machine_fallback');
+  return original;
 }
 export function adaptFrontier(original){
  if(typeof original!=='string'||!original.includes('window.REALITI_CATNIP_V1'))
   throw Error('NATIVE_RELAX_FRONTIER_SOURCE_MISSING');
  const old='if(room()===MARSH)stepMarsh(dt);';
  if(original.split(old).length!==2)throw Error('APARTMENT_FRONTIER_PATCH_DRIFT:lorenz');
- return original.replace(old,
+ let patched=original.replace(old,
   "if(room()===MARSH||window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(MARSH))stepMarsh(dt);");
+ const patch=(target,next,label)=>{
+  if(patched.split(target).length!==2)throw Error('APARTMENT_FRONTIER_PATCH_DRIFT:'+label);
+  patched=patched.replace(target,next);
+ };
+ patch("if(!inReach('deck.sextant'))",
+  "if(!inReach('deck.sextant')&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(DECK))",
+  'star_projector_sextant_reach');
+ patch("if(!inReach('hall.scroll_'+(i+1)))",
+  "if(!inReach('hall.scroll_'+(i+1))&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(HALL))",
+  'palimpsest_shelf_reach_read');
+ // Second identical occurrence must be selected too (the decoder), but the
+ // expected count is exactly two in pristine source. Do not grant authority
+ // from narration: the new station checks native Matrix reach independently.
+ patch("if(!inReach('hall.scroll_'+(i+1)))",
+  "if(!inReach('hall.scroll_'+(i+1))&&!window.REALITI_APARTMENT_STATIONS_V1?.nearActive?.(HALL))",
+  'palimpsest_shelf_reach_decode');
+ return patched;
 }
