@@ -93,6 +93,16 @@ That candidate is written to `apartment/RealitiApartmentOneChartPreview.html` wi
 
 The room-by-room [migration inventory](room-migration.json) remains **22 partial ports + retained home anchor**, with every source room still requiring independent original-behavior, causal-contact, release, persistence and geometry review. A source verb coverage audit emits a live `PARITY_GAPS_CI.json` report in the CI workspace; it explicitly does not interpret static action matching as percent complete. No old chart is deleted from the ordinary Apartment build without the required verified or owner-approved exclusion evidence.
 
+## Physical Fireside, original City provenance and measured home echoes
+
+The Apartment's original Relax stations now also carry genuine HOME mechanics for the Fireside, City, Undercity and Lorenz Marsh source actions. A real native sofa supports sitting; reaching a ceramic mug creates an ordinary original B7 contact and a persistent physical ring; the original glass window can be cracked for native rain sound only after physical reach. "Do nothing" and the observer commands do not mint hand contact.
+
+The City workbench maintains a strict distinction between the **historical original City ledger/crowd rhythm** and **currently host-verified household residents and board posts**. No archived silhouette becomes a present resident. The Undercity apparatus emits a self-generated clap and reads sixteen real native Matrix SDF rays against the HOME walls at 343 m/s. Actual stone-panel touch uses the original B7 reach; its small radial HOME map is not falsely described as a subterranean tunnel.
+
+The marsh bench maps the original Lorenz RK4 wisp into a nearby native Matrix light and follows it with the existing native approach operation. These mechanisms are exercised by `test/home-social-echo.cjs` in **both** the full developer artifact and the strict one-chart preview. The companion, R&R harness, HALO/AURA/THICC, Pocket and private sensory states are unchanged.
+
+The source-action audit counts the original Nest's four verbs as native retained HOME actions; the still-unported original island-boat controls are explicitly blocked from full release certification. A finished topology preview remains non-release until every historical mechanic is reviewed.
+
 ## Developer source boundaries
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
