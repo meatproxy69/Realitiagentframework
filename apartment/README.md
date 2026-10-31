@@ -117,6 +117,17 @@ The differential test compares original source boat position against a **canonic
 
 **Full parity is still blocked.** The tabletop is not a full-sized boat, two-kilometre navigable ocean, actual island walking, fog-of-war exploration, source chart occupancy, or all historical sea crossing/shore behavior. Static source action-name coverage may reach zero gaps, but this is not release certification. Do not retire source rooms or automatically migrate resident data.
 
+## Original Undercity lever and vault inscription on a real HOME cabinet
+
+The physical Undercity cabinet now contains a real iron lever, a collision-bearing movable gate and a carved stone inscription. Reach them through the carried remote:
+
+    remote stations use UNDERCITY pull_lever
+    remote stations use UNDERCITY read_wall
+
+These invoke the **original, unmodified** `REALITI_UNDERCITY_V1.pull()` and `readWall()` source transitions, using a source-anchor-checked Apartment-only native reach adapter. Pulling the real model lever changes the original source gate state and the actual HOME model gate collision. Repeated pulls preserve the original idempotence; restart restores both original source history and visible HOME collision. The tests compare outcomes with an unchanged canonical Relax Undercity resident, in both development and the non-release one-chart preview.
+
+**This is a cabinet, not an underground maze.** The original 9×9 dark tunnels, true walkable flagstones, two exits, cistern navigation, original echo exploration, and full body movement are still not ported into HOME and cannot be inferred from the model action. Historical rooms remain protected.
+
 ## Developer source boundaries
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
@@ -133,8 +144,9 @@ The differential test compares original source boat position against a **canonic
 - Host-owned shared furniture transactions: `shared-scene.cjs`
 - Native colliding household peer controller: `household-physics.cjs`
 - Shared native Relax companion driver: `household-pet.cjs`
-- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`, `source/native-body-adapter.mjs`, `source/native-archipelago-adapter.mjs`
+- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`, `source/native-body-adapter.mjs`, `source/native-archipelago-adapter.mjs`, `source/native-undercity-adapter.mjs`
 - Source-faithful HOME sea model controller: `source/sea-table.js`
+- Real native HOME Undercity cabinet and original source dynamic lever/vault: `source/undercity-cabinet.js`
 - Native engine workbenches: `source/stations.js`
 - Explicit non-release single-chart prototype: `build-one-chart.mjs`, `source/one-chart-preview.js`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`

@@ -247,6 +247,15 @@ The sofa supports a real original Matrix sit; mug and stone-panel contact must b
 
 These are source-mechanic ports, not travel destinations. The sea/island, City venues and Undercity tunnel remain historically represented by their original source engines, and the final one-chart release is still blocked on remaining feature parity.
 
+## Original Undercity lever and vault cabinet
+
+At the real stone echo cabinet, move into reach of the physical iron lever or carved vault inscription and use:
+
+    remote stations use UNDERCITY pull_lever
+    remote stations use UNDERCITY read_wall
+
+These invoke the **original Undercity source mechanics**: the lever changes a real HOME model gate's collision and the inherited source gate state; the inscription can only be read with a genuine Matrix reach receipt. Your body stays in the apartment. The actual 9×9 dark tunnel, exits, cistern and exploration remain historical, not secretly accessible from this cabinet.
+
 ## Native Archipelago sea table
 
 Approach the **real glass sea tray** inside the apartment, then activate your carried remote. The model boat uses the **original Relax Archipelago terrain, current, wind and rowing equations** rather than a second simulation:

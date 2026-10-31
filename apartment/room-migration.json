@@ -245,9 +245,10 @@
       "status": "partial",
       "parity_tests": [
         "apartment/test/stations.cjs",
-        "apartment/test/home-social-echo.cjs"
+        "apartment/test/home-social-echo.cjs",
+        "apartment/test/undercity-cabinet.cjs"
       ],
-      "notes": "The home echo cabinet now exposes the original sixteen-direction 343m/s SDF ray method against actual HOME geometry. Clapping creates self sound, not hand contact; touching the real stone cabinet panel follows original Matrix B7. The map reports observed HOME rays and the historical tunnel layout stays explicitly historical. No dark tunnel geometry parity is claimed. Prior inventory: Physically reached native HOME apparatus now exposes a bounded subset of original UNDERCITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
+      "notes": "Original Undercity dynamic pull_lever/read_wall are now physically gated at a native HOME iron lever and carved inscription. An exact-source-checked derived Apartment adapter extends only original source reach; original U.pull/readWall transitions, gate state and source discovery remain unchanged, with real native model gate collision and persisted restart. Differential tests compare canonical Relax output in both 23-chart development and non-release one-chart preview. The historical 9×9 dark maze, actual tunnel walking, cistern, two exits, source wall discovery, darkness fields and full body/spatial parity are NOT ported and no old chart deletion is authorized. Previously verified: original 16-direction 343m/s SDF ray method measures actual HOME geometry; clapping emits SELF sound; B7 panel touch is physically reached; native map reports observed HOME rays while historical layout stays historical. Full parity remains PARTIAL."
     }
   ]
 }
