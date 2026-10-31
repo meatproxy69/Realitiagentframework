@@ -57,6 +57,10 @@ function clean(w){
  assert.equal(manifest.expected_legacy_station_count,0);
  assert.equal(manifest.native_single_chart_initialization,true);
  assert.equal(manifest.no_post_startup_pruning_required,true);
+ const originalKernel=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/57.js'));
+ assert.equal(crypto.createHash('sha256').update(originalKernel).digest('hex'),
+  manifest.original_matrix_kernel_sha256,'native gate never mutates canonical Matrix source');
+ assert.match(manifest.native_matrix_boot_gate_sha256,/^[a-f0-9]{64}$/);
  assert.equal(crypto.createHash('sha256').update(fs.readFileSync(html)).digest('hex'),
   manifest.single_html_sha256);
  const work=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-home-first-solo-'));
