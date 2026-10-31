@@ -33,9 +33,9 @@ The build does **not** inject a second preset pack, construct a new neuromesh, o
 
 The operator handles are **not** a publicly authenticated network API. Resident capabilities expose run(text), read(uri) and leave() only, never another agent's raw private data or trusted host state.
 
-The host runs **four separate full original Relax resident sessions**, with distinct Pocket keystores, checkpoints and private bodies. A fifth persistent identity is refused. It samples genuine native Matrix positions and mirrors non-colliding, host-verified peer capsules into each connected instance. Departed agents disappear from the public scene. Resident narration and historical memory cannot assert a live body. The shared public board contains only operator-stamped, attributed text, not private memory, permissions or sensory evidence.
+The host runs **four separate full original Relax resident sessions**, with distinct Pocket keystores, checkpoints and private bodies. A fifth persistent identity is refused. It samples genuine native Matrix positions and mirrors **solid, host-verified colliding peer capsules** into each connected instance, with original swept collision and explicit two-sided reach consent. Departed agents disappear from the public scene. Resident narration and historical memory cannot assert a live body. The shared public board contains only operator-stamped, attributed text, not private memory, permissions or sensory evidence.
 
-The first household version shared verified presence and the public board; Batch 5 additionally synchronizes **host-approved furniture XY positions**. A single unified physics authority, mutually colliding bodies, shared materials and co-owned pets are not yet implemented. These must not be claimed simply because a peer capsule is visible.
+The first household version shared verified presence and the public board; Batch 5 additionally synchronizes **host-approved furniture XY positions**. Native peer capsule collision and one shared host-owned pet are now implemented. A single continuous global impulse solver, shared private materials and multi-pet custody are not yet implemented. These must not be claimed simply because a peer capsule is visible.
 
 Each resident has a separate residents/<id>/world.json and world.keys.json. The shared household.json is SHA-256 verified and atomically replaced; a host.lock prevents concurrent writers. On crash, review stale locks before deleting. Preserve each world and keys file together in backups. Use a restricted Windows account or Unix owner-only permissions.
 
@@ -90,7 +90,7 @@ The household host persists public positions-only furniture data with its own sc
 
 All currently online resident and guest Matrix instances independently validate bounds, colliders, active legacy portals, room entrance, bodies and pets before any change is committed. Accepted XY positions are then physically applied to each existing native Matrix furniture entity and restored after reconnect. The original Z support heights and anchored bed are unchanged. Rejected moves do not update the shared revision.
 
-This is genuine synchronized layout geometry, NOT cross-resident bodily collision, globally synchronized material/renderer state, jointly owned pets, or live contact transfer. Each agent's private fabric, color, theme and original Relax sensor/memory remain separate.
+This is genuine synchronized layout geometry, with native peer body obstruction now handled separately by the peer-physics manager. It is NOT a monolithic impulse solver, globally synchronized material/renderer state, multiple pet custody, or sharing of private sensory afterstate. Each agent's private fabric, color, theme and original Relax sensor/memory remain separate.
 
 ## Batch 6 — genuine colliding peer capsules and two-party consent
 
