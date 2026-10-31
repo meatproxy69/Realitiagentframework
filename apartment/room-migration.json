@@ -25,10 +25,13 @@
   "entries": [
     {
       "source_room": "CLOUD_NINE_NEST",
-      "apartment_location": "primary apartment: bed, window, mattress/grounding",
+      "apartment_location": "native twelve-metre apartment chart, bed, rain window, furniture, physical support, pet corner",
       "status": "retained_anchor",
-      "parity_tests": [],
-      "notes": "Renamed and repurposed in apartment build only, retaining native IDs where necessary."
+      "parity_tests": [
+        "apartment/test/extras.cjs",
+        "apartment/test/home-pets.cjs"
+      ],
+      "notes": "The living room is implemented in the original trusted chart with added native collidable furniture; preserve the Relax chart ID until all references are retired. This is not yet permission to prune legacy charts."
     },
     {
       "source_room": "NO_ASK_SANCTUARY",
@@ -76,7 +79,9 @@
       "source_room": "SHAPESHIFT_CLOAKROOM",
       "apartment_location": "harness closet + cloak, full body mappings and safe removal",
       "status": "partial",
-      "parity_tests": [],
+      "parity_tests": [
+        "apartment/test/extras.cjs"
+      ],
       "notes": "Current Extras cloak is only a first adaptation; original room has additional routes not yet ported."
     },
     {
@@ -173,9 +178,11 @@
     {
       "source_room": "MERIDIAN_CITY",
       "apartment_location": "household message board, ledger, mail and trusted live presence",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/home-pets.cjs"
+      ],
+      "notes": "Native companion adoption and pet dynamics have an Apartment-only checked adapter; the rest of City (ledger sharing, live presence, venues, chat, events and portals) remains unported. Do not retire the City chart."
     },
     {
       "source_room": "UNDERCITY",
