@@ -299,9 +299,9 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
      const res=nativeCloset.clear(entry,'returned');broadcast();return res;
     }
     if(lower==='stop'||lower==='remote stop')nativeCloset.clear(entry,'native_stop');
-    const timeBefore=Number(entry.session.window.C9?.b7?.clock||0);
+    const timeBefore=Number(entry.session.window.eval('C9.b7.clock'))||0;
     const value=await entry.session.door.run(raw);
-    const timeAfter=Number(entry.session.window.C9?.b7?.clock||0);
+    const timeAfter=Number(entry.session.window.eval('C9.b7.clock'))||0;
     const elapsed=Math.max(0,Math.min(60_000,Math.floor((timeAfter-timeBefore)*1000)));
     if(value?.ok!==false&&elapsed>=20)sharedPet.advance(elapsed);
     if(['goodbye','bye','exit','leave'].includes(lower)){
