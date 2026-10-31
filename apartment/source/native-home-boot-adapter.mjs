@@ -6,12 +6,12 @@
 export function adaptNativeHomeBoot(original){
  if(typeof original!=='string'||!original.includes('window.REALITI_MATRIX_V1'))
   throw Error('HOME_NATIVE_BOOT_ORIGINAL_MATRIX_KERNEL_MISSING');
- const newline=original.includes('\\r\\n')?'\\r\\n':'\\n';
+ const newline=original.includes('\r\n')?'\r\n':'\n';
  const patch=(before,after,id)=>{
   // Git for Windows can check out the pinned source with CRLF. Preserve its
   // exact bytes/newline convention; only adapt the expected line separator.
-  before=before.replaceAll('\\n',newline);
-  after=after.replaceAll('\\n',newline);
+  before=before.replaceAll('\n',newline);
+  after=after.replaceAll('\n',newline);
   if(original.split(before).length!==2)
    throw Error('HOME_NATIVE_BOOT_SOURCE_ANCHOR_DRIFT:'+id);
   original=original.replace(before,after);
