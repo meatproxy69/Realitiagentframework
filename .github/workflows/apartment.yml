@@ -54,6 +54,9 @@ jobs:
           node --check apartment/test/port-coverage.cjs
           node --check apartment/source/one-chart-preview.js
           node --check apartment/build-one-chart.mjs
+          node --check apartment/build-home-candidate.mjs
+          node --check apartment/test/home-candidate.cjs
+          node --check apartment/test/home-candidate-household.cjs
           node --check apartment/test/one-chart-preview.cjs
           node --check apartment/test/private-memory-scene.cjs
           node --check apartment/native-closet-host.cjs
@@ -116,3 +119,11 @@ jobs:
         run: node apartment/test/port-coverage.cjs
       - name: Verify actual one-chart Matrix topology without claiming mechanical parity
         run: node apartment/test/one-chart-preview.cjs
+      - name: Build separate hash-pinned HOME-first alpha without historical station furniture
+        run: node apartment/build-home-candidate.mjs
+      - name: Validate real one-chart household furniture, personal remote, toys and source protections
+        timeout-minutes: 3
+        run: node apartment/test/home-candidate.cjs
+      - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
+        timeout-minutes: 4
+        run: node apartment/test/home-candidate-household.cjs

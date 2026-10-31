@@ -40,6 +40,14 @@ This does **not** silently approve historical City dancehall geometry, the two-k
 
 The current 22 source workbench fixtures from the earlier migration phase remain **development-only scaffolding**, not approved home furniture. The next design gate must shrink the final HOME footprint: real furniture and companions in space, personal tools on the carried remote, optional Extras without fabricating grounded contact. Retiring a legacy chart does not imply replaying all of its scenery inside HOME. Functional release acceptance should review the **owner-approved product feature scope**, not demand that every original room be built in miniature. The non-release preview and all original systems stay protected during that design correction.
 
+## Candidate: strict home-only alpha (owner-reviewed scope, still non-release)
+
+`apartment/build-home-candidate.mjs` now emits an independently hashed one-chart HOME candidate **without installing** the 22 historical apparatus. It includes no original ocean, Undercity, marsh projection, bathhouse nor cardboard maze. Source-room names are still kept for original Relax provenance and migration review, but they are not menu pages, entity fixtures, or destinations in this candidate. This is a product-scope distinction: preservation of original mathematical engines is not a requirement to add scenery.
+
+Automated tests must demonstrate the new candidate's native 12×12 m furnishings, original R&R/SOMA/neuromesh/HALO/AURA/haptics, host-owned four-body collision, opt-in touch, independent encrypted memory, shared board/positions and one native pet, personal remote/optional Extras and guest wardrobe trial. The family-house mechanics remain original; there are no false room or contact receipts. The developer 23-chart baseline and old one-chart science preview are unchanged and independently retested.
+
+**Still required before shipping:** a manual floor-plan/playability walkthrough, home-first feature acceptance, full recoverable operator deployment rehearsal (including persistent-data migration/rollback decisions), review of network authentication and external permissions, and approval of an eventual release-specific one-chart initialization that does not rely on post-startup pruning. The candidate must retain its `release_approved:false` flag until these acceptance gates pass.
+
 ## Non-negotiable acceptance checks
 
 1. **Single spatial truth:** Exactly one `M.charts()` entry, the apartment chart, with zero outgoing portals and no non-home residents; the spatial footprint and bed/window/closet entities are inspectable.
