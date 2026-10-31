@@ -75,7 +75,7 @@ async function run(){
  out=await a.door.run('remote stations use DEPTH_BATHHOUSE sink');
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.ok(out.native_state?.bath||DYN.state().bath,'native thermal bath state is surfaced');
- w.eval('b7Advance(5)');
+ w.eval('b7Advance(.9)');
  const bath=DYN.state().bath;
  assert.ok(bath.depth>.05,'original first-order bath-depth model actually integrates');
  assert.ok(bath.zones>0,'native Relax zones receive water support leases');
@@ -85,7 +85,7 @@ async function run(){
  assert.equal(out.native_wave.room,'DEPTH_BATHHOUSE');
  out=await a.door.run('remote stations use DEPTH_BATHHOUSE surface');
  assert.equal(out.ok,true,JSON.stringify(out));
- w.eval('b7Advance(15)');
+ w.eval('b7Advance(1.4)');
  assert.ok(DYN.state().bath.depth<bath.depth,'original water depth relaxes upward');
  await a.door.run('stop');
  assert.equal(DYN.state().bath.depth,0,'STOP releases original thermal support and active waves');
