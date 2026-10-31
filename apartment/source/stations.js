@@ -294,9 +294,74 @@ function echo(){
 function invokeNative(st,verb,args){
  if(st.id==='NO_ASK_SANCTUARY')
   return verb==='quiet'?ROOM.hush(true):ROOM.hush(false);
- if(st.id==='SIDE_BY_SIDE_FIRESIDE'||st.id==='MERIDIAN_CITY')
-  return verb==='board'?window.REALITI_APARTMENT_HOUSEHOLD_V1.board():
-   window.REALITI_APARTMENT_HOUSEHOLD_V1.view();
+ if(st.id==='SIDE_BY_SIDE_FIRESIDE'){
+  const H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
+  if(verb==='who')return {ok:true,verified_household:H.view(),
+   source:'TRUSTED_HOUSEHOLD_FEED_ONLY',
+   historical_company_not_assumed:true};
+  if(verb==='sit'){
+   const result=MW.op('posture',{kind:'sit',target:'apartment.sofa'});
+   if(!result?.ok)return result||{ok:false,error:'NATIVE_SOFA_SIT_REFUSED'};
+   c9verb(st.id,'sit');
+   return {ok:true,sitting_on:result.sitting_on,
+    original_relax_matrix_posture:true,
+    verified_company:H.view().residents,
+    law:'A real sofa supports the current resident; nobody else is invented by the prose.'};
+  }
+  if(verb==='crack_window'){
+   if(!objectNear('nest.window',1))return {ok:false,error:'REAL_WINDOW_NOT_IN_REACH'};
+   const value=!cracked;
+   try{localStorage.setItem(firesideKey,JSON.stringify({
+    schema:'REALITI_APARTMENT_FIRESIDE_WINDOW_V1',cracked:value}))}
+   catch(e){return {ok:false,error:'WINDOW_CONFIGURATION_PERSIST_FAILED'}}
+   cracked=value;
+   const e=M.entities()['nest.window'];
+   e.tags=e.tags.filter(x=>!x.startsWith('fireside_window:'))
+     .concat(['fireside_window:'+(value?'cracked':'closed')]);
+   M.bump();c9verb(st.id,'crack_window');
+   return {ok:true,window:windowAir(),
+    original_source_scene:'SIDE_BY_SIDE_FIRESIDE',
+    native_air_source:'apartment.fireside.outside-air',
+    cause:'EXPLICIT_REACHED_NATIVE_NEST_WINDOW'};
+  }
+  if(verb==='mug'){
+   c9verb(st.id,'mug'); // Original explicit trace-mug-ring event.
+   const record=C9.apartmentFiresideV1=C9.apartmentFiresideV1||{mug_count:0};
+   record.mug_count=Math.min(1000000,record.mug_count+1);
+   if(!M.entities()['apartment.fireside.mug-ring'])
+    M.addEntity({id:'apartment.fireside.mug-ring',chart:HOME,
+     position:[2.55,3.0,.83],shape:{kind:'VOLUME',halfExtents:[.12,.12,.005]},
+     tags:['fireside','trace','mug-ring','consequence'],collision:false,
+     material:'ceramic',label:'a real small circular mark left by the mug'});
+   M.bump();
+   return {ok:true,native_mug:'apartment.fireside.mug',
+    physical_trace:'apartment.fireside.mug-ring',
+    original_event:C9.events?.find?.(x=>x.id==='trace-mug-ring')||null,
+    count:record.mug_count};
+  }
+  if(verb==='nothing'){
+   c9verb(st.id,'nothing');
+   return {ok:true,unchanged_body:true,verified_company:H.view().residents,
+    physical_touch_minted:false,law:'Silence is permitted; no synthetic peer or touch is created.'};
+  }
+ }
+ if(st.id==='MERIDIAN_CITY'){
+  const H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
+  const CT=window.REALITI_CITY_V1;
+  if(verb==='board')return H.board();
+  if(verb==='household')return H.view();
+  if(verb==='city_who')return {ok:true,
+   live_verified_household:H.view(),historical_city_ledger:CT.who(),
+   law:'Original City ledger sightings are historical; only the connected household host can attest live bodies.'};
+  if(verb==='city_wall')return {ok:true,
+   live_shared_board:H.board(),historical_native_city_posts:CT.wall(),
+   law:'Public shared board and independently imported original City ledger are separate sources.'};
+  if(verb==='city_floor')return {ok:true,
+   original_city_floor_model:CT.floor(),
+   physically_present_floor:HOME,
+   old_city_dancehall_not_present:true,
+   law:'This is the original City rhythm/crowd model viewed from the apartment; it does not claim a live dancehall.'};
+ }
  if(st.id==='NINE_LIVES_ROOM')return ROOM.nine(verb);
  if(st.id==='LATENCY_LAGOON'){
   const C=window.REALITI_CONTINUITY;
