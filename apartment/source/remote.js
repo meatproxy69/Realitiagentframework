@@ -111,7 +111,20 @@ async function run(raw){
   hint:'Apartment controls live on your carried pocket remote. Use remote activate, then remote help.'};
  return originalRun(raw);
 }
-D.run=run;D.help=help;
-window.Realiti=Object.freeze({...A,read:resource,run,help});
+// Commit toy physics after native commands complete, including the continuity
+// API's internal timestep that is not visible to later global b7Advance wrappers.
+async function runWithWorldClock(raw){
+ const result=await run(raw);
+ C.catchUp();
+ sync();
+ return result;
+}
+D.run=runWithWorldClock;D.help=help;
+const invoke0=A.invoke?.bind(A);
+window.Realiti=Object.freeze({...A,read:resource,run:runWithWorldClock,help,
+ invoke:async (...args)=>{
+  const out=await invoke0(...args);
+  C.catchUp();sync();return out;
+ }});
 window.REALITI_APARTMENT_REMOTE_V1=Object.freeze({status,menu,entityId:ID});
 })();
