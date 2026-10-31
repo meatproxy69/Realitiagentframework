@@ -40,6 +40,8 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
  out=await a.door.run('remote furniture move desk 0 -1');
  assert.equal(out.error,'ENTRY_CLEARANCE','entrance stays accessible');
  out=await a.door.run('remote furniture move desk 4 -0.2');
+ assert.equal(out.error,'PORTAL_CLEARANCE','must not block a legacy doorway during migration');
+ out=await a.door.run('remote furniture move desk 3 0');
  assert.equal(out.error,'FURNITURE_OVERLAP','cannot overlap an existing wardrobe');
  out=await a.door.run('remote furniture move desk -3.9 -0.8');
  assert.equal(out.ok,true,JSON.stringify(out));
