@@ -196,7 +196,7 @@ for(const def of [
  {id:'apartment.fireside.mug',p:[2.55,3.0,.94],shape:{kind:'SPHERE',radius:.11},
   tags:['fireside','mug','ceramic','tactile'],collision:false,material:'ceramic',
   label:'an ordinary ceramic mug by the fireside'},
- {id:'apartment.undercity.echo-panel',p:[-4.5,-4.82,1.1],
+ {id:'apartment.undercity.echo-panel',p:[4.5,-4.82,1.1],
   shape:{kind:'BOX',halfExtents:[.43,.07,.65]},
   tags:['sonar','echo','cabinet','stone'],collision:true,material:'stone',
   label:'the solid stone panel of the echo cabinet'},
