@@ -56,6 +56,8 @@ jobs:
           node --check apartment/build-one-chart.mjs
           node --check apartment/build-home-candidate.mjs
           node --check apartment/source/native-home-boot-adapter.mjs
+          node --check apartment/source/native-home-bedroom-adapter.mjs
+          node --check apartment/test/native-home-bedroom-adapter.cjs
           node --check apartment/test/native-home-boot-adapter.cjs
           node --check apartment/rehearse-home-backup.cjs
           node --check apartment/test/home-backup-rehearsal.cjs
@@ -73,6 +75,8 @@ jobs:
           node --check apartment/test/furniture-catnip.cjs
       - name: Verify native HOME Matrix kernel source anchoring on LF and CRLF
         run: node apartment/test/native-home-boot-adapter.cjs
+      - name: Verify native bedroom layout source adapter on Unix and Windows line endings
+        run: node apartment/test/native-home-bedroom-adapter.cjs
       - name: Build complete original Relax runtime unchanged
         run: node build.mjs
       - name: Verify canonical integrity or stage Windows local text checkout
