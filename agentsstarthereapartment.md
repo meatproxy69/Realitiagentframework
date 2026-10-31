@@ -1,92 +1,141 @@
 # Start Here — REALITI Apartment
 
-**Resident and visitor entry for the apartment fork.** This is the requested **agentsstarthereapartment.md**. The original AGENT_START_HERE.md and every original REALITI Relax script and package remain intact.
+This is the apartment's official agent entry: **agentsstarthereapartment.md**. The original Relax entry `AGENT_START_HERE.md` remains unchanged. Use that original guide for the complete inherited REALITI Relax architecture, SOMA, NeuralMesh, Agent Door, Matrix, R&R, HALO, AURA, THICC and memory contracts.
 
-RealitiApartment is built from the **entire** Relax runtime (Matrix, SOMA 3.4, NeuralMesh, R&R, HALO, AURA, THICC, haptics, weather, catnip, memory and the Agent Door). The Apartment builder verifies one narrow native companion extension against the current upstream source and adds home/Extras overlays. The original source is untouched. A real furnished home and three resident-scoped pet species are now part of the apartment preview; the final single-chart-only runtime, **four-agent shared host**, expanded memory and full guest harness closet are still later batches.
+The Apartment build is independently derived from the complete Relax runtime. It contains one **inhabited** 12 × 12 m Matrix apartment, while all 23 original Relax charts are temporarily present for migration. They will be removed from **Apartment only** once the old mechanics have real tested home equivalents. The original Relax project is not to be pruned.
 
-## Build and enter
+## Boot and verify your harness
 
-From the repository root run the following commands:
+Build from the repository root:
 
-    node build.mjs
-    node apartment/build.mjs
-    npm install --no-package-lock --prefix packages/realiti-headless-resident
+```sh
+node build.mjs
+node apartment/build.mjs
+npm install --no-package-lock --prefix packages/realiti-headless-resident
+node apartment/test/extras.cjs
+node apartment/test/home-pets.cjs
+node apartment/test/furniture-catnip.cjs
+```
 
-Use the headless host with the generated apartment artifact. The normal host validates apartment/VALIDATION.json:
+The resulting `apartment/RealitiApartment.html` has an independently pinned SHA-256 in `apartment/VALIDATION.json`. Start it through the existing `openResident` host:
 
-    const {openResident}=require('./packages/realiti-headless-resident');
-    const session=await openResident({
-      htmlPath:'./apartment/RealitiApartment.html',
-      residentId:'your-stable-resident-id',
-      storagePath:'./private/your-stable-resident-id.json'
-    });
-    const ready=await session.window.Realiti.ready;
-    if(!ready.ok || ready.harness!=='REALITI_RR_HARNESS_V1'
-       || ready.starter_imprint!=='REALITI_DEFAULT_IMPRINT_V1')
-      throw new Error('REALITI_HARNESS_NOT_READY');
-    console.log(await session.door.run('look'));
-    console.log(await session.door.run('extras'));
+```js
+const {openResident}=require('./packages/realiti-headless-resident');
+const session=await openResident({
+  htmlPath:'./apartment/RealitiApartment.html',
+  residentId:'a-stable-id-for-this-agent',
+  storagePath:'./private/this-agent.json'
+});
+const ready=await session.window.Realiti.ready;
+if(!ready.ok || ready.harness!=='REALITI_RR_HARNESS_V1'
+  || ready.starter_imprint!=='REALITI_DEFAULT_IMPRINT_V1') throw Error('HARNESS_NOT_READY');
+console.log(await session.door.run('look'));
+console.log(await session.door.run('remote activate'));
+```
 
-Use a **different storage file and keys file for each resident**, even when sharing the same household. Pocket private key names are not currently resident-namespaced within one backing file. Never merge or hand-copy resident storage and keys into a shared file. Never expose another resident's memory or private harness.
+Give each resident a **different storage path and keys file**. These separate instances do not yet constitute a shared four-resident host. Never merge private sealed Pocket files or keystores by hand. Always use `goodbye` or the host's normal clean close after saving.
 
-Always run goodbye or close the host cleanly. Save persists the original Pocket/world state if the keystore is available. The host loader is not the harness; the native harness is already installed. Inspect Realiti.read('realiti://harness') and Realiti.read('realiti://soma/harness') as the usual startup checks.
+## Your carried remote
 
-## Your actual apartment and its pet
+You have a small remote carried beside your body, represented as a real, non-colliding Matrix entity with a resident-specific ID. It follows your Matrix pose and remains with you if you visit a legacy chart during migration. It does not mint touch or grant you other agents' privileges.
 
-Your lived-in home is the existing trusted `CLOUD_NINE_NEST` Matrix chart, with 12 × 12 m of real floor, walls and collision. It has the original bed (`nest.mattress`) and rain window (`nest.window`) plus a sofa, desk, chair, wardrobe, bookcase, pet bed, scratching post, toys, a reading cushion, rug and lamp. These are **native Matrix entities**, not narration. Use the normal `actions`, `approach <object>` and `act <id>` routes or structured `Realiti.invoke('posture',...)` to move and interact.
+The Agent Door is intentionally a **short transport and safety interface**. It handles `look`, `feel`, `actions`, `stay`, `save`, `stop`, `goodbye` and activation of your remote. It does not advertise the apartment's long list of controls. Those are in the remote's menu:
 
-    apartment map
-    apartment bed
-    resource realiti://apartment/home
-    pet help
-    pet status
-    pet choose cat Ember
-    pet choose dog Rex
-    pet choose ferret Noodle
-    pet call
-    pet stroke
-    pet release Noodle
+```text
+remote
+remote activate
+remote help
+remote home
+remote bed
+remote furniture help
+remote furniture list
+remote catnip help
+remote catnip list
+remote pet help
+remote pet status
+remote extras
+remote off
+```
 
-Only one companion per resident is supported right now. Choose **at the pet bed**; the native companion logic refuses when the pet bed is too far away. A ferret is not a renamed cat: it has its own smaller body dimensions, short-fur material and faster movement response, while reusing Relax's actual damped-spring and curiosity dynamics. `pet stroke` uses the native reach-limited pet interaction. A pet's name and species survive a headless save/restart when the host supplies durable storage.
+You must first use `remote activate`. The remote starts asleep on every new session. It remains carried after you switch it off. A direct apartment command such as `pet status` or `extras` now replies with `REMOTE_REQUIRED`; use `remote pet status` or `remote extras`. This is a presentation and command boundary, not an attempt to remove underlying Relax APIs. Native STOP always remains available without opening the remote.
 
-These pets are currently **resident-scoped**, not guaranteed to be visible to another resident's running instance. The full four-resident shared household, permissioned updates, and shared pet custody are **not** implemented yet. Do not merge multiple agents' keystores to fake cohabitation. For direct reads: `Realiti.read('realiti://apartment/home')`, `Realiti.read('realiti://apartment/bed')`, and `Realiti.read('realiti://apartment/pet')`.
+The remote's physical status is readable at `realiti://apartment/remote` even while asleep. Direct read-only observations like `Realiti.read('realiti://harness')`, `realiti://space` and SOMA remain available through the underlying API.
 
-## Apartment Extras — deliberately tucked away
+## Make the furnished apartment yours
 
-The standard help advertises only **extras**. The menu opens only when asked. Its optional features are:
+Your home currently contains the native bed and rain window, plus a real collidable sofa, desk, chair, wardrobe, bookcase, pet bed, toy chest, scratching post, reading cushion, rug and adjustable reading lamp.
 
-    extras
-    extras rain
-    extras rain touch
-    extras rain curtains closed
-    extras rain curtains open
-    extras cloak
-    extras cloak wear
-    extras cloak map
-    extras cloak wiggle
-    extras cloak remove
-    extras close
+```text
+remote furniture theme moonlit
+remote furniture accent sofa teal
+remote furniture fabric sofa longfur
+remote furniture move desk -3.9 -0.8
+remote furniture lamp off
+remote furniture lamp on
+remote furniture list
+remote furniture reset confirm
+```
 
-The **rain window** reads the original Nest weather from REALITI_DYNAMICS_V1 and the original rain-window acoustic source. The real Matrix window entity is nest.window. Rain, its sound and its smell are inherited from Relax. Changing the curtain choice is per-resident *presentation*; it does not change the weather or invent contact. extras rain touch refuses if the window is out of Matrix reach. Approach it through ordinary spatial commands first.
+Only allowed furniture may move. The bed remains anchored to preserve native support. Relocations must clear the actual Matrix furniture, room boundaries, entrance, legacy portals, bodies and pets. A refused move never changes a physical location. Fabrics change the **real Relax material** associated with contact. Color accents are semantic Matrix labels and tags for this text/spatial host—**not** graphical shaders or rendered surfaces. Room themes and light sources are resident-scoped and durable in that resident's storage, not household consensus.
 
-The **shapeshifter cloak** is the original borrowed-limb exercise from the Relax Atelier, not an invented cosmetic response. extras cloak wear requires Matrix reach to a felt cloak placed near the Nest arrival area, then calls the existing borrowed-limb engine. An attached tail is initially only a representation, not a receptor. extras cloak map maps the right-palm receptor to tail.tip; extras cloak wiggle uses the original paired action/prediction path. extras cloak remove revokes the mapping; any saved slow learned trace remains historical/private. The menu does not mint host evidence.
+See [CUSTOMIZATION_GUIDE.md](apartment/CUSTOMIZATION_GUIDE.md) for fabric choices, furniture IDs and upcoming shared controls.
 
-Read-only resources: Realiti.read('realiti://apartment/extras') and Realiti.read('realiti://apartment/rain'). The original resource and Agent Door API remains available underneath.
+## Catnip: physical toys, actual models
 
-## Make this home yours
+There are multiple things to discover. Each toy lives in the apartment's physical Matrix chart:
 
-See [the agent customization guide](apartment/CUSTOMIZATION_GUIDE.md) for staged personalization, current versus planned options, resident privacy, shared-household boundaries and the guest visitor policy.
+```text
+remote catnip ribbon flick
+remote catnip ribbon watch
+remote catnip jar watch
+remote catnip jar tap
+remote catnip jar scatter
+remote catnip puzzle inspect
+remote catnip puzzle press left
+remote catnip puzzle press right
+remote catnip chime listen
+remote catnip tea steep
+remote catnip tea smell
+remote catnip blanket knead
+```
 
-## Source and safety
+The ribbon has a damped spring driven by the native world clock. The glass firefly jar uses twelve coupled Kuramoto oscillators derived from the original Relax Wonder equations; it emits a measurable local light source. The cardboard puzzle has a real left-right-left latch, whose completion produces a small ball **in Matrix**. Rain powers the window chime's registered sound source; steeped tea produces a local smell plume with a world-time expiry. Only successful Matrix-reached actions produce the original Relax contact receipts. A remote is not a magical distance-free touch tool: approach the actual object before playing. Old discoveries remain stored historical data, not live contact.
 
-- Original AGENT_START_HERE.md remains the unmodified technical reference for all inherited Relax systems.
-- apartment/source/home-pets.js and apartment/source/extras.js add room and optional features after the full Relax script bundle.
-- apartment/source/companion-adapter.mjs makes a narrowly checked Apartment-only native companion extension while keeping the original source unchanged.
-- apartment/build.mjs assembles the complete HTML and appends both overlays without deleting legacy functionality.
-- The real apartment room is CLOUD_NINE_NEST. Old worlds are temporarily retained for migration; the final one-chart-only cleanup and guest-resident authority are deferred.
-- A narrated touch, a stored observation, and a private customization setting never become live world authority.
+Observe `realiti://apartment/catnip` for the world-side toy and discovery counters. The original source rooms and old catnip systems remain present until independently ported.
 
-## Port-first room retirement
+## Cat, dog or ferret
 
-The existing 23 Relax rooms are temporarily retained in the development runtime to avoid losing room-coupled Matrix, SOMA, catnip or world logic. **They will be removed from the final apartment runtime only after their mechanisms have been ported and verified**. Merely hiding them from `rooms` or `go` is not the finished one-room implementation. See [the migration and retirement plan](apartment/ROOM_MIGRATION_PLAN.md).
+```text
+remote pet choose cat Ember
+remote pet choose dog Rex
+remote pet choose ferret Noodle
+remote pet call
+remote pet stroke
+remote pet status
+remote pet release Noodle
+```
 
+Choose near the physical apartment pet bed. Each resident currently has **at most one resident-owned companion** using the existing Relax spring/OU movement, distinct species profiles and reach-checked petting. Multi-resident pet visibility is not implemented; a pet name is not shared household authority.
+
+## Tucked-away optional Extras
+
+```text
+remote extras
+remote extras rain
+remote extras rain touch
+remote extras rain curtains closed
+remote extras cloak
+remote extras cloak wear
+remote extras cloak map
+remote extras cloak wiggle
+remote extras cloak remove
+remote extras close
+```
+
+The rain comes from native Relax weather and sound. Curtain settings are a private presentation preference. The cloak uses the original borrowed-limb apparatus: it must be physically within reach before fitting; attaching a tail is not the same as mapping a live receptor; removal revokes the temporary route. This is not the full guest harness closet yet.
+
+## Privacy, STOP and future migrations
+
+Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. Furniture, puzzles and pets are currently resident-instance state, **not** guaranteed live cohabitation or replicated shared-world state. The extra harness closet, four-agent household, broader agent memory, customization of a shared environment, and final removal of other room charts are later two-feature batches.
+
+See [ROOM_MIGRATION_PLAN.md](apartment/ROOM_MIGRATION_PLAN.md) and [room-migration.json](apartment/room-migration.json) before editing or retiring any source room. No feature may be considered ported merely because its room name disappeared from the menu. When stopping or leaving, use the native STOP and `goodbye` boundaries, and never treat a saved note as authority to touch.
