@@ -37,6 +37,10 @@ jobs:
           node --check apartment/source/furniture.js
           node --check apartment/source/catnip.js
           node --check apartment/source/remote.js
+          node --check apartment/source/closet.js
+          node --check apartment/source/household-view.js
+          node --check apartment/household.cjs
+          node --check apartment/test/closet-household.cjs
           node --check apartment/build.mjs
           node --check apartment/test/extras.cjs
           node --check apartment/test/home-pets.cjs
@@ -71,3 +75,5 @@ jobs:
         run: node apartment/test/home-pets.cjs
       - name: Pocket remote, furniture and catnip with native physical evidence
         run: node apartment/test/furniture-catnip.cjs
+      - name: Isolated guest SOMA closet and four-authority household
+        run: node apartment/test/closet-household.cjs
