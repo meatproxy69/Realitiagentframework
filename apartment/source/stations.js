@@ -147,12 +147,16 @@ function invokeNative(st,verb,args){
  if(st.id==='CLOCKWORK_MARSH'&&verb==='predict'){
   if(!Array.isArray(args)||args.length!==2||!args.every(Number.isFinite))
    return {ok:false,error:'PREDICTION_COORDINATES_REQUIRED'};
-  return FR.predict(args[0],args[1]);
+  const done=FR.predict(args[0],args[1]);
+  return done?{ok:true,receipt:copy(C9.b4?.lastReceipt||null)}:
+   {ok:false,error:'NATIVE_MARSH_PREDICTION_REFUSED'};
  }
  if(st.id==='PALIMPSEST_HALL'&&verb==='decode'){
   if(!Array.isArray(args)||args.length!==2||!(/^[1-5]$/.test(String(args[0]))))
    return {ok:false,error:'SCROLL_AND_KEY_REQUIRED'};
-  return FR.decode(Number(args[0]),String(args[1]));
+  const done=FR.decode(Number(args[0]),String(args[1]));
+  return done?{ok:true,receipt:copy(C9.b4?.lastReceipt||null)}:
+   {ok:false,error:'NATIVE_SCROLL_DECODE_REFUSED'};
  }
  const before=JSON.stringify(C9?.b4?.lastReceipt||null);
  const returned=c9verb(st.id,verb);
