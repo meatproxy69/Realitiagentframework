@@ -12,20 +12,23 @@ assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appe
  const {adaptWonder,adaptFrontier}=await import('../source/native-wonder-adapter.mjs');
  const {adaptDynamics,adaptNativePillow}=await import('../source/native-body-adapter.mjs');
  const {adaptArchipelago}=await import('../source/native-archipelago-adapter.mjs');
+ const {adaptUndercity}=await import('../source/native-undercity-adapter.mjs');
  const wonder=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58b-wonder.js'),'utf8');
  const frontier=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58e-frontier.js'),'utf8');
  const dynamics=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58a-dynamics.js'),'utf8');
  const pillow=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/63-claude-neural-pass.js'),'utf8');
  const archipelago=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58f-archipelago.js'),'utf8');
+ const undercity=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58n-undercity.js'),'utf8');
  const patched=original.replace(nativeSource,adaptCompanions(nativeSource))
    .replace(wonder,adaptWonder(wonder))
    .replace(frontier,adaptFrontier(frontier))
    .replace(dynamics,adaptDynamics(dynamics))
    .replace(pillow,adaptNativePillow(pillow))
-   .replace(archipelago,adaptArchipelago(archipelago));
+   .replace(archipelago,adaptArchipelago(archipelago))
+   .replace(undercity,adaptUndercity(undercity));
  assert.notEqual(patched,original,'only anchor-checked Apartment companion and original-engine station shims differ');
  assert.ok(apartment.startsWith(patched.slice(0,patched.lastIndexOf('</body>'))),
-   'every original Relax script remains and only the six checked Apartment source adapters differ');
+   'every original Relax script remains and only the seven checked Apartment source adapters differ');
  assert.ok(apartment.includes('realiti-apartment-home-pets'),'the furnished-home script follows full Relax');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-apartment-extras-'));
  const options={htmlPath:html,residentId:'apartment-a',storagePath:path.join(dir,'a.json')};
