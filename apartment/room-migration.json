@@ -83,9 +83,10 @@
       "apartment_location": "harness closet + cloak, full body mappings and safe removal",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/extras.cjs"
+        "apartment/test/extras.cjs",
+        "apartment/test/closet-household.cjs"
       ],
-      "notes": "Current Extras cloak is only a first adaptation; original room has additional routes not yet ported."
+      "notes": "Original Atelier borrowed-tail cloak plus separately isolated guest SOMA loaner wardrobe have been ported, but the entire richer legacy shapeshift room action set and body route palette are not yet parity-verified. No legacy room deletion."
     },
     {
       "source_room": "NINE_LIVES_ROOM",
@@ -185,9 +186,10 @@
       "apartment_location": "household message board, ledger, mail and trusted live presence",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/home-pets.cjs"
+        "apartment/test/home-pets.cjs",
+        "apartment/test/closet-household.cjs"
       ],
-      "notes": "Native companion adoption and pet dynamics have an Apartment-only checked adapter; the rest of City (ledger sharing, live presence, venues, chat, events and portals) remains unported. Do not retire the City chart."
+      "notes": "Apartment host now mirrors independently verified Matrix resident/guest presence and holds an integrity-checked public board, while the City venue/ledger/social/transport features remain unported. It is a multi-instance shared-presence layer, not shared-body collision. Do not retire City."
     },
     {
       "source_room": "UNDERCITY",
