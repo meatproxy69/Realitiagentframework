@@ -34,7 +34,9 @@ const allowed=Object.freeze({
  STAR_DECK:['read_sky','sight_lantern','sight_kite','sight_cat','sight_orrery','sight_boat','sight_comet'],
  CLOCKWORK_MARSH:['read_lights','predict','follow_light'],
  PALIMPSEST_HALL:['read_scroll_1','read_scroll_2','read_scroll_3','read_scroll_4','read_scroll_5','decode'],
- ARCHIPELAGO:['tide','calendar','weather','sea_map'],
+ ARCHIPELAGO:['tide','calendar','weather','sea_map','island_map',
+  'read_weather','board_boat','land_boat',...['harbor','lantern','hollow','stones','grove']
+   .map(id=>'row_to__'+id)],
  MERIDIAN_CITY:['household','board','city_who','city_wall','city_floor'],
  UNDERCITY:['echo','touch_wall','map','clap','touch','under_map']
 });
