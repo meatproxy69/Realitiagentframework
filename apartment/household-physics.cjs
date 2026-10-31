@@ -159,8 +159,9 @@ function createPeerPhysics({getEntries,atHome}={}){
  function accept(actor,id){
   const q=requests.get(id);
   if(!q)return refuse('NO_SUCH_TOUCH_REQUEST');
-  requests.delete(id); // single use, even on refusal
+  // A bystander must not be able to consume someone else's invitation.
   if(q.to!==actor.id)return refuse('TOUCH_NOT_YOURS_TO_ACCEPT');
+  requests.delete(id); // recipient's attempted acceptance is single use
   if(now()>q.expiresAt)return refuse('TOUCH_REQUEST_EXPIRED');
   const source=members().find(e=>e.id===q.from&&e.sessionTag===q.sessionA);
   if(!source||q.sessionB!==actor.sessionTag||actor.role!=='resident')
