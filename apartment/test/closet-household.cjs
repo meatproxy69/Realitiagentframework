@@ -46,6 +46,18 @@ async function solo(){
  assert.strictEqual(w.REALITI_NEURO_RESTORATION_V1,originalNeuro);
  assert.ok(!originalImprint.state().moonwire?.preset_id);
  assert.equal(originalRR.boot().ok,true);
+ // An original native B7 contact must still pass through the old Haptic Field.
+ const genuine=w.b7Contact('hand.R.palm',.42,{source:'WORLD_GROUNDED',
+  material:'blanket',cause:'APARTMENT_ORIGINAL_RELAX_PRESERVATION'});
+ assert.ok(genuine,'original Relax B7 contact kernel remains callable');
+ w.REALITI_HAPTIC_FIELD_V20.record();
+ w.REALITI_DEFAULT_IMPRINT_V1.sync();
+ const actual=w.REALITI_HAPTIC_FIELD_V20.exact();
+ const nativePalm=actual.z.indexOf('hand.R.palm');
+ assert.ok(nativePalm>=0&&actual.m[nativePalm]===1,
+  'original Haptic Field receives grounded B7 contact even after closet inspection');
+ assert.ok(w.REALITI_DEFAULT_IMPRINT_V1.state().sausage,
+  'original private renderer still processes real contact');
  assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().thicc.available,true);
  assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().halo.available,true);
  assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().aura.available,true);
