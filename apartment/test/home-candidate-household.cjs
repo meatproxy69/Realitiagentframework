@@ -127,6 +127,7 @@ const assertRoom=agent=>{
   bob=await host.joinResident('bob');
   assertRoom(alice);assertRoom(bob);
   await alice.run('remote activate');
+  await bob.run('remote activate');
   assert.equal((await alice.run('remote memory recall velveteen')).matches[0].text,secret);
   assert.equal((await bob.run('remote memory recall velveteen')).matches.length,0);
   assert.deepEqual(bob.read('realiti://apartment/scene').positions.desk,[-3.9,-.8]);
