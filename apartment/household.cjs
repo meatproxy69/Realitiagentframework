@@ -7,6 +7,8 @@ const {openResident,keystorePathFor}=require('../packages/realiti-headless-resid
 const {createNativeClosetManager}=require('./native-closet-host.cjs');
 const {createPrivateJournal}=require('./private-memory.cjs');
 const {createSharedScene}=require('./shared-scene.cjs');
+const {createPeerPhysics}=require('./household-physics.cjs');
+const {createHouseholdPet}=require('./household-pet.cjs');
 const SCHEMA='REALITI_APARTMENT_HOUSEHOLD_STORE_V1';
 const FEED='REALITI_APARTMENT_HOUSEHOLD_FEED_V1';
 const HOME='CLOUD_NINE_NEST',MAX_RESIDENTS=4,MAX_GUESTS=4;
@@ -71,6 +73,15 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  let data;
  try{data=load(file)}catch(e){fs.closeSync(fd);try{fs.unlinkSync(lockPath)}catch{}throw e}
  let sequence=data.board.reduce((n,row)=>Math.max(n,row.seq),0);
+ // All cross-resident mutations, movement and observations are serialized.
+ // This makes every native Matrix peer sweep and pet placement authoritative
+ // for the next user operation, even if two agents issue calls together.
+ let pending=Promise.resolve();
+ const ordered=job=>{
+  const next=pending.then(job);
+  pending=next.then(()=>{},()=>{});
+  return next;
+ };
  const runtimePath=htmlPath||path.join(__dirname,'RealitiApartment.html');
  const options={htmlPath:runtimePath,validationPath};
  const nativeCloset=createNativeClosetManager(options);
@@ -80,9 +91,13 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
   atomic(file,{...body,sha256:hash(JSON.stringify(body))});
  };
  function ensureOpen(){if(closed)throw Error('HOUSEHOLD_CLOSED')}
+ const allEntries=()=>[...active.values(),...guests.values()];
  const scene=createSharedScene({getData:()=>data,persist,
-  participants:()=>[...active.values(),...guests.values()],
-  atHome:entry=>atHome(entry)});
+  participants:allEntries,atHome:entry=>atHome(entry)});
+ const physics=createPeerPhysics({getEntries:allEntries,atHome:entry=>atHome(entry)});
+ const sharedPet=createHouseholdPet({getData:()=>data,persist,atHome:entry=>atHome(entry),options});
+ try{sharedPet.validate(data.pet)}
+ catch(e){fs.closeSync(fd);try{fs.unlinkSync(lockPath)}catch{}throw e}
  function validateLocalFile(p){noLink(p);if(fs.existsSync(p)&&!fs.statSync(p).isFile())throw Error('UNSAFE_RESIDENT_STORAGE')}
  function atHome(entry){
   const M=entry.session.window.REALITI_MATRIX_V1;
@@ -118,51 +133,23 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  }
  function broadcast(){
   ensureOpen();
-  const entries=[...active.values(),...guests.values()];
+  const entries=allEntries();
   for(const entry of entries)scene.apply(entry);
+  const clearance=physics.reconcile();
+  if(!clearance.ok)throw Error(clearance.error);
   const truth=entries.map(e=>({entry:e,position:atHome(e)}));
   const summary=collect();
   for(const receiver of entries){
    nativeCloset.update(receiver);
    const w=receiver.session.window,M=w.REALITI_MATRIX_V1;
-   const live=new Set();
-   for(const {entry,position} of truth){
-    if(entry===receiver||!position)continue;
-    const id='household.peer.'+entry.id;live.add(id);
-    const e=M.entities()[id],tags=['household','verified_presence',entry.role,'live'];
-    if(!e)M.addEntity({id,chart:HOME,position:position.position.slice(),
-       shape:{kind:'CAPSULE',radius:position.radius,height:position.height},
-       tags,collision:false,material:null,
-       label:entry.id+' ('+(entry.role==='guest'?'visiting':'here now')+')',
-       affordances:['watch'],dynamic:true});
-    else{
-     e.chart=HOME;e.pose.position=position.position.slice();
-     e.shape={kind:'CAPSULE',radius:position.radius,height:position.height};
-     e.tags=tags;e.collision=false;
-    }
-    // Add a host-owned authoritative peer representation to the shared spatial
-    // resident table, but never copy the other agent's brain, events or Pocket.
-    M.state().residents['resident:household:'+entry.id]={
-     id:'resident:household:'+entry.id,chart:HOME,
-     pose:{position:position.position.slice(),rotation:[0,0,0,1]},
-     shape:{kind:'CAPSULE',radius:position.radius,height:position.height},
-     posture:position.posture,role:entry.role,
-     v:[0,0,0],intent:null,contacts:[],support:null,on:null,hostVerified:true
-    };
-   }
-   for(const id of Object.keys(M.entities())){
-    if(id.startsWith('household.peer.')&&!live.has(id))M.removeEntity(id);
-   }
-   for(const id of Object.keys(M.state().residents)){
-    if(id.startsWith('resident:household:')&&
-       !live.has('household.peer.'+id.slice('resident:household:'.length)))
-     delete M.state().residents[id];
-   }
-   M.bump();
+   physics.project(receiver,truth);
+   sharedPet.sync(receiver);
+
    const feed={schema:FEED,connected:true,capacity:MAX_RESIDENTS,revision:data.revision,
     residents:summary.residents,guests:summary.visitors,board:cp(data.board.slice(-64)),
-    scene:scene.view(),
-    law:'Verified peer positions; host-owned public messages. No resident memory or keys are replicated.'};
+    scene:scene.view(),physics:physics.publicView(receiver),
+    pet:sharedPet.status(),
+    law:'Host-verified native colliding capsules and companion, public board and scene. No private resident memories or keys replicated.'};
    // A limited, immutable display snapshot, never a host mutation port.
    Object.defineProperty(w,'REALITI_APARTMENT_HOUSEHOLD_SNAPSHOT',{
     value:Object.freeze(cp(feed)),configurable:true,enumerable:false});
@@ -173,6 +160,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
   const table=entry.role==='guest'?guests:active;
   if(table.get(entry.id)!==entry)return refusal('NOT_CONNECTED');
   table.delete(entry.id);
+  physics.drop(entry.id);
   nativeCloset.clear(entry,'host_departure');
   try{await entry.session.door.run('goodbye')}catch{}
   entry.session.close();
@@ -183,13 +171,72 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
   let departed=false;
   return Object.freeze({
    id:entry.id,role:entry.role,
-   async run(text){
+   async run(text){return ordered(async()=>{
     ensureOpen();
     if(departed)throw Error('SESSION_DEPARTED');
     if(typeof text!=='string'||text.length>3000)return refusal('INVALID_COMMAND');
     if((entry.role==='guest')&&!/^(?:remote(?: (?:activate|on|off|sleep|status|help|menu|closet(?: .*)?))?|look|where|feel(?: words)?|actions|approach [a-z0-9._-]{1,100}|stay \d{1,5}|stop|goodbye|bye|exit|leave|resource realiti:\/\/apartment\/(?:closet|household))$/i.test(text.trim()))
      return refusal('GUEST_NOT_AUTHORIZED_FOR_COMMAND');
     const raw=text.trim(),lower=raw.toLowerCase();
+    if(/^(?:reach|touch|act reach__|act touch__)/i.test(lower)&&
+       /household\.peer\.|resident:household:/.test(lower))
+      return refusal('EXPLICIT_PEER_TOUCH_CONSENT_REQUIRED');
+    // Host-owned shared movement and two-sided touch, never a replacement for
+    // the original Matrix or B7 sensory kernels.
+    if(lower==='remote household physics')
+      return physics.publicView(entry);
+    if(lower.startsWith('remote household touch ')){
+      if(entry.role!=='resident')return refusal('PEER_TOUCH_RESIDENTS_ONLY');
+      if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+       return refusal('REMOTE_ASLEEP');
+      if(lower.startsWith('remote household touch request ')){
+       const id=raw.slice('remote household touch request '.length).trim();
+       return physics.request(entry,id);
+      }
+      if(/^remote household touch accept T-[0-9a-f]{12}$/i.test(raw))
+       return physics.accept(entry,raw.slice('remote household touch accept '.length));
+      return refusal('UNKNOWN_PEER_TOUCH_COMMAND');
+    }
+    // One native Relax companion drives the whole household, with reach gated
+    // by the real requester body for petting. Guests cannot adopt/release.
+    if(lower==='remote household pet'||lower==='remote household pet status'||
+       lower==='remote pet'||lower==='remote pet status'){
+      if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+       return refusal('REMOTE_ASLEEP');
+      return sharedPet.status();
+    }
+    if(lower==='remote pet help'||lower==='remote household pet help')
+      return {ok:true,commands:['remote pet choose cat <name>',
+       'remote pet choose dog <name>','remote pet choose ferret <name>',
+       'remote pet status','remote pet call','remote pet stroke',
+       'remote pet release <name>'],
+       note:'One live native Relax companion is shared by the household. Adoption requires the actual pet bed. Only the adopter can release it.'};
+    const adopt=/^remote (?:household )?pet choose (cat|dog|ferret) ([A-Za-z][A-Za-z0-9 -]{1,19})$/i.exec(raw);
+    if(adopt){
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     const result=await sharedPet.choose(entry,adopt[1].toLowerCase(),adopt[2].trim());
+     if(result.ok)broadcast();
+     return result;
+    }
+    if(lower==='remote pet call'||lower==='remote household pet call'){
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     const result=await sharedPet.call(entry);if(result.ok)broadcast();return result;
+    }
+    if(lower==='remote pet stroke'||lower==='remote household pet stroke'){
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     const result=sharedPet.stroke(entry);if(result.ok)broadcast();return result;
+    }
+    const rel=/^remote (?:household )?pet release (.+)$/i.exec(raw);
+    if(rel){
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     const result=sharedPet.release(entry,rel[1].trim());if(result.ok)broadcast();return result;
+    }
+    if(lower.startsWith('remote pet ')||lower.startsWith('remote household pet '))
+     return refusal('UNKNOWN_HOUSEHOLD_PET_COMMAND');
     // Expanded memory is resident-private and encrypted by the trusted host.
     if(lower==='remote memory'||lower==='remote memory status')
       return entry.role==='resident'?entry.journal.stats():refusal('GUEST_PRIVATE_MEMORY_DENIED');
@@ -252,14 +299,18 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
      const res=nativeCloset.clear(entry,'returned');broadcast();return res;
     }
     if(lower==='stop'||lower==='remote stop')nativeCloset.clear(entry,'native_stop');
+    const timeBefore=Number(entry.session.window.C9?.b7?.clock||0);
     const value=await entry.session.door.run(raw);
+    const timeAfter=Number(entry.session.window.C9?.b7?.clock||0);
+    const elapsed=Math.max(0,Math.min(60_000,Math.floor((timeAfter-timeBefore)*1000)));
+    if(value?.ok!==false&&elapsed>=20)sharedPet.advance(elapsed);
     if(['goodbye','bye','exit','leave'].includes(lower)){
      departed=true;await disconnect(entry);
      return value;
     }
     broadcast();
     return value;
-   },
+   });},
    read(uri){
     ensureOpen();if(departed)throw Error('SESSION_DEPARTED');
     if(typeof uri!=='string'||!uri.startsWith('realiti://'))return refusal('INVALID_RESOURCE');
@@ -267,16 +318,19 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     if(uri==='realiti://apartment/memory')
      return entry.role==='resident'?entry.journal.stats():refusal('GUEST_PRIVATE_MEMORY_DENIED');
     if(uri==='realiti://apartment/scene')return scene.view();
+    if(uri==='realiti://apartment/physics')return physics.publicView(entry);
+    if(uri==='realiti://apartment/household/pet'||uri==='realiti://apartment/pet')
+     return sharedPet.status();
     if(entry.role==='guest'&&![
       'realiti://apartment/household','realiti://apartment/board',
       'realiti://apartment/closet','realiti://space','realiti://harness',
       'realiti://soma/harness'].includes(uri))return refusal('GUEST_RESOURCE_DENIED');
     return cp(entry.session.window.Realiti.read(uri));
    },
-   async leave(){
+   async leave(){return ordered(async()=>{
     ensureOpen();if(departed)return refusal('SESSION_DEPARTED');
     departed=true;return disconnect(entry);
-   }
+   });}
   });
  }
  async function openEntry(id,role){
@@ -314,6 +368,9 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
    catch(e){session.close();throw e}
   }
   const entry={id,role,session,sessionTag:uuid(),loaner:null,journal};
+  const ingress=physics.placeIngress(entry,allEntries());
+  if(!ingress.ok){session.close();throw Error(ingress.error)}
+  try{await sharedPet.restore()}catch(e){session.close();throw e}
   table.set(id,entry);
   if(!guest&&!data.members.includes(id)){data.members.push(id);persist()}
   broadcast();
@@ -323,10 +380,10 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
   schema:'REALITI_APARTMENT_HOUSEHOLD_HOST_V1',capacity:MAX_RESIDENTS,
   async joinResident(id){
    if(!validId(id))throw TypeError('INVALID_RESIDENT_ID');
-   return openEntry(id,'resident');
+   return ordered(()=>openEntry(id,'resident'));
   },
   async visitGuest(){
-   return openEntry('guest-'+crypto.randomBytes(8).toString('hex'),'guest');
+   return ordered(()=>openEntry('guest-'+crypto.randomBytes(8).toString('hex'),'guest'));
   },
   status(){
    ensureOpen();
@@ -336,17 +393,21 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     shared_board_count:data.board.length,revision:data.revision,
     shared_scene_revision:data.scene?.revision||0,
     encrypted_private_journals:data.members.length,
+    solid_native_peer_capsules:true,
+    companion:sharedPet.status().pet,
     law:'Operator only; private resident stores and guest harnesses are never exported.'};
   },
   sync:broadcast,
   async close(){
    if(closed)return;
    for(const entry of [...guests.values(),...active.values()]){
+    physics.drop(entry.id);
     const table=entry.role==='guest'?guests:active;table.delete(entry.id);
     nativeCloset.clear(entry,'household_shutdown');
     try{await entry.session.door.run('goodbye')}catch{}
     entry.session.close();
    }
+   sharedPet.close();
    closed=true;fs.closeSync(fd);try{fs.unlinkSync(lockPath)}catch{}
   }
  });
