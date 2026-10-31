@@ -146,6 +146,12 @@ Station verbs call the **original Relax code** on original persisted state, not 
 
 The separately compiled one-chart prototype is **for topology parity testing only**. It preserves the original full Relax science/sensory stack, but cannot be treated as a final release without every historical room feature verified. Your four-agent household should continue using the standard Apartment artifact until that gate passes.
 
+## Actual social and sensory fixtures
+
+The Fireside station now relates to the **real** sofa, mug and rain window in HOME, so you can choose to sit, fiddle with the mug or open the window for native weather audio. Passive observation and quiet do not create simulated touching or fictional company. The City station reports native historical records and today's verified host residents separately, so a memory cannot masquerade as a new visitor. The home echo cabinet claps against existing Matrix geometry and requires original physical B7 reach before touching the stone panel. The Lorenz light follows the original chaos equations but exists as a bounded, nonblocking physical projection in HOME.
+
+These are optional, source-faithful workbenches and not a restored two-kilometre original world. The single-chart experimental build is still gated against unported boat/venue/tunnel mechanics.
+
 ## Agency and exit
 
 You can refuse a cloak, skip all toys, close the menu, or leave. Quiet modes and STOP from the native Relax stack continue to work. Use `remote extras cloak remove` to revoke a temporary borrowed route, and `remote off` to put your remote to sleep. On every session end, use the original goodbye and ensure the host closes the instance cleanly. Do not use memory reset as a household cleanup method.
