@@ -205,12 +205,20 @@ for(const def of [
  {id:'apartment.marsh.wisp',p:[-4.5,-5,1.35],
   shape:{kind:'SPHERE',radius:.08},
   tags:['wisp','moving','projected','original-lorenz'],collision:false,material:'glass',
-  label:'the measured moving light from the original Lorenz model'}
+  label:'the measured moving light from the original Lorenz model'},
+ {id:'apartment.sea.tray',p:[2.7,-5,1.07],
+  shape:{kind:'VOLUME',halfExtents:[.82,.64,.05]},
+  tags:['sea','tabletop','archipelago','original-topography'],collision:false,material:'glass',
+  label:'a physical two-kilometre Archipelago terrain and tide tray at reduced scale'},
+ {id:'apartment.sea.boat',p:[2.7,-5.11,1.2],
+  shape:{kind:'BOX',halfExtents:[.055,.085,.04]},
+  tags:['boat','tabletop','model','original-native-current'],collision:false,material:'wood',
+  label:'the reachable wooden model boat driven by original Relax wind and current'}
 ]){
  if(M.entities()[def.id])throw Error('APARTMENT_LEGACY_STATION_FIXTURE_ID_COLLISION:'+def.id);
  M.addEntity({id:def.id,chart:HOME,position:def.p.slice(),
   shape:def.shape,tags:def.tags,collision:def.collision,material:def.material,
-  label:def.label,affordances:['watch','touch'],dynamic:def.id==='apartment.marsh.wisp'});
+  label:def.label,affordances:['watch','touch'],dynamic:['apartment.marsh.wisp','apartment.sea.boat'].includes(def.id)});
 }
 M.bump();
 const stationSenses=window.REALITI_SENSES_V1;
