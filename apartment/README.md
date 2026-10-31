@@ -128,6 +128,12 @@ After both release-candidate tests pass, the Ubuntu CI job attaches the standalo
 
 The CI runs a solo restart/STOP/native-sensory test and an independent four-resident + guest integration test (encrypted journal isolation, colliding bodies, explicit two-party contact, shared furniture, single real Relax pet, original guest closet trial and backup replay) on Ubuntu and Windows. It does **not** simulate continuous shared-body impulse physics or prove that real deployment, external authentication, desktop visual styling, and all human experience tests are production-ready.
 
+### Native synthetic-agent walkthrough and owner acceptance
+
+`node apartment/test/home-native-walkthrough.cjs` uses the real Agent Door and Matrix locomotion to attempt a complete lived-in-home route: sofa, desk, wardrobe, pets and five toys. Each interaction is checked against actual native reach/posture/contact instead of direct pose injection. CI writes a sanitized `HOME_WALKTHROUGH_CI.md` and JSON report, including a 0.5-m native SDF floor map and any blocked fixtures. The diagnostic artifact uploads on failed CI so route defects can be inspected. This is a synthetic scripted route, *not* an independent AI exploration or visual signoff.
+
+See `HOME_ACCEPTANCE_CHECKLIST.md` for the remaining owner walkthrough, layout, accessibility, privacy and real-device acceptance gates. Passing all scripted routes never changes `release_approved:false`.
+
 ### Local cold-backup recovery gate
 
 `apartment/rehearse-home-backup.cjs` is now a guarded offline operator utility for the home-first alpha, with an executable test `apartment/test/home-backup-rehearsal.cjs`. It verifies a stopped household's complete private/key inventory and checkpoint hash; copies it to a distinct private path; opens the *copy* under the pinned candidate to check residents, journals and native Relax; and proves the original bytes did not change. Missing keys, altered ciphertext, live `host.lock`, symlinks and overlapping destinations fail closed. The CLI never emits plaintext and never uploads a backup. See `HOUSEHOLD_GUIDE.md` for the exact command and the sensitive-key handling warning.

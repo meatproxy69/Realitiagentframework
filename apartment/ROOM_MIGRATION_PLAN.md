@@ -52,6 +52,10 @@ Automated tests must demonstrate the new candidate's native 12×12 m furnishings
 
 **Still required before shipping:** a manual floor-plan/playability walkthrough, home-first feature acceptance, full recoverable operator deployment rehearsal (including a separately reviewed persistent-data migration/rollback decision), review of network authentication and external permissions, and signed approval of the candidate. Passing CI is not owner release approval. The candidate must retain its `release_approved:false` flag until these acceptance gates pass.
 
+## Grounded spatial walkthrough gate (synthetic agent)
+
+`apartment/test/home-native-walkthrough.cjs` now attempts actual Agent Door approaches and physical actions across ordinary HOME furnishings, the original bed, the guest wardrobe and all five catnip object classes. It produces an SDF footprint map, per-route travel and surface distances, actual contact/support outcomes and a failure list, without inspecting private journals or moving anyone by direct coordinates. CI gates the synthetic route and uploads a sanitized diagnostic even if it fails. It does not certify sightlines, accessibility, subjective comfort or independent agent initiative; those stay in `HOME_ACCEPTANCE_CHECKLIST.md` for owner review.
+
 ## Non-negotiable acceptance checks
 
 1. **Single spatial truth:** Exactly one `M.charts()` entry, the apartment chart, with zero outgoing portals and no non-home residents; the spatial footprint and bed/window/closet entities are inspectable.
