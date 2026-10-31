@@ -46,7 +46,7 @@ export function adaptCompanions(original) {
   );
   patch(
     "text:`${p.name} looks up at you for a moment, then trots back toward the teahouse bench and curls up to sleep.`",
-    "text:r&&r.chart===NEST?`${p.name} curls up on the apartment pet bed. The adoption ends here.`:`${p.name} looks up at you for a moment, then trots back toward the teahouse bench and curls up to sleep.`",
+    "text:r&&r.chart===NEST?`${p.name} is no longer an active companion in this apartment session. The Matrix pet entity is released.`:`${p.name} looks up at you for a moment, then trots back toward the teahouse bench and curls up to sleep.`",
     'home_release_description'
   );
   patch(
