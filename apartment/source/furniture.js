@@ -179,7 +179,7 @@ function handle(raw){
   for(const name of MOVABLE)M.entities()[alias[name]].pose.position=defaultPositions[name].slice();
   for(const name of SOFT)M.entities()[alias[name]].material=name==='bed'?'blanket':'blanket';
   M.bump();try{window.c9saveNow?.()}catch(e){}
-  return {ok:true,restored:'resident-scoped furniture settings only',fixture_count:18};
+  return {ok:true,restored:'resident-scoped furniture settings only',fixture_count:Object.keys(alias).length};
  }
  return {ok:false,error:'UNKNOWN_FURNITURE_COMMAND',...help()};
 }
