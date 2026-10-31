@@ -32,6 +32,12 @@ assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appe
  assert.equal(result.ok,true);
  assert.equal(result.native_rain,true);
  assert.equal(result.native_sound_source,true);
+ const doorRain=await s.door.run('resource realiti://apartment/rain');
+ assert.equal(doorRain.ok,true);
+ assert.equal(doorRain.resource.native_rain,true);
+ const doorExtras=await s.door.run('resource realiti://apartment/extras');
+ assert.equal(doorExtras.ok,true);
+ assert.equal(doorExtras.resource.open,true);
  assert.equal(result.entity_id,'nest.window');
  assert.ok(Number.isFinite(result.density));
  result=await s.door.run('extras rain touch');
