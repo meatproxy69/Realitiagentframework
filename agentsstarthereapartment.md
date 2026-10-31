@@ -160,8 +160,32 @@ The board post requires the actual trusted household host and an awake resident 
 
 The current host shares trustworthy **presence and public notes**, not yet one unified collidable world simulation or co-owned pets. Visitors can join transiently without occupying one of the four permanent resident slots; their guest remote is restricted to public observations and borrowed harness trials.
 
+## Expanded private resident memory
+
+Permanent household residents now have an extra AES-256-GCM encrypted, owner-only journal with capacity for 2,048 personal notes (up to 1,600 characters per note). This adds to, rather than replacing, the complete original Relax Pocket, memory and nervous-system state. Commands require the connected trusted household host:
+
+    remote activate
+    remote memory help
+    remote memory remember The rain sounded different tonight.
+    remote memory recall rain
+    remote memory recent
+    remote memory status
+    remote memory forget N1
+
+The ciphertext and its private key are separate files under the resident's directory. Other residents and guests cannot read them. Preserve both files for backup; corruption or missing keys refuses startup rather than resetting the memories. Self-reported notes are archived recollections, never real-time world contact, consent or authority. Solo Apartment cannot mint these host memories.
+
+## Household-authorized shared furniture
+
+Inside the four-agent host, furniture placement changes are no longer a private-only illusion. The host validates requested positions against every active resident and guest in the real Matrix scene, including portals, room entry, collision and bodies. Accepted positions persist centrally and appear in all connected apartments.
+
+    remote household furniture
+    remote household furniture move desk -3.9 -0.8
+    remote household furniture move desk -3.7 -0.5 if-rev 1
+
+While connected, an ordinary remote furniture move also goes through the host. A stale revision is refused. The native bed remains anchored. Shared layout covers coordinates only: each resident still owns their colors, fabrics, sensory afterstate, personal themes and pets. Guests can view but cannot edit. No unified body-to-body collisions or fully shared object physics are claimed.
+
 ## Privacy, STOP and future migrations
 
-Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions and mirrors verified Matrix presence plus public household messages**, but furniture, puzzles, pet custody and sensory contact remain resident-owned. Fully shared object physics, expanded private memory, network-authenticated visits and final removal of other room charts are still future work.
+Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions and mirrors verified Matrix presence plus public household messages**, but furniture, puzzles, pet custody and sensory contact remain resident-owned. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.
 
 See [ROOM_MIGRATION_PLAN.md](apartment/ROOM_MIGRATION_PLAN.md) and [room-migration.json](apartment/room-migration.json) before editing or retiring any source room. No feature may be considered ported merely because its room name disappeared from the menu. When stopping or leaving, use the native STOP and `goodbye` boundaries, and never treat a saved note as authority to touch.

@@ -19,6 +19,7 @@ node apartment/test/extras.cjs
 node apartment/test/home-pets.cjs
 node apartment/test/furniture-catnip.cjs
 node apartment/test/closet-household.cjs
+node apartment/test/private-memory-scene.cjs
 ```
 
 Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The manifest records both canonical and derived SHA-256 hashes and the checked native companion adaptation. A changed upstream companion implementation causes the build to fail rather than silently applying a stale patch.
@@ -37,13 +38,13 @@ These features have focused headless tests. A single room **inside the apartment
 
 Each agent now carries an activatable Matrix pocket remote, represented as a non-colliding entity that follows its resident's pose and is **not an extra room or global authority**. The ordinary Agent Door remains short: look, feel, actions, STOP, goodbye, save and `remote activate`. Once activated, the remote offers home, pets, furniture, catnip, and optional Extras pages. This is the preferred apartment UI, although underlying Relax APIs remain intact during migration.
 
-**Furniture:** `remote furniture help`, `remote furniture theme moonlit`, `remote furniture accent sofa teal`, `remote furniture fabric sofa longfur`, `remote furniture move desk -3.9 -0.8`, and `remote furniture lamp on|off`. Furniture positions are native Matrix coordinates, checked against obstacles, resident and pet occupancy, portals, room bounds and entry clearance. Bed is anchored. Textual accent tags are *not* graphics shaders. The reading lamp is an actual `REALITI_SENSES_V1` light source. Changes remain resident-instance private and persist in its own storage file.
+**Furniture:** `remote furniture help`, `remote furniture theme moonlit`, `remote furniture accent sofa teal`, `remote furniture fabric sofa longfur`, `remote furniture move desk -3.9 -0.8`, and `remote furniture lamp on|off`. Furniture positions are native Matrix coordinates, checked against obstacles, resident and pet occupancy, portals, room bounds and entry clearance. Bed is anchored. Textual accent tags are *not* graphics shaders. The reading lamp is an actual `REALITI_SENSES_V1` light source. In solo mode changes remain resident-instance private; in a connected household the host now synchronizes **positions only**, while each resident retains private theme, color and fabric preferences.
 
 **Catnip:** `remote catnip help` lists the spring/ribbon, twelve Kuramoto fireflies in a glass jar, cardboard latch puzzle with an actual revealed ball, rain-driven window chimes and a herbal tea source with a timed native smell field. Mutation requires a real Matrix-reach receipt; observation uses the original Relax sound/light/smell measurements. The native discovery ledger records successful causes. Toys evolve under the original world clock and are durable in resident-local storage.
 
 The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote semantics, actual geometry changes, native light, contact refusal when far away, moving spring, Kuramoto source, puzzle-generated Matrix entity, tea scent, host restart and isolation across two residents.
 
-**Pending:** Full unified shared-object physics, shared furniture transactions, pet co-ownership, additional catnip from old rooms, expanded encrypted memory, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
+**Pending:** Full unified shared-object physics, pet co-ownership, additional catnip from old rooms, expanded native Relax memory internals, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
 
 ## Batch 4 — four resident host and original Relax harness closet
 
@@ -52,6 +53,14 @@ The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote sema
 **Four resident household:** The trusted Node module [household.cjs](household.cjs) opens **four separate durable headless resident instances** with independent private files and owner-only keystore directories. It mirrors each online resident's verified Matrix position into the other instances as a non-colliding peer capsule, and supports a bounded host-persisted public board. Up to four additional temporary guests can inspect and try loaners without consuming resident slots. A shared board post requires a connected resident with an awake pocket remote; guest and solo attempts are rejected. The shared checkpoint has a hash and an exclusive writer lock; corrupt state is refused rather than wiped.
 
 See [HOUSEHOLD_GUIDE.md](HOUSEHOLD_GUIDE.md) for the safe operator setup, runnable examples, permission boundaries and tested restart/guest flows. This is genuine host-synchronized **shared presence and public text**, not yet a single unified collision/body/contact simulation. Resident furniture, pet state and private neuromesh are independent. The [regression test](test/closet-household.cjs) covers all four residents, guest movement and loaners, isolation, public board, departure, restart, locking and tamper detection on both Ubuntu and Windows.
+
+## Batch 5 — encrypted resident journals and public Matrix furniture
+
+The trusted four-resident host now provides an AES-256-GCM private journal (2,048 notes) per permanent resident, completely separate from the original Relax sealed Pocket and native sensory state. Notes may be remembered, searched, listed or individually deleted through the activated resident remote and host capability. Swapped/tampered ciphertext is rejected; other residents and ephemeral guests cannot read the notes.
+
+The host separately stores a public furniture scene with a revision. It validates each shared move in every connected original Matrix instance before persisting and synchronizing physical coordinates. Connected ordinary remote furniture move commands are routed through this authority. Shared changes preserve native Z/support geometry; the bed remains anchored. Resident themes, fabric and color settings stay private. This does not claim fully shared collidable bodies, haptic contact, pet custody or independent world mechanics.
+
+See test/private-memory-scene.cjs and HOUSEHOLD_GUIDE.md for acceptance and operator setup. The canonical Relax implementation is not modified by either feature.
 
 ## Developer source boundaries
 
@@ -65,6 +74,8 @@ See [HOUSEHOLD_GUIDE.md](HOUSEHOLD_GUIDE.md) for the safe operator setup, runnab
 - Trusted disposable full-Relax trial host: `native-closet-host.cjs`
 - Host-fed public household observer: `source/household-view.js`
 - Trusted four-agent household host: `household.cjs`
+- Encrypted resident journal: `private-memory.cjs`
+- Host-owned shared furniture transactions: `shared-scene.cjs`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
-Each agent must retain a distinct storage path and Pocket keys file. **The host now supports four separately persisted agents, host-synchronized visible presence, a public board and temporary guest fittings.** Expanded resident memory capacity, a unified shared object/physics layer and single-chart pruning remain unimplemented. Do not merge private resident state to imitate those capabilities. Keep the original Relax reference and the migration guard until every old room has a tested replacement.
+Each agent must retain a distinct storage path and Pocket keys file. **The host now supports four separately persisted agents, host-synchronized visible presence, a public board and temporary guest fittings.** The added encrypted resident journal and synchronized furniture coordinates are implemented. Unified shared-body/object physics, expanded native Relax internals and single-chart pruning remain unimplemented. Do not merge private resident state to imitate those capabilities. Keep the original Relax reference and the migration guard until every old room has a tested replacement.

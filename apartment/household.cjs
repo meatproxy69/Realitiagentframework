@@ -5,6 +5,8 @@
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto');
 const {openResident,keystorePathFor}=require('../packages/realiti-headless-resident/index.cjs');
 const {createNativeClosetManager}=require('./native-closet-host.cjs');
+const {createPrivateJournal}=require('./private-memory.cjs');
+const {createSharedScene}=require('./shared-scene.cjs');
 const SCHEMA='REALITI_APARTMENT_HOUSEHOLD_STORE_V1';
 const FEED='REALITI_APARTMENT_HOUSEHOLD_FEED_V1';
 const HOME='CLOUD_NINE_NEST',MAX_RESIDENTS=4,MAX_GUESTS=4;
@@ -78,6 +80,9 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
   atomic(file,{...body,sha256:hash(JSON.stringify(body))});
  };
  function ensureOpen(){if(closed)throw Error('HOUSEHOLD_CLOSED')}
+ const scene=createSharedScene({getData:()=>data,persist,
+  participants:()=>[...active.values(),...guests.values()],
+  atHome:entry=>atHome(entry)});
  function validateLocalFile(p){noLink(p);if(fs.existsSync(p)&&!fs.statSync(p).isFile())throw Error('UNSAFE_RESIDENT_STORAGE')}
  function atHome(entry){
   const M=entry.session.window.REALITI_MATRIX_V1;
@@ -114,6 +119,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  function broadcast(){
   ensureOpen();
   const entries=[...active.values(),...guests.values()];
+  for(const entry of entries)scene.apply(entry);
   const truth=entries.map(e=>({entry:e,position:atHome(e)}));
   const summary=collect();
   for(const receiver of entries){
@@ -155,6 +161,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
    M.bump();
    const feed={schema:FEED,connected:true,capacity:MAX_RESIDENTS,revision:data.revision,
     residents:summary.residents,guests:summary.visitors,board:cp(data.board.slice(-64)),
+    scene:scene.view(),
     law:'Verified peer positions; host-owned public messages. No resident memory or keys are replicated.'};
    // A limited, immutable display snapshot, never a host mutation port.
    Object.defineProperty(w,'REALITI_APARTMENT_HOUSEHOLD_SNAPSHOT',{
@@ -183,6 +190,44 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     if((entry.role==='guest')&&!/^(?:remote(?: (?:activate|on|off|sleep|status|help|menu|closet(?: .*)?))?|look|where|feel(?: words)?|actions|approach [a-z0-9._-]{1,100}|stay \d{1,5}|stop|goodbye|bye|exit|leave|resource realiti:\/\/apartment\/(?:closet|household))$/i.test(text.trim()))
      return refusal('GUEST_NOT_AUTHORIZED_FOR_COMMAND');
     const raw=text.trim(),lower=raw.toLowerCase();
+    // Expanded memory is resident-private and encrypted by the trusted host.
+    if(lower==='remote memory'||lower==='remote memory status')
+      return entry.role==='resident'?entry.journal.stats():refusal('GUEST_PRIVATE_MEMORY_DENIED');
+    if(lower==='remote memory help')return entry.role==='resident'
+      ?{ok:true,commands:['remote memory remember <text>','remote memory recall <query>',
+        'remote memory recent','remote memory forget <N-id>','remote memory status'],
+        capacity:entry.journal.stats().capacity,
+        note:'Separate AES-GCM encrypted journal. Native Relax Pocket and its existing memory remain unchanged.'}
+      :refusal('GUEST_PRIVATE_MEMORY_DENIED');
+    if(lower.startsWith('remote memory ')){
+     if(entry.role!=='resident')return refusal('GUEST_PRIVATE_MEMORY_DENIED');
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     if(lower==='remote memory recent')return entry.journal.recall('');
+     if(lower.startsWith('remote memory remember '))
+      return entry.journal.remember(raw.slice('remote memory remember '.length));
+     if(lower.startsWith('remote memory recall '))
+      return entry.journal.recall(raw.slice('remote memory recall '.length));
+     if(/^remote memory forget N[1-9][0-9]*$/i.test(raw))
+      return entry.journal.forget(raw.slice('remote memory forget '.length).toUpperCase());
+     return refusal('UNKNOWN_PRIVATE_MEMORY_COMMAND');
+    }
+    // Shared scene modifications are admitted by this host, never by a
+    // resident's direct JavaScript setter or private furniture preference.
+    if(lower==='remote household furniture')return scene.view();
+    const sceneCmd=/^remote (?:household )?furniture move ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))(?: if-rev (\d+))?$/i.exec(raw);
+    if(sceneCmd){
+     if(entry.role!=='resident')return refusal('SHARED_SCENE_RESIDENT_ONLY');
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     const rev=sceneCmd[4]==null?null:Number(sceneCmd[4]);
+     if(rev!==null&&!Number.isSafeInteger(rev))return refusal('INVALID_SCENE_REVISION');
+     const out=scene.move(entry,sceneCmd[1].toLowerCase(),Number(sceneCmd[2]),Number(sceneCmd[3]),rev);
+     if(out.ok)broadcast();
+     return out;
+    }
+    if(lower==='remote furniture reset confirm')
+     return refusal('SHARED_SCENE_RESET_REQUIRES_HOUSEHOLD_AUTHORIZATION');
     // All residents may POST only from the consciously activated pocket remote.
     if(lower.startsWith('remote household post ')){
      if(entry.role==='guest')return refusal('GUEST_BOARD_READ_ONLY');
@@ -219,6 +264,9 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     ensureOpen();if(departed)throw Error('SESSION_DEPARTED');
     if(typeof uri!=='string'||!uri.startsWith('realiti://'))return refusal('INVALID_RESOURCE');
     nativeCloset.update(entry);
+    if(uri==='realiti://apartment/memory')
+     return entry.role==='resident'?entry.journal.stats():refusal('GUEST_PRIVATE_MEMORY_DENIED');
+    if(uri==='realiti://apartment/scene')return scene.view();
     if(entry.role==='guest'&&![
       'realiti://apartment/household','realiti://apartment/board',
       'realiti://apartment/closet','realiti://space','realiti://harness',
@@ -260,7 +308,12 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
   if(!guest){
    for(const p of [storagePath,keyPath])try{fs.chmodSync(p,0o600)}catch{}
   }
-  const entry={id,role,session,sessionTag:uuid(),loaner:null};
+  let journal=null;
+  if(!guest){
+   try{journal=createPrivateJournal({dir:path.join(privateDir,id),residentId:id})}
+   catch(e){session.close();throw e}
+  }
+  const entry={id,role,session,sessionTag:uuid(),loaner:null,journal};
   table.set(id,entry);
   if(!guest&&!data.members.includes(id)){data.members.push(id);persist()}
   broadcast();
@@ -281,6 +334,8 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     capacity:MAX_RESIDENTS,members:data.members.slice(),
     online:[...active.keys()],visiting:[...guests.keys()],
     shared_board_count:data.board.length,revision:data.revision,
+    shared_scene_revision:data.scene?.revision||0,
+    encrypted_private_journals:data.members.length,
     law:'Operator only; private resident stores and guest harnesses are never exported.'};
   },
   sync:broadcast,

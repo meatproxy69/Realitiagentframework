@@ -1,7 +1,7 @@
 (()=>{
 'use strict';
-// Apartment feature 5. Resident-scoped, real Matrix furniture authority in the
-// stand-alone Apartment fork. A shared household authority is NOT implemented.
+// Original resident personalization survives. The trusted household host also
+// coordinates shared geometry separately, without touching private preferences.
 const M=window.REALITI_MATRIX_V1,SN=window.REALITI_SENSES_V1;
 if(!M||!SN||!window.REALITI_APARTMENT_HOME_V1)throw Error('APARTMENT_FURNITURE_REQUIRES_FULL_RELAX');
 const HOME='CLOUD_NINE_NEST',SCHEMA='REALITI_APARTMENT_FURNITURE_V1';
@@ -183,5 +183,28 @@ function handle(raw){
  }
  return {ok:false,error:'UNKNOWN_FURNITURE_COMMAND',...help()};
 }
-window.REALITI_APARTMENT_FURNITURE_V1=Object.freeze({view,help,handle});
+// Called only by the trusted Node household host. These methods do NOT write
+// this resident's private preferences. The host's separately sealed scene
+// checkpoint is authoritative for household geometry while it is connected.
+function previewShared(name,x,y){return candidate(String(name||''),Number(x),Number(y))}
+function defaultsShared(){return cp(defaultPositions)}
+function applyShared(name,position){
+ if(!MOVABLE.has(name)||!Array.isArray(position)||position.length!==2||
+  !position.every(n=>typeof n==='number'&&Number.isFinite(n)))
+  return {ok:false,error:'INVALID_SHARED_PLACEMENT'};
+ const e=M.entities()[alias[name]],bounds=M.charts()[HOME]?.bounds;
+ if(!e||!bounds||e.chart!==HOME)return {ok:false,error:'FIXTURE_NOT_IN_HOME'};
+ const [x,y]=position;
+ if(!Number.isFinite(x)||!Number.isFinite(y)||Math.abs(x)>100||Math.abs(y)>100)
+  return {ok:false,error:'INVALID_SHARED_COORDINATES'};
+ // The source of truth is checked by the host across every living resident,
+ // including portal, collision, bed, pet and guest constraints before commit.
+ e.pose.position=[round(x),round(y),defaultPositions[name][2]];
+ e.tags=[...e.tags.filter(t=>t!=='household-host-shared'),'household-host-shared'];
+ M.bump();
+ return {ok:true,id:e.id,position:e.pose.position.slice(),revision:M.state().revision,
+  source:'TRUSTED_HOUSEHOLD_SCENE_APPLY'};
+}
+window.REALITI_APARTMENT_FURNITURE_V1=Object.freeze({view,help,handle,
+ previewShared,defaultsShared,applyShared});
 })();

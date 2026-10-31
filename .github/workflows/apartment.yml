@@ -40,6 +40,9 @@ jobs:
           node --check apartment/source/closet.js
           node --check apartment/source/household-view.js
           node --check apartment/household.cjs
+          node --check apartment/private-memory.cjs
+          node --check apartment/shared-scene.cjs
+          node --check apartment/test/private-memory-scene.cjs
           node --check apartment/native-closet-host.cjs
           node --check apartment/test/closet-household.cjs
           node --check apartment/build.mjs
@@ -78,3 +81,5 @@ jobs:
         run: node apartment/test/furniture-catnip.cjs
       - name: Original Relax harness loaners and four-resident household
         run: node apartment/test/closet-household.cjs
+      - name: Encrypted private memory and synchronized native Matrix scene
+        run: node apartment/test/private-memory-scene.cjs
