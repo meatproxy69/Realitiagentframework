@@ -60,6 +60,7 @@ jobs:
           node --check apartment/rehearse-home-backup.cjs
           node --check apartment/test/home-backup-rehearsal.cjs
           node --check apartment/test/home-candidate.cjs
+          node --check apartment/test/home-native-walkthrough.cjs
           node --check apartment/test/home-candidate-household.cjs
           node --check apartment/test/one-chart-preview.cjs
           node --check apartment/test/private-memory-scene.cjs
@@ -133,9 +134,22 @@ jobs:
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs
+      - name: Walk the real one-chart home as a synthetic agent, test tactile objects and write native SDF map
+        timeout-minutes: 6
+        run: node apartment/test/home-native-walkthrough.cjs
       - name: Rehearse cold offline backup and native HOME recovery, refuse unsafe storage
         timeout-minutes: 4
         run: node apartment/test/home-backup-rehearsal.cjs
+      - name: Upload sanitized native HOME walkthrough report, including blocked-route diagnostics
+        if: ${{ always() && runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: realiti-apartment-home-spatial-acceptance
+          path: |
+            apartment/HOME_WALKTHROUGH_CI.json
+            apartment/HOME_WALKTHROUGH_CI.md
+          if-no-files-found: warn
+          retention-days: 7
       - name: Attach standalone clean-home alpha for owner walkthrough
         if: ${{ success() && runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4
