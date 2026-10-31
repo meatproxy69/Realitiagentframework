@@ -30,9 +30,10 @@
       "parity_tests": [
         "apartment/test/extras.cjs",
         "apartment/test/home-pets.cjs",
-        "apartment/test/furniture-catnip.cjs"
+        "apartment/test/furniture-catnip.cjs",
+        "apartment/test/private-memory-scene.cjs"
       ],
-      "notes": "Ported physical room fixtures and local personalization plus carried remote. This is only the inhabited home in the full migration build; legacy charts are not yet retired."
+      "notes": "Native apartment home and original R&R retained. Private encrypted host journal and host-owned shared furniture coordinates are now tested, but this is not yet the final one-chart-only release; preserve all Relax chart-dependent features until separately reviewed."
     },
     {
       "source_room": "NO_ASK_SANCTUARY",
@@ -187,9 +188,10 @@
       "status": "partial",
       "parity_tests": [
         "apartment/test/home-pets.cjs",
-        "apartment/test/closet-household.cjs"
+        "apartment/test/closet-household.cjs",
+        "apartment/test/private-memory-scene.cjs"
       ],
-      "notes": "Apartment host now mirrors independently verified Matrix resident/guest presence and holds an integrity-checked public board, while the City venue/ledger/social/transport features remain unported. It is a multi-instance shared-presence layer, not shared-body collision. Do not retire City."
+      "notes": "Host mirrors verified household presence and public board, now with shared authenticated furniture coordinates and private resident journals. Those do not port original City venues, ledger/transport, chats or all social interactions; City chart MUST remain during migration."
     },
     {
       "source_room": "UNDERCITY",
