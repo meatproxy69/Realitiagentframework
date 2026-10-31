@@ -111,16 +111,16 @@ function mapSvg(entities,solid){
   const M=session.window.REALITI_MATRIX_V1,E=M.entities();
   const layout=session.window.REALITI_APARTMENT_BEDROOM_LAYOUT_V4;
   assert.equal(layout?.schema,'REALITI_APARTMENT_BEDROOM_LAYOUT_V4');
-  assert.deepEqual(layout.bed.slice(0,2),[-1,-3.2]);
-  assert.deepEqual(layout.headboard.slice(0,2),[-1,-5.5]);
-  assert.deepEqual(layout.desk.slice(0,2),[-4.4,-.85]);
-  assert.deepEqual(layout.chair.slice(0,2),[-4.4,-2]);
+  assert.deepEqual(Array.from(layout.bed.slice(0,2)),[-1,-3.2]);
+  assert.deepEqual(Array.from(layout.headboard.slice(0,2)),[-1,-5.5]);
+  assert.deepEqual(Array.from(layout.desk.slice(0,2)),[-4.4,-.85]);
+  assert.deepEqual(Array.from(layout.chair.slice(0,2)),[-4.4,-2]);
   const born=M.resident();
   assert.equal(born.on,'nest.mattress');
   assert.equal(born.posture,'lying');
   assert.ok(dist(born.pose.position,layout.bed)<.1,
     'An agent must wake physically on the moved mattress, never old chart spawn');
-  assert.deepEqual(M.charts()[HOME].spawn.position.slice(0,2),layout.bed.slice(0,2));
+  assert.deepEqual(Array.from(M.charts()[HOME].spawn.position.slice(0,2)),Array.from(layout.bed.slice(0,2)));
   // Between bedroom and lounge, keep a real, collider-free 1m radius
   // centre of circulation; zoning must not create a new narrow corridor.
   const origin=[0,0,1];
