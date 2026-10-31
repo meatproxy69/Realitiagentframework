@@ -40,6 +40,12 @@ A new physical HOME sea-table and wooden model boat use the original Relax Archi
 
 Importantly, **source numerical parity is not spatial/body parity**: a model controller cannot substitute for the full original island chart, actual physically boarded avatar, boats as full-size supports, terrain walking, island exploration, or source fog-of-war. The static action gap audit may report no unlisted static action names while these environmental and dynamic systems are incomplete. All original room statuses must remain `partial` (HOME retained) until owner-reviewed full behavior and state migration criteria pass.
 
+## Undercity original dynamic action parity, without fictitious exploration
+
+The Apartment-only exact-source adapter extends the original Undercity lever/vault reach predicate to a real HOME cabinet. The two original dynamic functions run on actual native Matrix lever and inscription contacts, preserve original source lever/gate/inscription state, and drive a real physically collidable iron model gate. Differential tests compare the source results to an unchanged canonical Relax Undercity instance, exercise refusal and repeat actions, and verify save/restart in both topologies.
+
+**Only these dynamic actions are transferred.** The original 9×9 tunnel's physical exploration, darkness fields, cistern, low clearance, exits, wall topology, and discovery coverage have not been replaced by a cabinet or the current 16 HOME-ray measurement. The original source room remains `partial`, and no chart removal or release certification follows.
+
 ## Non-negotiable acceptance checks
 
 1. **Single spatial truth:** Exactly one `M.charts()` entry, the apartment chart, with zero outgoing portals and no non-home residents; the spatial footprint and bed/window/closet entities are inspectable.
