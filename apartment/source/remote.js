@@ -154,7 +154,7 @@ async function run(raw){
   if(command.startsWith('household post '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
     hint:'A verified household host must publish public notes after authorization.'};
   if(command==='stations')return ST.view();
-  if(command.startsWith('stations '))return ST.handle(spoken.slice(7));
+  if(command.startsWith('stations '))return ST.handle(spoken.slice('remote stations '.length));
   if(command==='furniture')return F.view();
   if(command==='catnip')return C.view();
   if(command==='pet')return originalRun('pet status');
