@@ -57,6 +57,8 @@ jobs:
           node --check apartment/build-home-candidate.mjs
           node --check apartment/source/native-home-boot-adapter.mjs
           node --check apartment/test/native-home-boot-adapter.cjs
+          node --check apartment/rehearse-home-backup.cjs
+          node --check apartment/test/home-backup-rehearsal.cjs
           node --check apartment/test/home-candidate.cjs
           node --check apartment/test/home-candidate-household.cjs
           node --check apartment/test/one-chart-preview.cjs
@@ -131,6 +133,9 @@ jobs:
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs
+      - name: Rehearse cold offline backup and native HOME recovery, refuse unsafe storage
+        timeout-minutes: 4
+        run: node apartment/test/home-backup-rehearsal.cjs
       - name: Attach standalone clean-home alpha for owner walkthrough
         if: ${{ success() && runner.os == 'Linux' }}
         uses: actions/upload-artifact@v4
