@@ -14,6 +14,14 @@ This is a **mechanical script**, not a claim that a thinking agent independently
 
 **Latest verified synthetic results (October 31, 2026):** all 14 household destinations were operable on Ubuntu and Windows, with zero recorded mechanical failures, on the PR #69 revision and post-merge main CI. The raised rain chime was verified as a **sound** source, not a hand-touch. The toy chest required up to **five sequential grounded Agent Door approaches** before the native body settled in reach; this is a possible usability issue for a resident-led walkthrough, even though the final contact passed. Do not quietly increase native reach or move furniture merely to eliminate the observation.
 
+## Clutter / coziness evidence (native spatial model, not rendered review)
+
+The separate native HOME alpha is a 12 × 12 metre studio. Its solid default furniture occupies roughly one fifth of the 144 m² chart, **not** a crowded room. The closer inspection found a *local* staging defect instead: the original tea shelf and added bookcase physically intersected, the optional shapeshifter cloak sat over the bed, and two inherited Nest props did not belong in an ordinary one-room home.
+
+In the HOME-only candidate, the bookcase moves alongside the quiet reading cushion (no new furniture); the tea cup rests correctly on the original guestbook shelf; the optional cloak stays by the wardrobe; and the false cloudfall portal marker and extra, unmanaged Nest cat are absent. Four native wall surfaces now use the existing `wood` haptic material instead of inherited test-box cardboard. Original Relax and the 23-chart development environment retain their original geometry and mechanics.
+
+The independent `apartment/test/home-cozy-layout.cjs` loads the actual one-chart candidate, measures native collision footprints and solid-to-solid overlap, checks the real lamp/firefly/rain/tea sources, and walks a second reading / tea / window / cloak circuit through Agent Door actions. Its CI report `HOME_COZY_AUDIT.json` and **source-geometry diagram** `HOME_COZY_FLOORPLAN.svg` are inspectable artifacts. A metric like 20–25% solid floor coverage is a clutter *proxy*, not an objective measure of comfort. No 3D render, shader, actual camera screenshot or owner reaction has been verified.
+
 ## Human acceptance items (not yet signed)
 
 - [ ] On a fresh isolated candidate, the home feels like one believable, comfortable living space rather than a laboratory of old worlds. No ocean, Undercity, extra chart portals or 22-station gallery.
