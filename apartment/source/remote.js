@@ -5,8 +5,9 @@
 const D=window.REALITI_AGENT_DOOR,A=window.Realiti,M=window.REALITI_MATRIX_V1;
 const F=window.REALITI_APARTMENT_FURNITURE_V1,C=window.REALITI_APARTMENT_CATNIP_V1;
 const CLOSET=window.REALITI_APARTMENT_CLOSET_V1,H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
+const ST=window.REALITI_APARTMENT_STATIONS_V1;
 const GUEST=window.REALITI_APARTMENT_ROLE==='guest';
-if(!D||!A||!M||!F||!C||!CLOSET||!H||!window.REALITI_APARTMENT_HOME_V1||
+if(!D||!A||!M||!F||!C||!CLOSET||!H||!ST||!window.REALITI_APARTMENT_HOME_V1||
    !window.REALITI_SOMA_RELAX_V3)throw Error('APARTMENT_REMOTE_MISSING_FULL_RELAX');
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default');
 let h=2166136261;for(const ch of rid){h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0}
@@ -57,6 +58,7 @@ function menu(){
    'remote pet stroke','remote pet release <name>'],
   furnishings:['remote furniture help','remote furniture list'],
   catnip:['remote catnip help','remote catnip list'],
+  stations:['remote stations help','remote stations list','remote stations inspect <source-id>','remote stations use <source-id> <original-verb>'],
   extras:['remote extras','remote extras rain','remote extras cloak'],
   closet:['remote closet inspect','remote closet help','remote closet status'],
   household:['remote household','remote household board','remote household furniture',
@@ -85,6 +87,7 @@ function resource(uri){
  if(uri==='realiti://apartment/remote')return status();
  if(uri==='realiti://apartment/furniture')return F.view();
  if(uri==='realiti://apartment/catnip')return C.view();
+ if(uri==='realiti://apartment/stations')return ST.view();
  if(uri==='realiti://apartment/closet')return CLOSET.inspect();
  if(uri==='realiti://apartment/closet/status')return CLOSET.current();
  if(uri==='realiti://apartment/household')return H.view();
@@ -118,6 +121,7 @@ async function run(raw){
      'realiti://apartment/closet','realiti://apartment/closet/status',
      'realiti://apartment/household','realiti://apartment/board',
      'realiti://apartment/scene','realiti://apartment/memory',
+     'realiti://apartment/stations',
      'realiti://apartment/physics','realiti://apartment/household/pet'].includes(uri))
    return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri,resource:resource(uri)};
  }
@@ -149,6 +153,8 @@ async function run(raw){
    hint:'Expanded private memory is encrypted and accessed only through the connected household host.'};
   if(command.startsWith('household post '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
     hint:'A verified household host must publish public notes after authorization.'};
+  if(command==='stations')return ST.view();
+  if(command.startsWith('stations '))return ST.handle(spoken.slice('remote stations '.length));
   if(command==='furniture')return F.view();
   if(command==='catnip')return C.view();
   if(command==='pet')return originalRun('pet status');
@@ -159,7 +165,7 @@ async function run(raw){
   if(command.startsWith('extras '))return originalRun(command);
   return {ok:false,error:'UNKNOWN_REMOTE_PAGE',...menu()};
  }
- if(remoteRequired(s))return {ok:false,error:'REMOTE_REQUIRED',
+ if(remoteRequired(s)||s.startsWith('stations ')||s==='stations')return {ok:false,error:'REMOTE_REQUIRED',
   hint:'Apartment controls live on your carried pocket remote. Use remote activate, then remote help.'};
  return originalRun(raw);
 }

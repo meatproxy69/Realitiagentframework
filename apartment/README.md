@@ -21,6 +21,8 @@ node apartment/test/furniture-catnip.cjs
 node apartment/test/closet-household.cjs
 node apartment/test/private-memory-scene.cjs
 node apartment/test/peer-physics-pet.cjs
+node apartment/test/stations.cjs
+node apartment/test/port-coverage.cjs
 ```
 
 Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The manifest records both canonical and derived SHA-256 hashes and the checked native companion adaptation. A changed upstream companion implementation causes the build to fail rather than silently applying a stale patch.
@@ -71,6 +73,26 @@ The household now supports **one real shared cat/dog/ferret at a time** via the 
 
 [Regression](test/peer-physics-pet.cjs) validates four separate native body positions, peer collision, contact consent, original B7 preservation, concurrent operations, shared species behavior, release, restart, restricted guests, and invalid checkpoint rejection. This is native turn-serialized cross-resident collisions and public pet physics, **not** yet a single monolithic global solver with impulse exchange or shared pet feeding/custody voting. The canonical original Relax files and old chart inventory are unchanged.
 
+## Migration development — original mathematical engines and one-chart preview
+
+`apartment/source/stations.js` adds **22 real Matrix-reached apartment apparatus**, one for every original non-home Relax room. Only an activated pocket remote can invoke a station. The original five-body symplectic integrator, 11×11 maze, sandpile, 48 Kuramoto fireflies, OU kite, 24×24 cellular automaton, three-mode resonance, Kepler sky, Lorenz RK4 and Vigenère ciphers run from their **unchanged original source**, with narrow checked Apartment-only reach/step adapters where needed. The station tests compare canonical source engine state and inspect native world receipts. These are **partial ports**, not blanket room equivalence.
+
+Development build:
+
+    node build.mjs
+    node apartment/build.mjs
+    node apartment/test/stations.cjs
+    node apartment/test/port-coverage.cjs
+
+Separately, a **non-release one-chart topology candidate** can be built and tested:
+
+    node apartment/build-one-chart.mjs
+    node apartment/test/one-chart-preview.cjs
+
+That candidate is written to `apartment/RealitiApartmentOneChartPreview.html` with its own `ONE_CHART_VALIDATION.json`; it does not overwrite the 23-chart development build, its resident storage, or the original Relax artifact. It removes actual old Matrix chart/portal/physical objects and blocks old navigation, while retaining original source algorithms and 22 home stations. This validates **spatial topology only**, not full original mechanic parity. It is marked `preview_only: true`, `release_approved: false`.
+
+The room-by-room [migration inventory](room-migration.json) remains **22 partial ports + retained home anchor**, with every source room still requiring independent original-behavior, causal-contact, release, persistence and geometry review. A source verb coverage audit emits a live `PARITY_GAPS_CI.json` report in the CI workspace; it explicitly does not interpret static action matching as percent complete. No old chart is deleted from the ordinary Apartment build without the required verified or owner-approved exclusion evidence.
+
 ## Developer source boundaries
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
@@ -87,6 +109,9 @@ The household now supports **one real shared cat/dog/ferret at a time** via the 
 - Host-owned shared furniture transactions: `shared-scene.cjs`
 - Native colliding household peer controller: `household-physics.cjs`
 - Shared native Relax companion driver: `household-pet.cjs`
+- Original-physics sources, Apartment-only checked adapters: `source/native-wonder-adapter.mjs`
+- Native engine workbenches: `source/stations.js`
+- Explicit non-release single-chart prototype: `build-one-chart.mjs`, `source/one-chart-preview.js`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
 Each agent must retain a distinct storage path and Pocket keys file. **The host now supports four separately persisted agents, host-synchronized visible presence, a public board and temporary guest fittings.** The added encrypted resident journal and synchronized furniture coordinates are implemented. Unified shared-body/object physics, expanded native Relax internals and single-chart pruning remain unimplemented. Do not merge private resident state to imitate those capabilities. Keep the original Relax reference and the migration guard until every old room has a tested replacement.

@@ -9,10 +9,15 @@ const nativeSource=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/
 assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appended');
 (async()=>{
  const {adaptCompanions}=await import('../source/companion-adapter.mjs');
- const patched=original.replace(nativeSource,adaptCompanions(nativeSource));
- assert.notEqual(patched,original,'only native companion adaptation should differ from upstream');
+ const {adaptWonder,adaptFrontier}=await import('../source/native-wonder-adapter.mjs');
+ const wonder=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58b-wonder.js'),'utf8');
+ const frontier=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58e-frontier.js'),'utf8');
+ const patched=original.replace(nativeSource,adaptCompanions(nativeSource))
+   .replace(wonder,adaptWonder(wonder))
+   .replace(frontier,adaptFrontier(frontier));
+ assert.notEqual(patched,original,'only anchor-checked Apartment companion and original-engine station shims differ');
  assert.ok(apartment.startsWith(patched.slice(0,patched.lastIndexOf('</body>'))),
-   'all Relax scripts are present; only the checked native companion patch differs');
+   'every original Relax script remains and only the three checked Apartment source adapters differ');
  assert.ok(apartment.includes('realiti-apartment-home-pets'),'the furnished-home script follows full Relax');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-apartment-extras-'));
  const options={htmlPath:html,residentId:'apartment-a',storagePath:path.join(dir,'a.json')};

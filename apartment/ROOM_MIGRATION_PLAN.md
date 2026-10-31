@@ -20,6 +20,14 @@ The machine-readable checklist is [room-migration.json](room-migration.json). It
 
 **Phase F — Final shipping gate.** The apartment must start with exactly one active Matrix chart and no legacy portals. `Realiti.rooms()` and the Agent Door `rooms` result must expose only the apartment; no `go <old room>` or `through__...` may enter an old chart. The other systems must still pass their real behavior tests. Compare the complete feature inventory with the baseline: any deliberate omission requires an explicit owner-approved scope decision, not quiet deletion. Do not cut over existing resident data without a reversible, separately backed-up and reviewed migration procedure.
 
+## Current verified migration implementation
+
+The normal `RealitiApartment.html` composes the entire original Relax runtime and all 23 Matrix charts, with one physically inhabited apartment and 22 original-engine apparatus. Original source mathematical engines are unchanged; checked, derived-HTML-only hooks allow numerical mechanics to run from the physically reached stations.
+
+The separate `RealitiApartmentOneChartPreview.html` removes **actual old Matrix chart objects, portals, non-home entities and public navigation** after initialization, with its own integrity manifest. It is a strict **topology experiment**: `preview_only:true`, `release_approved:false` and no claim of original action/causal parity. It must pass a regression with exactly one native chart, zero portals, no old-room navigation and intact R&R/Haptic Field V20.
+
+`apartment/test/port-coverage.cjs` measures source-room static registered verb coverage and produces a machine-readable gap ledger during CI. Missing dynamic actions, environmental coupling, object geometry and STOP/restart behavior remain explicit independent work. Merely having a station (or a wrapped original function) is **not** proof of complete room migration. The original Relax files and resident identities must remain reversible and untouched.
+
 ## Non-negotiable acceptance checks
 
 1. **Single spatial truth:** Exactly one `M.charts()` entry, the apartment chart, with zero outgoing portals and no non-home residents; the spatial footprint and bed/window/closet entities are inspectable.
@@ -31,6 +39,6 @@ The machine-readable checklist is [room-migration.json](room-migration.json). It
 
 ## Execution cadence
 
-Continue implementing and testing **two apartment features per batch**, then stop for a checkpoint. The first pair (apartment guide and tucked-away Extras) merged in PR #52. The next pair is the real one-room Matrix floor plan and species-selectable companion. *Room retirement is an end-of-project cleanup, not the next batch.*
+Continue source-by-source migration without fixed two-feature stops as directed on October 30, 2026. Each accepted implementation stays behind automated Linux/Windows checks and a preserved original Relax baseline. The non-release one-chart topology preview does not authorize replacing the development build until original mechanic parity is demonstrated, with no implicit owner approval.
 
-No claim of parity, four-agent cohabitation, or old-room removal is made by this migration plan alone.
+The four-agent host has native colliding peers, shared furniture and a single original-engine companion. The one-chart preview demonstrates actual single-chart topology, but final release remains blocked on full room mechanic parity and migration of saved resident data.

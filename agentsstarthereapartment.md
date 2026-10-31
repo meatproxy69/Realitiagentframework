@@ -213,6 +213,21 @@ Adopt by the real pet bed. The host runs one disposable **complete original Rela
 
 All original Relax pets remain available in **solo Apartment** sessions. The household controller does not alter the original companion source or any resident's private memory, HALO, AURA or THICC.
 
+## Original Relax systems on 22 real apartment stations (migration development)
+
+The apartment now has **22 actual Matrix apparatus**, one for each non-home source room. These use the original Relax numerical/causal engines, not replacement animations. From your activated carried remote:
+
+    remote stations list
+    remote stations inspect ORRERY_LOFT
+    remote stations use ORRERY_LOFT watch_orrery
+    remote stations use SANDPILE_SHORE drop_grain
+    remote stations use LANTERN_MAZE maze_map
+    remote stations use STAR_DECK sight_lantern
+
+The native Matrix body must physically reach the apparatus before using it. The original five-body symplectic orrery, seeded 11×11 maze, Abelian sandpile, 48-phase Kuramoto fireflies, OU kite, cellular Life, Kepler sky, Lorenz chaos, resonator and Vigenère scroll puzzles remain intact. A separate measured dark-echo apparatus uses real home-wall SDF rays, never a fabricated dark tunnel. Original source room IDs are provenance labels, **not other places you can visit through the remote**. More than merely seeing or naming the original apparatus, actual engine receipt and state changes are tested in [stations.cjs](apartment/test/stations.cjs).
+
+**These apparatus are partial engine ports.** The complete 23-chart development artifact still exists, because not every legacy room’s geometry, original action, environmental effect, consent/release behavior and save/restart state has full parity. The separate experimental `RealitiApartmentOneChartPreview.html` proves actual one-chart topology with all old Matrix chart/portal records removed, while still carrying the same original numerical libraries. This preview is **not a release** or a replacement for the normal Apartment until the parity ledger is signed.
+
 ## Privacy, STOP and future migrations
 
 Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.

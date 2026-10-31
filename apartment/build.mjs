@@ -3,6 +3,7 @@
 import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import {adaptCompanions} from './source/companion-adapter.mjs';
+import {adaptWonder,adaptFrontier} from './source/native-wonder-adapter.mjs';
 const root=new URL('../',import.meta.url);
 const apartment=new URL('./',import.meta.url);
 const read=async p=>fs.readFile(new URL(p,apartment),'utf8');
@@ -17,9 +18,17 @@ if(!base.includes('REALITI_SOMA_HARNESS_V3')||!base.includes('REALITI_MATRIX'))
  throw Error('RELAX_FULL_HARNESS_OR_MATRIX_NOT_FOUND');
 if(base.split(nativeSource).length!==2)throw Error('RELAX_COMPANION_SOURCE_NOT_UNIQUE_IN_HTML');
 let html=base.replace(nativeSource,patchedNative);
+// Make room-independent engine access through exact anchor-checked Apartment
+// shims, without cloning equations or editing any canonical Relax source.
+const wonderSource=await fs.readFile(new URL('source/scripts/58b-wonder.js',root),'utf8');
+const frontierSource=await fs.readFile(new URL('source/scripts/58e-frontier.js',root),'utf8');
+if(html.split(wonderSource).length!==2||html.split(frontierSource).length!==2)
+ throw Error('NATIVE_WONDER_OR_FRONTIER_SOURCE_NOT_UNIQUE_IN_RELAX');
+const apartmentWonder=adaptWonder(wonderSource),apartmentFrontier=adaptFrontier(frontierSource);
+html=html.replace(wonderSource,apartmentWonder).replace(frontierSource,apartmentFrontier);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
-  'source/closet.js','source/household-view.js','source/remote.js'];
+  'source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
 for(const filename of overlays){
  const body=await read(filename);
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
@@ -27,6 +36,7 @@ for(const filename of overlays){
   'source/extras.js':'realiti-apartment-extras',
   'source/furniture.js':'realiti-apartment-furniture',
   'source/catnip.js':'realiti-apartment-catnip',
+  'source/stations.js':'realiti-apartment-native-stations',
   'source/closet.js':'realiti-apartment-closet',
   'source/household-view.js':'realiti-apartment-household-view',
   'source/remote.js':'realiti-apartment-remote'};
@@ -37,18 +47,23 @@ for(const filename of overlays){
 const file=new URL('RealitiApartment.html',apartment);
 await fs.writeFile(file,html);
 const validation={
- schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.4.0',
+ schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.5.0',
  source_artifact:'../RealitiRELAX.html',
  source_html_sha256:hash(base),
  native_companions_source_sha256:hash(nativeSource),
  native_companions_apartment_sha256:hash(patchedNative),
+ native_wonder_source_sha256:hash(wonderSource),
+ native_wonder_station_patch_sha256:hash(apartmentWonder),
+ native_frontier_source_sha256:hash(frontierSource),
+ native_frontier_station_patch_sha256:hash(apartmentFrontier),
+ verified_engine_access:'original relax wonder/frontier patched only in derived HTML, by exact source anchors',
  native_companions_patch:'source/companion-adapter.mjs',
  overlays:overlays.slice(),
  closet_preset_source:'unchanged native REALITI_NEURO_RESTORATION_V1.presets()',
  native_relax_harness_reused:true,
  extra_sensory_stack_created:false,
  single_html_sha256:hash(html),
- includes:'complete canonical REALITI Relax runtime, checked native companion adapter, physical apartment, original Relax preset catalog and read-only household observer',
+ includes:'complete canonical REALITI Relax stack plus checked native source-engine access at 22 physically reached apparatus, full native companion, private resident and household systems',
  complete_relax_source_retained:true,
  parent_files_mutated:false,
  current_room_target:'CLOUD_NINE_NEST',

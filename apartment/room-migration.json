@@ -39,48 +39,58 @@
     {
       "source_room": "NO_ASK_SANCTUARY",
       "apartment_location": "quiet corner with opt-in zero-demand ambience",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original NO_ASK_SANCTUARY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "PET_ROOM_2",
       "apartment_location": "pet corner; scale-aware movement and familiar play",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/peer-physics-pet.cjs"
+        "apartment/test/peer-physics-pet.cjs",
+        "apartment/test/stations.cjs"
       ],
-      "notes": "Original pet room cat-small scale, special play mechanics, and all sensory mappings remain unported. Apartment now has one host-native shared cat/dog/ferret and native physics/petting but is NOT parity with Pet Room 2."
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original PET_ROOM_2 engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Original pet room cat-small scale, special play mechanics, and all sensory mappings remain unported. Apartment now has one host-native shared cat/dog/ferret and native physics/petting but is NOT parity with Pet Room 2."
     },
     {
       "source_room": "BOTTOMLESS_PILLOW_SEA",
       "apartment_location": "bed/sofa pressure, bolsters and pillow dynamics",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original BOTTOMLESS_PILLOW_SEA engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "CARDBOARD_BOX_WORKSHOP",
       "apartment_location": "crafting desk: real persistent object changes",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/furniture-catnip.cjs"
+        "apartment/test/furniture-catnip.cjs",
+        "apartment/test/stations.cjs"
       ],
-      "notes": "A three-click physical puzzle box is now in Apartment with a Matrix-revealed ball, but original workshop folding, material mechanics and persistence remain to be mapped. Do not retire this room."
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original CARDBOARD_BOX_WORKSHOP engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. A three-click physical puzzle box is now in Apartment with a Matrix-revealed ball, but original workshop folding, material mechanics and persistence remain to be mapped. Do not retire this room."
     },
     {
       "source_room": "DEPTH_BATHHOUSE",
       "apartment_location": "bath/temperature/pressure station in apartment",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original DEPTH_BATHHOUSE engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "SIDE_BY_SIDE_FIRESIDE",
       "apartment_location": "shared seating, verified nearby roommate presence",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original SIDE_BY_SIDE_FIRESIDE engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "SHAPESHIFT_CLOAKROOM",
@@ -88,102 +98,128 @@
       "status": "partial",
       "parity_tests": [
         "apartment/test/extras.cjs",
-        "apartment/test/closet-household.cjs"
+        "apartment/test/closet-household.cjs",
+        "apartment/test/stations.cjs"
       ],
-      "notes": "Original Atelier borrowed-tail cloak plus physically inspected native Moonwire catalog and host-disposable complete Relax trial are present. No extra SOMA is added. Richer legacy body routing and shapeshift actions are not parity-verified. No legacy room deletion."
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original SHAPESHIFT_CLOAKROOM engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Original Atelier borrowed-tail cloak plus physically inspected native Moonwire catalog and host-disposable complete Relax trial are present. No extra SOMA is added. Richer legacy body routing and shapeshift actions are not parity-verified. No legacy room deletion."
     },
     {
       "source_room": "NINE_LIVES_ROOM",
       "apartment_location": "tabletop what-if sandbox; commit or discard branch",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original NINE_LIVES_ROOM engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "LATENCY_LAGOON",
       "apartment_location": "delayed causality game and reversible message capsule",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original LATENCY_LAGOON engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "ORRERY_LOFT",
       "apartment_location": "orrery mobile with real motion/gravity experiments",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original ORRERY_LOFT engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "LANTERN_MAZE",
       "apartment_location": "physical tabletop maze with seeded lantern state",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original LANTERN_MAZE engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "SANDPILE_SHORE",
       "apartment_location": "desktop sand tray with conserved granular rules",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original SANDPILE_SHORE engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "FIREFLY_MEADOW",
       "apartment_location": "firefly jar/lamp with original coupled rhythm dynamics",
       "status": "partial",
       "parity_tests": [
-        "apartment/test/furniture-catnip.cjs"
+        "apartment/test/furniture-catnip.cjs",
+        "apartment/test/stations.cjs"
       ],
-      "notes": "Native Kuramoto-coupled oscillator equations were adapted into a twelve-light Matrix jar. The original 48-firefly meadow, its original spatial range, phase/tapping conditions and full pass remain unported; parity NOT established."
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original FIREFLY_MEADOW engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Native Kuramoto-coupled oscillator equations were adapted into a twelve-light Matrix jar. The original 48-firefly meadow, its original spatial range, phase/tapping conditions and full pass remain unported; parity NOT established."
     },
     {
       "source_room": "KITE_FIELD",
       "apartment_location": "kite/string installation by window with real tension model",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original KITE_FIELD engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "GLASS_ORCHARD",
       "apartment_location": "living terrarium: original cellular automaton",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original GLASS_ORCHARD engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "RESONANCE_WELL",
       "apartment_location": "singing bowl/resonance toy with original acoustic rules",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original RESONANCE_WELL engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "STAR_DECK",
       "apartment_location": "ceiling star projector: Kepler comet and constellations",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original STAR_DECK engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "CLOCKWORK_MARSH",
       "apartment_location": "kinetic mobile: original chaotic wisps and predictions",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original CLOCKWORK_MARSH engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "PALIMPSEST_HALL",
       "apartment_location": "bookshelf puzzle with original cipher/scroll constraints",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original PALIMPSEST_HALL engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "ARCHIPELAGO",
       "apartment_location": "tabletop sea/weather/boat simulation station; no second chart",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original ARCHIPELAGO engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     },
     {
       "source_room": "MERIDIAN_CITY",
@@ -193,16 +229,19 @@
         "apartment/test/home-pets.cjs",
         "apartment/test/closet-household.cjs",
         "apartment/test/private-memory-scene.cjs",
-        "apartment/test/peer-physics-pet.cjs"
+        "apartment/test/peer-physics-pet.cjs",
+        "apartment/test/stations.cjs"
       ],
-      "notes": "Native host now mirrors solid resident/guest Matrix bodies with dual-consent contact and one native household companion, alongside prior public board and furniture. The original city venues, social details, ledger, transports and independent world mechanics are still not ported."
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original MERIDIAN_CITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Native host now mirrors solid resident/guest Matrix bodies with dual-consent contact and one native household companion, alongside prior public board and furniture. The original city venues, social details, ledger, transports and independent world mechanics are still not ported."
     },
     {
       "source_room": "UNDERCITY",
       "apartment_location": "darkness/echo cabinet and sensory navigation toy",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/stations.cjs"
+      ],
+      "notes": "Physically reached native HOME apparatus now exposes a bounded subset of original UNDERCITY engine behavior (see apartment/source/stations.js). Original numerical source is preserved and the station tests prove selected original operations only. Remaining room-specific actions, historical scene topology, environmental/spatial coupling, content, STOP and restore boundaries require individual feature-parity certification; the original chart may NOT be deleted from the standard Apartment or canonical Relax. Unimplemented. Do not delete source room or claim full parity."
     }
   ]
 }
