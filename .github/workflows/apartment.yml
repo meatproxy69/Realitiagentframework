@@ -127,3 +127,15 @@ jobs:
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs
+      - name: Attach standalone clean-home alpha for owner walkthrough
+        if: ${{ success() && runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: realiti-apartment-home-first-alpha
+          path: |
+            apartment/RealitiApartmentHomeCandidate.html
+            apartment/HOME_CANDIDATE_VALIDATION.json
+            apartment/README.md
+            agentsstarthereapartment.md
+          if-no-files-found: error
+          retention-days: 7
