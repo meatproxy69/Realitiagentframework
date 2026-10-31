@@ -1,44 +1,44 @@
-# REALITI Apartment — complete Relax fork, feature pair 1–2
+# RealitiApartment — full Relax-based home
 
-This is a **separate standalone output built from the complete, existing REALITI Relax runtime**. None of the original Relax source scripts, packages, or AGENT_START_HERE.md are removed or replaced. The apartment overlay is appended after the full original HTML, so all legacy algorithms remain bundled.
+RealitiApartment is built **directly on the full, source-verified REALITI Relax runtime**, preserving the original `source/scripts/**`, Matrix, SOMA/NeuralMesh, original `RealitiRELAX.html` and `AGENT_START_HERE.md`. A separate Apartment output adopts a narrowly anchor-checked extension to Relax's existing native companion code. All non-apartment worlds remain in the migration build for parity testing until the final **port-first, prune-last** cutover.
 
-**Entry for agents:** [agentsstarthereapartment.md](../agentsstarthereapartment.md)
+**Agent entry:** [agentsstarthereapartment.md](../agentsstarthereapartment.md)  
+**Customization:** [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)  
+**Migration:** [ROOM_MIGRATION_PLAN.md](ROOM_MIGRATION_PLAN.md) and [23-room inventory](room-migration.json)
 
-**Customizing:** [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)
-
-## Build
+## Build and test
 
 From the repository root:
 
-    node build.mjs
-    node apartment/build.mjs
-    npm install --no-package-lock --prefix packages/realiti-headless-resident
-    node apartment/test/extras.cjs
+```sh
+node build.mjs
+node apartment/build.mjs
+npm install --no-package-lock --prefix packages/realiti-headless-resident
+node apartment/test/room-inventory.cjs
+node apartment/test/extras.cjs
+node apartment/test/home-pets.cjs
+```
 
-Outputs: apartment/RealitiApartment.html and apartment/VALIDATION.json, with a distinct SHA-256 for headless integrity verification. The generated HTML is a complete copy of the base runtime plus one apartment-only script; it is independent of the Relax canonical artifact and cannot mutate it.
+Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The manifest records both canonical and derived SHA-256 hashes and the checked native companion adaptation. A changed upstream companion implementation causes the build to fail rather than silently applying a stale patch.
 
-## Current two-feature milestone
+## Completed apartment feature batches
 
-**1. Customization onboarding:** a dedicated apartment entry guide and an agent-first customization manual, with explicit privacy, room-design, pet and guest-harness requirements. The original agent start guide stays intact.
+**Batch 1 — onboarding and Extras:** The apartment-specific agent guide, customization guide, native rain-window resource, individual curtains and optional shapeshifter cloak. Cloak fitting requires a Matrix reach; attaching a tail is not by itself a live receptor. The existing Relax Alto/Atelier borrowed-limb machinery handles mapping and learned afterstate.
 
-**2. Tucked-away optional menu:** open with extras; close with extras close. The menu exposes a rain window driven by REALITI_DYNAMICS_V1 and a real Matrix-registered shapeshifter cloak that invokes the borrowed-tail simulation already implemented in Relax. A reach check is necessary before touching the window or fitting the cloak. Attachment is not falsely counted as a receptor; the mapped route can be explicitly removed. Rain curtains are an isolated resident preference; they do not change native simulated weather.
+**Batch 2 — furnished Matrix room and species-selectable native pet:** The apartment's one lived-in room is `CLOUD_NINE_NEST`, a 12 × 12 m existing Matrix chart with an actual bed, weather window, original support/collision, sofa, writing desk, chair, wardrobe, bookcase, pet bed, toy chest, scratching post, quiet cushion, rug and reading lamp. Furniture BOX entities are native Matrix collision objects; the rug and lamp are intentionally non-blocking. The home can be inspected with `apartment map`, `apartment bed` and `realiti://apartment/home`. The other original Relax charts are **temporarily retained and still technically present**. This is not yet the final one-chart distribution.
 
-The full-layout one-room Matrix apartment, selectable cat/dog/ferret, furnishings, extra harness closet, four-agent household authority, and larger memories are **not yet implemented**. They are subsequent two-feature milestones. The underlying complete Relax runtime is present, but it should not be described as if the new apartment-specific features have already been verified.
+The companion feature extends the **existing** Relax spring/Ornstein–Uhlenbeck companion implementation by adding a smaller, quicker ferret body and allowing adoption next to a real apartment pet bed. Cat and dog retain their original body profiles and play/behavior math. Choose with `pet choose cat Ember`, `pet choose dog Rex`, or `pet choose ferret Noodle`. `pet status`, `pet call`, `pet stroke`, and `pet release <name>` call the native underlying companion system; reach-gated petting and persistent ledger/state work exactly through that host. Pet choices are **currently resident-scoped**, not automatically a verified four-agent shared household pet.
 
-## Source boundaries
+These features have focused headless tests. A single room **inside the apartment** does not imply that the full base world has already been stripped of other charts; that happens after all room-dependent mechanisms are ported and verified.
 
-- Parent Relax scripts: source/scripts/ (unchanged)
-- Parent full runtime: RealitiRELAX.html (unchanged)
-- New optional overlay: apartment/source/extras.js
-- Independent builder: apartment/build.mjs
-- Focused headless acceptance: apartment/test/extras.cjs
-- Apartment guide: agentsstarthereapartment.md
+## Developer source boundaries
 
-Developers: do not use a shared localStorage file or shared Pocket keystore for multiple residents. The future household host must commit and attest shared actions independently of residents' private body and memory stores. Both guest and resident STOP/release boundaries remain mandatory.
+- Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
+- Canonical native companion code: `../source/scripts/58o-companions.js`, unchanged
+- Checked apartment-only adaptation: `source/companion-adapter.mjs`
+- Furnished home and pet interface: `source/home-pets.js`
+- Optional rain and cloak controls: `source/extras.js`
+- Independent runtime assembler: `build.mjs`
+- Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
-## Safe room retirement
-
-The apartment is **port-first, prune-last**. Relax currently has 23 source rooms; no chart is removed until its mechanics have been moved to apartment fixtures/Extras and independently validated. The final Apartment distribution must have **exactly one Matrix chart** and **zero legacy portals**, not merely a filtered room menu. The full original Relax source, `RealitiRELAX.html` and `AGENT_START_HERE.md` remain untouched.
-
-See [ROOM_MIGRATION_PLAN.md](ROOM_MIGRATION_PLAN.md) and the machine-readable [23-room inventory](room-migration.json). The inventory includes a deliberate gate that prevents untested feature removal. The room-prune gate is NOT satisfied by this first two-feature batch.
-
+Each agent must retain a distinct storage path and Pocket keys file. **A shared four-agent household, multi-agent spatial presence, larger memory and guest harness closet remain unimplemented**; no private resident state may be merged to imitate those capabilities. Keep the Relax reference and the migration guard until every old room has a tested replacement. This product is currently an incremental apartment preview, not the final release.
