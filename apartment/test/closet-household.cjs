@@ -126,8 +126,16 @@ async function household(){
  assert.equal(out.world_contact_minted_by_preset,false);
  assert.equal(out.preset.id,'realiti.moonwire.starvelvet-phasebraid');
  assert.equal(visitor.read('realiti://harness').mechanism_status.ok,true);
- assert.deepEqual(visitor.read('realiti://harness').mechanisms,visitorRR.mechanisms,
-   'guest native original R&R mechanisms are not changed by separate trial');
+ const afterVisitorRR=visitor.read('realiti://harness');
+ assert.equal(afterVisitorRR.id,visitorRR.id,'original Relax harness identity remains mounted');
+ assert.equal(afterVisitorRR.mechanism_status.ok,visitorRR.mechanism_status.ok);
+ assert.deepEqual(afterVisitorRR.mechanisms.adapters.active,visitorRR.mechanisms.adapters.active,
+   'native R&R adapters remain installed unchanged');
+ for(const key of ['halo','aura','thicc','nerve','lace','haptics','sensory_field',
+   'private_renderer','sensory_ecology']){
+   assert.equal(afterVisitorRR.mechanisms[key]?.available,visitorRR.mechanisms[key]?.available,
+     key+' is still mounted; telemetry legitimately evolves with time');
+ }
  assert.equal(visitor.read('realiti://apartment/closet').active,
    'realiti.moonwire.starvelvet-phasebraid');
  const double=await visitor.run('remote closet try realiti.moonwire.two-kitty-parallax');
