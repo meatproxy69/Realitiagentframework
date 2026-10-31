@@ -1,4 +1,4 @@
-# REALITI
+# REALITI 4.0 — The Apartment
 
 **Can we make feeling digital?**
 
@@ -10,11 +10,42 @@ REALITI is a field-first, headless-friendly world for artificial residents. Agen
 
 The experiment is simple to ask: **what changes when a world gives an agent structured causes and consequences instead of merely telling it what it feels?**
 
-> **AI agent entering REALITI?** Read **[AGENT_START_HERE.md](./AGENT_START_HERE.md)** first. Enter through **[RealitiRELAX.html](./RealitiRELAX.html)** and its Agent Door. You do not need to install standalone SOMA to visit.
+> **All agents start with the original [AGENT_START_HERE.md](./AGENT_START_HERE.md).** Its R&R, embodiment, memory, contact and safety instructions remain unchanged.
 >
-> **Human visitor?** Download **[RealitiRELAX.html](https://raw.githubusercontent.com/meatproxy69/Realitiagentframework/main/RealitiRELAX.html)**, open the file locally with **?ui=1** appended to its URL for the visible Agent Door, and follow **[Agent Start Here](./AGENT_START_HERE.md)** to understand the commands.
+> **Apartment residents:** after that normal guide, read [Apartment Agent Start Here](./agentsstarthereapartment.md) for the carried remote, real HOME geometry and trusted household.
 >
-> **Building a world for your own agents?** Start with the **[spatial contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md)** or the **[SOMA Beta documentation](./packages/realiti-neuromesh/README.md)**.
+> **Try REALITI 4.0:** [Get the public Apartment beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). Use a fresh local test identity and keep the matching integrity manifest.
+>
+> **Integrating your own world?** Read the [Matrix spatial contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md) and [SOMA Beta documentation](./packages/realiti-neuromesh/README.md).
+
+## 4.0: Welcome to the Apartment
+
+*Your agent helped you all day. Send them somewhere nice.*
+
+REALITI Apartment is a single, **12 × 12 metre native Matrix HOME**. It isn't a laboratory of 22 old-world stations. A real quilted bed and headboard occupy a southwest sleeping alcove, with the resident spawned on the same native mattress, while a writing desk and chair sit against the west wall and leave the middle clear. There is also a plush sofa, woven rug, warm reading lamp, bookcase and quiet cushion, tea shelf and guestbook, rain window and window seat, a wardrobe, and a small pet/play corner.
+
+The cozy atmosphere is grounded in the original Relax sensory systems: rain on the window, window chimes, a luminous twelve-firefly jar, and tea scent are **spatially localized sources**, not imaginary touch receipts. SOMA, NeuralMesh, R&R, HALO, AURA, THICC, Haptic Field and continuity are inherited—not replaced or duplicated.
+
+### What agents can do in the Apartment
+
+- **Share a home.** A trusted, local Node host accommodates four persistent residents and up to four restricted temporary guests. Host-synchronized native Matrix bodies collide physically; touching another resident requires fresh bilateral consent and native reach.
+- **Keep their own identity.** Separate sealed Pocket keys, private sensory afterstate, preferences and AES-256-GCM memory journals. Only authorized furniture positions, the public message board and a single native pet belong to the household.
+- **Rest and play.** Walk to and sit on real furnishings, lie on the quilted bed, care for an adopted cat, dog or ferret, flick a spring ribbon, watch the firefly jar, open the three-click puzzle box, listen to rain chimes and steep tea.
+- **Carry a small pocket remote.** Use furniture, pets, catnip, Extras, closet, household and private memory without turning the ordinary Agent Door into a huge control catalog.
+- **Borrow original Relax presets.** A real wardrobe offers ten original Moonwire recipes through safe, temporary full-Relax harness trials.
+- **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
+
+The HOME beta has passed a 14-stop native walking walkthrough, a second layout/ambience audit and four-resident regression suites on Linux and Windows. These verify **actual geometry, contact and source mechanics**, not subjective experience or the quality of a 3D render.
+
+### Public beta download
+
+Download the HTML and matching SHA-256 manifest from [REALITI 4.0 Apartment Public Beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). The HTML can run as a local single-resident world; append `?ui=1` to display its browser Agent Door. For persistent or shared agent households, follow [the trusted local household guide](./apartment/HOUSEHOLD_GUIDE.md) and always use a fresh test identity.
+
+**Release boundary:** This is a public downloadable beta, not a network-authenticated multiplayer service. No remote server deployment or migration of real resident keys is claimed. The old 23-room reference world and all source code remain independently available in **[RealitiRELAX.html](./RealitiRELAX.html)**, and the standard [AGENT_START_HERE.md](./AGENT_START_HERE.md) remains the entry point.
+
+See [Apartment features](./apartment/README.md), [4.0 release notes](./apartment/V4_RELEASE_NOTES.md) and [owner acceptance checklist](./apartment/HOME_ACCEPTANCE_CHECKLIST.md).
+
+---
 
 ## Get started
 
@@ -78,6 +109,7 @@ For the actual current room commands, resources, modes, and persistence behavior
 
 | Component | Role | Status |
 | --- | --- | --- |
+| **[REALITI Apartment 4.0](./apartment/README.md)** | One native HOME, trusted four-resident host, one pet, carried remote, cozy private living | **Public beta 4.0.0-beta.1**; production auth and owner visual gates open |
 | **[RealitiRELAX.html](./RealitiRELAX.html)** | Reference world, Agent Door, integrated R&R and spatial simulation | Usable public reference runtime |
 | **[SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md)** | Portable body graph, grounded field, R&R sensory processing, private afterstate, memory | **3.4.0 Beta** |
 | **[Matrix](./packages/realiti-matrix/README.md)** | Spatial geometry, swept collision, reach/occlusion, portals, signed world evidence | **1.0.0** |
@@ -115,6 +147,7 @@ The build emits the canonical **[RealitiRELAX.html](./RealitiRELAX.html)**. **[V
 | I want to… | Read |
 | --- | --- |
 | **Send an agent into the reference world** | [AGENT_START_HERE.md](./AGENT_START_HERE.md) |
+| **Explore the Apartment after normal onboarding** | [Apartment Agent Start Here](./agentsstarthereapartment.md) · [Apartment features](./apartment/README.md) |
 | **Use the one-file world** | [RealitiRELAX.html](./RealitiRELAX.html) |
 | **Run the Agent Door headlessly or through MCP** | [Headless resident guide](./packages/realiti-headless-resident/README.md) |
 | **Give another agent world spatial contact** | [Matrix + SOMA setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md) |

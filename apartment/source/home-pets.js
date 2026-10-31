@@ -62,6 +62,18 @@ furnish();
 const HOME_FIRST=window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true;
 if(HOME_FIRST){
  const E=M.entities();
+ // The source-time world adapter moved bed, headboard and spawn together.
+ // Never silently rehome an old persisted lying body with a mere label edit.
+ const resident=M.state().residents['resident:self'];
+ if(resident?.chart===HOME&&resident?.on==='nest.mattress'&&
+    resident?.posture==='lying'&&
+    Math.hypot(resident.pose.position[0]-bed.pose.position[0],
+      resident.pose.position[1]-bed.pose.position[1])>1)
+  throw Error('HOME_V4_OLD_BED_CHECKPOINT_NEEDS_EXPLICIT_MIGRATION');
+ // Put the existing desk and chair against the west wall. The open centre
+ // becomes circulation; the actual quilted bed occupies a southwest alcove.
+ E['apartment.desk'].pose.position=[-4.4,-.85,.46];
+ E['apartment.desk-chair'].pose.position=[-4.4,-2,.28];
  for(const id of ['nest.cloudfall','nest.cat'])
   if(E[id]?.chart===HOME)M.removeEntity(id);
  E['apartment.bookcase'].pose.position=[-5.0,4.35,1.1];
@@ -69,6 +81,13 @@ if(HOME_FIRST){
  // Tuck the toy chest away from the scratcher; the old diagonal approach
  // ended just outside native hand reach without reporting a collider hit.
  E['apartment.toy-chest'].pose.position=[4.5,-4.2,.35];
+ // Read-only native placement evidence for release/regression checks.
+ window.REALITI_APARTMENT_BEDROOM_LAYOUT_V4=Object.freeze({
+  schema:'REALITI_APARTMENT_BEDROOM_LAYOUT_V4',
+  bed:bed.pose.position.slice(),headboard:E['nest.backrest'].pose.position.slice(),
+  desk:E['apartment.desk'].pose.position.slice(),
+  chair:E['apartment.desk-chair'].pose.position.slice(),
+  old_checkpoint_migrated:false});
  // The historical Nest's cardboard collision walls read as test scaffolding.
  // Use an existing, truthful native wood material (warm paneling) instead of
  // adding more decorative props, a fake shader, or a second sensory stack.

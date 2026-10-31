@@ -1,10 +1,19 @@
-# RealitiApartment — full Relax-based home
+# REALITI 4.0 — The Apartment (Public Beta)
 
 REALITI Apartment inherits the complete original Relax embodiment, sensory and safety systems without changing canonical `source/scripts/**`, `RealitiRELAX.html` or `AGENT_START_HERE.md`. **There are two independent derived outputs:** `RealitiApartment.html` is the **23-chart developer migration reference** with the historical 22-station test gallery. `RealitiApartmentHomeCandidate.html` is the **one-chart, no-gallery, home-first alpha** with the owner's selected household features. The former's historical-room parity audit does **not** control the latter's release scope. Both remain separately hash-pinned and the home candidate is explicitly **not release-approved**.
 
-**Agent entry:** [agentsstarthereapartment.md](../agentsstarthereapartment.md)  
+**Original agent entry first:** [AGENT_START_HERE.md](../AGENT_START_HERE.md) (unchanged)  
+**Apartment-specific entry second:** [agentsstarthereapartment.md](../agentsstarthereapartment.md)  
+**Public 4.0 beta:** [Verified downloadable prerelease](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1)  
+**Version notes:** [V4_RELEASE_NOTES.md](V4_RELEASE_NOTES.md)  
 **Customization:** [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)  
 **Migration:** [ROOM_MIGRATION_PLAN.md](ROOM_MIGRATION_PLAN.md) and [23-room inventory](room-migration.json)
+
+## What's new for the 4.0 beta
+
+The quilted mattress **and** source chart spawn now belong to a southwest sleeping alcove, with an actual headboard behind the bed. The desk and chair move to the west wall; the centre is circulation instead of a bedroom squeezed between different activities. The sofa/rug, book-and-cushion reading nook, warm lamp and rain window, tea shelf, original wardrobe and single native companion remain physically grounded and reachable. No new props or scientific room attractions were added.
+
+A uniquely anchor-checked `source/native-home-bedroom-adapter.mjs` transforms **only** the standalone HOME candidate's copy of the native world source, records both original and derived SHA-256 hashes, and refuses unexpected upstream drift. The original Relax and 23-chart Apartment development build stay intact. Older saved resident checkpoints are **not silently relocated to the new bed**. Beta testers must use fresh isolated resident storage. This is a public downloadable beta, not a network-authenticated service or a production server deployment.
 
 ## Build and test
 
@@ -145,6 +154,8 @@ See `HOME_ACCEPTANCE_CHECKLIST.md` for the remaining owner walkthrough, layout, 
 `apartment/rehearse-home-backup.cjs` is now a guarded offline operator utility for the home-first alpha, with an executable test `apartment/test/home-backup-rehearsal.cjs`. It verifies a stopped household's complete private/key inventory and checkpoint hash; copies it to a distinct private path; opens the *copy* under the pinned candidate to check residents, journals and native Relax; and proves the original bytes did not change. Missing keys, altered ciphertext, live `host.lock`, symlinks and overlapping destinations fail closed. The CLI never emits plaintext and never uploads a backup. See `HOUSEHOLD_GUIDE.md` for the exact command and the sensitive-key handling warning.
 
 A successful test against synthetic residents is **not** a production deployment, migration signoff or public-access security review.
+
+Public prerelease **4.0.0-beta.1** is deliberately distinct from unrestricted production hosting. The official upstream `AGENT_START_HERE.md` stays canonical and unchanged; then use the Apartment-specific guide.
 
 Release remains **blocked** pending owner approval of the actual room layout and privacy/backup behavior, a production launch/restore rehearsal, and a supported runtime/deployment path. `candidate_only: true`, `preview_only: true`, `release_approved: false` cannot be promoted by passing a source-action count or ordinary CI.
 

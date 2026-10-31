@@ -1,0 +1,25 @@
+{
+  "schema": "REALITI_APARTMENT_PUBLIC_BETA_RELEASE_V1",
+  "tag": "v4.0.0-beta.1",
+  "version": "4.0.0-beta.1",
+  "title": "REALITI 4.0 — The Apartment (Public Beta)",
+  "distribution": "GITHUB_RELEASE_DOWNLOADABLE_STANDALONE_HTML",
+  "release_channel": "public_prerelease",
+  "local_or_trusted_host_only": true,
+  "network_guest_authentication_approved": false,
+  "external_server_deployment_confirmed": false,
+  "source_file": "apartment/RealitiApartmentHomeCandidate.html",
+  "integrity_file": "apartment/HOME_CANDIDATE_VALIDATION.json",
+  "notes_file": "apartment/V4_RELEASE_NOTES.md",
+  "unchanged_agent_entry": "AGENT_START_HERE.md",
+  "apartment_agent_entry": "agentsstarthereapartment.md",
+  "source_preservation": [
+    "RealitiRELAX.html",
+    "source/scripts/**",
+    "AGENT_START_HERE.md"
+  ],
+  "owner_scope": "one HOME, no historical station gallery",
+  "original_worlds_available_separately": true,
+  "old_resident_storage_migration_allowed": false,
+  "full_production_release_approved": false
+}

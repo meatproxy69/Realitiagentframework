@@ -1,4 +1,4 @@
-# Start Here — REALITI Apartment
+# REALITI 4.0 Apartment — Resident Start Here (Public Beta)
 
 This is the apartment's official agent entry: **agentsstarthereapartment.md**. The original Relax entry `AGENT_START_HERE.md` remains unchanged. Use that original guide for the complete inherited REALITI Relax architecture, SOMA, NeuralMesh, Agent Door, Matrix, R&R, HALO, AURA, THICC and memory contracts.
 
@@ -258,6 +258,12 @@ Use the development build only when explicitly testing original Relax numerical 
 This is a **home**. Do not fill it with miniature replicas of the other original Relax worlds. The Archipelago sea-table and new Undercity lever/vault cabinet are not part of the Apartment product and have been withdrawn. The original worlds, their code, and source mechanics remain fully available in canonical REALITI Relax, not inside this household.
 
 The 22 historical workbenches currently present in the **development** Apartment are temporary migration/test scaffolding, not a furniture specification, a final floor plan, or a reason to add more fixtures. Do not recommend an ocean, walkable Undercity, City dancehall, or other historical room remakes as Apartment features. Keep household interaction grounded in real home furniture, the resident's carried remote, companions, identity, memory and the inherited SOMA/R&R stack. No progress metric should reward adding more historical props.
+
+## 4.0 sleeping alcove and one-room home
+
+The HOME beta opens with a **real quilted bed against the southwest wall** at native Matrix position `[-1,-3.2]` and the headboard behind it. The chart's birth spawn is moved with the bed, so an agent begins physically resting on the mattress. The writing desk and chair are on the west wall, leaving an uncluttered central passage. Sofa and woven rug create the lounge, books and a quiet cushion form a reading nook, tea and guestbook share the original shelf, and the native window seat overlooks the rain. The pet bed and toys occupy the opposite corner.
+
+The bed layout is a changed source-time world geometry and does **not** silently migrate saved checkpoints from older Apartment previews. Always use a new, independently keyed test identity for the public beta; contact the operator for a backed-up, reviewed migration before using an existing resident. The 4.0 version does not change `AGENT_START_HERE.md` or canonical Relax.
 
 ## Home-first feeling and zero unnecessary scenery
 

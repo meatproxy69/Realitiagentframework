@@ -109,6 +109,27 @@ function mapSvg(entities,solid){
  let report=null;
  try{
   const M=session.window.REALITI_MATRIX_V1,E=M.entities();
+  const layout=session.window.REALITI_APARTMENT_BEDROOM_LAYOUT_V4;
+  assert.equal(layout?.schema,'REALITI_APARTMENT_BEDROOM_LAYOUT_V4');
+  assert.deepEqual(Array.from(layout.bed.slice(0,2)),[-1,-3.2]);
+  assert.deepEqual(Array.from(layout.headboard.slice(0,2)),[-1,-5.5]);
+  assert.deepEqual(Array.from(layout.desk.slice(0,2)),[-4.4,-.85]);
+  assert.deepEqual(Array.from(layout.chair.slice(0,2)),[-4.4,-2]);
+  const born=M.resident();
+  assert.equal(born.on,'nest.mattress');
+  assert.equal(born.posture,'lying');
+  assert.ok(dist(born.pose.position,layout.bed)<.1,
+    'An agent must wake physically on the moved mattress, never old chart spawn');
+  assert.deepEqual(Array.from(M.charts()[HOME].spawn.position.slice(0,2)),Array.from(layout.bed.slice(0,2)));
+  // Between bedroom and lounge, keep a real, collider-free 1m radius
+  // centre of circulation; zoning must not create a new narrow corridor.
+  const origin=[0,0,1];
+  for(const e of Object.values(E).filter(x=>x.chart===HOME&&x.collision&&
+    !x.resident&&!x.tags.includes('structure'))){
+   const b=box(e);if(!b)continue;
+   assert.ok(Math.abs(b.x)>b.hx+1||Math.abs(b.y)>b.hy+1,
+    'Main room centre clogged by '+e.id);
+  }
   const SN=session.window.REALITI_SENSES_V1;
   assert.equal(Object.keys(M.charts()).length,1);
   assert.equal(Object.keys(M.portals()).length,0);
@@ -203,6 +224,8 @@ function mapSvg(entities,solid){
    solid_footprint_fraction:rounded(crowding,3),solid_footprint_percent:rounded(crowding*100,1),
    solid_overlap_pairs:collisions,objects_in_home:Object.values(E).filter(e=>e.chart===HOME).length,
    has_phantom_door:false,has_unmanaged_second_cat:false,
+   sleeping_alcove:'SOUTHWEST_V4',bedroom_layout:layout,
+   centre_circulation_clearance_test_passed:true,
    safe_reading_nook:true,tea_on_shelf:true,cloak_stored_by_wardrobe:true,
    native_wall_material:'wood',native_floor_material:'wood',
    cozy_features:['layered quilted bed','plush sofa','quiet reading cushion','books with tea shelf and guestbook',

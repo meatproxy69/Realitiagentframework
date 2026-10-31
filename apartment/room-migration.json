@@ -335,6 +335,14 @@
       "nest.cloudfall",
       "nest.cat"
     ],
-    "retained_owner_selected_pet_engine": "REALITI_COMPANIONS_V1"
+    "retained_owner_selected_pet_engine": "REALITI_COMPANIONS_V1",
+    "public_beta_version": "4.0.0-beta.1",
+    "distribution_channel": "GITHUB_RELEASE_PRERELEASE_NOT_NETWORK_SERVICE",
+    "bedroom_layout": "SOUTHWEST_QUIET_ALCOVE_V4",
+    "native_world_adapter": "apartment/source/native-home-bedroom-adapter.mjs",
+    "native_world_adapter_test": "apartment/test/native-home-bedroom-adapter.cjs",
+    "checkpoint_migration_approved": false,
+    "native_spawn_matches_mattress": true,
+    "external_server_deployed": false
   }
 }

@@ -57,6 +57,13 @@ function clean(w){
  assert.equal(manifest.expected_legacy_station_count,0);
  assert.equal(manifest.native_single_chart_initialization,true);
  assert.equal(manifest.no_post_startup_pruning_required,true);
+ assert.equal(manifest.version,'4.0.0-beta.1');
+ assert.equal(manifest.bedroom_layout,'SOUTHWEST_QUIET_ALCOVE_V4');
+ assert.equal(manifest.layout_checkpoint_migration_approved,false);
+ const originalWorld=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58d-matrix-world.js'));
+ assert.equal(crypto.createHash('sha256').update(originalWorld).digest('hex'),
+  manifest.original_world_kernel_sha256,'canonical Relax world geometry source remains unmodified');
+ assert.match(manifest.home_bedroom_kernel_sha256,/^[a-f0-9]{64}$/);
  const originalKernel=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/57.js'));
  assert.equal(crypto.createHash('sha256').update(originalKernel).digest('hex'),
   manifest.original_matrix_kernel_sha256,'native gate never mutates canonical Matrix source');
@@ -70,6 +77,20 @@ function clean(w){
  assert.equal(s.integrity.status,'VERIFIED');
  assert.equal(s.ready.harness,'REALITI_RR_HARNESS_V1');
  clean(s.window);
+ const birth=s.window.REALITI_MATRIX_V1,
+  bed=birth.entities()['nest.mattress'],
+  head=birth.entities()['nest.backrest'],
+  room=birth.state().residents['resident:self'];
+ assert.deepEqual(Array.from(bed.pose.position.slice(0,2)),[-1,-3.2]);
+ assert.deepEqual(Array.from(head.pose.position.slice(0,2)),[-1,-5.5]);
+ assert.deepEqual(Array.from(birth.charts().CLOUD_NINE_NEST.spawn.position.slice(0,2)),[-1,-3.2]);
+ assert.equal(room.on,'nest.mattress');
+ assert.equal(room.posture,'lying');
+ assert.ok(Math.hypot(room.pose.position[0]-bed.pose.position[0],
+  room.pose.position[1]-bed.pose.position[1])<.1);
+ assert.deepEqual(Array.from(birth.entities()['apartment.desk'].pose.position.slice(0,2)),[-4.4,-.85]);
+ assert.deepEqual(Array.from(birth.entities()['apartment.desk-chair'].pose.position.slice(0,2)),[-4.4,-2]);
+ assert.equal(s.window.REALITI_APARTMENT_BEDROOM_LAYOUT_V4.old_checkpoint_migrated,false);
  // Probe the actual boot-time Matrix registration boundary. Nothing may mint
  // an unapproved chart, historical room entity, or portal through its API.
  const M=s.window.REALITI_MATRIX_V1;
