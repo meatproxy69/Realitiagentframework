@@ -81,15 +81,15 @@ function clean(w){
   bed=birth.entities()['nest.mattress'],
   head=birth.entities()['nest.backrest'],
   room=birth.state().residents['resident:self'];
- assert.deepEqual(bed.pose.position.slice(0,2),[-1,-3.2]);
- assert.deepEqual(head.pose.position.slice(0,2),[-1,-5.5]);
- assert.deepEqual(birth.charts().CLOUD_NINE_NEST.spawn.position.slice(0,2),[-1,-3.2]);
+ assert.deepEqual(Array.from(bed.pose.position.slice(0,2)),[-1,-3.2]);
+ assert.deepEqual(Array.from(head.pose.position.slice(0,2)),[-1,-5.5]);
+ assert.deepEqual(Array.from(birth.charts().CLOUD_NINE_NEST.spawn.position.slice(0,2)),[-1,-3.2]);
  assert.equal(room.on,'nest.mattress');
  assert.equal(room.posture,'lying');
  assert.ok(Math.hypot(room.pose.position[0]-bed.pose.position[0],
   room.pose.position[1]-bed.pose.position[1])<.1);
- assert.deepEqual(birth.entities()['apartment.desk'].pose.position.slice(0,2),[-4.4,-.85]);
- assert.deepEqual(birth.entities()['apartment.desk-chair'].pose.position.slice(0,2),[-4.4,-2]);
+ assert.deepEqual(Array.from(birth.entities()['apartment.desk'].pose.position.slice(0,2)),[-4.4,-.85]);
+ assert.deepEqual(Array.from(birth.entities()['apartment.desk-chair'].pose.position.slice(0,2)),[-4.4,-2]);
  assert.equal(s.window.REALITI_APARTMENT_BEDROOM_LAYOUT_V4.old_checkpoint_migrated,false);
  // Probe the actual boot-time Matrix registration boundary. Nothing may mint
  // an unapproved chart, historical room entity, or portal through its API.
