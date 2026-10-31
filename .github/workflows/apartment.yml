@@ -40,6 +40,7 @@ jobs:
           node --check apartment/source/closet.js
           node --check apartment/source/household-view.js
           node --check apartment/household.cjs
+          node --check apartment/native-closet-host.cjs
           node --check apartment/test/closet-household.cjs
           node --check apartment/build.mjs
           node --check apartment/test/extras.cjs
