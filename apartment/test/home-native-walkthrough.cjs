@@ -17,7 +17,7 @@ const stops=[
  {id:'apartment.bookcase',action:'reach__apartment.bookcase',glyph:'K'},
  {id:'apartment.quiet-cushion',action:'sit__apartment.quiet-cushion',expectOn:'apartment.quiet-cushion',stand:true,glyph:'Q'},
  {id:'apartment.firefly-jar',action:'remote catnip jar tap',glyph:'J'},
- {id:'apartment.wind-chime',action:'remote catnip chime listen',glyph:'H'},
+ {id:'apartment.wind-chime',action:'remote catnip chime listen',glyph:'H',interaction:'PASSIVE_SOUND'},
  {id:'apartment.tea-cup',action:'remote catnip tea steep',glyph:'T'},
  {id:'apartment.wardrobe',action:'reach__apartment.wardrobe',glyph:'W'},
  {id:'apartment.pet-bed',action:'remote pet choose ferret Noodle',glyph:'P'},
@@ -67,10 +67,10 @@ function recordInteraction(name,result){
 function writeReport(){
  log.outcome=log.failures.length?'BLOCKED':'PASS';
  log.route_count=log.walks.length;
- log.successful_routes=log.walks.filter(x=>x.ok&&x.within_reach).length;
+ log.successful_routes=log.walks.filter(x=>x.ok&&x.within_interaction_range).length;
  fs.writeFileSync(reportPath,JSON.stringify(log,null,2)+'\n');
  const rows=log.walks.map(x=>'| '+x.target+' | '+
-   (x.ok&&x.within_reach?'Reachable':'Blocked')+' | '+
+   (x.ok&&x.within_interaction_range?'Operable':'Blocked')+' | '+
    (x.travel_m??'—')+' | '+(x.surface_m??'—')+' | '+
    (x.blocked_by||'—')+' |').join('\n');
  const issues=log.failures.length?log.failures.map(x=>'- '+x.label+': '+x.details).join('\n'):
@@ -79,7 +79,7 @@ function writeReport(){
   '# HOME candidate — native synthetic-agent spatial walkthrough','',
   '**Not a rendered-visual or owner approval.** This is genuine Matrix locomotion/collision with disposable synthetic resident state.','',
   'Outcome: **'+log.outcome+'**. Routes tested: '+log.route_count+
-   '. Native reach passes: '+log.successful_routes+'.','',
+   '. Native interaction-range passes: '+log.successful_routes+'.','',
   '## Physical map (native Matrix SDF footprints)','',
   '~~~text',log.diagram||'(not available)','~~~','',
   '## Native route results','',
@@ -135,11 +135,13 @@ function writeReport(){
    // text/receipt field that the public result does not promise to expose.
    // If one bounded approach undershoots, repeat through the same Agent Door:
    // this is physical continued walking, NOT direct pose placement/teleport.
+   const auditory=target.interaction==='PASSIVE_SOUND';
+   const interactionLimit=auditory?1.25:1.0;
    const attempts=[];
    let after=before,nav=null,nativeNow=nativeStart;
    for(let n=0;n<5;n++){
     const remaining=Math.max(0,M.sdf(e,nativeNow));
-    if(remaining<=.98)break;
+    if(remaining<=(auditory?1.20:.98))break;
     const prevNative=nativeNow,move=await session.door.run('approach '+target.id);
     after=session.window.Realiti.read('realiti://space');
     nativeNow=M.resident().pose.position.slice();
@@ -154,25 +156,32 @@ function writeReport(){
    const travel=attempts.reduce((sum,a)=>sum+a.moved_m,0);
    const reached=surface<=1.0&&after.chart===HOME&&
     attempts.every(a=>a.ok===true);
+   // A hanging wind chime is audible nearby; never invent a hand touch.
+   const operable=surface<=interactionLimit&&after.chart===HOME&&
+    attempts.every(a=>a.ok===true);
    const entry={target:target.id,ok:attempts.every(a=>a.ok===true),
     native_arrival_flag:nav?.arrived??null,within_reach:reached,
+    within_interaction_range:operable,
+    interaction:auditory?'PASSIVE_SOUND':'TACTILE',
+    interaction_limit_m:interactionLimit,
     approach_attempts:attempts.length,attempts,
     pre_surface_m:round(preSurface),travel_m:round(travel),
     surface_m:round(surface),blocked_by:nav?.blocked_by||null,
     detour:nav?.detour||null,start_pose:before.pose.position.slice(0,2),
     end_pose:after.pose.position.slice(0,2)};
    log.walks.push(entry);
-   if(!reached)fail('Unreachable native object '+target.id,
+   if(!operable)fail('Native object not operable '+target.id,
     JSON.stringify({surface:entry.surface_m,blocked_by:entry.blocked_by,
      attempts:entry.attempts}));
    if(preSurface>1.8&&travel<.1)fail('No real spatial movement toward '+target.id,
     'Object was out of reach but the native body did not move');
    if(Object.keys(M.charts()).length!==1||Object.keys(M.portals()).length!==0)
     fail('HOME topology changed during '+target.id,'Unexpected chart or portal');
-   if(!reached)continue;
+   if(!operable)continue;
    // Posture is an explicitly supported structured public operation; reach
    // is a discoverable native Matrix action through public Realiti.invoke.
    // Household-specific controls stay on the carried pocket remote.
+   const oldReceipt=auditory?JSON.stringify(session.window.eval('C9.b4?.lastReceipt||null')):null;
    let outcome;
    if(target.action.startsWith('sit__')||target.action.startsWith('lie__')){
     const kind=target.action.startsWith('sit__')?'sit':'lie';
@@ -181,6 +190,11 @@ function writeReport(){
     outcome=await session.window.Realiti.invoke('do',{action:target.action});
    }else outcome=await session.door.run(target.action);
    recordInteraction(target.action,outcome);
+   if(auditory){
+    const current=JSON.stringify(session.window.eval('C9.b4?.lastReceipt||null'));
+    if(oldReceipt!==current)fail('Passive sound generated an action receipt',target.id);
+    if(outcome?.source_registered!==true)fail('Wind chime source missing',target.id);
+   }
    if(target.expectOn&&outcome?.ok===true){
     const space=session.window.Realiti.read('realiti://space');
     if(space.body?.on!==target.expectOn)fail('Support not engaged '+target.id,
