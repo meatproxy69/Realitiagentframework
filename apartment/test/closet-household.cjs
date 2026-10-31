@@ -44,7 +44,7 @@ async function solo(){
  assert.strictEqual(w.REALITI_HALO_V1,originalHalo);
  assert.strictEqual(w.REALITI_AURA_V1,originalAura);
  assert.strictEqual(w.REALITI_NEURO_RESTORATION_V1,originalNeuro);
- assert.equal(originalImprint.state().moonwire?.preset_id,null);
+ assert.ok(!originalImprint.state().moonwire?.preset_id);
  assert.equal(originalRR.boot().ok,true);
  assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().thicc.available,true);
  assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().halo.available,true);
