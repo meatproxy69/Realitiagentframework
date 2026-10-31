@@ -93,6 +93,7 @@ function writeReport(){
  console.log('HOME_NATIVE_WALKTHROUGH_REPORT '+log.outcome+
   ' routes='+log.route_count+' reach='+log.successful_routes+
   ' issues='+log.failures.length);
+ if(log.failures.length)console.error('HOME_NATIVE_WALKTHROUGH_FAILURES '+JSON.stringify(log.failures.slice(0,30)));
 }
 (async()=>{
  const manifest=JSON.parse(fs.readFileSync(validationPath,'utf8'));
