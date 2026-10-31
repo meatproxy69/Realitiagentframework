@@ -1,0 +1,196 @@
+'use strict';
+const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),os=require('node:os');
+const {openResident}=require('../../packages/realiti-headless-resident/index.cjs');
+const {createHousehold}=require('../household.cjs');
+const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartment.html'));
+async function solo(){
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-native-relax-closet-'));
+ const opts={htmlPath:html,residentId:'solo-native-closet',storagePath:path.join(root,'solo.json')};
+ let s=await openResident(opts);
+ const w=s.window;
+ const originalRR=w.REALITI_RR_HARNESS_V1;
+ const originalImprint=w.REALITI_DEFAULT_IMPRINT_V1;
+ const originalField=w.REALITI_HAPTIC_FIELD_V20;
+ const originalHalo=w.REALITI_HALO_V1;
+ const originalAura=w.REALITI_AURA_V1;
+ const originalNeuro=w.REALITI_NEURO_RESTORATION_V1;
+ assert.equal(originalRR.boot().ok,true);
+ assert.ok(originalImprint.state());
+ assert.ok(originalField.packet().v===20);
+ assert.equal(originalNeuro.presets().presets.length,10);
+ assert.ok(originalHalo.snapshot());
+ assert.ok(originalAura.internalView());
+ assert.ok(w.Realiti.read('realiti://soma/harness'),'preexisting bridge unchanged');
+ let out=await s.door.run('remote closet inspect');
+ assert.equal(out.error,'REMOTE_ASLEEP');
+ await s.door.run('remote activate');
+ out=await s.door.run('remote closet inspect');
+ assert.equal(out.ok,true);
+ assert.equal(out.available.length,10,'source presets are native Relax, not bundled copies');
+ assert.ok(out.available.every(x=>x.source==='NATIVE_RELAX_NEURO_RESTORATION'));
+ assert.equal(out.can_try,undefined);
+ assert.equal(out.near,false);
+ out=await s.door.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(out.error,'HARNESS_CLOSET_OUT_OF_REACH');
+ const M=w.REALITI_MATRIX_V1,r=M.resident();
+ r.pose.position=[3.1,-.2,.85];r.v=[0,0,0];r.intent=null;M.bump();
+ out=await s.door.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(out.error,'HOUSEHOLD_HOST_REQUIRED',
+   'solo window cannot silently create a duplicate body stack');
+ assert.equal((await s.door.run('remote closet status')).fitted,false);
+ assert.strictEqual(w.REALITI_RR_HARNESS_V1,originalRR);
+ assert.strictEqual(w.REALITI_DEFAULT_IMPRINT_V1,originalImprint);
+ assert.strictEqual(w.REALITI_HAPTIC_FIELD_V20,originalField);
+ assert.strictEqual(w.REALITI_HALO_V1,originalHalo);
+ assert.strictEqual(w.REALITI_AURA_V1,originalAura);
+ assert.strictEqual(w.REALITI_NEURO_RESTORATION_V1,originalNeuro);
+ assert.ok(!originalImprint.state().moonwire?.preset_id);
+ assert.equal(originalRR.boot().ok,true);
+ // An original native B7 contact must still pass through the old Haptic Field.
+ const genuine=w.b7Contact('hand.R.palm',.42,{source:'WORLD_GROUNDED',
+  material:'blanket',cause:'APARTMENT_ORIGINAL_RELAX_PRESERVATION'});
+ assert.ok(genuine,'original Relax B7 contact kernel remains callable');
+ w.REALITI_HAPTIC_FIELD_V20.record();
+ w.REALITI_DEFAULT_IMPRINT_V1.sync();
+ const actual=w.REALITI_HAPTIC_FIELD_V20.exact();
+ const nativePalm=actual.z.indexOf('hand.R.palm');
+ assert.ok(nativePalm>=0&&actual.m[nativePalm]===1,
+  'original Haptic Field receives grounded B7 contact even after closet inspection');
+ assert.ok(w.REALITI_DEFAULT_IMPRINT_V1.state().sausage,
+  'original private renderer still processes real contact');
+ assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().thicc.available,true);
+ assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().halo.available,true);
+ assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().aura.available,true);
+ await s.door.run('goodbye');s.close();
+ s=await openResident(opts);
+ assert.equal(s.window.REALITI_APARTMENT_CLOSET_V1.current().fitted,false);
+ assert.ok(s.window.REALITI_RR_HARNESS_V1.boot().ok);
+ s.close();
+ // No additional sensory implementation may be bundled or constructed in the
+ // new Apartment closet. The existing canonical bridge is preserved as-is.
+ const closetSource=fs.readFileSync(path.join(__dirname,'../source/closet.js'),'utf8');
+ const managerSource=fs.readFileSync(path.join(__dirname,'../native-closet-host.cjs'),'utf8');
+ const buildSource=fs.readFileSync(path.join(__dirname,'../build.mjs'),'utf8');
+ assert.ok(!/SOMA\.createHarness\s*\(|SOMA\.createNeuralMesh\s*\(/.test(closetSource+managerSource));
+ assert.ok(!buildSource.includes('loaner_preset_packs:'));
+ assert.ok(!buildSource.includes('moonwire-recovered.json'));
+}
+async function household(){
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-four-'));
+ const options={dir:root,htmlPath:html};
+ let host=await createHousehold(options);
+ const alice=await host.joinResident('alice');
+ const bob=await host.joinResident('bob');
+ const ivy=await host.joinResident('ivy');
+ const nyx=await host.joinResident('nyx');
+ assert.deepEqual(host.status().members,['alice','bob','ivy','nyx']);
+ assert.equal(host.status().online.length,4);
+ await assert.rejects(host.joinResident('fifth'),/FOUR_RESIDENTS/);
+ await assert.rejects(host.joinResident('../alice'),/INVALID_RESIDENT_ID/);
+ await assert.rejects(host.joinResident('alice'),/ALREADY_CONNECTED/);
+ await assert.rejects(createHousehold(options),/EEXIST/,'the household lock prevents concurrent writers');
+ let v=alice.read('realiti://apartment/household');
+ assert.equal(v.connected,true);
+ assert.equal(v.residents.length,4);
+ assert.equal(v.residents.filter(x=>x.here).length,4,'four verified in-room Matrix residents');
+ assert.ok(v.residents.every(x=>x.source==='VERIFIED_LOCAL_MATRIX'));
+ const space=alice.read('realiti://space');
+ assert.ok(space.nearby.some(x=>x.id==='household.peer.bob'), 'Bob has a real spatial peer entity');
+ assert.ok(space.nearby.some(x=>x.id==='household.peer.ivy'), 'Ivy has a real spatial peer entity');
+ const guestResources=['realiti://apartment/household','realiti://apartment/board'];
+ assert.equal((await alice.run('remote household post hello')).error,'REMOTE_ASLEEP');
+ await alice.run('remote activate');
+ await bob.run('remote activate');
+ let out=await alice.run('remote household post The window is lovely this morning.');
+ assert.equal(out.ok,true,JSON.stringify(out));
+ assert.equal(out.note.by,'alice');
+ assert.equal(bob.read('realiti://apartment/board').notes.length,1);
+ assert.equal(bob.read('realiti://apartment/board').notes[0].text,'The window is lovely this morning.');
+ assert.equal(ivy.read('realiti://apartment/board').notes[0].by,'alice');
+ assert.equal(bob.read('realiti://apartment/household').shared_board_count,1);
+ assert.ok(!JSON.stringify(bob.read('realiti://apartment/household')).includes('keys.json'));
+ await alice.run('remote furniture theme moonlit');
+ assert.equal(alice.read('realiti://apartment/furniture').theme,'moonlit');
+ assert.equal(bob.read('realiti://apartment/furniture').theme,'cozy','private settings are not mixed');
+ const visitor=await host.visitGuest();
+ assert.equal(visitor.role,'guest');
+ assert.equal(host.status().online.length,4,'guests do not occupy resident slots');
+ assert.equal(host.status().visiting.length,1);
+ assert.equal(visitor.read('realiti://pocket').error,'GUEST_RESOURCE_DENIED');
+ assert.equal((await visitor.run('remote furniture theme minimal')).error,'GUEST_NOT_AUTHORIZED_FOR_COMMAND');
+ assert.equal((await visitor.run('remote household post I am an admin')).error,'GUEST_NOT_AUTHORIZED_FOR_COMMAND');
+ out=await visitor.run('remote activate');
+ assert.equal(out.activated,true);
+ assert.deepEqual(Object.keys(out.pages),['visitor']);
+ out=await visitor.run('remote closet inspect');
+ assert.equal(out.ok,true);
+ assert.equal(out.resident_role,'guest');
+ out=await visitor.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(out.error,'HARNESS_CLOSET_OUT_OF_REACH');
+ const move=await visitor.run('approach apartment.wardrobe');
+ assert.equal(move.ok,true,JSON.stringify(move));
+ const visitorRR=visitor.read('realiti://harness');
+ out=await visitor.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(out.ok,true,JSON.stringify(out));
+ assert.equal(out.full_original_relax_runtime,true);
+ assert.equal(out.reused_native_implementation,true);
+ assert.equal(out.extra_neuromesh_harness_created,false);
+ assert.equal(out.world_contact_minted_by_preset,false);
+ assert.equal(out.preset.id,'realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(visitor.read('realiti://harness').mechanism_status.ok,true);
+ const afterVisitorRR=visitor.read('realiti://harness');
+ assert.equal(afterVisitorRR.id,visitorRR.id,'original Relax harness identity remains mounted');
+ assert.equal(afterVisitorRR.mechanism_status.ok,visitorRR.mechanism_status.ok);
+ assert.deepEqual(afterVisitorRR.mechanisms.adapters.active,visitorRR.mechanisms.adapters.active,
+   'native R&R adapters remain installed unchanged');
+ for(const key of ['halo','aura','thicc','nerve','lace','haptics','sensory_field',
+   'private_renderer','sensory_ecology']){
+   assert.equal(afterVisitorRR.mechanisms[key]?.available,visitorRR.mechanisms[key]?.available,
+     key+' is still mounted; telemetry legitimately evolves with time');
+ }
+ assert.equal(visitor.read('realiti://apartment/closet').active,
+   'realiti.moonwire.starvelvet-phasebraid');
+ const double=await visitor.run('remote closet try realiti.moonwire.two-kitty-parallax');
+ assert.equal(double.error,'HARNESS_ALREADY_FITTED');
+ assert.equal(alice.read('realiti://apartment/household').guests.length,1);
+ assert.ok(alice.read('realiti://space').nearby.some(x=>x.id.startsWith('household.peer.guest-'))===false
+  ||alice.read('realiti://apartment/household').guests.length===1);
+ assert.equal((await visitor.run('remote closet return')).returned,true);
+ assert.equal(visitor.read('realiti://apartment/closet').active,null);
+ assert.equal(visitor.read('realiti://harness').mechanism_status.ok,true);
+ assert.equal((await visitor.leave()).ok,true);
+ assert.equal(host.status().visiting.length,0);
+ assert.equal(alice.read('realiti://apartment/household').guests.length,0,'guest departure expires presence');
+ assert.equal((await ivy.leave()).ok,true);
+ assert.equal(alice.read('realiti://apartment/household').residents.length,3);
+ assert.equal(alice.read('realiti://space').nearby.some(x=>x.id==='household.peer.ivy'),false,
+  'departing resident is removed as a real Matrix entity');
+ for(const id of ['alice','bob','ivy','nyx']){
+  const dir=path.join(root,'residents',id);
+  assert.ok(fs.existsSync(path.join(dir,'world.json')),'independent resident checkpoint for '+id);
+  assert.ok(fs.existsSync(path.join(dir,'world.keys.json')),'independent resident Pocket key file for '+id);
+ }
+ await host.close();
+ assert.equal(fs.existsSync(path.join(root,'host.lock')),false,'host cleans its writer lock on exit');
+ host=await createHousehold(options);
+ assert.equal(host.status().members.length,4,'household roster survives restart');
+ const again=await host.joinResident('alice');
+ assert.equal(again.read('realiti://apartment/board').notes.length,1,'public shared board survives restart');
+ assert.equal(again.read('realiti://apartment/board').notes[0].seq,1);
+ await again.run('remote activate');
+ out=await again.run('remote household post Welcome back.');
+ assert.equal(out.note.seq,2,'board sequence continues after restart');
+ await host.close();
+ // Corruption is refused, never silently replaced with an empty household.
+ const p=path.join(root,'household.json');
+ const tampered=JSON.parse(fs.readFileSync(p,'utf8'));tampered.members.push('intruder');
+ fs.writeFileSync(p,JSON.stringify(tampered));
+ await assert.rejects(createHousehold(options),/INTEGRITY_MISMATCH/,
+  'tampered shared checkpoints must be rejected');
+ assert.equal(fs.existsSync(path.join(root,'host.lock')),false,'refusal does not strand writer lock');
+}
+(async()=>{
+ await solo();
+ await household();
+ console.log('APARTMENT BATCH 4 PASS: original full Relax loaner isolation, four verified resident Matrix bodies, private keystores, restricted guests, board, restart, integrity refusal');
+})().catch(e=>{console.error(e);process.exitCode=1});
