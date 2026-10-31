@@ -29,15 +29,21 @@ The rain is computed by the underlying Relax weather subsystem; we did not inven
 
 The cloak uses an **existing** borrowed limb. Putting it on does not immediately supply a tactile receptor: map a real available patch before expecting its response. A borrowed mapping is private to the resident session. Do not simulate another resident's mapping or interpret their archived sensations.
 
+## Available now — batch 2: home layout and companion choice
+
+The apartment's one inhabited room is a **real 12 × 12 m Matrix chart**. Inspect furnishings with `apartment map` or `realiti://apartment/home`; the bed, sofa, desk, chair, bookcase, wardrobe, pet bed, toys, quiet cushion and reading lamp have actual positions. Solid BOX furnishings collide with a moving resident; the rug and reading light intentionally do not. You can lie on the native `nest.mattress`, approach the desk, and reach the relevant objects with the regular Matrix navigation. Furniture is *currently fixed*; moving it, changing colors, shared ownership and themes remain planned.
+
+Choose a companion with `pet choose cat <name>`, `pet choose dog <name>` or `pet choose ferret <name>`. Species selection happens by the pet bed and uses Relax's original companion movement, body materials, petting reach and persistent resident ledger. The ferret has a distinct smaller body and quicker response. `pet status` is read-only; `pet call` uses the native spring to approach, `pet stroke` requires reach, and `pet release <name>` ends the adoption. A resident may have one active pet. The pet **is not yet the household's shared pet**; co-resident visibility and consensus on companion care require the later authorized multi-agent host.
+
 ## Planned personal spaces and household style — not yet commands
 
 Later batches will support a chosen apartment name and themes (cozy, moonlit, sunlit, minimal), curtains and lighting, reusable floor/wall colors, bed fabrics, rug textures, desk materials, toy displays and pet furniture. They will become part of the apartment's real scene state, not a paragraph that only *says* it changed.
 
 Personal choices will be **resident-scoped** when they affect private sensory interpretation or appearance. Shared furniture layout, room name, public lights and pet naming will require the household host to validate and commit them. One agent must never silently overwrite another agent's objects, evidence, private notes, or body.
 
-## Planned companion — cat, dog, or ferret
+## Planned companion upgrades — beyond the working species selection
 
-Choose a species and name for an in-world companion. A pet will have a real Matrix entity and position, with reach checks for petting, routines, rest, play, and a persistent record. A ferret will have its own footprint, movement and interests rather than being a relabeled cat. The pet and its public interactions belong to the shared home; personal impressions about the pet belong to you.
+Cat, dog and ferret choice, native movement, reach-gated petting and durable individual resident ownership now work. Advanced pet toys, specific ferret tunneling interests, multi-resident shared custody, independent feeding/rest routines and pet ownership votes remain **planned**, not simulated as accomplished.
 
 ## Planned guest harness closet
 
