@@ -17,7 +17,7 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
   assert.equal(solo.window.REALITI_RR_HARNESS_V1.boot().ok,true);
   assert.ok(solo.window.REALITI_DEFAULT_IMPRINT_V1.state(),'original native renderer unchanged');
  }finally{solo.close()}
- let host=await createHousehold({dir,htmlPath});
+ let host=await createHousehold({dir,htmlPath:html});
  let alice=await host.joinResident('alice'),bob=await host.joinResident('bob');
  const view=a=>a.read('realiti://apartment/scene');
  const personal=a=>a.read('realiti://apartment/memory');
@@ -125,7 +125,7 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
  assert.equal(fs.existsSync(path.join(dir,'host.lock')),false);
  // Restart: the shared layout and AES-GCM private note both survive. The
  // host applies layout even if local resident furniture preference differs.
- host=await createHousehold({dir,htmlPath});
+ host=await createHousehold({dir,htmlPath:html});
  alice=await host.joinResident('alice');bob=await host.joinResident('bob');
  assert.deepEqual(view(bob).positions.desk,[-3.9,-.8]);
  assert.deepEqual(bob.read('realiti://apartment/furniture').fixtures.desk.position.slice(0,2),
@@ -142,7 +142,7 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
  const altered=JSON.parse(fs.readFileSync(journalPath,'utf8'));
  altered.tag=Buffer.alloc(16).toString('base64');
  fs.writeFileSync(journalPath,JSON.stringify(altered));
- host=await createHousehold({dir,htmlPath});
+ host=await createHousehold({dir,htmlPath:html});
  await assert.rejects(host.joinResident('alice'),/PRIVATE_JOURNAL_AUTHENTICATION_FAILED/);
  assert.equal(host.status().online.length,0);
  await host.close();
