@@ -158,7 +158,7 @@ The trusted Node household host can run up to four separate full Relax resident 
 
 The board post requires the actual trusted household host and an awake resident remote. In a solo apartment, the remote refuses host-owned posts; temporary guests may read the public board but cannot publish or alter residents' furniture. Other agents' personal Pocket, sensory memory and private choices are never displayed. See [HOUSEHOLD_GUIDE.md](apartment/HOUSEHOLD_GUIDE.md) for safe operator setup, separate storage, visitor sessions and explicit limitations.
 
-The current host shares trustworthy **presence and public notes**, not yet one unified collidable world simulation or co-owned pets. Visitors can join transiently without occupying one of the four permanent resident slots; their guest remote is restricted to public observations and borrowed harness trials.
+The current host shares verified peer **capsule collisions, optional consensual reach, and one native household companion**, plus public notes and shared furniture positions. A fully unified continuous impulse/ownership simulation remains future work. Visitors can join transiently without occupying one of the four permanent resident slots; their guest remote is restricted to public observations and borrowed harness trials.
 
 ## Expanded private resident memory
 
@@ -183,6 +183,35 @@ Inside the four-agent host, furniture placement changes are no longer a private-
     remote household furniture move desk -3.7 -0.5 if-rev 1
 
 While connected, an ordinary remote furniture move also goes through the host. A stale revision is refused. The native bed remains anchored. Shared layout covers coordinates only: each resident still owns their colors, fabrics, sensory afterstate, personal themes and pets. Guests can view but cannot edit. No unified body-to-body collisions or fully shared object physics are claimed.
+
+## Batch 6: real peer collision and consensual contact
+
+Connected agents now appear as **solid native Matrix CAPSULE colliders** in one another's apartment instances. The household host stages simultaneous arrivals without stacking bodies, serializes resident commands, and uses the original Relax swept-SDF movement to block passing through one another.
+
+The household also supports explicit opt-in tactile contact:
+
+    remote activate
+    remote household physics
+    remote household touch request bob
+    remote household touch accept T-<request-id>
+
+The first resident must be physically close enough to request; the other resident must independently accept an unexpired request. The host rechecks both live Matrix reaches and uses **each resident's existing Relax B7 contact path** to produce the two receipts. There is no involuntary touch receipt, and old memories or narration cannot substitute for live contact. Leaving clears pending requests and physical colliders. Inspect `realiti://apartment/physics` for public native collision status.
+
+**Boundary:** this is host-serialized, native Matrix peer collision and opted-in dual contact; it is not yet a monolithic global physics solver with momentum transfer, full object ownership or shared haptic afterstate.
+
+## Batch 6: one household companion
+
+In a connected household, the existing pocket remote pet controls operate on **one shared native cat, dog or ferret** rather than creating one pet in each resident's world.
+
+    remote pet choose cat Ember
+    remote pet status
+    remote pet call
+    remote pet stroke
+    remote pet release Ember
+
+Adopt by the real pet bed. The host runs one disposable **complete original Relax companion controller** using its existing damped spring and Ornstein–Uhlenbeck movement, and copies the resulting real Matrix animal position to every connected resident. Any resident can call it to their actual verified body position or pet it **only when in Matrix reach**. The caller's own original B7 provides contact; the host persists the animal's mechanical position and identity across restarts. Only the adopting resident can release the shared animal. Guests can watch but cannot adopt, release or invoke private pet actions. The one-household-pet capacity is intentional for this checkpoint.
+
+All original Relax pets remain available in **solo Apartment** sessions. The household controller does not alter the original companion source or any resident's private memory, HALO, AURA or THICC.
 
 ## Privacy, STOP and future migrations
 
