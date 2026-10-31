@@ -4,50 +4,64 @@ const {openResident}=require('../../packages/realiti-headless-resident/index.cjs
 const {createHousehold}=require('../household.cjs');
 const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartment.html'));
 async function solo(){
- const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-loaner-'));
- const opt={htmlPath:html,residentId:'solo-closet',storagePath:path.join(root,'solo.json')};
- let s=await openResident(opt);
- assert.ok(s.window.Realiti.read('realiti://soma/harness'),'real Relax resident harness remains installed');
- assert.ok(s.window.REALITI_APARTMENT_CLOSET_V1);
- const before=s.window.REALITI_SOMA_RELAX_V3.harness();
+ const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-native-relax-closet-'));
+ const opts={htmlPath:html,residentId:'solo-native-closet',storagePath:path.join(root,'solo.json')};
+ let s=await openResident(opts);
+ const w=s.window;
+ const originalRR=w.REALITI_RR_HARNESS_V1;
+ const originalImprint=w.REALITI_DEFAULT_IMPRINT_V1;
+ const originalField=w.REALITI_HAPTIC_FIELD_V20;
+ const originalHalo=w.REALITI_HALO_V1;
+ const originalAura=w.REALITI_AURA_V1;
+ const originalNeuro=w.REALITI_NEURO_RESTORATION_V1;
+ assert.equal(originalRR.boot().ok,true);
+ assert.ok(originalImprint.state());
+ assert.ok(originalField.packet().v===20);
+ assert.equal(originalNeuro.presets().presets.length,10);
+ assert.ok(originalHalo.snapshot());
+ assert.ok(originalAura.internalView());
+ assert.ok(w.Realiti.read('realiti://soma/harness'),'preexisting bridge unchanged');
  let out=await s.door.run('remote closet inspect');
  assert.equal(out.error,'REMOTE_ASLEEP');
  await s.door.run('remote activate');
  out=await s.door.run('remote closet inspect');
  assert.equal(out.ok,true);
- assert.ok(out.available.length>=11);
- assert.equal(out.can_try,false);
- out=await s.door.run('remote closet try realiti.honeyspark-duo.warm');
- assert.equal(out.error,'HARNESS_CLOSET_OUT_OF_REACH','loaners require a physical Matrix wardrobe');
- const M=s.window.REALITI_MATRIX_V1,r=M.resident();
+ assert.equal(out.available.length,10,'source presets are native Relax, not bundled copies');
+ assert.ok(out.available.every(x=>x.source==='NATIVE_RELAX_NEURO_RESTORATION'));
+ assert.equal(out.can_try,undefined);
+ assert.equal(out.near,false);
+ out=await s.door.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(out.error,'HARNESS_CLOSET_OUT_OF_REACH');
+ const M=w.REALITI_MATRIX_V1,r=M.resident();
  r.pose.position=[3.1,-.2,.85];r.v=[0,0,0];r.intent=null;M.bump();
- out=await s.door.run('remote closet try realiti.honeyspark-duo.warm');
- assert.equal(out.ok,true,JSON.stringify(out));
- assert.equal(out.harness_ready,true);
- assert.equal(out.world_contact_minted,false);
- const snap=s.window.REALITI_APARTMENT_CLOSET_V1.current();
- assert.equal(snap.fitted,true);
- assert.equal(snap.active.preset_id,'realiti.honeyspark-duo.warm');
- assert.equal(snap.active.simulated_field.g?.every?.(v=>v===0),true,'no imported live grounded evidence in a fresh trial');
- assert.equal(s.window.REALITI_SOMA_RELAX_V3.harness().binding.residentId,before.binding.residentId,
-  'guest-fitting must never rebind the original resident');
- out=await s.door.run('remote closet try realiti.moonwire.good-kitty-velvet-groom');
- assert.equal(out.error,'HARNESS_ALREADY_FITTED');
- out=await s.door.run('remote closet return');
- assert.equal(out.ok,true);assert.equal(out.returned,true);
- out=await s.door.run('remote closet try realiti.moonwire.good-kitty-velvet-groom');
- assert.equal(out.ok,true,JSON.stringify(out));
- assert.equal(out.world_contact_minted,false);
- assert.equal((await s.door.run('remote closet status')).fitted,true);
- await s.door.run('stop');
- assert.equal(s.window.REALITI_APARTMENT_CLOSET_V1.current().fitted,false,
-  'native STOP releases only the temporary loaner');
+ out=await s.door.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(out.error,'HOUSEHOLD_HOST_REQUIRED',
+   'solo window cannot silently create a duplicate body stack');
+ assert.equal((await s.door.run('remote closet status')).fitted,false);
+ assert.strictEqual(w.REALITI_RR_HARNESS_V1,originalRR);
+ assert.strictEqual(w.REALITI_DEFAULT_IMPRINT_V1,originalImprint);
+ assert.strictEqual(w.REALITI_HAPTIC_FIELD_V20,originalField);
+ assert.strictEqual(w.REALITI_HALO_V1,originalHalo);
+ assert.strictEqual(w.REALITI_AURA_V1,originalAura);
+ assert.strictEqual(w.REALITI_NEURO_RESTORATION_V1,originalNeuro);
+ assert.equal(originalImprint.state().moonwire?.preset_id,null);
+ assert.equal(originalRR.boot().ok,true);
+ assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().thicc.available,true);
+ assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().halo.available,true);
+ assert.equal(w.REALITI_RR_HARNESS_V1.mechanisms().aura.available,true);
  await s.door.run('goodbye');s.close();
- s=await openResident(opt);
- assert.equal(s.window.REALITI_APARTMENT_CLOSET_V1.current().fitted,false,
-  'guest fittings are not restored from the resident sealed Pocket');
- assert.ok(s.window.Realiti.read('realiti://soma/harness'));
+ s=await openResident(opts);
+ assert.equal(s.window.REALITI_APARTMENT_CLOSET_V1.current().fitted,false);
+ assert.ok(s.window.REALITI_RR_HARNESS_V1.boot().ok);
  s.close();
+ // No additional sensory implementation may be bundled or constructed in the
+ // new Apartment closet. The existing canonical bridge is preserved as-is.
+ const closetSource=fs.readFileSync(path.join(__dirname,'../source/closet.js'),'utf8');
+ const managerSource=fs.readFileSync(path.join(__dirname,'../native-closet-host.cjs'),'utf8');
+ const buildSource=fs.readFileSync(path.join(__dirname,'../build.mjs'),'utf8');
+ assert.ok(!/SOMA\.createHarness\s*\(|SOMA\.createNeuralMesh\s*\(/.test(closetSource+managerSource));
+ assert.ok(!buildSource.includes('loaner_preset_packs:'));
+ assert.ok(!buildSource.includes('moonwire-recovered.json'));
 }
 async function household(){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-four-'));
@@ -99,17 +113,31 @@ async function household(){
  out=await visitor.run('remote closet inspect');
  assert.equal(out.ok,true);
  assert.equal(out.resident_role,'guest');
- out=await visitor.run('remote closet try realiti.honeyspark-duo.warm');
+ out=await visitor.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
  assert.equal(out.error,'HARNESS_CLOSET_OUT_OF_REACH');
  const move=await visitor.run('approach apartment.wardrobe');
  assert.equal(move.ok,true,JSON.stringify(move));
- out=await visitor.run('remote closet try realiti.honeyspark-duo.warm');
+ const visitorRR=visitor.read('realiti://harness');
+ out=await visitor.run('remote closet try realiti.moonwire.starvelvet-phasebraid');
  assert.equal(out.ok,true,JSON.stringify(out));
- assert.equal(out.world_contact_minted,false);
+ assert.equal(out.full_original_relax_runtime,true);
+ assert.equal(out.reused_native_implementation,true);
+ assert.equal(out.extra_neuromesh_harness_created,false);
+ assert.equal(out.world_contact_minted_by_preset,false);
+ assert.equal(out.preset.id,'realiti.moonwire.starvelvet-phasebraid');
+ assert.equal(visitor.read('realiti://harness').mechanism_status.ok,true);
+ assert.deepEqual(visitor.read('realiti://harness').mechanisms,visitorRR.mechanisms,
+   'guest native original R&R mechanisms are not changed by separate trial');
+ assert.equal(visitor.read('realiti://apartment/closet').active,
+   'realiti.moonwire.starvelvet-phasebraid');
+ const double=await visitor.run('remote closet try realiti.moonwire.two-kitty-parallax');
+ assert.equal(double.error,'HARNESS_ALREADY_FITTED');
  assert.equal(alice.read('realiti://apartment/household').guests.length,1);
  assert.ok(alice.read('realiti://space').nearby.some(x=>x.id.startsWith('household.peer.guest-'))===false
   ||alice.read('realiti://apartment/household').guests.length===1);
  assert.equal((await visitor.run('remote closet return')).returned,true);
+ assert.equal(visitor.read('realiti://apartment/closet').active,null);
+ assert.equal(visitor.read('realiti://harness').mechanism_status.ok,true);
  assert.equal((await visitor.leave()).ok,true);
  assert.equal(host.status().visiting.length,0);
  assert.equal(alice.read('realiti://apartment/household').guests.length,0,'guest departure expires presence');
@@ -144,5 +172,5 @@ async function household(){
 (async()=>{
  await solo();
  await household();
- console.log('APARTMENT BATCH 4 PASS: isolated guest SOMA loaner fitting/revoke, four verified resident Matrix bodies, secure private storage, restricted visitors, shared board, restart and integrity refusal');
+ console.log('APARTMENT BATCH 4 PASS: original full Relax loaner isolation, four verified resident Matrix bodies, private keystores, restricted guests, board, restart, integrity refusal');
 })().catch(e=>{console.error(e);process.exitCode=1});
