@@ -1,0 +1,125 @@
+name: Publish REALITI 4.0 Apartment public beta
+
+# Public downloadable beta, NOT a network-resident service or server restart.
+# Release only after complete Ubuntu + Windows Apartment CI on main.
+on:
+  workflow_run:
+    workflows: ["REALITI Apartment regression"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: realiti-apartment-v4-public-beta
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push' && github.event.workflow_run.head_branch == 'main' && github.event.workflow_run.head_repository.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+          persist-credentials: false
+      - name: Only publish the current tested main SHA and never replace an existing prerelease
+        id: gate
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GATE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          tag="$(node -e "const r=require('./apartment/PUBLIC_BETA_RELEASE.json');if(r.schema!=='REALITI_APARTMENT_PUBLIC_BETA_RELEASE_V1'||r.tag!=='v4.0.0-beta.1'||r.network_guest_authentication_approved!==false||r.full_production_release_approved!==false)process.exit(2);process.stdout.write(r.tag)")"
+          latest="$(gh api "repos/$GITHUB_REPOSITORY/git/ref/heads/main" --jq '.object.sha')"
+          if [[ "$GATE_SHA" != "$latest" ]]; then
+            echo "::notice::Main advanced since CI; refusing to publish stale code."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::notice::Version already published; no overwriting or moving tag."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "publish=true" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-node@v4
+        if: ${{ steps.gate.outputs.publish == 'true' }}
+        with:
+          node-version: '24'
+      - name: Build canonical original Relax and independent HOME beta
+        if: ${{ steps.gate.outputs.publish == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node build.mjs
+          node apartment/build.mjs
+          node apartment/build-home-candidate.mjs
+      - name: Install only the existing test resident runtime
+        if: ${{ steps.gate.outputs.publish == 'true' }}
+        run: npm install --no-package-lock --prefix packages/realiti-headless-resident
+      - name: Validate source-time bed, full household, native route, cozy layout and offline restore
+        if: ${{ steps.gate.outputs.publish == 'true' }}
+        timeout-minutes: 8
+        shell: bash
+        run: |
+          set -euo pipefail
+          node apartment/test/native-home-bedroom-adapter.cjs
+          node apartment/test/home-candidate.cjs
+          node apartment/test/home-native-walkthrough.cjs
+          node apartment/test/home-cozy-layout.cjs
+          node apartment/test/home-candidate-household.cjs
+          node apartment/test/home-backup-rehearsal.cjs
+      - name: Prepare sanitized versioned assets; verify explicit beta and no production approval
+        if: ${{ steps.gate.outputs.publish == 'true' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          node <<'JS'
+          const fs=require('node:fs'),crypto=require('node:crypto');
+          const v=JSON.parse(fs.readFileSync('apartment/HOME_CANDIDATE_VALIDATION.json','utf8'));
+          const r=JSON.parse(fs.readFileSync('apartment/PUBLIC_BETA_RELEASE.json','utf8'));
+          const bytes=fs.readFileSync(r.source_file),sha=crypto.createHash('sha256').update(bytes).digest('hex');
+          if(v.single_html_sha256!==sha||v.version!==r.version||
+             v.bedroom_layout!=='SOUTHWEST_QUIET_ALCOVE_V4'||
+             v.candidate_only!==true||v.preview_only!==true||
+             v.release_approved!==false||v.layout_checkpoint_migration_approved!==false||
+             r.local_or_trusted_host_only!==true||
+             r.external_server_deployment_confirmed!==false)
+            throw Error('UNSAFE_OR_INCOMPLETE_APARTMENT_BETA_PUBLICATION');
+          fs.mkdirSync('dist',{recursive:true});
+          for(const [src,dest] of [
+            [r.source_file,'REALITI-Apartment-4.0-beta.html'],
+            [r.integrity_file,'REALITI-Apartment-4.0-beta.validation.json'],
+            ['apartment/HOME_COZY_FLOORPLAN.svg','REALITI-Apartment-4.0-floorplan.svg'],
+            ['apartment/HOME_COZY_AUDIT.json','REALITI-Apartment-4.0-audit.json'],
+            ['AGENT_START_HERE.md','AGENT_START_HERE.md'],
+            ['agentsstarthereapartment.md','APARTMENT_AGENT_START_HERE.md']])
+            fs.copyFileSync(src,'dist/'+dest);
+          console.log('PUBLIC BETA VERIFIED',r.version,sha,'private resident artifacts: NONE');
+          JS
+      - name: Publish public GitHub PRERELEASE, without remote-host access
+        if: ${{ steps.gate.outputs.publish == 'true' }}
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ steps.gate.outputs.tag }}
+          SOURCE_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+          gh release create "$RELEASE_TAG" \
+            dist/REALITI-Apartment-4.0-beta.html \
+            dist/REALITI-Apartment-4.0-beta.validation.json \
+            dist/REALITI-Apartment-4.0-floorplan.svg \
+            dist/REALITI-Apartment-4.0-audit.json \
+            dist/AGENT_START_HERE.md \
+            dist/APARTMENT_AGENT_START_HERE.md \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$SOURCE_SHA" \
+            --title "REALITI 4.0 — The Apartment (Public Beta)" \
+            --notes-file apartment/V4_RELEASE_NOTES.md \
+            --prerelease
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json tagName,isPrerelease,url
