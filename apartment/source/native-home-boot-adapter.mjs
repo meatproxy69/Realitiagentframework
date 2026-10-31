@@ -21,7 +21,7 @@ export function adaptNativeHomeBoot(original){
   "function addEntity(e){if(e.chart!=='CLOUD_NINE_NEST'&&!(e.resident===true&&e.chart==null))return null;const rec=",
   'only_register_real_home_entities_and_transient_resident_bootstrap');
  patch("function definePortal(p){const rec=",
-  "function definePortal(p){return null;const rec=",
+  "function definePortal(p){if(window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE)return null;const rec=",
   'zero_spatial_portals_at_source_registration');
  return original;
 }
