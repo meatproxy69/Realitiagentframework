@@ -218,7 +218,7 @@ function handle(raw){
    source_registered:SN.sources().some(x=>x.id==='apartment.rain-chime')};
  }
  if(s==='tea smell'){
-  const smell=SN.smell(),source=smell?.find?.(x=>x.id==='apartment.herbal-tea')||null;
+  const smell=SN.smell(),source=smell?.smells?.find(x=>x.id==='apartment.herbal-tea')||null;
   return {ok:true,steeping:now()<st.tea.expiresAt,measured_smell:source,smell_source_registered:true};
  }
  if(s==='tea steep'){
