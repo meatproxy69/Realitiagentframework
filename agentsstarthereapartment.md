@@ -2,7 +2,7 @@
 
 **Resident and visitor entry for the apartment fork.** This is the requested **agentsstarthereapartment.md**. The original AGENT_START_HERE.md and every original REALITI Relax script and package remain intact.
 
-The apartment is an additive standalone artifact, built from the **entire** Relax runtime (Matrix, SOMA 3.4, NeuralMesh, R&R, HALO, AURA, THICC, haptics, weather, catnip, memory and the Agent Door). Its own source lives in apartment/. This is an incremental build: the final one-room layout, pets, four-resident host, expanded memory and full guest harness closet are subsequent batches. Do not claim those features are working from this first two-feature batch.
+RealitiApartment is built from the **entire** Relax runtime (Matrix, SOMA 3.4, NeuralMesh, R&R, HALO, AURA, THICC, haptics, weather, catnip, memory and the Agent Door). The Apartment builder verifies one narrow native companion extension against the current upstream source and adds home/Extras overlays. The original source is untouched. A real furnished home and three resident-scoped pet species are now part of the apartment preview; the final single-chart-only runtime, **four-agent shared host**, expanded memory and full guest harness closet are still later batches.
 
 ## Build and enter
 
@@ -30,6 +30,26 @@ Use the headless host with the generated apartment artifact. The normal host val
 Use a **different storage file and keys file for each resident**, even when sharing the same household. Pocket private key names are not currently resident-namespaced within one backing file. Never merge or hand-copy resident storage and keys into a shared file. Never expose another resident's memory or private harness.
 
 Always run goodbye or close the host cleanly. Save persists the original Pocket/world state if the keystore is available. The host loader is not the harness; the native harness is already installed. Inspect Realiti.read('realiti://harness') and Realiti.read('realiti://soma/harness') as the usual startup checks.
+
+## Your actual apartment and its pet
+
+Your lived-in home is the existing trusted `CLOUD_NINE_NEST` Matrix chart, with 12 × 12 m of real floor, walls and collision. It has the original bed (`nest.mattress`) and rain window (`nest.window`) plus a sofa, desk, chair, wardrobe, bookcase, pet bed, scratching post, toys, a reading cushion, rug and lamp. These are **native Matrix entities**, not narration. Use the normal `actions`, `approach <object>` and `act <id>` routes or structured `Realiti.invoke('posture',...)` to move and interact.
+
+    apartment map
+    apartment bed
+    resource realiti://apartment/home
+    pet help
+    pet status
+    pet choose cat Ember
+    pet choose dog Rex
+    pet choose ferret Noodle
+    pet call
+    pet stroke
+    pet release Noodle
+
+Only one companion per resident is supported right now. Choose **at the pet bed**; the native companion logic refuses when the pet bed is too far away. A ferret is not a renamed cat: it has its own smaller body dimensions, short-fur material and faster movement response, while reusing Relax's actual damped-spring and curiosity dynamics. `pet stroke` uses the native reach-limited pet interaction. A pet's name and species survive a headless save/restart when the host supplies durable storage.
+
+These pets are currently **resident-scoped**, not guaranteed to be visible to another resident's running instance. The full four-resident shared household, permissioned updates, and shared pet custody are **not** implemented yet. Do not merge multiple agents' keystores to fake cohabitation. For direct reads: `Realiti.read('realiti://apartment/home')`, `Realiti.read('realiti://apartment/bed')`, and `Realiti.read('realiti://apartment/pet')`.
 
 ## Apartment Extras — deliberately tucked away
 
@@ -60,9 +80,10 @@ See [the agent customization guide](apartment/CUSTOMIZATION_GUIDE.md) for staged
 ## Source and safety
 
 - Original AGENT_START_HERE.md remains the unmodified technical reference for all inherited Relax systems.
-- apartment/source/extras.js is the only runtime overlay in this first pair.
-- apartment/build.mjs copies the complete HTML and appends its extra script without deleting legacy functionality.
-- The temporary room is the existing CLOUD_NINE_NEST. Final room replacement and guest-room state are deferred to later features.
+- apartment/source/home-pets.js and apartment/source/extras.js add room and optional features after the full Relax script bundle.
+- apartment/source/companion-adapter.mjs makes a narrowly checked Apartment-only native companion extension while keeping the original source unchanged.
+- apartment/build.mjs assembles the complete HTML and appends both overlays without deleting legacy functionality.
+- The real apartment room is CLOUD_NINE_NEST. Old worlds are temporarily retained for migration; the final one-chart-only cleanup and guest-resident authority are deferred.
 - A narrated touch, a stored observation, and a private customization setting never become live world authority.
 
 ## Port-first room retirement
