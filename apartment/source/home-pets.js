@@ -53,6 +53,21 @@ function furnish(){
  M.bump();
 }
 furnish();
+// HOME-only spatial housekeeping: do not change the 23-chart migration lab or
+// canonical Relax. Keep a real tea shelf/guestbook, but remove its collision
+// overlap with the separately installed bookcase. The books and soft reading
+// cushion make one quiet corner instead of occupying the same shelf footprint.
+// The old cloudfall marker has no portal in HOME; the legacy Nest cat would
+// otherwise masquerade as a second pet alongside the owner's shared companion.
+const HOME_FIRST=window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true;
+if(HOME_FIRST){
+ const E=M.entities();
+ for(const id of ['nest.cloudfall','nest.cat'])
+  if(E[id]?.chart===HOME)M.removeEntity(id);
+ E['apartment.bookcase'].pose.position=[-5.0,4.35,1.1];
+ E['apartment.quiet-cushion'].pose.position=[-3.2,3.5,.2];
+ M.bump();
+}
 const OWNED=['nest.mattress','nest.window','nest.backrest','nest.shelf',...FIXTURES.map(x=>x[0]),'apartment.rug','apartment.lamp'];
 function homeView(){
  const c=M.charts()[HOME],e=M.entities(),r=M.state().residents['resident:self'];
@@ -66,7 +81,9 @@ function homeView(){
    native_bed:'nest.mattress',native_window:'nest.window',
    other_relax_charts_still_present:Object.keys(M.charts()).length>1,
    original_chart_count:Object.keys(M.charts()).length,
-   guarantee:'Furniture is native Matrix geometry. The final prune to one global chart happens only after all source room mechanisms migrate.'};
+   guarantee:HOME_FIRST?
+    'One HOME chart starts natively; no historic station fixtures or phantom second household pet. All furniture is genuine Matrix geometry.':
+    'The 23-chart developer reference retains historical migration scaffolding.'};
 }
 function bedView(){
  const e=M.entities()['nest.mattress'],r=M.state().residents['resident:self'];
