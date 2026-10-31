@@ -52,14 +52,18 @@ function menu(){
    'remote closet status','remote household','remote household board','remote off']},
   note:'Visitor mode: temporary SOMA loaners only, no resident/private household controls.'};
  return {...p,schema:'REALITI_APARTMENT_POCKET_REMOTE_MENU_V1',pages:{
-  home:['remote home','remote bed','remote pet help','remote pet status'],
+  home:['remote home','remote bed','remote pet help','remote pet status',
+   'remote pet choose cat|dog|ferret <name>','remote pet call',
+   'remote pet stroke','remote pet release <name>'],
   furnishings:['remote furniture help','remote furniture list'],
   catnip:['remote catnip help','remote catnip list'],
   extras:['remote extras','remote extras rain','remote extras cloak'],
   closet:['remote closet inspect','remote closet help','remote closet status'],
   household:['remote household','remote household board','remote household furniture',
    'remote household furniture move <name> <x> <y> [if-rev <n>]',
-   'remote household post <text>'],
+   'remote household physics','remote household touch request <resident>',
+   'remote household touch accept <request-id>',
+   'remote household pet status','remote household post <text>'],
   memory:['remote memory help','remote memory status','remote memory remember <text>',
    'remote memory recall <query>','remote memory recent'],
   utility:['remote status','remote save','remote off']},
@@ -86,6 +90,8 @@ function resource(uri){
  if(uri==='realiti://apartment/household')return H.view();
  if(uri==='realiti://apartment/board')return H.board();
  if(uri==='realiti://apartment/scene')return H.scene();
+ if(uri==='realiti://apartment/physics')return H.physics();
+ if(uri==='realiti://apartment/household/pet')return H.pet();
  if(uri==='realiti://apartment/memory')return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
   hint:'Only the connected trusted host may read private memory; the browser does not have the journal encryption key.'};
  return A.read(uri);
@@ -111,7 +117,8 @@ async function run(raw){
   if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/catnip',
      'realiti://apartment/closet','realiti://apartment/closet/status',
      'realiti://apartment/household','realiti://apartment/board',
-     'realiti://apartment/scene','realiti://apartment/memory'].includes(uri))
+     'realiti://apartment/scene','realiti://apartment/memory',
+     'realiti://apartment/physics','realiti://apartment/household/pet'].includes(uri))
    return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri,resource:resource(uri)};
  }
  if(s.startsWith('remote ')){
@@ -130,6 +137,12 @@ async function run(raw){
   if(command==='household')return H.view();
   if(command==='household board')return H.board();
   if(command==='household furniture')return H.scene();
+  if(command==='household physics')return H.physics();
+  if(command.startsWith('household touch '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
+   hint:'Peer contact requires the trusted host to verify two live residents and explicit consent.'};
+  if(command==='household pet'||command==='household pet status')return H.pet();
+  if(command.startsWith('household pet '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
+   hint:'Only the trusted household companion controller owns shared pet actions.'};
   if(command.startsWith('household furniture move '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
    hint:'Shared furniture moves are committed by the trusted host, never by this local remote alone.'};
   if(command==='memory'||command.startsWith('memory '))return {ok:false,error:'HOUSEHOLD_HOST_REQUIRED',
