@@ -181,6 +181,56 @@ function syncNativePhysicalObjects(id,verb){
  if(defs.length||s.hidden)M.bump();
 }
 syncNativePhysicalObjects('CARDBOARD_BOX_WORKSHOP','boot');
+
+// New physically grounded pieces, shared with the original Nest Matrix chart:
+// a ceramic mug, a stone echo panel and a harmless projected Lorenz wisp.
+// Their provenance labels never create a second room or another resident.
+for(const def of [
+ {id:'apartment.fireside.mug',p:[2.55,3.0,.94],shape:{kind:'SPHERE',radius:.11},
+  tags:['fireside','mug','ceramic','tactile'],collision:false,material:'ceramic',
+  label:'an ordinary ceramic mug by the fireside'},
+ {id:'apartment.undercity.echo-panel',p:[-4.5,-4.82,1.1],
+  shape:{kind:'BOX',halfExtents:[.43,.07,.65]},
+  tags:['sonar','echo','cabinet','stone'],collision:true,material:'stone',
+  label:'the solid stone panel of the echo cabinet'},
+ {id:'apartment.marsh.wisp',p:[-4.5,-5,1.35],
+  shape:{kind:'SPHERE',radius:.08},
+  tags:['wisp','moving','projected','original-lorenz'],collision:false,material:'glass',
+  label:'the measured moving light from the original Lorenz model'}
+]){
+ if(M.entities()[def.id])throw Error('APARTMENT_LEGACY_STATION_FIXTURE_ID_COLLISION:'+def.id);
+ M.addEntity({id:def.id,chart:HOME,position:def.p.slice(),
+  shape:def.shape,tags:def.tags,collision:def.collision,material:def.material,
+  label:def.label,affordances:['watch','touch'],dynamic:def.id==='apartment.marsh.wisp'});
+}
+M.bump();
+const stationSenses=window.REALITI_SENSES_V1;
+const rainDynamics=window.REALITI_DYNAMICS_V1;
+const firesideKey='realiti-apartment-fireside-v1:'+
+ encodeURIComponent(String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default'));
+let cracked=false;
+try{
+ const saved=JSON.parse(localStorage.getItem(firesideKey)||'null');
+ if(saved?.schema==='REALITI_APARTMENT_FIRESIDE_WINDOW_V1'&&typeof saved.cracked==='boolean')
+  cracked=saved.cracked;
+}catch(e){}
+function windowAir(){
+ return {cracked,rain_intensity:rainDynamics?.rain?.()??null,
+  native_window_entity:'nest.window',original_fireside:HOME};
+}
+stationSenses?.addSource?.({id:'apartment.fireside.outside-air',
+ chart:HOME,pos:'nest.window',label:'rain through an opened physical window',
+ sound:()=>cracked?12*Number(rainDynamics?.rain?.()||0):0});
+function syncMarshWisp(){
+ const state=FR.state()?.marsh?.wisp;
+ const st=find('CLOCKWORK_MARSH'),e=M.entities()['apartment.marsh.wisp'];
+ if(!st||!e||!Array.isArray(state)||state.length<2)return null;
+ const n=v=>Math.max(-.43,Math.min(.43,v*.075));
+ e.pose.position=[st.position[0]+n(state[0]),st.position[1]+n(state[1]),1.35];
+ M.bump();
+ return {native_lorenz_position:state.slice(),observed_matrix_position:e.pose.position.slice()};
+}
+
 function view(){
  return {ok:true,schema:'REALITI_APARTMENT_NATIVE_STATIONS_V1',
   chart:HOME,source_room_count:ROOM.manifest.length,station_count:stations.length,
