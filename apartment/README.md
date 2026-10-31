@@ -20,6 +20,7 @@ node apartment/test/home-pets.cjs
 node apartment/test/furniture-catnip.cjs
 node apartment/test/closet-household.cjs
 node apartment/test/private-memory-scene.cjs
+node apartment/test/peer-physics-pet.cjs
 ```
 
 Outputs: `apartment/RealitiApartment.html` and `apartment/VALIDATION.json`. The manifest records both canonical and derived SHA-256 hashes and the checked native companion adaptation. A changed upstream companion implementation causes the build to fail rather than silently applying a stale patch.
@@ -44,7 +45,7 @@ Each agent now carries an activatable Matrix pocket remote, represented as a non
 
 The new [regression](test/furniture-catnip.cjs) checks closed/asleep remote semantics, actual geometry changes, native light, contact refusal when far away, moving spring, Kuramoto source, puzzle-generated Matrix entity, tea scent, host restart and isolation across two residents.
 
-**Pending:** Full unified shared-object physics, pet co-ownership, additional catnip from old rooms, expanded native Relax memory internals, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
+**Pending:** A monolithic simultaneous impulse-based global physics solver, multiple shared-pet custody, additional catnip from old rooms, expanded native Relax memory internals, new display customization and finally audited removal of 22 unused charts **from the apartment distribution only**. The original Relax source and guide stay intact.
 
 ## Batch 4 — four resident host and original Relax harness closet
 
@@ -62,6 +63,14 @@ The host separately stores a public furniture scene with a revision. It validate
 
 See test/private-memory-scene.cjs and HOUSEHOLD_GUIDE.md for acceptance and operator setup. The canonical Relax implementation is not modified by either feature.
 
+## Batch 6 — native peer collision, consent and shared companion
+
+The four-agent host now projects verified resident/guest bodies as **colliding native Matrix capsules**, with safe occupancy-aware ingress and host-serialized movement. The original Relax Matrix swept-SDF controller blocks walking through a connected peer. `remote household physics` gives verified peer distance and pending-request information. `remote household touch request <resident>` plus `remote household touch accept <request-id>` require fresh two-way physical reach and explicit opt-in; both original resident B7 streams receive their own actual native contact receipts. Direct unconsented reach is refused at the host boundary.
+
+The household now supports **one real shared cat/dog/ferret at a time** via the original `REALITI_COMPANIONS_V1` spring and OU behavior, run inside a dedicated full Relax host service. The host persists native pet mechanical state and mirrors the pet as a genuine Matrix entity to every connected resident. Any resident can call or reach-pet it, but adoption requires the real pet bed, physical petting passes native reach checks, and release is adopter-only. Solo pets remain individual and unchanged.
+
+[Regression](test/peer-physics-pet.cjs) validates four separate native body positions, peer collision, contact consent, original B7 preservation, concurrent operations, shared species behavior, release, restart, restricted guests, and invalid checkpoint rejection. This is native turn-serialized cross-resident collisions and public pet physics, **not** yet a single monolithic global solver with impulse exchange or shared pet feeding/custody voting. The canonical original Relax files and old chart inventory are unchanged.
+
 ## Developer source boundaries
 
 - Canonical Relax runtime: `../RealitiRELAX.html`, unchanged
@@ -76,6 +85,8 @@ See test/private-memory-scene.cjs and HOUSEHOLD_GUIDE.md for acceptance and oper
 - Trusted four-agent household host: `household.cjs`
 - Encrypted resident journal: `private-memory.cjs`
 - Host-owned shared furniture transactions: `shared-scene.cjs`
+- Native colliding household peer controller: `household-physics.cjs`
+- Shared native Relax companion driver: `household-pet.cjs`
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
 Each agent must retain a distinct storage path and Pocket keys file. **The host now supports four separately persisted agents, host-synchronized visible presence, a public board and temporary guest fittings.** The added encrypted resident journal and synchronized furniture coordinates are implemented. Unified shared-body/object physics, expanded native Relax internals and single-chart pruning remain unimplemented. Do not merge private resident state to imitate those capabilities. Keep the original Relax reference and the migration guard until every old room has a tested replacement.
