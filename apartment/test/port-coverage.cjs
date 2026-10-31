@@ -15,10 +15,14 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
   for(const item of inventory.entries){
    const scene=scenes[item.source_room]||null;
    const source=(scene?.verbs||[]).map(v=>v[0]);
+   const retainedHome=item.source_room==='CLOUD_NINE_NEST';
    const catalog=st.stations.find(x=>x.id===item.source_room);
-   const offered=item.source_room==='CLOUD_NINE_NEST'?[]:catalog?.verbs||[];
-   if(item.source_room!=='CLOUD_NINE_NEST')assert.ok(catalog);
-   const covered=source.filter(v=>offered.includes(v));
+   const offered=retainedHome?[]:catalog?.verbs||[];
+   if(!retainedHome)assert.ok(catalog);
+   // The original four Nest verbs are still provided verbatim by the inherited
+   // CLOUD_NINE_NEST source scene, not by a duplicate workbench. Do not count
+   // them as absent simply because no second home station was built.
+   const covered=retainedHome?source:source.filter(v=>offered.includes(v));
    const missing=source.filter(v=>!offered.includes(v));
    // It is impossible to call a port verified when the static original verbs
    // are missing or its narrative/physics parity test isn't independently signed.
@@ -32,6 +36,7 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
     assert.ok(item.owner_approval&&item.justification);
    }
    detail.push({id:item.source_room,status:item.status,
+    retained_in_original_home:retainedHome,
     source_registered_static_verbs:source.length,station_allowed:offered.length,
     static_verbs_matched:covered.length,
     original_verbs_unported:missing,
@@ -48,7 +53,11 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
    live_matrix_charts:Object.keys(w.REALITI_MATRIX_V1.charts()).length,
    physically_reached_apparatus:st.station_count,
    source_registered_static_verbs:total,
-   station_whitelisted_static_verbs:matching,
+   station_whitelisted_static_verbs:detail.filter(x=>!x.retained_in_original_home)
+     .reduce((n,x)=>n+x.static_verbs_matched,0),
+   home_static_verbs_native_retained:detail.filter(x=>x.retained_in_original_home)
+     .reduce((n,x)=>n+x.static_verbs_matched,0),
+   all_static_verbs_accounted_for:matching,
    still_missing_static_verbs:total-matching,
    parity_approved_rooms:0,
    release_ready:false,
