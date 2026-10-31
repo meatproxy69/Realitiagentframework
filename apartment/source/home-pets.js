@@ -89,6 +89,8 @@ function petView(){
 }
 function parse(raw){
  const s=String(raw||'').replace(/\s+/g,' ').trim(),low=norm(s);
+ const readCmd=/^resource (realiti:\/\/apartment\/(?:home|bed|pet))$/.exec(low);
+ if(readCmd)return {ok:true,schema:'REALITI_RESOURCE_READ_V1',uri:readCmd[1],resource:resource(readCmd[1])};
  if(low==='apartment'||low==='apartment map'||low==='home map'||low==='home furniture')return homeView();
  if(low==='apartment bed'||low==='home bed')return bedView();
  if(low==='pet help')return {ok:true,schema:'REALITI_APARTMENT_PET_HELP_V1',
