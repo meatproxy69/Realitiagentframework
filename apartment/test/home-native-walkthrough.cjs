@@ -127,21 +127,40 @@ function writeReport(){
    const e=M.entities()[target.id];
    if(!e||e.chart!==HOME){fail('Fixture missing '+target.id,'Not registered in HOME');continue}
    const preSurface=Math.max(0,M.sdf(e,before.pose.position));
-   const move=await session.door.run('approach '+target.id);
-   const after=session.window.Realiti.read('realiti://space');
+   // Agent Door mutation envelopes have different shapes from the internal
+   // Matrix op. Ground arrival against the real Matrix SDF, not a top-level
+   // text/receipt field that the public result does not promise to expose.
+   // If one bounded approach undershoots, repeat through the same Agent Door:
+   // this is physical continued walking, NOT direct pose placement/teleport.
+   const attempts=[];
+   let after=before,nav=null;
+   for(let n=0;n<3;n++){
+    const remaining=Math.max(0,M.sdf(e,after.pose.position));
+    if(remaining<=.98)break;
+    const prev=after,move=await session.door.run('approach '+target.id);
+    after=session.window.Realiti.read('realiti://space');
+    nav=move?.result||move;
+    attempts.push({ok:move?.ok===true,moved_m:round(distance(prev.pose.position,after.pose.position)),
+     surface_m:round(Math.max(0,M.sdf(e,after.pose.position))),
+     blocked_by:nav?.blocked_by||null});
+    if(move?.ok!==true||after.chart!==HOME||
+       distance(prev.pose.position,after.pose.position)<.05)break;
+   }
    const surface=Math.max(0,M.sdf(e,after.pose.position));
-   const travel=distance(before.pose.position,after.pose.position);
-   const reached=move?.ok===true&&move.arrived===true&&
-    surface<=1.05&&after.chart===HOME;
-   const entry={target:target.id,ok:move?.ok===true,arrived:!!move?.arrived,
-    within_reach:reached,pre_surface_m:round(preSurface),
-    travel_m:round(travel),surface_m:round(surface),
-    blocked_by:move?.blocked_by||null,detour:move?.detour||null,
-    start_pose:before.pose.position.slice(0,2),
+   const travel=attempts.reduce((sum,a)=>sum+a.moved_m,0);
+   const reached=surface<=1.0&&after.chart===HOME&&
+    attempts.every(a=>a.ok===true);
+   const entry={target:target.id,ok:attempts.every(a=>a.ok===true),
+    native_arrival_flag:nav?.arrived??null,within_reach:reached,
+    approach_attempts:attempts.length,attempts,
+    pre_surface_m:round(preSurface),travel_m:round(travel),
+    surface_m:round(surface),blocked_by:nav?.blocked_by||null,
+    detour:nav?.detour||null,start_pose:before.pose.position.slice(0,2),
     end_pose:after.pose.position.slice(0,2)};
    log.walks.push(entry);
    if(!reached)fail('Unreachable native object '+target.id,
-    JSON.stringify({surface:entry.surface_m,blocked_by:entry.blocked_by,arrived:entry.arrived}));
+    JSON.stringify({surface:entry.surface_m,blocked_by:entry.blocked_by,
+     attempts:entry.attempts}));
    if(preSurface>1.8&&travel<.1)fail('No real spatial movement toward '+target.id,
     'Object was out of reach but the native body did not move');
    if(Object.keys(M.charts()).length!==1||Object.keys(M.portals()).length!==0)
