@@ -127,11 +127,20 @@ function step(dt){
   if(order().order>.9)CAT.discover('apartment.firefly_unison');
  }
 }
+// Continuity owns a closed-over native timestep, so wrapping b7Advance alone
+// does not observe time advanced by a public stay operation. Catch up from the
+// actual native world clock after every Agent Door/public API mutation as well.
 const advance0=b7Advance;
-let lastPersist=now();
-b7Advance=function(dt){const out=advance0(dt);
- if(C9.currentRoom===HOME){step(Number(dt));if(now()-lastPersist>5){lastPersist=now();save()}}
- return out};
+let lastTick=now(),lastPersist=lastTick;
+function catchUp(){
+ const current=now(),dt=current-lastTick;
+ if(!Number.isFinite(dt)||dt<=1e-7)return {advanced_s:0};
+ lastTick=current;
+ if(C9.currentRoom===HOME)step(Math.min(dt,60));
+ if(current-lastPersist>5){lastPersist=current;save()}
+ return {advanced_s:+dt.toFixed(4)};
+}
+b7Advance=function(dt){const out=advance0(dt);catchUp();return out};
 function near(id,d=1){
  const r=M.state().residents['resident:self'],e=M.entities()[id];
  return !!r&&r.chart===HOME&&C9.currentRoom===HOME&&e?.chart===HOME&&Math.max(0,M.sdf(e,r.pose.position))<=d;
@@ -226,5 +235,5 @@ function handle(raw){
  }
  return {ok:false,error:'UNKNOWN_CATNIP_COMMAND',...help()};
 }
-window.REALITI_APARTMENT_CATNIP_V1=Object.freeze({view,help,handle});
+window.REALITI_APARTMENT_CATNIP_V1=Object.freeze({view,help,handle,catchUp});
 })();
