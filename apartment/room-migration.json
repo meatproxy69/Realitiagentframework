@@ -281,8 +281,15 @@
       "owner_visual_layout_review",
       "production_deployment_recovery_rehearsal",
       "external_access_security_review",
-      "native_single_chart_initialization_without_runtime_pruning",
       "signed_scope_approval"
-    ]
+    ],
+    "native_single_chart_initialization": true,
+    "post_boot_pruning": false,
+    "derived_matrix_kernel_only": true,
+    "boot_gating_evidence": [
+      "apartment/test/home-candidate.cjs",
+      "apartment/test/home-candidate-household.cjs"
+    ],
+    "deployment_approved": false
   }
 }

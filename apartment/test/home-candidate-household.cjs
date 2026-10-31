@@ -16,6 +16,10 @@ const assertRoom=agent=>{
  assert.equal(top.charts.length,1);
  assert.equal(top.portals,0);
  assert.equal(top.home_first_candidate,true);
+ assert.equal(top.native_single_chart_initialization,true);
+ assert.equal(top.initial_charts_at_boot,1);
+ assert.equal(top.retired_at_boot,0);
+ assert.equal(top.no_post_startup_pruning,true);
  assert.equal(top.live_source_engine_stations,0);
  assert.equal(agent.read('realiti://apartment/stations').error,
   'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE');
