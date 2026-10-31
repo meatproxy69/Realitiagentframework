@@ -25,13 +25,14 @@
   "entries": [
     {
       "source_room": "CLOUD_NINE_NEST",
-      "apartment_location": "native twelve-metre apartment chart, bed, rain window, furniture, physical support, pet corner",
+      "apartment_location": "real 12 × 12 m private apartment: bed, rain window, native furniture, accent/material/lighting control, physical catnip",
       "status": "retained_anchor",
       "parity_tests": [
         "apartment/test/extras.cjs",
-        "apartment/test/home-pets.cjs"
+        "apartment/test/home-pets.cjs",
+        "apartment/test/furniture-catnip.cjs"
       ],
-      "notes": "The living room is implemented in the original trusted chart with added native collidable furniture; preserve the Relax chart ID until all references are retired. This is not yet permission to prune legacy charts."
+      "notes": "Ported physical room fixtures and local personalization plus carried remote. This is only the inhabited home in the full migration build; legacy charts are not yet retired."
     },
     {
       "source_room": "NO_ASK_SANCTUARY",
@@ -57,9 +58,11 @@
     {
       "source_room": "CARDBOARD_BOX_WORKSHOP",
       "apartment_location": "crafting desk: real persistent object changes",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/furniture-catnip.cjs"
+      ],
+      "notes": "A three-click physical puzzle box is now in Apartment with a Matrix-revealed ball, but original workshop folding, material mechanics and persistence remain to be mapped. Do not retire this room."
     },
     {
       "source_room": "DEPTH_BATHHOUSE",
@@ -122,9 +125,11 @@
     {
       "source_room": "FIREFLY_MEADOW",
       "apartment_location": "firefly jar/lamp with original coupled rhythm dynamics",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/furniture-catnip.cjs"
+      ],
+      "notes": "Native Kuramoto-coupled oscillator equations were adapted into a twelve-light Matrix jar. The original 48-firefly meadow, its original spatial range, phase/tapping conditions and full pass remain unported; parity NOT established."
     },
     {
       "source_room": "KITE_FIELD",
