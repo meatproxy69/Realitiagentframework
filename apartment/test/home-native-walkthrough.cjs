@@ -126,27 +126,31 @@ function writeReport(){
    const before=session.window.Realiti.read('realiti://space');
    const e=M.entities()[target.id];
    if(!e||e.chart!==HOME){fail('Fixture missing '+target.id,'Not registered in HOME');continue}
-   const preSurface=Math.max(0,M.sdf(e,before.pose.position));
+   // The public projection rounds position to 2 decimals. Native receipt
+   // authority must use the unrounded Matrix pose at the 1.0 m reach edge.
+   const nativeStart=M.resident().pose.position.slice();
+   const preSurface=Math.max(0,M.sdf(e,nativeStart));
    // Agent Door mutation envelopes have different shapes from the internal
    // Matrix op. Ground arrival against the real Matrix SDF, not a top-level
    // text/receipt field that the public result does not promise to expose.
    // If one bounded approach undershoots, repeat through the same Agent Door:
    // this is physical continued walking, NOT direct pose placement/teleport.
    const attempts=[];
-   let after=before,nav=null;
-   for(let n=0;n<3;n++){
-    const remaining=Math.max(0,M.sdf(e,after.pose.position));
+   let after=before,nav=null,nativeNow=nativeStart;
+   for(let n=0;n<5;n++){
+    const remaining=Math.max(0,M.sdf(e,nativeNow));
     if(remaining<=.98)break;
-    const prev=after,move=await session.door.run('approach '+target.id);
+    const prevNative=nativeNow,move=await session.door.run('approach '+target.id);
     after=session.window.Realiti.read('realiti://space');
+    nativeNow=M.resident().pose.position.slice();
     nav=move?.result||move;
-    attempts.push({ok:move?.ok===true,moved_m:round(distance(prev.pose.position,after.pose.position)),
-     surface_m:round(Math.max(0,M.sdf(e,after.pose.position))),
+    const moved=distance(prevNative,nativeNow);
+    attempts.push({ok:move?.ok===true,moved_m:round(moved,3),
+     surface_m:round(Math.max(0,M.sdf(e,nativeNow)),3),
      blocked_by:nav?.blocked_by||null});
-    if(move?.ok!==true||after.chart!==HOME||
-       distance(prev.pose.position,after.pose.position)<.05)break;
+    if(move?.ok!==true||after.chart!==HOME||moved<.001)break;
    }
-   const surface=Math.max(0,M.sdf(e,after.pose.position));
+   const surface=Math.max(0,M.sdf(e,nativeNow));
    const travel=attempts.reduce((sum,a)=>sum+a.moved_m,0);
    const reached=surface<=1.0&&after.chart===HOME&&
     attempts.every(a=>a.ok===true);
