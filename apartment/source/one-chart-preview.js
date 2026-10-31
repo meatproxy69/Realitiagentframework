@@ -69,6 +69,7 @@ if(typeof FIRST!=='undefined'){
 const Drun=D.run.bind(D),Dhelp=D.help?.bind(D);
 D.run=async function(raw){
  const text=String(raw||'').trim();
+ if(/^help$/i.test(text))return D.help();
  if(/^(?:rooms|places|more places|all places)$/i.test(text))return cp(only);
  const match=/^(?:go|enter)\s+(.+)$/i.exec(text);
  if(match&&!safeName(match[1]))return noRoom(match[1]);
