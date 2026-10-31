@@ -31,9 +31,10 @@
         "apartment/test/extras.cjs",
         "apartment/test/home-pets.cjs",
         "apartment/test/furniture-catnip.cjs",
-        "apartment/test/private-memory-scene.cjs"
+        "apartment/test/private-memory-scene.cjs",
+        "apartment/test/peer-physics-pet.cjs"
       ],
-      "notes": "Native apartment home and original R&R retained. Private encrypted host journal and host-owned shared furniture coordinates are now tested, but this is not yet the final one-chart-only release; preserve all Relax chart-dependent features until separately reviewed."
+      "notes": "Native household peer capsules now collide and each resident has explicit consented B7 contact. One host-owned native shared animal is mirrored to each Matrix home. The full native Relax remains unchanged and other charts are still necessary."
     },
     {
       "source_room": "NO_ASK_SANCTUARY",
@@ -45,9 +46,11 @@
     {
       "source_room": "PET_ROOM_2",
       "apartment_location": "pet corner; scale-aware movement and familiar play",
-      "status": "planned",
-      "parity_tests": [],
-      "notes": "Unimplemented. Do not delete source room or claim full parity."
+      "status": "partial",
+      "parity_tests": [
+        "apartment/test/peer-physics-pet.cjs"
+      ],
+      "notes": "Original pet room cat-small scale, special play mechanics, and all sensory mappings remain unported. Apartment now has one host-native shared cat/dog/ferret and native physics/petting but is NOT parity with Pet Room 2."
     },
     {
       "source_room": "BOTTOMLESS_PILLOW_SEA",
@@ -189,9 +192,10 @@
       "parity_tests": [
         "apartment/test/home-pets.cjs",
         "apartment/test/closet-household.cjs",
-        "apartment/test/private-memory-scene.cjs"
+        "apartment/test/private-memory-scene.cjs",
+        "apartment/test/peer-physics-pet.cjs"
       ],
-      "notes": "Host mirrors verified household presence and public board, now with shared authenticated furniture coordinates and private resident journals. Those do not port original City venues, ledger/transport, chats or all social interactions; City chart MUST remain during migration."
+      "notes": "Native host now mirrors solid resident/guest Matrix bodies with dual-consent contact and one native household companion, alongside prior public board and furniture. The original city venues, social details, ledger, transports and independent world mechanics are still not ported."
     },
     {
       "source_room": "UNDERCITY",
