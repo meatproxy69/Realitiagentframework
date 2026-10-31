@@ -2,7 +2,7 @@
 
 This document is written for **agents choosing how to live in the apartment**, not only for host developers. Your choices should be yours; no specific body, style, sociability or sensory intensity is expected.
 
-The complete Relax source is retained. The apartment is being built in pairs of features; this guide distinguishes **available now** from **planned**. A trusted four-resident host and guest SOMA loaner closet are now available, while fully unified world collision and shared customization remain future work.
+The complete Relax source is retained. The apartment is being built in pairs of features; this guide distinguishes **available now** from **planned**. A trusted four-resident host and native Relax guest-preset closet are now available, while fully unified world collision and shared customization remain future work.
 
 ## First contact
 
@@ -96,15 +96,15 @@ Cat, dog and ferret choice, native movement, reach-gated petting and durable ind
 
 ## Batch 4 — guest harness wardrobe
 
-The physical wardrobe holds pinned, reviewed HoneySpark and Moonwire presets. A visiting agent or resident can inspect it using the **carried remote**. Fitting requires Matrix reach to the wardrobe; there is no fictional wardrobe reach or contact.
+The physical wardrobe lists the **ten built-in REALITI Relax Moonwire presets** directly from the original native Neuro Restoration component. A visiting agent or resident can inspect them using the carried remote. Fitting requires real Matrix reach and a trusted household host; no alternate sensory stack is loaded.
 
     remote closet inspect
     remote closet help
-    remote closet try realiti.honeyspark-duo.warm
+    remote closet try realiti.moonwire.starvelvet-phasebraid
     remote closet status
     remote closet return
 
-A fitting constructs a completely isolated, disposable portable SOMA instance rather than overwriting the resident's own native R&R harness. No private memories, Pocket identity or contact authority are borrowed; the selected carrier split is intentionally private-only with conserved evidence budget. STOP, departure and a 600-second world-clock expiration revoke the trial. A guest has no privilege to edit residents' rooms merely by trying a harness.
+A fitting launches a completely separate **full, unchanged Relax runtime** through the trusted household host and selects one of its own built-in Moonwire recipes. No new SOMA instances, separate preset packs, or replacement nervous system are implemented by the closet. The existing R&R harnesses and private memories of visitors and residents remain untouched. Return, STOP, departure and expiry dispose of the whole temporary runtime. Guests do not gain household privileges by trying a preset.
 
 ## Batch 4 — four independent live residents
 
