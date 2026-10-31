@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import {adaptCompanions} from './source/companion-adapter.mjs';
 import {adaptWonder,adaptFrontier} from './source/native-wonder-adapter.mjs';
+import {adaptDynamics,adaptNativePillow} from './source/native-body-adapter.mjs';
 const root=new URL('../',import.meta.url);
 const apartment=new URL('./',import.meta.url);
 const read=async p=>fs.readFile(new URL(p,apartment),'utf8');
@@ -26,6 +27,12 @@ if(html.split(wonderSource).length!==2||html.split(frontierSource).length!==2)
  throw Error('NATIVE_WONDER_OR_FRONTIER_SOURCE_NOT_UNIQUE_IN_RELAX');
 const apartmentWonder=adaptWonder(wonderSource),apartmentFrontier=adaptFrontier(frontierSource);
 html=html.replace(wonderSource,apartmentWonder).replace(frontierSource,apartmentFrontier);
+const dynSource=await fs.readFile(new URL('source/scripts/58a-dynamics.js',root),'utf8');
+const pillowSource=await fs.readFile(new URL('source/scripts/63-claude-neural-pass.js',root),'utf8');
+if(html.split(dynSource).length!==2||html.split(pillowSource).length!==2)
+ throw Error('NATIVE_RELAX_PRESSURE_OR_PILLOW_SOURCE_NOT_UNIQUE');
+const apartmentDyn=adaptDynamics(dynSource),apartmentPillow=adaptNativePillow(pillowSource);
+html=html.replace(dynSource,apartmentDyn).replace(pillowSource,apartmentPillow);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
   'source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
@@ -47,7 +54,7 @@ for(const filename of overlays){
 const file=new URL('RealitiApartment.html',apartment);
 await fs.writeFile(file,html);
 const validation={
- schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.5.0',
+ schema:'REALITI_APARTMENT_VALIDATION_V1',version:'0.6.0',
  source_artifact:'../RealitiRELAX.html',
  source_html_sha256:hash(base),
  native_companions_source_sha256:hash(nativeSource),
@@ -56,7 +63,11 @@ const validation={
  native_wonder_station_patch_sha256:hash(apartmentWonder),
  native_frontier_source_sha256:hash(frontierSource),
  native_frontier_station_patch_sha256:hash(apartmentFrontier),
- verified_engine_access:'original relax wonder/frontier patched only in derived HTML, by exact source anchors',
+ native_dynamics_source_sha256:hash(dynSource),
+ native_dynamics_station_patch_sha256:hash(apartmentDyn),
+ native_pillow_source_sha256:hash(pillowSource),
+ native_pillow_station_patch_sha256:hash(apartmentPillow),
+ verified_engine_access:'original Relax Wonder/Frontier/Dynamics/Neural Pass instrumented only in separate Apartment HTML, by unique exact source anchors',
  native_companions_patch:'source/companion-adapter.mjs',
  overlays:overlays.slice(),
  closet_preset_source:'unchanged native REALITI_NEURO_RESTORATION_V1.presets()',
