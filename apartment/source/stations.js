@@ -273,6 +273,14 @@ function invokeNative(st,verb,args){
   if(verb==='map')return {ok:true,native_model:window.REALITI_UNDERCITY_V1.layout(),
    apartment_evidence:echo(),historical_model_only:true};
  }
+ if((st.id==='BOTTOMLESS_PILLOW_SEA'||st.id==='DEPTH_BATHHOUSE')&&verb==='weather_wave'){
+  const original=c9verb(st.id,verb),wave=window.REALITI_DYNAMICS_V1?.state?.()?.wave||null;
+  return wave?{ok:true,native_wave:wave,
+   original_dynamics:'REALITI_DYNAMICS_V1',
+   source:'ORIGINAL_SOURCE_WAVE_PROFILE',
+   law:'Original wave runs only while authentic home body support remains in native Matrix reach.'}:
+   {ok:false,error:'NATIVE_PRESSURE_WAVE_WAS_NOT_LAUNCHED',original_action:original===true};
+ }
  if(st.id==='CLOCKWORK_MARSH'&&verb==='predict'){
   if(!Array.isArray(args)||args.length!==2||!args.every(Number.isFinite))
    return {ok:false,error:'PREDICTION_COORDINATES_REQUIRED'};
