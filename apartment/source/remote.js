@@ -72,7 +72,8 @@ function remoteRequired(s){
  return /^(?:extras(?:\s|$)|apartment(?:\s|$)|home (?:map|bed|furniture)(?:\s|$)|pet (?:help|status|home|call|stroke|choose|release)(?:\s|$))/.test(s);
 }
 async function run(raw){
- const s=normalize(raw);
+ const spoken=String(raw||'').replace(/\s+/g,' ').trim();
+ const s=normalize(spoken);
  if(s==='help')return help();
  if(s==='remote'||s==='remote status'){sync();return status()}
  if(s==='remote activate'||s==='remote on'){
@@ -102,7 +103,7 @@ async function run(raw){
   if(command==='extras')return originalRun('extras');
   if(command.startsWith('furniture '))return F.handle(command.slice(10));
   if(command.startsWith('catnip '))return C.handle(command.slice(7));
-  if(command.startsWith('pet '))return originalRun(command);
+  if(command.startsWith('pet '))return originalRun(spoken.slice(7));
   if(command.startsWith('extras '))return originalRun(command);
   return {ok:false,error:'UNKNOWN_REMOTE_PAGE',...menu()};
  }
