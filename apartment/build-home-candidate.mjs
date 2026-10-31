@@ -5,6 +5,7 @@
 import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import {adaptNativeHomeBoot} from './source/native-home-boot-adapter.mjs';
+import {adaptHomeBedAlcove} from './source/native-home-bedroom-adapter.mjs';
 const apartment=new URL('./',import.meta.url);
 const read=async name=>fs.readFile(new URL(name,apartment),'utf8');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -21,7 +22,14 @@ const originalKernel=await fs.readFile(new URL('source/scripts/57.js',new URL('.
 if(base.split(originalKernel).length!==2)
  throw Error('HOME_CANDIDATE_ORIGINAL_MATRIX_KERNEL_NOT_UNIQUE');
 const nativeKernel=adaptNativeHomeBoot(originalKernel);
-const clean=base.replace(originalKernel,nativeKernel);
+const worldKernel=await fs.readFile(new URL('source/scripts/58d-matrix-world.js',new URL('../',apartment)),'utf8');
+if(base.split(worldKernel).length!==2)
+ throw Error('HOME_CANDIDATE_ORIGINAL_WORLD_SOURCE_NOT_UNIQUE');
+const bedroomKernel=adaptHomeBedAlcove(worldKernel);
+// The bedroom's initial spawn is moved *with* its native mattress before
+// the original world layer registers geometry. No after-boot teleportation.
+const clean=base.replace(originalKernel,nativeKernel)
+ .replace(worldKernel,bedroomKernel);
 if(clean.includes('realiti-apartment-home-first-configuration'))
  throw Error('HOME_CANDIDATE_LEGACY_LATE_CONFIG_MUST_NOT_BE_PRESENT');
 const source=await read('source/one-chart-preview.js');
@@ -32,7 +40,8 @@ const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\
  source+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
- version:'0.1.0-alpha',candidate_only:true,preview_only:true,
+ version:'4.0.0-beta.1',candidate_only:true,preview_only:true,
+ public_distribution:'GITHUB_PUBLIC_PRERELEASE_LOCAL_TRUSTED_ONLY',
  release_approved:false,product_parity_reviewed:false,
  single_html_sha256:hash(html),
  parent_apartment_sha256:validated.single_html_sha256,
@@ -40,6 +49,10 @@ const manifest={
  source_gate_sha256:hash(source),
  original_matrix_kernel_sha256:hash(originalKernel),
  native_matrix_boot_gate_sha256:hash(nativeKernel),
+ original_world_kernel_sha256:hash(worldKernel),
+ home_bedroom_kernel_sha256:hash(bedroomKernel),
+ bedroom_layout:'SOUTHWEST_QUIET_ALCOVE_V4',
+ layout_checkpoint_migration_approved:false,
  native_single_chart_initialization:true,
  no_post_startup_pruning_required:true,
  expected_chart_ids:['CLOUD_NINE_NEST'],
