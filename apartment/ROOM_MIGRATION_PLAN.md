@@ -28,6 +28,12 @@ The separate `RealitiApartmentOneChartPreview.html` removes **actual old Matrix 
 
 `apartment/test/port-coverage.cjs` measures source-room static registered verb coverage and produces a machine-readable gap ledger during CI. Missing dynamic actions, environmental coupling, object geometry and STOP/restart behavior remain explicit independent work. Merely having a station (or a wrapped original function) is **not** proof of complete room migration. The original Relax files and resident identities must remain reversible and untouched.
 
+## Live action-gap audit and the next mechanical gate
+
+The source-action audit now distinguishes four original Nest verbs that remain in the native HOME scene from missing workbench commands. Physical Fireside sofa/mug/window, actual 16-ray HOME echo mapping, separated historical City ledger vs verified active household presence, and native Lorenz pursuit are now tested in both current Apartment and the separate one-chart preview.
+
+This does **not** silently approve historical City dancehall geometry, the two-kilometre Archipelago, old boat boarding/landing, genuine Undercity tunnel exploration or other dynamic controls. Original harbor/boat and venue behavior must be ported independently with new actual Matrix objects and equivalent state/physics, or explicitly excluded by owner approval. Keep `partial` status until the complete parity gate passes.
+
 ## Non-negotiable acceptance checks
 
 1. **Single spatial truth:** Exactly one `M.charts()` entry, the apartment chart, with zero outgoing portals and no non-home residents; the spatial footprint and bed/window/closet entities are inspectable.
