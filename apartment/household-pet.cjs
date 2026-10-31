@@ -29,6 +29,8 @@ function createHouseholdPet({getData,persist,atHome,options}={}){
      !Array.isArray(rec.native.ou)||rec.native.ou.length!==2||
      !rec.native.ou.every(finite)||
      !Array.isArray(rec.position)||rec.position.length!==3||!rec.position.every(finite)||
+     !finite(rec.radius)||rec.radius<.08||rec.radius>.45||
+     !['longfur','shortfur'].includes(rec.material)||
      !Number.isSafeInteger(rec.calls)||rec.calls<0||
      !Number.isSafeInteger(rec.pets)||rec.pets<0||
      !Number.isSafeInteger(rec.revision)||rec.revision<1)
