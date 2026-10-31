@@ -35,6 +35,11 @@ export function adaptCompanions(original) {
     'pet_stays_inside_apartment_bounds'
   );
   patch(
+    "function release(name){const p=petState();",
+    "function release(name){const p=petState(),r=me();",
+    'release_current_matrix_resident'
+  );
+  patch(
     "if(!ent()['city.stray'])M.addEntity({id:'city.stray'",
     "if(r&&r.chart===CITY&&!ent()['city.stray'])M.addEntity({id:'city.stray'",
     'release_does_not_spawn_city_stray_from_home'
