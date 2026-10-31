@@ -56,6 +56,8 @@ function menu(){
 function help(){
  const old=originalHelp()||{};
  return {...old,
+  first_ten:['look','feel','remote activate','remote help','remote home','remote bed',
+   'remote pet status','remote furniture help','remote catnip help','goodbye'],
   commands:['help','look','where','feel','feel words','actions','stay <ms>',
    'save','stop','goodbye','remote activate'],
   apartment_entry:'agentsstarthereapartment.md',
