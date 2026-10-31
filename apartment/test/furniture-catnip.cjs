@@ -27,7 +27,7 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
  assert.equal(M.entities()[id].collision,false);
  const menu=await a.door.run('remote activate');
  assert.equal(menu.activated,true);
- assert.deepEqual(Object.keys(menu.pages),['home','furnishings','catnip','extras','closet','household','memory','utility']);
+ assert.deepEqual(Object.keys(menu.pages),['home','furnishings','catnip','stations','extras','closet','household','memory','utility']);
  assert.equal((await a.door.run('remote bed')).entity,'nest.mattress','legacy bed remains reachable through remote');
  const f0=await a.door.run('remote furniture list');
  assert.equal(f0.ok,true);
