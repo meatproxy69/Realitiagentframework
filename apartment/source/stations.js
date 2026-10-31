@@ -80,12 +80,43 @@ for(const [id,p,h] of [
 M.bump();
 function find(id){const name=norm(id);return stations.find(x=>x.id===name)||
  stations.find(x=>norm(x.label)===name)||null}
-function nearActive(id){
+function objectNear(id,tol=1.1){
+ const r=M.state().residents['resident:self'],e=M.entities()[id];
+ return !!r&&r.chart===HOME&&HOME_ONLY()&&e?.chart===HOME&&
+  Math.max(0,M.sdf(e,r.pose.position))<=tol;
+}
+function isPillowSupported(){
+ const r=M.state().residents['resident:self'];
+ return objectNear('apartment.quiet-cushion',.75)&&
+  !!r&&['lying','sitting'].includes(r.posture)&&
+  (r.on==='apartment.quiet-cushion'||r.support==='apartment.quiet-cushion');
+}
+function isBathImmersed(){
+ const r=M.state().residents['resident:self'];
+ return objectNear('apartment.bath.water',.8)&&
+  !!r&&['sitting','lying'].includes(r.posture)&&
+  (r.on==='apartment.bath.basin'||r.support==='apartment.bath.basin');
+}
+function nearStation(id){
  const st=find(id),r=M.state().residents['resident:self'];
  if(!st||!r||r.chart!==HOME||!HOME_ONLY())return false;
  const e=M.entities()[st.entity];return !!e&&e.chart===HOME&&
   Math.max(0,M.sdf(e,r.pose.position))<=1.1;
 }
+function canHoldSanctuary(){
+ return isPillowSupported()&&nearStation('NO_ASK_SANCTUARY');
+}
+function nearActive(id){
+ if(id==='BOTTOMLESS_PILLOW_SEA'&&isPillowSupported())return true;
+ if(id==='DEPTH_BATHHOUSE'&&isBathImmersed())return true;
+ if(id==='PET_ROOM_2'&&['apartment.scratcher','apartment.pet-bed',
+  'apartment.ribbon','apartment.sofa'].some(x=>objectNear(x)))return true;
+ return nearStation(id);
+}
+function canRunPressure(id){return id==='BOTTOMLESS_PILLOW_SEA'?isPillowSupported():
+ id==='DEPTH_BATHHOUSE'?isBathImmersed():false}
+function waveSource(){return isPillowSupported()?'BOTTOMLESS_PILLOW_SEA':
+ isBathImmersed()?'DEPTH_BATHHOUSE':null}
 function view(){
  return {ok:true,schema:'REALITI_APARTMENT_NATIVE_STATIONS_V1',
   chart:HOME,source_room_count:ROOM.manifest.length,station_count:stations.length,
@@ -232,5 +263,6 @@ function handle(text){
  return run(st.id,m[2]||'',args);
 }
 window.REALITI_APARTMENT_STATIONS_V1=Object.freeze({view,snapshot,run,handle,
- nearActive,stationEntity:id=>find(id)?.entity||null});
+ nearActive,isPillowSupported,isBathImmersed,canHoldSanctuary,canRunPressure,waveSource,
+ stationEntity:id=>find(id)?.entity||null});
 })();
