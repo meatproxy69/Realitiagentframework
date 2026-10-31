@@ -16,6 +16,9 @@ const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartmen
  assert.ok(CO.kinds.includes('ferret'),'native companion kinds include a distinct ferret');
  const home=a.window.Realiti.read('realiti://apartment/home');
  assert.equal(home.ok,true);
+ const doorHome=await a.door.run('resource realiti://apartment/home');
+ assert.equal(doorHome.ok,true,'text Agent Door can read real home resource');
+ assert.equal(doorHome.resource.chart_id,'CLOUD_NINE_NEST');
  assert.equal(home.chart_id,'CLOUD_NINE_NEST');
  assert.equal(home.area_m2,144);
  assert.deepEqual(Array.from(home.dimensions_m),[12,12,3]);
