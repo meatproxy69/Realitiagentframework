@@ -4,13 +4,18 @@
 // readouts are distinguished from world-grounded B7/contact evidence.
 const assert=require('node:assert/strict'),fs=require('node:fs'),os=require('node:os'),path=require('node:path');
 const {openResident}=require('../../packages/realiti-headless-resident/index.cjs');
-const html=path.resolve(process.argv[2]||path.join(__dirname,'../RealitiApartment.html'));
+const preview=process.argv[2]==='preview';
+const html=path.resolve(__dirname,'../'+(preview?'RealitiApartmentOneChartPreview.html':'RealitiApartment.html'));
+const validationPath=preview?path.resolve(__dirname,'../ONE_CHART_VALIDATION.json'):undefined;
 const stage=s=>console.log('NATIVE_BODY_STAGE:'+s);
 async function run(){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'apartment-native-body-'));
- const opts={htmlPath:html,residentId:'native-bodysupport',storagePath:path.join(root,'body.json')};
+ const opts={htmlPath:html,validationPath,residentId:'native-bodysupport',storagePath:path.join(root,'body.json')};
  let a=await openResident(opts),w=a.window,M=w.REALITI_MATRIX_V1,MW=w.REALITI_MATRIX_WORLD_V1;
  const ST=w.REALITI_APARTMENT_STATIONS_V1,DYN=w.REALITI_DYNAMICS_V1;
+ assert.equal(Object.keys(M.charts()).length,preview?1:23,
+  'body fixtures must execute with the expected actual Matrix topology');
+ if(preview)assert.equal(Object.keys(M.portals()).length,0);
  assert.equal(a.ready.harness,'REALITI_RR_HARNESS_V1');
  assert.equal(w.REALITI_RR_HARNESS_V1.boot().ok,true);
  assert.ok(M.entities()['apartment.bath.basin']);
@@ -49,7 +54,10 @@ async function run(){
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.equal(out.native_wave.room,'BOTTOMLESS_PILLOW_SEA');
  stage('pillow_wave_tick');
- w.eval('b7Advance(0.3)');
+ // Nonzero bounded world ticks verify native state transitions without using
+ // long wall-clock physics runs as a surrogate for a long-form soak test.
+ // Original Relax equations and ordinary b7Advance execution are untouched.
+ w.eval('b7Advance(0.12)');
  assert.ok(DYN.state().wave!=null,'original wave still evolves at physical HOME station');
  const m=w.REALITI_HAPTIC_FIELD_V20.exact();
  assert.ok(m.m.some(Boolean),'original Relax haptics receive actual support on physical cushion');
@@ -58,7 +66,7 @@ async function run(){
  stage('sanctuary_hold');
  out=await a.door.run('remote stations use NO_ASK_SANCTUARY quiet');
  assert.equal(out.ok,true,JSON.stringify(out));
- w.eval('b7Advance(0.4)');
+ w.eval('b7Advance(0.12)');
  const hold=DYN.state().hold;
  assert.equal(hold.active,true,'original sanctuary hold is active only on a real supporting Apartment cushion');
  assert.ok(hold.zones>=4,'native Relax sanctuary body zones are genuinely leased');
@@ -66,7 +74,7 @@ async function run(){
  assert.ok(waveBefore?.age_s>=0);
  const room=M.resident();
  MW.op('posture',{kind:'stand'});
- w.eval('b7Advance(.3)');
+ w.eval('b7Advance(.12)');
  assert.equal(ST.isPillowSupported(),false);
  assert.equal(DYN.state().wave,null,'moving off real support revokes the original wave');
  // Native bath thermal leases require the actual resident sitting in the
@@ -83,7 +91,7 @@ async function run(){
  assert.equal(out.ok,true,JSON.stringify(out));
  assert.ok(out.native_state?.bath||DYN.state().bath,'native thermal bath state is surfaced');
  stage('bath_integrate');
- w.eval('b7Advance(.9)');
+ w.eval('b7Advance(.55)');
  const bath=DYN.state().bath;
  assert.ok(bath.depth>.05,'original first-order bath-depth model actually integrates');
  assert.ok(bath.zones>0,'native Relax zones receive water support leases');
@@ -94,7 +102,7 @@ async function run(){
  out=await a.door.run('remote stations use DEPTH_BATHHOUSE surface');
  assert.equal(out.ok,true,JSON.stringify(out));
  stage('bath_surface');
- w.eval('b7Advance(1.4)');
+ w.eval('b7Advance(.35)');
  assert.ok(DYN.state().bath.depth<bath.depth,'original water depth relaxes upward');
  await a.door.run('stop');
  assert.equal(DYN.state().bath.depth,0,'STOP releases original thermal support and active waves');
@@ -165,7 +173,10 @@ async function run(){
  assert.equal(a.window.eval('C9.box2.tunnel'),true,'original native cardboard history survives restart');
  assert.ok(a.window.REALITI_MATRIX_V1.entities()['apartment.cardboard.tunnel-roof']);
  assert.equal(a.window.eval('C9.pet2.scale'),'NORMAL');
+ assert.equal(Object.keys(a.window.REALITI_MATRIX_V1.charts()).length,preview?1:23,
+  'original body interactions must survive restart in the same topology');
+ if(preview)assert.equal(Object.keys(a.window.REALITI_MATRIX_V1.portals()).length,0);
  a.close();
- console.log('APARTMENT NATIVE BODY SUPPORT PASS: authentic Matrix cushion/basin/den, original Relax pillow field leases, thermal bath dynamics, pressure waves and STOP, original semantic cat scale plus real capsule size, original cardboard memory and native mapped routes');
+ console.log('APARTMENT NATIVE BODY SUPPORT PASS:',preview?'ONE CHART':'DEVELOPMENT','authentic Matrix cushion/basin/den, original Relax pillow field leases, thermal bath dynamics, pressure waves and STOP, original semantic cat scale plus real capsule size, original cardboard memory and native mapped routes');
 }
 run().catch(e=>{console.error(e.stack||e);process.exitCode=1});

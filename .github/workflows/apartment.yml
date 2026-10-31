@@ -116,6 +116,9 @@ jobs:
       - name: Original Relax pillow, thermal water, cat-small body and physical box
         timeout-minutes: 3
         run: node apartment/test/native-body-fixtures.cjs
+      - name: Recheck native pillow, bath, cat-small body and physical box with exactly one real Matrix chart
+        timeout-minutes: 3
+        run: node apartment/test/native-body-fixtures.cjs preview
       - name: Audit every source-room static verb and unresolved parity gap
         run: node apartment/test/port-coverage.cjs
       - name: Verify actual one-chart Matrix topology without claiming mechanical parity
