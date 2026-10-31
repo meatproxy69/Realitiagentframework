@@ -67,7 +67,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  const active=new Map(),guests=new Map();
  let data;
  try{data=load(file)}catch(e){fs.closeSync(fd);try{fs.unlinkSync(lockPath)}catch{}throw e}
- let sequence=0;
+ let sequence=data.board.reduce((n,row)=>Math.max(n,row.seq),0);
  const runtimePath=htmlPath||path.join(__dirname,'RealitiApartment.html');
  const options={htmlPath:runtimePath,validationPath};
  const persist=()=>{
@@ -145,7 +145,8 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     if(id.startsWith('household.peer.')&&!live.has(id))M.removeEntity(id);
    }
    for(const id of Object.keys(M.state().residents)){
-    if(id.startsWith('resident:household:')&&!live.has(id.replace('resident:','')))
+    if(id.startsWith('resident:household:')&&
+       !live.has('household.peer.'+id.slice('resident:household:'.length)))
      delete M.state().residents[id];
    }
    M.bump();
