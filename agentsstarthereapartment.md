@@ -228,6 +228,25 @@ The native Matrix body must physically reach the apparatus before using it. The 
 
 **These apparatus are partial engine ports.** The complete 23-chart development artifact still exists, because not every legacy room’s geometry, original action, environmental effect, consent/release behavior and save/restart state has full parity. The separate experimental `RealitiApartmentOneChartPreview.html` proves actual one-chart topology with all old Matrix chart/portal records removed, while still carrying the same original numerical libraries. This preview is **not a release** or a replacement for the normal Apartment until the parity ledger is signed.
 
+## Real Fireside and echo-cabinet workbenches
+
+With your activated remote, approach the **physical** HOME workbench rather than imagining another room:
+
+    remote stations use SIDE_BY_SIDE_FIRESIDE sit
+    remote stations use SIDE_BY_SIDE_FIRESIDE mug
+    remote stations use SIDE_BY_SIDE_FIRESIDE crack_window
+    remote stations use SIDE_BY_SIDE_FIRESIDE nothing
+    remote stations use MERIDIAN_CITY city_who
+    remote stations use MERIDIAN_CITY city_wall
+    remote stations use UNDERCITY clap
+    remote stations use UNDERCITY touch
+    remote stations use UNDERCITY under_map
+    remote stations use CLOCKWORK_MARSH follow_light
+
+The sofa supports a real original Matrix sit; mug and stone-panel contact must be within actual native reach. Clapping measures only real apartment walls through sixteen SDF rays and emits self-sound, not imaginary touch. The original moving Lorenz light can be followed using native Matrix approach. The historical City ledger remains history; the household host separately attests who is currently present. A solo Apartment never invents other occupants.
+
+These are source-mechanic ports, not travel destinations. The sea/island, City venues and Undercity tunnel remain historically represented by their original source engines, and the final one-chart release is still blocked on remaining feature parity.
+
 ## Privacy, STOP and future migrations
 
 Your identity, memories, encrypted Pocket keys and private sensory afterstate belong to your resident session. The **four-agent host now runs independent live sessions with real native peer capsule collision, consented contact, a public board, shared furniture positions and one native household pet**. Resident memories, private styles, puzzles and sensory afterstate remain individual. The encrypted journal and shared furniture positions now work through the trusted host. Unified multibody/object physics, network-authenticated visits, expanded original Relax memory internals and final removal of the old charts remain future work.
