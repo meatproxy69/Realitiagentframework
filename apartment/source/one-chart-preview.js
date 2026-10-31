@@ -11,8 +11,16 @@ const NATIVE=window.REALITI_SLICE_ROOMS,ST=window.REALITI_APARTMENT_STATIONS_V1;
 if(!M||!D||!A||!NATIVE||!ST||!window.REALITI_RR_HARNESS_V1||
    !window.REALITI_SOMA_RELAX_V3)throw Error('ONE_CHART_REQUIRES_ENTIRE_NATIVE_RELAX');
 const HOME_FIRST=window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true;
+const NATIVE_BOOT=HOME_FIRST&&window.REALITI_APARTMENT_NATIVE_BOOT_V1?.mode===
+ 'PRE_REGISTRATION_HOME_ONLY';
 const initial=Object.keys(M.charts());
-if(initial.length!==23||!M.charts()[HOME]||ST.view().station_count!==(HOME_FIRST?0:22))
+if(HOME_FIRST&&!NATIVE_BOOT)
+ throw Error('HOME_FIRST_NATIVE_BOOT_GATE_NOT_INSTALLED');
+// The legacy *development* topology preview still prunes 23 existing charts.
+// The clean HOME candidate must already have exactly one chart; it can never
+// turn an invalid 23-chart boot into apparent success by deleting the others.
+if(initial.length!==(NATIVE_BOOT?1:23)||!M.charts()[HOME]||
+ ST.view().station_count!==(HOME_FIRST?0:22))
  throw Error('ONE_CHART_SOURCE_ATLAS_OR_MECHANICS_NOT_READY');
 const cp=x=>JSON.parse(JSON.stringify(x));
 const only=Object.freeze([{id:HOME,title:'RealitiApartment',
@@ -25,6 +33,16 @@ const noRoom=place=>({ok:false,error:'LEGACY_ROOM_NOT_WALKABLE',
  'Only RealitiApartment is physically registered. Explore original mechanisms using remote stations, or use the complete Relax reference build.'});
 let retired=0;
 function prune(){
+ if(NATIVE_BOOT){
+  const charts=Object.keys(M.charts()),portals=Object.keys(M.portals()),
+   foreign=Object.values(M.entities()).filter(e=>e.chart!==HOME),
+   displaced=Object.values(M.state().residents||{}).filter(r=>r?.chart!==HOME);
+  if(charts.length!==1||charts[0]!==HOME||portals.length||foreign.length||
+   displaced.length||C9.currentRoom!==HOME)
+   throw Error('HOME_NATIVE_BOOT_SINGLE_CHART_INVARIANT_BROKEN');
+  // Crucially, no deletion, chart transfer, or checkpoint repair occurs.
+  return false;
+ }
  let changed=false;
  const ch=M.charts(),E=M.entities(),P=M.portals();
  for(const id of Object.keys(P)){delete P[id];changed=true}
@@ -122,12 +140,15 @@ function status(){
  legacy_matrix_entities:Object.values(M.entities()).filter(e=>e.chart!==HOME).length,
  live_source_engine_stations:ST.view().station_count,
  home_first_candidate:HOME_FIRST,legacy_station_gallery_disabled:HOME_FIRST,
+ native_single_chart_initialization:NATIVE_BOOT,
+ initial_charts_at_boot:initial.length,
+ no_post_startup_pruning:NATIVE_BOOT,
  source_room_names_are_not_walkable:true,
- retired_at_boot:initial.length-1,
+ retired_at_boot:NATIVE_BOOT?0:initial.length-1,
  original_relax_untouched:true,
  preview_only:true,mechanical_parity_certified:false,
  law:HOME_FIRST?
- 'One-chart home with original Relax systems; manual product approval and restoration gates still required.':
+ 'Only HOME is registered from source boot; no late pruning or quiet checkpoint conversion. Original Relax retained; owner release review still required.':
  'This candidate proves physical one-chart topology only. Historical source engines still need individual behavior/causal equivalence review before release.'};
 }
 window.Realiti=Object.freeze({...A,read,invoke,run,
