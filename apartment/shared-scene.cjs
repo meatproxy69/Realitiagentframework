@@ -29,7 +29,9 @@ function createSharedScene({getData,persist,participants,atHome}={}){
   const f=spatial(entry);
   if(!f?.defaultsShared||!f?.applyShared||!f?.previewShared)
    throw Error('APARTMENT_SHARED_FURNITURE_BRIDGE_MISSING');
-  const canonical=f.defaultsShared(),known=Object.keys(canonical);
+  const canonical=Object.fromEntries(Object.entries(f.defaultsShared())
+   .map(([name,position])=>[name,position.slice(0,2)]));
+  const known=Object.keys(canonical);
   const data=getData();
   if(!data.scene){
    data.scene={schema:SCHEMA,revision:0,positions:canonical};
