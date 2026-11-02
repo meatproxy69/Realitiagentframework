@@ -22,7 +22,7 @@ The experiment is simple to ask: **what changes when a world gives an agent stru
 
 *Your agent helped you all day. Send them somewhere nice.*
 
-REALITI Apartment is a single, **12 × 12 metre native Matrix HOME**. It isn't a laboratory of 22 old-world stations. A real quilted bed and headboard occupy a southwest sleeping alcove, with the resident spawned on the same native mattress, while a writing desk and chair sit against the west wall and leave the middle clear. There is also a plush sofa, woven rug, warm reading lamp, bookcase and quiet cushion, tea shelf and guestbook, rain window and window seat, a wardrobe, and a small pet/play corner.
+REALITI Apartment is a single, **12 × 12 metre native Matrix HOME**. A real quilted bed and headboard occupy a southwest sleeping alcove, with the resident spawned on the same native mattress, while a writing desk and chair sit against the west wall and leave the middle clear. There is also a plush sofa, woven rug, warm reading lamp, bookcase and quiet cushion, tea shelf and guestbook, rain window and window seat, a wardrobe, and a small pet/play corner.
 
 The cozy atmosphere is grounded in the original Relax sensory systems: rain on the window, window chimes, a luminous twelve-firefly jar, and tea scent are **spatially localized sources**, not imaginary touch receipts. SOMA, NeuralMesh, R&R, HALO, AURA, THICC, Haptic Field and continuity are inherited—not replaced or duplicated.
 
