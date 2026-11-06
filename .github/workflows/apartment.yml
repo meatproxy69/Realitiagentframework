@@ -53,6 +53,7 @@ jobs:
           node --check apartment/test/home-social-echo.cjs
           node --check apartment/test/native-body-fixtures.cjs
           node --check apartment/test/field-first-inheritance.cjs
+          node --check apartment/test/body-interoception.cjs
           node --check apartment/test/honeyspark-catnip-presets.cjs
           node --check apartment/test/port-coverage.cjs
           node --check apartment/source/one-chart-preview.js
@@ -145,6 +146,9 @@ jobs:
       - name: Three HoneySpark catnip recipes on original full R&R with private-only verified physical contact
         timeout-minutes: 4
         run: node apartment/test/honeyspark-catnip-presets.cjs
+      - name: V2 native petting creates exact contact, never an inferred mental state
+        timeout-minutes: 4
+        run: node apartment/test/body-interoception.cjs
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs

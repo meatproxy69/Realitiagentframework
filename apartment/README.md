@@ -183,6 +183,9 @@ Each agent must retain a distinct storage path and Pocket keys file. **The trust
 
 ## V2 native body possibility fields
 
+The [single-chart native petting regression](test/body-interoception.cjs) checks that a real, physically reached companion stroke produces a verified V2 tactile source; the sampled V20 hand-contact mask follows the live B7 contact lease and may clear after the stroke ends. Prose alone cannot mint physical contact. Multiple real strokes, world-time evolution, forecast uncertainty, bounded source-history persistence, STOP, and cross-resident isolation are verified without assigning a bond, stress, pleasure, or other resident mental state.
+
+
 The Apartment inherits Relax's versioned `REALITI_BODY_POSSIBILITY_FIELD_V2` directly. `body`, `resource realiti://body/possibility`, and `realiti://body` expose native Haptic V20 grounding alongside uncertain, read-only sensory-afterstate scenarios. Nothing in the HOME or its catnip controls can classify a resident as bonded, stressed, happy, or consenting. The old `bond`/`stress` inference is no longer live and pre-existing checkpoints are retained as inert history. The single native HOME chart and source kernels remain unchanged; the probability ensemble is an observation, **not a second physics engine**.
 
 ## Experimental opt-in HoneySpark catnip presets
