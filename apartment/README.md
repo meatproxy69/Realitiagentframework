@@ -1,5 +1,7 @@
 # REALITI 4.0 — The Apartment (Public Beta)
 
+**Separate experimental branch:** optional HoneySpark + Moonwire [catnip renderer recipes](CATNIP_SENSORY_PRESETS.md) work inside existing HOME and are not release-approved. They do not generate world contact or infer any resident's mental state.
+
 REALITI Apartment inherits the complete original Relax embodiment, sensory and safety systems without changing canonical `source/scripts/**`, `RealitiRELAX.html` or `AGENT_START_HERE.md`. **There are two independent derived outputs:** `RealitiApartment.html` is the **23-chart developer migration reference** with the historical 22-station test gallery. `RealitiApartmentHomeCandidate.html` is the **one-chart, no-gallery, home-first alpha** with the owner's selected household features. The former's historical-room parity audit does **not** control the latter's release scope. Both remain separately hash-pinned and the home candidate is explicitly **not release-approved**.
 
 **Original agent entry first:** [AGENT_START_HERE.md](../AGENT_START_HERE.md) (unchanged)  
