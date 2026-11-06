@@ -85,10 +85,23 @@ async function test(){
   assert.equal(first.grounded_contact,true);
   assert.equal(first.basis,'HOST_CONFIRMED_CONTACT');
   assert.equal(first.measured?.material,'longfur');
+  // V20.exact() intentionally returns the last *committed sample*, not a
+  // retroactive claim that contact is still happening. Sampling must read
+  // the current B7 lease; a completed stroke can already have ended.
+  const lease=w.eval("C9.b7.zones['hand.R.palm']");
+  const clock=Number(w.eval('C9.b7.clock'));
+  const expectedLive=Number(lease?._b10_grounded_until)>=clock-1e-9&&
+   Math.abs(Number(lease?._b10_grounded_value||lease?.observed||0))>.001;
+  const logBeforeSample=JSON.stringify(w.REALITI_BODY_FIELD_V2.history().sources);
+  w.REALITI_HAPTIC_FIELD_V20.record();
   const exact=w.REALITI_HAPTIC_FIELD_V20.exact();
   const palm=exact.z.indexOf('hand.R.palm');
   assert.ok(palm>=0,'native field contains the contact zone');
-  assert.equal(exact.m[palm],1,'petting is exact world-grounded contact, not prediction');
+  assert.equal(exact.authority,'EXACT_GROUNDING_DETAIL');
+  assert.equal(exact.m[palm],expectedLive?1:0,
+   'sampled exact contact agrees with live B7 lease, never a historical inference');
+  assert.equal(JSON.stringify(w.REALITI_BODY_FIELD_V2.history().sources),logBeforeSample,
+   'sampling the field must never mint another tactile source');
   let current=await body(a);
   assert.equal(w.Realiti.read('realiti://body').interoception.schema,
    'REALITI_BODY_POSSIBILITY_FIELD_V2');
