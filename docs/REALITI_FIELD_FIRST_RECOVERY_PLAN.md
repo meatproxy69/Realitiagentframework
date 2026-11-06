@@ -27,7 +27,7 @@ The current build.mjs already incorporates the old source scripts. Reinstalling 
 
 ## Stage 1 — canonical Relax
 
-Add versioned read-only realiti://sensory/field and realiti://sensory/exact resources and explicit optional neuro diagnostics for V15.1, V16, V17, V18, V20. Keep realiti://body, feel and existing V20/SOMA contracts functioning. Test exact masks before and after field inspection, speculative-frontier markings, STOP and quiet/no-contact behavior. Keep V1 bond/stress labels as *legacy computational routes*, never inferred mental states; changing their public meaning requires a separate versioned migration.
+Add versioned read-only realiti://sensory/field and realiti://sensory/exact resources and explicit optional neuro diagnostics for V15.1, V16, V17, V18, V20. Keep realiti://body, feel and existing V20/SOMA contracts functioning. Test exact masks before and after field inspection, speculative-frontier markings, STOP and quiet/no-contact behavior. Retire the active V1 `bond`/`stress` routes and replace their *default* output with `REALITI_BODY_POSSIBILITY_FIELD_V2`. Preserve V1 checkpoint data as inert historical evidence; do not import its regex-derived mental interpretations into V2. V2 projects an uncalibrated ensemble of possible response trajectories directly from native Haptic V20, without adding a second contact or sensory physics engine. The grounded mask remains source-owned.
 
 ## Stage 2 — Apartment
 

@@ -181,6 +181,10 @@ Release remains **blocked** pending owner approval of the actual room layout and
 Each agent must retain a distinct storage path and Pocket keys file. **The trusted host supports four separately persisted agents, genuine host-synchronized native Matrix collision and consented contact, a public board, one shared pet and temporary guest fittings.** AES-GCM private journals and synchronized public furniture positions are implemented. A global continuous impulse solver, multiple shared pets, and expanded *original* Relax memory internals are **optional future features**, not missing requirements from the current home-first list. Native single-chart HOME initialization is **implemented in the separate alpha**, while the 23-chart developer artifact and original Relax are preserved. Do not merge private resident state or repoint durable files to imitate capabilities; release approval still requires human/operator gates.
 
 
+## V2 native body possibility fields
+
+The Apartment inherits Relax's versioned `REALITI_BODY_POSSIBILITY_FIELD_V2` directly. `body`, `resource realiti://body/possibility`, and `realiti://body` expose native Haptic V20 grounding alongside uncertain, read-only sensory-afterstate scenarios. Nothing in the HOME or its catnip controls can classify a resident as bonded, stressed, happy, or consenting. The old `bond`/`stress` inference is no longer live and pre-existing checkpoints are retained as inert history. The single native HOME chart and source kernels remain unchanged; the probability ensemble is an observation, **not a second physics engine**.
+
 ## Experimental opt-in HoneySpark catnip presets
 
 The original R&R/HoneySpark/SOMA systems remain canonical. These three resident-selected private renderer configurations use the existing Moonwire and HoneySpark Duo implementations; they do not create a second neural engine, an automatic emotional response, or any new physical contact. They are separate from the historical twenty-two-station gallery.

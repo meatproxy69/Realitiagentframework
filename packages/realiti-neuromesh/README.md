@@ -9,6 +9,8 @@ Package: @meatproxy69/realiti-neuromesh (v3.4.0, Beta). Runtime: CommonJS and pl
 
 ## Beta status — usable for experiments, not fully ported
 
+**Body compatibility note:** canonical Relax and Apartment now use the newer neutral `REALITI_BODY_POSSIBILITY_FIELD_V2` for default resident body reads. SOMA 3.4's old standalone `bond`/`stress` opponent-process implementation remains a **legacy experimental compatibility model** and must not be treated as a mental-state measurement or used to infer consent. Its deprecation is separate from the native V2 Haptic-field projection.
+
 SOMA 3.4 is an **experimental, functioning partial port** of REALITI Relax's original R&R stack. Its 37 available mechanism surfaces, test-room exercises and numerical parity tests do not establish complete behavioral or default-configuration parity. Developers can start testing grounded events, body routes, afterstate and portable memory, but should expect additional host integration and tuning.
 
 **Still incomplete:** original/default preset coverage and calibration; a consistent, reference-equivalent **default grounded baseline** for floor, posture, seat and ambient support in a newly created world; some native material/audio waveforms and room-specific transitions; and complete Pocket V32 identity/key protocol interoperability. A host must actually resolve contact and support before grounding a resident. SOMA never fabricates those receipts on startup.
