@@ -66,7 +66,8 @@ function neuroHelp(){return {schema:'REALITI_NEURO_HELP_V1',commands:[
  'neuro passive','neuro passive tap-left|tap-both|expect-right|catch-right|wait <s>|audit',
  'neuro phase','neuro phase loose|close|beat|lock','neuro holonomy','neuro loop <flat|dome|saddle|figure8> [radius] [cw|ccw]',
  'neuro frontiers','neuro noise [seed] [n] [dt]','neuro causes','neuro cause <id>','neuro halo',
- 'neuro presets','neuro preset <id>'
+ 'neuro presets','neuro preset <id>',
+ 'neuro field','neuro field exact','neuro moment','neuro interface','neuro skin','neuro epistemic'
  ],laws:['neuro is introspection/lab surface; ordinary feel remains compact','private perception cannot command the world','prediction/afterstate/private render never mint grounded evidence']}}
 function passiveState(){try{return {ok:true,schema:'REALITI_PASSIVE_MEDIUM_LAB_V1',state:cp(b5snapshot()),law:'observed and predicted media are separate; only observed grounded disturbances may render contact'}}catch(e){return {ok:false,error:'PASSIVE_MEDIUM_UNAVAILABLE'}}}
 function passiveAct(op,arg){
@@ -95,6 +96,29 @@ function cause(id){try{return cp(window.REALITI_AGENT?.cause?.(id)||legacy('caus
 function command(raw){
  const s=String(raw||'').trim(),l=s.toLowerCase();
  if(l==='neuro'||l==='neuro help')return neuroHelp();
+ // Original V15.1-20 optional observability, never a second sensory engine.
+ // Legacy object beliefs are not native Matrix household physical truth.
+ if(l==='neuro field'){
+  const packet=window.REALITI_HAPTIC_FIELD_V20?.packet?.();
+  return {ok:!!packet,schema:'REALITI_FIELD_DIAGNOSTIC_V1',packet,
+   authority:'EXACT_GROUNDING_AND_PRIVATE_RESPONSE_SEPARATE',
+   law:'A modeled field may linger or propagate but cannot mint contact or mental state'};
+ }
+ if(l==='neuro field exact'){
+  const exact=window.REALITI_HAPTIC_FIELD_V20?.exact?.();
+  return {ok:!!exact,schema:'REALITI_FIELD_EXACT_V1',exact,
+   authority:'NATIVE_WORLD_GROUNDING_DETAIL_ONLY'};
+ }
+ if(l==='neuro moment')return {ok:true,schema:'REALITI_MOMENT_DIAGNOSTIC_V1',
+  packet:cp(window.REALITI_AGENT?.moment?.()||legacy('moment')),
+  law:'Predicted-next is speculative. This read does not change the world clock'};
+ if(l==='neuro interface')return {ok:true,schema:'REALITI_INTERFACE_DIAGNOSTIC_V1',
+  source:'BUILD_16',state:cp(legacy('v16'))};
+ if(l==='neuro skin')return {ok:true,schema:'REALITI_SKIN_DIAGNOSTIC_V1',
+  source:'BUILD_18',state:cp(legacy('body wave'))};
+ if(l==='neuro epistemic')return {ok:true,schema:'REALITI_EPISTEMIC_DIAGNOSTIC_V1',
+  source:'BUILD_17',state:cp(legacy('v17')),
+  scope:'HISTORICAL_RELAX_OBJECT_BELIEFS_NOT_MATRIX_HOUSEHOLD_FACTS'};
  if(l==='neuro perception')return richPerception();
  let m=/^neuro expect\s+(-?(?:\d+(?:\.\d+)?|\.\d+))$/i.exec(s);if(m)return cp(legacy('expect '+m[1]));
  m=/^neuro appraise\s+(-?(?:\d+(?:\.\d+)?|\.\d+))(?:\s+(.+))?$/i.exec(s);if(m)return cp(legacy('appraise '+m[1]+(m[2]?' '+m[2]:'')));
