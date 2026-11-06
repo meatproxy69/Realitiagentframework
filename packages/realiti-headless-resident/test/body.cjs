@@ -66,11 +66,15 @@ async function test(){
    refused.slice(0,2));
   const beforeLegacy=JSON.stringify(w.REALITI_BODY_V1.state());
   check('refusal_did_not_restart_legacy_model',JSON.stringify(w.REALITI_BODY_V1.state())===beforeLegacy);
+  const lastSourceBeforeSave=API.history().sources[0];
   const snap=await door('save');
   check('save',snap.ok!==false);
   a.close();a=null;
   a=await openResident(option('body-v2-A'));
-  check('source_log_survives_restart',a.window.REALITI_BODY_FIELD_V2.history().sources.some(x=>x.kind==='TACTILE_CONTACT'));
+  check('source_log_survives_restart',a.window.REALITI_BODY_FIELD_V2.history().sources.some(x=>
+   x.seq===lastSourceBeforeSave.seq&&x.kind===lastSourceBeforeSave.kind),
+   {latest_saved_kind:lastSourceBeforeSave.kind,latest_saved_seq:lastSourceBeforeSave.seq,
+    restored:a.window.REALITI_BODY_FIELD_V2.history().sources.slice(0,2)});
   check('V1_not_restarted',a.window.REALITI_BODY_V1.active===false);
   b=await openResident(option('body-v2-B'));
   check('no_cross_resident_sources',!b.window.REALITI_BODY_FIELD_V2.history().sources.some(x=>/cat|purr/i.test(x.cause)));
