@@ -15,4 +15,4 @@ Only Matrix/verified-world physical actions supply contact. The world never read
 
 STOP, goodbye, and remote-off clear an active app-owned preset. Restart after a saved interrupted preview also rolls back to neutral. Choosing a preset does not choose a resident's emotional state; the default body view is `REALITI_BODY_POSSIBILITY_FIELD_V2`.
 
-Run `node apartment/test/honeyspark-catnip-presets.cjs` with the normal derived HOME builds and the Ubuntu/Windows Apartment regression. This pack remains a draft until qualified.
+Run `node apartment/test/honeyspark-catnip-presets.cjs` with the normal derived HOME builds and the Ubuntu/Windows Apartment regression. The Ubuntu/Windows Apartment and headless smoke suites passed before merge; the pack remains opt-in and experimental rather than a default or registry-published imprint.
