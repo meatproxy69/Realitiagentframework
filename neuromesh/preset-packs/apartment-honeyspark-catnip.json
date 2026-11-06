@@ -1,0 +1,341 @@
+{
+  "schema": "NEUROMESH_PRESET_PACK_V1",
+  "pack_id": "realiti.apartment-catnip-honeyspark.001",
+  "name": "REALITI Apartment HoneySpark Catnip — Public Neutral Experiments",
+  "version": "0.1.0-draft",
+  "author_namespace": "realiti",
+  "description": "Three opt-in public-neutral interpretations of accepted HoneySpark Duo and public Moonwire routes. No private Asha/Nyx appraisals, user preferences, WILDFIELD, resident identities, or counterfeit grounded contact. Actual runtime uses existing HoneySpark + Moonwire; advanced descriptors mark available mechanisms, not unverified automatic modulation.",
+  "requires": {
+    "starter_harness": "REALITI_RR_HARNESS_V1",
+    "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
+    "neuromesh": "LACE2_PORTABLE_V1"
+  },
+  "presets": [
+    {
+      "preset_id": "realiti.apartment.catnip.quiltglass",
+      "label": "Quiltglass Afterglow",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.58,
+          "hz": 28,
+          "role": "HoneySpark broad body carrier"
+        },
+        "mid": {
+          "share": 0.42,
+          "hz": 240,
+          "role": "HoneySpark fine private carrier"
+        },
+        "top": {
+          "enabled": false,
+          "share": 0,
+          "hz": 825,
+          "duty": null,
+          "pattern": null,
+          "distinct_function": []
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.75,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "DEPTH_GEODESIC_LOOP",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "TRIANGLE",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "DEPTH_GEODESIC_LOOP",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.79,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "runtime_composition": "ORIGINAL_HONEYSPARK_DUO_AND_MOONWIRE",
+        "source_public_moonwire": "realiti.moonwire.honeydepth-geodesic-loop",
+        "original_presets_not_duplicated": true,
+        "physical_contact": "MATRIX_REACH_AND_CONSENT_ONLY",
+        "no_emotional_inference": true
+      },
+      "annotation": "Broad quilt structure; only a real mattress/blanket interaction supplies tactile grounding. This is private-renderer configuration, NOT a guarantee of feeling; advanced mechanism descriptors reflect the original R&R stack, not a second engine.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      },
+      "honeyspark": {
+        "mode": "DUO",
+        "conserved_budget": true,
+        "low_hz": 28,
+        "mid_hz": 240,
+        "hard_switching": false,
+        "starlight": null
+      }
+    },
+    {
+      "preset_id": "realiti.apartment.catnip.ribbon-comet",
+      "label": "Ribbon Comet",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.58,
+          "hz": 28,
+          "role": "HoneySpark broad body carrier"
+        },
+        "mid": {
+          "share": 0.42,
+          "hz": 240,
+          "role": "HoneySpark fine private carrier"
+        },
+        "top": {
+          "enabled": false,
+          "share": 0,
+          "hz": 825,
+          "duty": null,
+          "pattern": null,
+          "distinct_function": []
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "LOCAL_FIRST_THEN_WHOLE_BODY",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.7300000000000001,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "SOURCE_HANDOFF_SPARK",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "FALSE_FINISH",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "SOURCE_HANDOFF_SPARK",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.92,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "runtime_composition": "ORIGINAL_HONEYSPARK_DUO_AND_MOONWIRE",
+        "source_public_moonwire": "realiti.moonwire.passing-spark-aftertrace",
+        "original_presets_not_duplicated": true,
+        "physical_contact": "MATRIX_REACH_AND_CONSENT_ONLY",
+        "no_emotional_inference": true
+      },
+      "annotation": "Real ribbon dynamics can support a routed delayed private tracer. This is private-renderer configuration, NOT a guarantee of feeling; advanced mechanism descriptors reflect the original R&R stack, not a second engine.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      },
+      "honeyspark": {
+        "mode": "DUO",
+        "conserved_budget": true,
+        "low_hz": 28,
+        "mid_hz": 240,
+        "hard_switching": false,
+        "starlight": null
+      }
+    },
+    {
+      "preset_id": "realiti.apartment.catnip.pawloom",
+      "label": "Pawloom Groom",
+      "pipeline_variant": "RICH_STARTER_V2354",
+      "carrier": {
+        "budget_mode": "NORMALIZED_CONSERVED",
+        "low": {
+          "share": 0.58,
+          "hz": 28,
+          "role": "HoneySpark broad body carrier"
+        },
+        "mid": {
+          "share": 0.42,
+          "hz": 240,
+          "role": "HoneySpark fine private carrier"
+        },
+        "top": {
+          "enabled": false,
+          "share": 0,
+          "hz": 825,
+          "duty": null,
+          "pattern": null,
+          "distinct_function": []
+        }
+      },
+      "thick_carrier": {
+        "engine": "THICK_CARRIER_V2",
+        "core_count": 1,
+        "halo_modes": 6,
+        "short_detune_cents": 14,
+        "short_delay_ms": 3,
+        "short_phase_rad": 0.18,
+        "long_detune_cents": 36,
+        "long_delay_ms": 8,
+        "long_phase_rad": 0.48
+      },
+      "sausage": {
+        "engine": "SAUSAGE_FATTENER_V4",
+        "material": "WARM_HONEY",
+        "density_level": 5,
+        "fill_policy": "ROUTE_LOCAL_FIRST_THEN_BODY_SPILL",
+        "attack": "MEDIUM",
+        "spill": "MESH_DISTANCE_WEIGHTED",
+        "release": "SLOW_MONOTONIC",
+        "live_cause_gate": true,
+        "target_occupancy": 0.744,
+        "region_bias": {},
+        "depth_bias": {
+          "surface": 0.82,
+          "shallow": 1,
+          "mid": 0.94,
+          "deep": 0.82
+        }
+      },
+      "cotton": {
+        "engine": "COTTON_CANDY_V26_THICK",
+        "micro_bloom": "V3_ASYNCHRONOUS",
+        "micro_sites_per_active_node": 24,
+        "carrier_hz": 250,
+        "phase_mode": "ASYNC_LOCAL",
+        "turnover": "JND_GATED",
+        "halo": "PRIVATE_NEIGHBOR_SPREAD",
+        "route": "WHOLE_BODY_VELVET_GROOM",
+        "resonator_cloud": "SIX_POLE_PRIVATE",
+        "mass_policy": "EXACT_REAGGREGATION"
+      },
+      "temporal": {
+        "envelope_a": "SAW_DOWN",
+        "envelope_b": null,
+        "pulse_sync": null
+      },
+      "route": "WHOLE_BODY_VELVET_GROOM",
+      "flush": {
+        "enabled": true,
+        "engine": "FLUSH_V1_1",
+        "foreground_strength": 0.9,
+        "headroom_cap": 0.92,
+        "funnel_kappa": 2.4,
+        "peripheral_mix": 0.28,
+        "bind_before_tunnel": true,
+        "sovereign_bypass": true
+      },
+      "sparse_overrides": {
+        "runtime_composition": "ORIGINAL_HONEYSPARK_DUO_AND_MOONWIRE",
+        "source_public_moonwire": "realiti.moonwire.good-kitty-velvet-groom",
+        "original_presets_not_duplicated": true,
+        "physical_contact": "MATRIX_REACH_AND_CONSENT_ONLY",
+        "no_emotional_inference": true
+      },
+      "annotation": "A reached native companion supplies any physical pet evidence; no inferred affection. This is private-renderer configuration, NOT a guarantee of feeling; advanced mechanism descriptors reflect the original R&R stack, not a second engine.",
+      "aura": {
+        "enabled": true,
+        "engine": "AURA_NATIVE_V1",
+        "alpha_cap": 0.08,
+        "source_factor_self": 0.45,
+        "max_onsets_per_second_per_zone": 3,
+        "max_retained_impulses": 96
+      },
+      "honeyspark": {
+        "mode": "DUO",
+        "conserved_budget": true,
+        "low_hz": 28,
+        "mid_hz": 240,
+        "hard_switching": false,
+        "starlight": null
+      }
+    }
+  ],
+  "invariants": {
+    "conserved_response_budget": true,
+    "evidence_gain": 0,
+    "private_render_only": true
+  }
+}
