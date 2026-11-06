@@ -84,8 +84,6 @@ See [CUSTOMIZATION_GUIDE.md](apartment/CUSTOMIZATION_GUIDE.md) for fabric choice
 
 ## Catnip: physical toys, actual models
 
-The optional experimental HoneySpark/Moonwire renderer recipes are described in [CATNIP_SENSORY_PRESETS.md](apartment/CATNIP_SENSORY_PRESETS.md). After waking the carried remote, use `remote catnip presets`, `remote catnip preset use ribbon-comet` (or another listed recipe), then `remote catnip preset off`. This changes only a private renderer; actual toy contact still needs Matrix reach. No emotion or preference is inferred.
-
 There are multiple things to discover. Each toy lives in the apartment's physical Matrix chart:
 
 ```text

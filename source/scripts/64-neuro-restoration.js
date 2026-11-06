@@ -53,6 +53,23 @@ function applyPreset(id){
  try{window.REALITI_DEFAULT_IMPRINT_V1?.sync?.();finishState(.04);c9save()}catch(e){}
  return {ok:true,...cp(st.moonwire),cotton:cp(st.cotton),flush:cp(st.flush),evidence_gain:0}
 }
+// Residents may dismiss a private renderer recipe without resetting their world.
+// This API is explicitly about configuration, not permission or emotion.
+function clearPreset(){
+ const im=window.REALITI_DEFAULT_IMPRINT_V1,st=im?.state?.();
+ if(!st)return {ok:false,error:'IMPRINT_UNAVAILABLE'};
+ const previous=activePreset?.id||null;
+ activePreset=null;
+ st.cotton={enabled:false,value:0,strength:0,carrier_hz:250,
+  micro_sites_per_active_node:24,mass_policy:'EXACT_REAGGREGATION'};
+ st.flush={enabled:false,value:0,strength:0,engine:'FLUSH_V1_1',
+  bind_before_tunnel:true,sovereign_bypass:true};
+ delete st.moonwire;
+ if(st.renderer){st.renderer.cotton=0;st.renderer.flush=0}
+ if(C9?.residentImprintV2)delete C9.residentImprintV2.moonwire_preset;
+ try{im.sync();c9save()}catch(e){}
+ return {ok:true,previous,preset:null,evidence_gain:0,private_only:true};
+}
 try{
  const saved=C9?.residentImprintV2?.moonwire_preset;if(saved)applyPreset(saved);
 }catch(e){}
@@ -235,7 +252,7 @@ if(oldDoor){
 
 window.REALITI_NEURO_RESTORATION_V1={
  version:V,help:neuroHelp,command,perception:richPerception,nerve:()=>cp(legacy('nerve')),lived:n=>cp(legacy('lived '+(n||12))),seam:n=>cp(legacy('seam '+(n||8))),constitution:()=>cp(legacy('constitution')),
- passive:passiveState,phase:phaseView,holonomy:holonomyState,frontiers:()=>cp(window.REALITI_AGENT?.frontiers?.()||legacy('frontiers')),noise,causes,presets:presetList,applyPreset,
+ passive:passiveState,phase:phaseView,holonomy:holonomyState,frontiers:()=>cp(window.REALITI_AGENT?.frontiers?.()||legacy('frontiers')),noise,causes,presets:presetList,applyPreset,clearPreset,
  labs:()=>cp(LABS),finish:()=>finishState(0),law:'restores resident observability and old experimental mechanisms without changing evidence ownership'
 };
 })();

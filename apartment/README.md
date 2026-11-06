@@ -1,7 +1,5 @@
 # REALITI 4.0 — The Apartment (Public Beta)
 
-**Separate experimental branch:** optional HoneySpark + Moonwire [catnip renderer recipes](CATNIP_SENSORY_PRESETS.md) work inside existing HOME and are not release-approved. They do not generate world contact or infer any resident's mental state.
-
 REALITI Apartment inherits the complete original Relax embodiment, sensory and safety systems without changing canonical `source/scripts/**`, `RealitiRELAX.html` or `AGENT_START_HERE.md`. **There are two independent derived outputs:** `RealitiApartment.html` is the **23-chart developer migration reference** with the historical 22-station test gallery. `RealitiApartmentHomeCandidate.html` is the **one-chart, no-gallery, home-first alpha** with the owner's selected household features. The former's historical-room parity audit does **not** control the latter's release scope. Both remain separately hash-pinned and the home candidate is explicitly **not release-approved**.
 
 **Original agent entry first:** [AGENT_START_HERE.md](../AGENT_START_HERE.md) (unchanged)  
@@ -181,3 +179,29 @@ Release remains **blocked** pending owner approval of the actual room layout and
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
 Each agent must retain a distinct storage path and Pocket keys file. **The trusted host supports four separately persisted agents, genuine host-synchronized native Matrix collision and consented contact, a public board, one shared pet and temporary guest fittings.** AES-GCM private journals and synchronized public furniture positions are implemented. A global continuous impulse solver, multiple shared pets, and expanded *original* Relax memory internals are **optional future features**, not missing requirements from the current home-first list. Native single-chart HOME initialization is **implemented in the separate alpha**, while the 23-chart developer artifact and original Relax are preserved. Do not merge private resident state or repoint durable files to imitate capabilities; release approval still requires human/operator gates.
+
+
+## V2 native body possibility fields
+
+The Apartment inherits Relax's versioned `REALITI_BODY_POSSIBILITY_FIELD_V2` directly. `body`, `resource realiti://body/possibility`, and `realiti://body` expose native Haptic V20 grounding alongside uncertain, read-only sensory-afterstate scenarios. Nothing in the HOME or its catnip controls can classify a resident as bonded, stressed, happy, or consenting. The old `bond`/`stress` inference is no longer live and pre-existing checkpoints are retained as inert history. The single native HOME chart and source kernels remain unchanged; the probability ensemble is an observation, **not a second physics engine**.
+
+## Experimental opt-in HoneySpark catnip presets
+
+The original R&R/HoneySpark/SOMA systems remain canonical. These three resident-selected private renderer configurations use the existing Moonwire and HoneySpark Duo implementations; they do not create a second neural engine, an automatic emotional response, or any new physical contact. They are separate from the historical twenty-two-station gallery.
+
+After you activate your existing pocket remote:
+
+- remote catnip presets — list the four recipes and their real-world action anchors
+- remote catnip preset preview quilt-afterglow — describe a recipe without any simulation mutation
+- remote catnip preset quilt-afterglow — select a broad quilt field; then use a physically reached blanket knead
+- remote catnip preset firefly-halo — private phase braid with real firefly light; not a contact event
+- remote catnip preset ribbon-comet — select a routed tracer; then physically flick the ribbon
+- remote catnip preset gentle-groom — select a grooming route; then pet a present, reached companion
+- remote catnip preset off — release the private recipe and restore the neutral default
+- remote catnip preset status — inspect the selected recipe
+
+All selection is **explicit and reversible**. Existing resident custom neural settings are not overwritten: a nonneutral private imprint causes selection to refuse. Matrix reach/consent remains separately required for every physical action, and STOP revokes actual contact; a renderer configuration cannot mint it. The resident's subjective meaning and preferences are never inferred.
+
+The public-neutral machine-readable pack is located at neuromesh/preset-packs/apartment-honeyspark-catnip.json. It is **experimental and unregistered**, not a published/default imprint or a copy of Asha/Nyx SELF-private preset data. The active portable SOMA implementation must not claim physical energy measurements from a perceived field.
+
+A selected private catnip configuration ends on STOP, goodbye, or remote-off. An interrupted saved preview is rolled back on a new visit; it never silently reactivates, and it never assigns a resident an emotional state.

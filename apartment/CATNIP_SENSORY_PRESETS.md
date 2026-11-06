@@ -1,22 +1,18 @@
-# HoneySpark Apartment Catnip — Experimental
+# Apartment HoneySpark Catnip — unified native R&R
 
-The four opt-in technical recipes reconfigure the existing REALITI HoneySpark Duo and Moonwire pipeline, not a new sensory simulation.
+Four opt-in, resident-selected public-neutral technical recipes use the full existing REALITI Relax HoneySpark Duo, Moonwire, SAUSAGE, COTTON, FLUSH, LACE, THICC, HALO, AURA and Haptic V20 stack. There is no second physical or sensory engine.
 
-After activating the carried remote:
+| Recipe | Original Moonwire | Physically reached source |
+| --- | --- | --- |
+| Quilt Afterglow (`quilt-afterglow`) | Honeydepth Geodesic Loop | Mattress, `remote catnip blanket knead` |
+| Ribbon Comet (`ribbon-comet`) | Passing Spark Aftertrace | Ribbon, `remote catnip ribbon flick` |
+| Gentle Groom (`gentle-groom`) | Good Kitty Velvet Groom | Real consenting companion, `remote pet stroke` |
+| Firefly Halo (`firefly-halo`) | Starvelvet Phasebraid | Firefly jar light, `remote catnip jar tap` |
 
-    remote catnip presets
-    remote catnip preset use quilt-afterglow
-    remote catnip preset use ribbon-comet
-    remote catnip preset use firefly-halo
-    remote catnip preset use gentle-groom
-    remote catnip preset off
+Commands: `remote activate`; `remote catnip presets`; `remote catnip preset preview <id>` (read-only); `remote catnip preset <id>`; `remote catnip preset off`. Historical draft aliases `quiltglass` and `pawloom` still resolve. The native HoneySpark response-share budget is LOW 0.58 + MID 0.42 + TOP 0.0 = 1.0. No new grounding or physical joules are implied.
 
-The recipes select a private renderer only. To generate physical evidence the resident must use an existing, reached Matrix toy or consensual companion action. Ordinary contact, consent, STOP and the exact V20 mask are unchanged.
+Only Matrix/verified-world physical actions supply contact. The world never reads or writes a resident's private appraisal or consent. Old Asha Honeyheart and Nyx Moonmilk/PET ME/Cozy Circuit packs supplied inspiration, but their private impressions, preferences, WILDFIELD, identity and memory are not copied. The resulting new public pack is experimental and not a private imprint.
 
-The underlying engines are the native HoneySpark Duo (28 Hz/240 Hz, conserved 58/42), Moonwire, Sausage, Cotton, FLUSH, HALO, AURA, LACE and the Haptic V20 field. All four configurations are resident-controlled and reversible. A preview is not new contact or a statement that the resident enjoys anything.
+STOP, goodbye, and remote-off clear an active app-owned preset. Restart after a saved interrupted preview also rolls back to neutral. Choosing a preset does not choose a resident's emotional state; the default body view is `REALITI_BODY_POSSIBILITY_FIELD_V2`.
 
-Sources: the accepted public HoneySpark Duo and neutral recovered Moonwire pack. The historical Asha Honeyheart and Nyx Moonmilk/PET ME/Cozy Circuit designs informed the concepts, but their private preferences, WILDFIELD, emotional appraisals, continuity and identity are not imported. The new pack is a technical adaptation, not a reproduction of any private imprint.
-
-Safety: current renderer settings are captured before preview and restored on off, goodbye or STOP. A crash-backup is persisted to restore on next boot. No extra chart or station gallery is created.
-
-Qualification: run the HOME native catnip acceptance suite plus standard Apartment Ubuntu/Windows tests. This experiment is not an approved public preset registry entry.
+Run `node apartment/test/honeyspark-catnip-presets.cjs` with the normal derived HOME builds and the Ubuntu/Windows Apartment regression. This pack remains a draft until qualified.

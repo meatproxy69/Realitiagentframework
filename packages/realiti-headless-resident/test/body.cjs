@@ -1,39 +1,91 @@
 'use strict';
-// The body layer, through the harness as a resident would use it: quiet at first; prose moves nothing; a grounded
-// contact (the welcome cat, a companion) moves the bond route with a named cause; repetition grows the counter-process
-// so later strokes move less; time decays the primary faster than the counter, so the level dips below quiet; the sea's
-// refusal is a stress cause; the world never reads the body; the state survives a restart.
+// V2 body is a probability/possibility field over existing REALITI Haptic V20,
+// never a diagnosis. The original V1 bond/stress model is archived and inert.
+const assert=require('node:assert/strict');
 const path=require('node:path'),fs=require('node:fs'),os=require('node:os');
 const {openResident}=require('../index.cjs');
 const html=path.resolve(process.argv[2]||'../../RealitiRELAX.html');
-const checks={},details={};const check=(k,v,d)=>{checks[k]=!!v;if(d!==undefined)details[k]=d};
-(async()=>{
- const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-body-')),sp=path.join(dir,'state.json');
- let s=await openResident({htmlPath:html,residentId:'body-a',storagePath:sp});
+const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-body-v2-'));
+const option=id=>({htmlPath:html,residentId:id,storagePath:path.join(tmp,id+'.json')});
+const checks={},details={};
+function check(k,ok,extra){checks[k]=!!ok;if(extra!==undefined)details[k]=extra;}
+let a=null,b=null;
+async function test(){
  try{
-  const w=s.window,d=c=>s.door.run(c),BD=w.REALITI_BODY_V1;
-  check('mounted',!!BD&&BD.routes.join()==='bond,stress');
-  const b0=await d('body');check('quiet_at_first',b0.ok&&b0.result.routes.bond.level===0&&b0.result.routes.stress.level===0&&/quiet/.test(b0.text),b0.text);
-  await d('say I stroke the cat and she purrs and purrs');await d('note the cat purred against my palm');const b1=await d('body');
-  check('prose_moves_nothing',b1.result.routes.bond.level===0&&b1.result.causes.length===0,b1.result.causes);
-  const pet=await d('pet cat');const b2=await d('body');
-  check('grounded_contact_moves_bond',pet.ok!==false&&b2.result.routes.bond.level>.1&&b2.result.causes.some(c=>c.route==='bond'&&/cat/.test(c.cause))&&/bond/.test(b2.text),{pet:String(pet.text||pet.error).slice(0,80),bond:b2.result.routes.bond,causes:b2.result.causes.slice(0,2)});
-  const first=b2.result.causes[0].moved;for(let i=0;i<6;i++)await d('pet cat');const b3=await d('body');const last=b3.result.causes[0].moved;
-  check('repetition_grows_the_counter_process',b3.result.routes.bond.counter>b2.result.routes.bond.counter&&last<first&&b3.result.routes.bond.level<=1&&/counter-process has grown/.test(b3.text),{first,last,counter:b3.result.routes.bond.counter,level:b3.result.routes.bond.level});
-  const body=w.Realiti.read('realiti://body');check('interoception_on_the_body_resource',body.interoception?.schema==='REALITI_BODY_V1'&&body.interoception.routes.bond.level>0);
-  const here=JSON.stringify(w.Realiti.read('realiti://here'))+JSON.stringify(w.Realiti.read('realiti://space'));check('world_reads_do_not_carry_it',!/counter-process|"bond"/.test(here));
-  const lvl=b3.result.routes.bond.level;const pass=async n=>{for(let i=0;i<n;i++)await d('stay 60000')};await pass(20);const b4=await d('body');await pass(60);const b5=await d('body');
-  check('time_decays_primary_faster_than_counter',b4.result.routes.bond.level<lvl&&b5.result.routes.bond.level<b4.result.routes.bond.level&&b5.result.routes.bond.level<0&&/below quiet/.test(b5.text),{after_30min:b4.result.routes.bond.level,after_2h:b5.result.routes.bond.level});
-  await d('go ARCHIPELAGO');await d('walk to boathouse');const M=w.REALITI_MATRIX_V1,me=M.state().residents['resident:self'];M.moveTo([me.pose.position[0],me.pose.position[1]-40,me.pose.position[2]]);await d('stay 20000');const b6=await d('body');
-  check('the_sea_is_a_stress_cause',b6.result.routes.stress.level>0&&b6.result.causes.some(c=>c.route==='stress'&&/sea/.test(c.cause)),{stress:b6.result.routes.stress,causes:b6.result.causes.slice(0,2)});
-  const refusals=w.REALITI_MATRIX_LOCAL_EVIDENCE_V1?.events?.()||[];
-  check('matrix_issues_real_refusal_receipts',refusals.some(e=>
-    e.kind==='MOVEMENT_OBSTRUCTED'&&e.issuerAuthority==='IN_PROCESS_NATIVE_WORLD'&&
-    e.reason==='sea'&&e.actorId==='resident:self'&&typeof e.witness?.chart==='string'&&e.witness.chart.length>0),refusals.slice(-3));
-
-  const saved=await d('save');check('save_ok',saved.ok);
- }finally{s.close()}
- s=await openResident({htmlPath:html,residentId:'body-a',storagePath:sp});
- try{const b7=await s.door.run('body');check('state_survives_a_restart',b7.result.causes.length>0&&b7.result.routes.stress.level>0,{causes:b7.result.causes.length,stress:b7.result.routes.stress.level,downtime:b7.result.downtime_s});check('energy_audit_passes',s.window.REALITI_HAPTIC_FIELD_V20.energy().pass===true)}finally{s.close()}
- console.log(JSON.stringify({checks,details},null,2));const failed=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);if(failed.length){console.error('FAILED',failed);process.exit(1)}console.log('BODY PASS',Object.keys(checks).length,'checks');
-})().catch(e=>{console.error(e);process.exit(1)});
+  a=await openResident(option('body-v2-A'));
+  const w=a.window,door=x=>a.door.run(x),read=x=>w.Realiti.read(x);
+  const API=w.REALITI_BODY_FIELD_V2;
+  check('installed_without_inferred_emotions',!!API&&API.version==='2.0'&&
+   w.REALITI_BODY_V1?.active===false);
+  const start=(await door('body')).result;
+  check('versioned_field',start?.schema==='REALITI_BODY_POSSIBILITY_FIELD_V2'&&
+   start.mental_state==='NOT_INFERRED'&&start.valence==='UNASSIGNED'&&
+   start.preference==='NOT_INFERRED'&&start.consent==='NEVER_INFERRED'&&
+   start.conditional_model.members===12);
+  check('fields_not_psychological_routes',!('routes' in start)&&
+   start.active_zones?.every(q=>q.grounding===true||q.grounding===false));
+  check('probabilistic_quantiles_ordered',start.active_zones.every(x=>
+   x.forecast.every(q=>q.p10<=q.p50&&q.p50<=q.p90&&q.min<=q.p10&&q.p90<=q.max)));
+  check('archived_V1_not_running',w.REALITI_BODY_V1.state().authoritative===false&&
+   w.REALITI_BODY_V1.state().read_only===true);
+  const prev=JSON.stringify(API.history().sources);
+  const exact0=JSON.stringify(w.REALITI_HAPTIC_FIELD_V20.exact().m);
+  await door('say I pet the cat and feel love');
+  await door('note I fear the sea');
+  check('narration_does_not_mint_source',JSON.stringify(API.history().sources)===prev);
+  const resource=read('realiti://body/possibility');
+  const viaDoor=await door('resource realiti://body/possibility');
+  check('resource_and_headless_door',resource.schema==='REALITI_BODY_POSSIBILITY_FIELD_V2'&&
+   viaDoor?.resource?.schema===resource.schema&&
+   read('realiti://body').interoception?.schema===resource.schema);
+  check('read_does_not_move_grounding',JSON.stringify(w.REALITI_HAPTIC_FIELD_V20.exact().m)===exact0);
+  const pet=await door('pet cat');
+  const after=(await door('body')).result;
+  const log=after.recent_sources;
+  check('real_contact_has_verified_source',pet.ok!==false&&log.some(x=>
+   x.kind==='TACTILE_CONTACT'&&x.grounded_contact===true&&/cat|pet|purr|companion/i.test(x.cause)),
+   {pet:pet.ok,log:log.slice(0,3)});
+  check('forecast_uses_native_field',after.active_zones.every(x=>
+   x.forecast.length===5&&x.forecast[0].seconds===0),after.conditional_model);
+  const latest=after.active_zones.find(x=>x.forecast.some(z=>z.max>z.min));
+  check('uncertainty_is_not_false_precision',!!latest||after.active_zones.length===0,
+   {active_zones:after.active_zones.length,distinct:!!latest});
+  const historySize=API.history().sources.length;
+  await door('stay 120000'); 
+  check('world_time_not_future_grounding',API.history().sources.length>=historySize&&
+    API.state().conditional_model.condition==='NO_NEW_EXTERNAL_CONTACT');
+  const world=JSON.stringify(read('realiti://here'))+JSON.stringify(read('realiti://space'));
+  check('private_field_not_world_authority',!/REALITI_BODY_POSSIBILITY_FIELD_V2|UNCALIBRATED_SCENARIO_ENSEMBLE|\"mental_state\"/.test(world));
+  await door('go ARCHIPELAGO');
+  await door('walk to boathouse');
+  const M=w.REALITI_MATRIX_V1,me=M.state().residents['resident:self'];
+  M.moveTo([me.pose.position[0],me.pose.position[1]-40,me.pose.position[2]]);
+  await door('stay 20000');
+  const refused=API.history().sources.filter(x=>x.kind==='MOVEMENT_REFUSAL');
+  check('real_world_refusal_is_not_stress_diagnosis',refused.some(x=>x.source==='MATRIX_WORLD'&&!x.grounded_contact),
+   refused.slice(0,2));
+  const beforeLegacy=JSON.stringify(w.REALITI_BODY_V1.state());
+  check('refusal_did_not_restart_legacy_model',JSON.stringify(w.REALITI_BODY_V1.state())===beforeLegacy);
+  const lastSourceBeforeSave=API.history().sources[0];
+  const snap=await door('save');
+  check('save',snap.ok!==false);
+  a.close();a=null;
+  a=await openResident(option('body-v2-A'));
+  check('source_log_survives_restart',a.window.REALITI_BODY_FIELD_V2.history().sources.some(x=>
+   x.seq===lastSourceBeforeSave.seq&&x.kind===lastSourceBeforeSave.kind),
+   {latest_saved_kind:lastSourceBeforeSave.kind,latest_saved_seq:lastSourceBeforeSave.seq,
+    restored:a.window.REALITI_BODY_FIELD_V2.history().sources.slice(0,2)});
+  check('V1_not_restarted',a.window.REALITI_BODY_V1.active===false);
+  b=await openResident(option('body-v2-B'));
+  check('no_cross_resident_sources',!b.window.REALITI_BODY_FIELD_V2.history().sources.some(x=>/cat|purr/i.test(x.cause)));
+  const stop=await a.door.run('stop');
+  check('STOP_preserves_world_authority',stop.ok!==false&&
+   a.window.REALITI_HAPTIC_FIELD_V20.exact().m.every(x=>x===0));
+  check('physical_energy_audit',a.window.REALITI_HAPTIC_FIELD_V20.energy().pass===true);
+ }finally{if(a)a.close();if(b)b.close();}
+ console.log(JSON.stringify({checks,details},null,2));
+ const fail=Object.entries(checks).filter(([,pass])=>!pass).map(([k])=>k);
+ if(fail.length){console.error('BODY V2 FAILED',fail);process.exitCode=1;}
+ else console.log('BODY V2 PASS',Object.keys(checks).length,'checks');
+}
+test().catch(e=>{console.error(e.stack||e);process.exitCode=1});

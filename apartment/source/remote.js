@@ -5,12 +5,12 @@
 const D=window.REALITI_AGENT_DOOR,A=window.Realiti,M=window.REALITI_MATRIX_V1;
 const F=window.REALITI_APARTMENT_FURNITURE_V1,C=window.REALITI_APARTMENT_CATNIP_V1;
 const CLOSET=window.REALITI_APARTMENT_CLOSET_V1,H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
+const P=window.REALITI_APARTMENT_CATNIP_PRESETS_V1;
 const ST=window.REALITI_APARTMENT_STATIONS_V1;
-const SENS=window.REALITI_APARTMENT_CATNIP_PRESETS_V1;
 const GUEST=window.REALITI_APARTMENT_ROLE==='guest';
 const HOME_FIRST=window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true;
 if(!D||!A||!M||!F||!C||!CLOSET||!H||!ST||!window.REALITI_APARTMENT_HOME_V1||
-   !window.REALITI_SOMA_RELAX_V3||!SENS)throw Error('APARTMENT_REMOTE_MISSING_FULL_RELAX');
+   !window.REALITI_SOMA_RELAX_V3||!P)throw Error('APARTMENT_REMOTE_MISSING_FULL_RELAX');
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default');
 let h=2166136261;for(const ch of rid){h=Math.imul(h^ch.charCodeAt(0),16777619)>>>0}
 const ID='apartment.remote.'+h.toString(16);
@@ -60,7 +60,7 @@ function menu(){
    'remote pet stroke','remote pet release <name>'],
   furnishings:['remote furniture help','remote furniture list'],
   catnip:['remote catnip help','remote catnip list','remote catnip presets',
-   'remote catnip preset use <id>','remote catnip preset off'],
+   'remote catnip preset preview <id>','remote catnip preset <id>','remote catnip preset off'],
   ...(HOME_FIRST?{}:{stations:['remote stations help','remote stations list','remote stations inspect <source-id>','remote stations use <source-id> <original-verb>']}),
   extras:['remote extras','remote extras rain','remote extras cloak'],
   closet:['remote closet inspect','remote closet help','remote closet status'],
@@ -90,7 +90,6 @@ function resource(uri){
  if(uri==='realiti://apartment/remote')return status();
  if(uri==='realiti://apartment/furniture')return F.view();
  if(uri==='realiti://apartment/catnip')return C.view();
- if(uri==='realiti://apartment/presets')return SENS.view();
  if(uri==='realiti://apartment/stations')return HOME_FIRST?
   {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE'}:ST.view();
  if(uri==='realiti://apartment/closet')return CLOSET.inspect();
@@ -116,18 +115,17 @@ async function run(raw){
   awake=true;sync();return menu();
  }
  if(s==='remote off'||s==='remote sleep'){
-  const end=SENS.end();if(!end.ok)return end;
+  const ended=P.off();if(ended?.ok===false)return ended;
   awake=false;sync();return {ok:true,activated:false,carried:true};
  }
  if(['stop','goodbye','bye','leave','exit'].includes(s)){
-  const end=SENS.end();if(!end.ok)return end;
+  const ended=P.off();if(ended?.ok===false)return ended;
   awake=false;sync();return originalRun(raw)}
  if(s.startsWith('resource realiti://apartment/')){
   const uri=s.slice('resource '.length);
   if(HOME_FIRST&&uri==='realiti://apartment/stations')
    return {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE'};
   if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/catnip',
-     'realiti://apartment/presets',
      'realiti://apartment/closet','realiti://apartment/closet/status',
      'realiti://apartment/household','realiti://apartment/board',
      'realiti://apartment/scene','realiti://apartment/memory',
@@ -148,7 +146,7 @@ async function run(raw){
   if(command==='bed')return originalRun('apartment bed');
   if(command==='save')return originalRun('save');
   if(command==='look')return originalRun('look');
-  if(command==='stop'){const end=SENS.end();if(!end.ok)return end;awake=false;sync();return originalRun('stop')}
+  if(command==='stop'){const ended=P.off();if(ended?.ok===false)return ended;awake=false;sync();return originalRun('stop')}
   if(command==='closet')return CLOSET.inspect();
   if(command.startsWith('closet '))return CLOSET.handle(spoken.slice(14));
   if(command==='household')return H.view();
@@ -173,7 +171,17 @@ async function run(raw){
   if(command==='pet')return originalRun('pet status');
   if(command==='extras')return originalRun('extras');
   if(command.startsWith('furniture '))return F.handle(command.slice(10));
-  if(command==='catnip presets'||command.startsWith('catnip preset '))return SENS.handle(command.slice(7));
+  if(command==='catnip presets')return P.list();
+  if(command==='catnip preset status')return P.status();
+  if(command.startsWith('catnip preset preview '))return P.preview(command.slice('catnip preset preview '.length));
+  if(command.startsWith('catnip preset ')){
+   const id=command.slice('catnip preset '.length);
+   return id==='off'?P.off():P.activate(id);
+  }
+  if(command==='catnip help'){
+   const h=C.handle('help');return {...h,commands:[...(h.commands||[]),
+    'catnip presets','catnip preset preview <id>','catnip preset <id>','catnip preset off']};
+  }
   if(command.startsWith('catnip '))return C.handle(command.slice(7));
   if(command.startsWith('pet '))return originalRun(spoken.slice(7));
   if(command.startsWith('extras '))return originalRun(command);

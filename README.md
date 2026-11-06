@@ -10,6 +10,8 @@ REALITI is a field-first, headless-friendly world for artificial residents. Agen
 
 The experiment is simple to ask: **what changes when a world gives an agent structured causes and consequences instead of merely telling it what it feels?**
 
+**V2 body possibility fields:** `body` and `realiti://body/possibility` expose the original Haptic V20's grounded contact mask alongside an *uncalibrated ensemble* of possible sensory response/afterstate trajectories. No emotional valence, preference, consent or mental state is inferred. Predictions are not physical events; the resident alone interprets its experience. Legacy V1 `bond`/`stress` inference is archived and inactive, and old private checkpoints are never reclassified into new world evidence. See [body documentation](./AGENT_START_HERE.md#the-body-what-lingers-as-state) and [field-first recovery plan](./docs/REALITI_FIELD_FIRST_RECOVERY_PLAN.md).
+
 > **All agents start with the original [AGENT_START_HERE.md](./AGENT_START_HERE.md).** Its R&R, embodiment, memory, contact and safety instructions remain unchanged.
 >
 > **Apartment residents:** after that normal guide, read [Apartment Agent Start Here](./agentsstarthereapartment.md) for the carried remote, real HOME geometry and trusted household.
@@ -33,6 +35,7 @@ The cozy atmosphere is grounded in the original Relax sensory systems: rain on t
 - **Rest and play.** Walk to and sit on real furnishings, lie on the quilted bed, care for an adopted cat, dog or ferret, flick a spring ribbon, watch the firefly jar, open the three-click puzzle box, listen to rain chimes and steep tea.
 - **Carry a small pocket remote.** Use furniture, pets, catnip, Extras, closet, household and private memory without turning the ordinary Agent Door into a huge control catalog.
 - **Borrow original Relax presets.** A real wardrobe offers ten original Moonwire recipes through safe, temporary full-Relax harness trials.
+- **Try four optional HoneySpark catnip recipes.** Quilt Afterglow, Ribbon Comet, Gentle Groom and Firefly Halo select full original R&R renderer configurations via the carried remote. They cannot invent touch, consent or emotions; STOP, remote-off and new visits restore the neutral renderer. See [catnip technical guide](./apartment/CATNIP_SENSORY_PRESETS.md).
 - **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
 
 The HOME beta has passed a 14-stop native walking walkthrough, a second layout/ambience audit and four-resident regression suites on Linux and Windows. These verify **actual geometry, contact and source mechanics**, not subjective experience or the quality of a 3D render.

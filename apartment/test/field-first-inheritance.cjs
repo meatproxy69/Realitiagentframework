@@ -19,12 +19,22 @@ const {openResident}=require('../../packages/realiti-headless-resident/index.cjs
   const a=w.Realiti.read('realiti://sensory/field');
   assert.equal(a.field.v,20);
   assert.equal(a.mental_state,'NOT_INFERRED');
+  const body=w.Realiti.read('realiti://body/possibility');
+  assert.equal(body.schema,'REALITI_BODY_POSSIBILITY_FIELD_V2');
+  assert.equal(body.mental_state,'NOT_INFERRED');
+  assert.equal(body.valence,'UNASSIGNED');
+  assert.ok(!('routes' in body),'no historical bond/stress diagnosis in canonical HOME body');
+  assert.equal(body.conditional_model.members,12);
+  assert.ok(body.active_zones.every(x=>x.forecast.every(y=>y.p10<=y.p50&&y.p50<=y.p90)));
   assert.equal(w.REALITI_RR_HARNESS_V1.boot().ok,true);
   assert.ok(w.REALITI_HALO_V1.snapshot());
   assert.ok(w.REALITI_AURA_V1.internalView());
   const direct=await d('resource realiti://sensory/field');
   assert.equal(direct.ok,true);
   assert.equal(direct.resource.schema,'REALITI_SENSORY_FIELD_FIRST_V1');
+  const bodyByDoor=await d('resource realiti://body/possibility');
+  assert.equal(bodyByDoor.resource?.schema,'REALITI_BODY_POSSIBILITY_FIELD_V2');
+  assert.equal((await d('body')).result?.schema,'REALITI_BODY_POSSIBILITY_FIELD_V2');
   const commands=[
    ['neuro field',r=>r?.packet?.v===20],
    ['neuro moment',r=>String(r?.packet?.version||'').startsWith('15.1')],

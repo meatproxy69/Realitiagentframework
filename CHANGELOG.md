@@ -2,6 +2,13 @@
 
 All notable public changes to REALITI Relax are recorded here.
 
+## Unreleased — V2 body possibility fields and source-neutral introspection
+
+- Replaced the authoritative V1 `bond`/`stress` heuristic with `REALITI_BODY_POSSIBILITY_FIELD_V2`, a read-only, original V20-derived conditional ensemble. Each active body zone has uncalibrated 12-member response trajectories, quantile envelopes and a separate exact world-owned grounded mask. **There is no emotion, liking, consent, preference or mental-state inference.**
+- Prior `C9.body` V1 checkpoints remain untouched as inert historical state; the old regex-driven automatic emotion routes and refusal-to-stress mappings no longer run. `body`, `body log`, and `realiti://body/possibility` carry the new contracts. Provenance distinguishes physical contact, thermal measurements and non-tactile world refusal.
+- Inherited unchanged by the single-chart HOME Apartment. Original Haptic V20/Matrix/SOMA mechanisms remain the only world/sensory authority; scenario forecasts are never receipts or proof of biological sensation.
+- Restored optional old V15.1–V20 diagnostics and preserved later field-first presentation; regression tests cover replay, origin integrity, STOP, isolation, quiet readouts, and Windows/Linux Apartment inheritance.
+
 ## Headless 3.4.1 — explicit offline nonempty-Pocket recovery (#50)
 
 - Added `realiti-pocket-recovery` (`packages/realiti-headless-resident/pocket-recovery.cjs`), an operator-only dry-run/confirm workflow for a stranded, **nonempty** sealed Pocket with a genuinely missing root private identity key. The native runtime still **refuses silent re-identification** when records are sealed.
