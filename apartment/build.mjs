@@ -35,7 +35,7 @@ const apartmentDyn=adaptDynamics(dynSource),apartmentPillow=adaptNativePillow(pi
 html=html.replace(dynSource,apartmentDyn).replace(pillowSource,apartmentPillow);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
-  'source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
+  'source/catnip-presets.js','source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
 for(const filename of overlays){
  const body=await read(filename);
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
@@ -43,6 +43,7 @@ for(const filename of overlays){
   'source/extras.js':'realiti-apartment-extras',
   'source/furniture.js':'realiti-apartment-furniture',
   'source/catnip.js':'realiti-apartment-catnip',
+  'source/catnip-presets.js':'realiti-apartment-catnip-presets',
   'source/stations.js':'realiti-apartment-native-stations',
   'source/closet.js':'realiti-apartment-closet',
   'source/household-view.js':'realiti-apartment-household-view',
