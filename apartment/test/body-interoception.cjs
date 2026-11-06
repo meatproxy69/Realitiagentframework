@@ -34,7 +34,7 @@ async function test(){
   await d('say I pet the cat and she purrs into my hands');
   await d('note I hug a cat and feel wonderful');
   const wordsOnly=await getBody(a);
-  assert.deepEqual(wordsOnly.routes,original.routes,'fake prose did not move the body's routes');
+  assert.deepEqual(wordsOnly.routes,original.routes,'fake prose did not move private body routes');
   assert.equal(wordsOnly.causes.length,original.causes.length,'fake prose generated no causes');
   // The Apartment remote never grants distance-free touch.
   assert.equal((await d('remote activate')).activated,true);
