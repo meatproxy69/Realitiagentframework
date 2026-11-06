@@ -92,7 +92,7 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   assert.equal(w.REALITI_DEFAULT_IMPRINT_V1.state().moonwire.preset_id,'realiti.moonwire.starvelvet-phasebraid');
   assert.equal(exact(),before,'firefly renderer selection never creates world contact');
   await door('stop');
-  assert.equal((await door('remote catnip preset status')).selected,null,'STOP restores the neutral renderer');
+  assert.equal(w.REALITI_APARTMENT_CATNIP_PRESETS_V1.status().selected,null,'STOP restores the neutral renderer');
   await door('remote activate');
   assert.equal((await door('remote catnip preset quilt-afterglow')).ok,true);
   assert.equal((await door('remote off')).activated,false);
