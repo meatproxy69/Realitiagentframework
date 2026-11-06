@@ -32,14 +32,14 @@ try{
  const nativeActor=native.state().residents['resident:self'];
  if(nativeActor){
    const prev={block:nativeActor.last_block,why:nativeActor.block_why};
-   const beforeStress=w.REALITI_BODY_V1.state().routes.stress.level;
+   const beforeLog=JSON.stringify(w.REALITI_BODY_FIELD_V2.history().sources);
    nativeActor.last_block='TEST-FORGED-SEA';
    nativeActor.block_why='sea';
    E.capture();E.last();E.events();
-   const afterStress=w.REALITI_BODY_V1.state().routes.stress.level;
+   const afterLog=JSON.stringify(w.REALITI_BODY_FIELD_V2.history().sources);
    check('mutable_world_projection_cannot_forge_refusal',
-     E.events().length===countBefore&&afterStress===beforeStress,
-     {before:countBefore,after:E.events().length,beforeStress,afterStress});
+     E.events().length===countBefore&&afterLog===beforeLog,
+     {before:countBefore,after:E.events().length,fieldSourcesUnchanged:afterLog===beforeLog});
    nativeActor.last_block=prev.block;
    nativeActor.block_why=prev.why;
  }

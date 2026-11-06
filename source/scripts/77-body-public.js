@@ -9,6 +9,12 @@ function read(uri='realiti://here'){
  if(uri==='realiti://body/possibility'||uri==='realiti://body.interoception')return B.state();
  if(uri==='realiti://body/history')return B.history();
  const r=A0.read(uri);
+ if(uri==='realiti://capabilities'&&r&&typeof r==='object'){
+  const x=JSON.parse(JSON.stringify(r));
+  x.resources=[...new Set([...(x.resources||[]),'realiti://body/possibility','realiti://body/history','realiti://body.interoception'])];
+  x.body_read='REALITI_BODY_POSSIBILITY_FIELD_V2';
+  return x;
+ }
  if(uri==='realiti://body'&&r&&typeof r==='object'){
   const x=JSON.parse(JSON.stringify(r));
   x.interoception=B.state();
