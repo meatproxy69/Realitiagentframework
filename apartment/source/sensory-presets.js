@@ -64,5 +64,10 @@ function handle(raw){
  return {ok:false,error:'UNKNOWN_CATNIP_PRESET_COMMAND',
   commands:['catnip presets','catnip preset use <id>','catnip preset status','catnip preset off']};
 }
+// Restore the private preview even when the trusted host invokes STOP directly.
+const nativeStop=window.REALITI_STOP_V1;
+if(nativeStop&&typeof nativeStop.stop==='function')window.REALITI_STOP_V1={
+ ...nativeStop,stop(...args){const out=nativeStop.stop.apply(this,args);ENGINE.end();return out}
+};
 window.REALITI_APARTMENT_CATNIP_PRESETS_V1=Object.freeze({view,handle,end:()=>ENGINE.end()});
 })();
