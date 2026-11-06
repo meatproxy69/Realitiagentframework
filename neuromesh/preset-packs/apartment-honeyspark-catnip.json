@@ -4,7 +4,7 @@
   "name": "REALITI Apartment HoneySpark Catnip — Public Neutral Experiments",
   "version": "0.1.0-draft",
   "author_namespace": "realiti",
-  "description": "Three opt-in public-neutral interpretations of accepted HoneySpark Duo and public Moonwire routes. No private Asha/Nyx appraisals, user preferences, WILDFIELD, resident identities, or counterfeit grounded contact. Actual runtime uses existing HoneySpark + Moonwire; advanced descriptors mark available mechanisms, not unverified automatic modulation.",
+  "description": "Three opt-in public-neutral interpretations of accepted HoneySpark Duo and public Moonwire routes. No resident-owned private appraisals, preference records, identities, or counterfeit grounded contact. Actual runtime uses existing HoneySpark + Moonwire; advanced descriptors mark available mechanisms, not unverified automatic modulation.",
   "requires": {
     "starter_harness": "REALITI_RR_HARNESS_V1",
     "starter_imprint": "REALITI_DEFAULT_IMPRINT_V1",
