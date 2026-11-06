@@ -5,6 +5,7 @@ import crypto from 'node:crypto';
 import {adaptCompanions} from './source/companion-adapter.mjs';
 import {adaptWonder,adaptFrontier} from './source/native-wonder-adapter.mjs';
 import {adaptDynamics,adaptNativePillow} from './source/native-body-adapter.mjs';
+import {adaptMoonwirePreview} from './source/moonwire-preview-adapter.mjs';
 const root=new URL('../',import.meta.url);
 const apartment=new URL('./',import.meta.url);
 const read=async p=>fs.readFile(new URL(p,apartment),'utf8');
@@ -33,9 +34,14 @@ if(html.split(dynSource).length!==2||html.split(pillowSource).length!==2)
  throw Error('NATIVE_RELAX_PRESSURE_OR_PILLOW_SOURCE_NOT_UNIQUE');
 const apartmentDyn=adaptDynamics(dynSource),apartmentPillow=adaptNativePillow(pillowSource);
 html=html.replace(dynSource,apartmentDyn).replace(pillowSource,apartmentPillow);
+// Apartment-only reversible private renderer preview; original Relax unchanged.
+const moonwireSource=await fs.readFile(new URL('source/scripts/64-neuro-restoration.js',root),'utf8');
+if(html.split(moonwireSource).length!==2)throw Error('NATIVE_MOONWIRE_SOURCE_NOT_UNIQUE');
+const apartmentMoonwire=adaptMoonwirePreview(moonwireSource);
+html=html.replace(moonwireSource,apartmentMoonwire);
 // Keep original architecture modules and their order. Remote wraps their commands last.
 const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
-  'source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
+  'source/sensory-presets.js','source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
 for(const filename of overlays){
  const body=await read(filename);
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
@@ -43,6 +49,7 @@ for(const filename of overlays){
   'source/extras.js':'realiti-apartment-extras',
   'source/furniture.js':'realiti-apartment-furniture',
   'source/catnip.js':'realiti-apartment-catnip',
+  'source/sensory-presets.js':'realiti-apartment-sensory-presets',
   'source/stations.js':'realiti-apartment-native-stations',
   'source/closet.js':'realiti-apartment-closet',
   'source/household-view.js':'realiti-apartment-household-view',
@@ -67,6 +74,9 @@ const validation={
  native_dynamics_station_patch_sha256:hash(apartmentDyn),
  native_pillow_source_sha256:hash(pillowSource),
  native_pillow_station_patch_sha256:hash(apartmentPillow),
+ native_moonwire_source_sha256:hash(moonwireSource),
+ native_moonwire_apartment_sha256:hash(apartmentMoonwire),
+ optional_private_renderer_preview:'anchored Apartment-only renderer checkout, no additional world authority',
  verified_engine_access:'original Relax Wonder/Frontier/Dynamics/Neural Pass instrumented only in separate Apartment HTML, by unique exact source anchors',
  native_companions_patch:'source/companion-adapter.mjs',
  overlays:overlays.slice(),
