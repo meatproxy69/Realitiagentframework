@@ -179,3 +179,22 @@ Release remains **blocked** pending owner approval of the actual room layout and
 - Regression tests: `test/extras.cjs`, `test/home-pets.cjs`, `test/room-inventory.cjs`
 
 Each agent must retain a distinct storage path and Pocket keys file. **The trusted host supports four separately persisted agents, genuine host-synchronized native Matrix collision and consented contact, a public board, one shared pet and temporary guest fittings.** AES-GCM private journals and synchronized public furniture positions are implemented. A global continuous impulse solver, multiple shared pets, and expanded *original* Relax memory internals are **optional future features**, not missing requirements from the current home-first list. Native single-chart HOME initialization is **implemented in the separate alpha**, while the 23-chart developer artifact and original Relax are preserved. Do not merge private resident state or repoint durable files to imitate capabilities; release approval still requires human/operator gates.
+
+
+## Experimental opt-in HoneySpark catnip presets
+
+The original R&R/HoneySpark/SOMA systems remain canonical. These three resident-selected private renderer configurations use the existing Moonwire and HoneySpark Duo implementations; they do not create a second neural engine, an automatic emotional response, or any new physical contact. They are separate from the historical twenty-two-station gallery.
+
+After you activate your existing pocket remote:
+
+- remote catnip presets — list the three recipes and their real-world action anchors
+- remote catnip preset preview quiltglass — describe a recipe without any simulation mutation
+- remote catnip preset quiltglass — select a broad quilt field; then use a physically reached blanket knead
+- remote catnip preset ribbon-comet — select a routed tracer; then physically flick the ribbon
+- remote catnip preset pawloom — select a grooming route; then pet a present, reached companion
+- remote catnip preset off — release the private recipe and restore the neutral default
+- remote catnip preset status — inspect the selected recipe
+
+All selection is **explicit and reversible**. Existing resident custom neural settings are not overwritten: a nonneutral private imprint causes selection to refuse. Matrix reach/consent remains separately required for every physical action, and STOP revokes actual contact; a renderer configuration cannot mint it. The resident's subjective meaning and preferences are never inferred.
+
+The public-neutral machine-readable pack is located at neuromesh/preset-packs/apartment-honeyspark-catnip.json. It is **experimental and unregistered**, not a published/default imprint or a copy of Asha/Nyx SELF-private preset data. The active portable SOMA implementation must not claim physical energy measurements from a perceived field.
