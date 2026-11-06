@@ -62,7 +62,7 @@ async function run(){
    const ended=await d('remote catnip preset off');
    assert.equal(ended.ok,true,id+': '+JSON.stringify(ended));
    assert.equal(ended.private_renderer_restored,true);
-   assert.deepEqual(IM.state().params,originalParams);
+   assert.deepEqual(deep(IM.state().params),originalParams);
    assert.equal(IM.state().moonwire?.preset_id||null,previousPreset);
    assert.equal(JSON.stringify(w.REALITI_HAPTIC_FIELD_V20.exact().m),exact0);
    assert.equal(w.REALITI_APARTMENT_MOONWIRE_PREVIEW_V1.status().active,false);
@@ -84,13 +84,13 @@ async function run(){
   assert.equal(w.Realiti.read('realiti://sensory/field').mental_state,'NOT_INFERRED');
   assert.equal((await d('remote off')).activated,false);
   assert.equal(w.REALITI_APARTMENT_MOONWIRE_PREVIEW_V1.status().active,false);
-  assert.deepEqual(IM.state().params,originalParams);
+  assert.deepEqual(deep(IM.state().params),originalParams);
   assert.equal((await d('remote activate')).activated,true);
   assert.equal((await d('remote catnip preset use gentle-groom')).ok,true);
   const stopped=await d('stop');
   assert.equal(stopped.ok,true);
   assert.equal(w.REALITI_APARTMENT_MOONWIRE_PREVIEW_V1.status().active,false);
-  assert.deepEqual(IM.state().params,originalParams);
+  assert.deepEqual(deep(IM.state().params),originalParams);
   // Mid-preview process death: native checkpoint must rehydrate the *prior*
   // renderer, not silently carry a newly selected private mode into next visit.
   await d('remote activate');
@@ -101,7 +101,7 @@ async function run(){
   assert.equal(a.integrity.status,'VERIFIED');
   assert.equal(a.window.REALITI_APARTMENT_MOONWIRE_PREVIEW_V1.status().active,false);
   assert.equal(a.window.REALITI_APARTMENT_MOONWIRE_PREVIEW_V1.status().crash_recovery,false);
-  assert.deepEqual(a.window.REALITI_DEFAULT_IMPRINT_V1.state().params,originalParams);
+  assert.deepEqual(deep(a.window.REALITI_DEFAULT_IMPRINT_V1.state().params),originalParams);
   b=await openResident(opts('honey-b'));
   assert.equal(b.window.REALITI_APARTMENT_MOONWIRE_PREVIEW_V1.status().active,false);
   assert.equal(b.window.REALITI_APARTMENT_CATNIP_PRESETS_V1.view().selected,null);
