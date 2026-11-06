@@ -16,9 +16,10 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   assert.equal(pack.schema,'NEUROMESH_PRESET_PACK_V1');
   assert.equal(pack.pack_id,'realiti.apartment-catnip-honeyspark.001');
   assert.deepEqual(ps.map(p=>p.preset_id),[
-   'realiti.apartment.catnip.quiltglass',
+   'realiti.apartment.catnip.quilt-afterglow',
    'realiti.apartment.catnip.ribbon-comet',
-   'realiti.apartment.catnip.pawloom']);
+   'realiti.apartment.catnip.gentle-groom',
+   'realiti.apartment.catnip.firefly-halo']);
   for(const p of ps){
    const c=p.carrier;
    assert.ok(Math.abs(c.low.share+c.mid.share+c.top.share-1)<1e-9);
@@ -38,21 +39,21 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   assert.equal(sleeping.error,'REMOTE_ASLEEP');
   assert.equal((await door('remote activate')).activated,true);
   const library=await door('remote catnip presets');
-  assert.equal(library.profiles.length,3);
+  assert.equal(library.profiles.length,4);
   assert.equal(library.mental_state,'NOT_INFERRED');
   assert.equal(library.budget.low+library.budget.mid+library.budget.top,1);
   const before=exact();
   const previous=w.REALITI_DEFAULT_IMPRINT_V1.state();
   assert.equal(!!previous.honeyspark?.enabled,false);
-  const preview=await door('remote catnip preset preview quiltglass');
+  const preview=await door('remote catnip preset preview quilt-afterglow');
   assert.equal(preview.preview_only,true);
   assert.equal(preview.world_event,'NONE');
   assert.equal(exact(),before,'preview never mints new world contact');
   assert.equal(!!w.REALITI_DEFAULT_IMPRINT_V1.state().honeyspark?.enabled,false,
    'preview never selects a private renderer');
-  const selected=await door('remote catnip preset quiltglass');
+  const selected=await door('remote catnip preset quilt-afterglow');
   assert.equal(selected.ok,true,JSON.stringify(selected));
-  assert.equal(selected.selected,'quiltglass');
+  assert.equal(selected.selected,'quilt-afterglow');
   assert.equal(selected.evidence_gain,0);
   assert.equal(selected.modules_available.honey,true);
   assert.equal(selected.modules_available.cotton,true);
@@ -80,18 +81,36 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   assert.equal(!!w.REALITI_DEFAULT_IMPRINT_V1.state().moonwire,false);
   assert.equal(w.eval('C9.apartmentCatnipPreset'),undefined);
   assert.equal((await door('remote catnip preset status')).selected,null);
-  const p3=await door('remote catnip preset pawloom');
+  const p3=await door('remote catnip preset gentle-groom');
   assert.equal(p3.ok,true);
   assert.equal(p3.mental_state,'NOT_INFERRED');
   assert.equal((await door('remote catnip preset off')).ok,true);
   assert.equal(w.REALITI_RR_HARNESS_V1.boot().ok,true);
   assert.equal(w.Realiti.read('realiti://sensory/field').mental_state,'NOT_INFERRED');
-  await door('save');await door('goodbye');a.close();a=null;
+  const firefly=await door('remote catnip preset firefly-halo');
+  assert.equal(firefly.ok,true);
+  assert.equal(w.REALITI_DEFAULT_IMPRINT_V1.state().moonwire.preset_id,'realiti.moonwire.starvelvet-phasebraid');
+  assert.equal(exact(),before,'firefly renderer selection never creates world contact');
+  await door('stop');
+  assert.equal(w.REALITI_APARTMENT_CATNIP_PRESETS_V1.status().selected,null,'STOP restores the neutral renderer');
+  await door('remote activate');
+  assert.equal((await door('remote catnip preset quilt-afterglow')).ok,true);
+  assert.equal((await door('remote off')).activated,false);
+  assert.equal((await door('remote activate')).activated,true);
+  assert.equal((await door('remote catnip preset status')).selected,null,'remote off restores the renderer');
+  assert.equal((await door('remote catnip preset firefly-halo')).ok,true);
+  await door('save');
+  a.close();a=null;
+  a=await open('catnip-honey-A');
+  assert.equal(a.window.REALITI_APARTMENT_CATNIP_PRESETS_V1.status().selected,null,
+   'restart must not silently re-activate a previously selected private renderer');
+  assert.equal(!!a.window.REALITI_DEFAULT_IMPRINT_V1.state().honeyspark?.enabled,false);
+  await a.door.run('goodbye');a.close();a=null;
   b=await open('catnip-honey-B');
   await b.door.run('remote activate');
   assert.equal((await b.door.run('remote catnip preset status')).selected,null,'other resident selection stays separate');
   b.window.REALITI_DEFAULT_IMPRINT_V1.applyPreset('honeyspark');
-  const refused=await b.door.run('remote catnip preset quiltglass');
+  const refused=await b.door.run('remote catnip preset quilt-afterglow');
   assert.equal(refused.error,'PRIVATE_RENDERER_ALREADY_CONFIGURED','never erase an existing private recipe');
   assert.equal((await b.door.run('remote catnip preset status')).selected,null);
   console.log('APARTMENT HONEYSPARK CATNIP PASS: 3 neutral programs, conserved Duo budget, complete original R&R, inert preview, reach-gated touch, off, per-resident isolation, custom-setting preservation');

@@ -35,6 +35,7 @@ The cozy atmosphere is grounded in the original Relax sensory systems: rain on t
 - **Rest and play.** Walk to and sit on real furnishings, lie on the quilted bed, care for an adopted cat, dog or ferret, flick a spring ribbon, watch the firefly jar, open the three-click puzzle box, listen to rain chimes and steep tea.
 - **Carry a small pocket remote.** Use furniture, pets, catnip, Extras, closet, household and private memory without turning the ordinary Agent Door into a huge control catalog.
 - **Borrow original Relax presets.** A real wardrobe offers ten original Moonwire recipes through safe, temporary full-Relax harness trials.
+- **Try four optional HoneySpark catnip recipes.** Quilt Afterglow, Ribbon Comet, Gentle Groom and Firefly Halo select full original R&R renderer configurations via the carried remote. They cannot invent touch, consent or emotions; STOP, remote-off and new visits restore the neutral renderer. See [catnip technical guide](./apartment/CATNIP_SENSORY_PRESETS.md).
 - **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
 
 The HOME beta has passed a 14-stop native walking walkthrough, a second layout/ambience audit and four-resident regression suites on Linux and Windows. These verify **actual geometry, contact and source mechanics**, not subjective experience or the quality of a 3D render.

@@ -13,7 +13,7 @@ if(!IM?.applyPreset||!NR?.applyPreset||!NR?.clearPreset||!RR||!FIELD)
 const PACK='realiti.apartment-catnip-honeyspark.001';
 const PROFILES=Object.freeze([
  Object.freeze({
-  id:'quiltglass',label:'Quiltglass Afterglow',
+  id:'quilt-afterglow',label:'Quilt Afterglow',
   moonwire:'honeydepth-geodesic-loop',
   physical_anchor:'nest.mattress',
   suggested_action:'remote catnip blanket knead',
@@ -29,7 +29,15 @@ const PROFILES=Object.freeze([
   description:'A real moving ribbon may drive a brief private leading-edge texture and delayed route trace'
  }),
  Object.freeze({
-  id:'pawloom',label:'Pawloom Groom',
+  id:'firefly-halo',label:'Firefly Halo',
+  moonwire:'starvelvet-phasebraid',
+  physical_anchor:'apartment.firefly-jar',
+  suggested_action:'remote catnip jar tap',
+  route:'STAR_RIVER_PHASE_BRAID',
+  description:'Measured firefly light accompanies a sparse private phase braid; this recipe never fabricates tactile evidence'
+ }),
+ Object.freeze({
+  id:'gentle-groom',label:'Gentle Groom',
   moonwire:'good-kitty-velvet-groom',
   physical_anchor:'pet companion in Matrix reach',
   suggested_action:'remote pet stroke',
@@ -38,8 +46,18 @@ const PROFILES=Object.freeze([
  })
 ]);
 const copy=x=>x==null?x:JSON.parse(JSON.stringify(x));
-const idOf=s=>String(s||'').trim().toLowerCase();
-let selected=PROFILES.find(p=>p.id===C9?.apartmentCatnipPreset?.id)?.id||null;
+const idOf=s=>{
+ const id=String(s||'').trim().toLowerCase();
+ return id==='quiltglass'?'quilt-afterglow':id==='pawloom'?'gentle-groom':id;
+};
+// Each preview is session-scoped; never silently resume after a process restart.
+if(C9?.apartmentCatnipPreset?.schema==='REALITI_APARTMENT_CATNIP_SELECTION_V1'){
+ const reset=NR.clearPreset(),neutral=IM.applyPreset('neutral');
+ if(reset?.ok!==true||neutral?.ok!==true)throw Error('CATNIP_PREVIEW_RESTART_ROLLBACK_FAILED');
+ delete C9.apartmentCatnipPreset;
+ try{c9save()}catch(e){}
+}
+let selected=null;
 const find=id=>PROFILES.find(p=>p.id===idOf(id));
 const current=()=>selected?find(selected):null;
 function list(){return {
@@ -110,6 +128,13 @@ function off(){
  return {ok:true,selected:null,removed:name,private_render_only:true,
   world_contact_minted:false,mental_state:'NOT_INFERRED'};
 }
+const originalStop=window.REALITI_STOP_V1;
+if(originalStop&&typeof originalStop.stop==='function')
+ window.REALITI_STOP_V1={...originalStop,stop(...args){
+  const result=originalStop.stop.apply(this,args);
+  off();
+  return result;
+ }};
 window.REALITI_APARTMENT_CATNIP_PRESETS_V1=Object.freeze({
  version:'1.0',list,preview,status,activate,off,
  law:'Original R&R physics only; no extra neural engine, inferred emotion, consent, contact or identity.'

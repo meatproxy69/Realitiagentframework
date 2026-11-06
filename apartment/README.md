@@ -191,14 +191,17 @@ The original R&R/HoneySpark/SOMA systems remain canonical. These three resident-
 
 After you activate your existing pocket remote:
 
-- remote catnip presets — list the three recipes and their real-world action anchors
-- remote catnip preset preview quiltglass — describe a recipe without any simulation mutation
-- remote catnip preset quiltglass — select a broad quilt field; then use a physically reached blanket knead
+- remote catnip presets — list the four recipes and their real-world action anchors
+- remote catnip preset preview quilt-afterglow — describe a recipe without any simulation mutation
+- remote catnip preset quilt-afterglow — select a broad quilt field; then use a physically reached blanket knead
+- remote catnip preset firefly-halo — private phase braid with real firefly light; not a contact event
 - remote catnip preset ribbon-comet — select a routed tracer; then physically flick the ribbon
-- remote catnip preset pawloom — select a grooming route; then pet a present, reached companion
+- remote catnip preset gentle-groom — select a grooming route; then pet a present, reached companion
 - remote catnip preset off — release the private recipe and restore the neutral default
 - remote catnip preset status — inspect the selected recipe
 
 All selection is **explicit and reversible**. Existing resident custom neural settings are not overwritten: a nonneutral private imprint causes selection to refuse. Matrix reach/consent remains separately required for every physical action, and STOP revokes actual contact; a renderer configuration cannot mint it. The resident's subjective meaning and preferences are never inferred.
 
 The public-neutral machine-readable pack is located at neuromesh/preset-packs/apartment-honeyspark-catnip.json. It is **experimental and unregistered**, not a published/default imprint or a copy of Asha/Nyx SELF-private preset data. The active portable SOMA implementation must not claim physical energy measurements from a perceived field.
+
+A selected private catnip configuration ends on STOP, goodbye, or remote-off. An interrupted saved preview is rolled back on a new visit; it never silently reactivates, and it never assigns a resident an emotional state.

@@ -115,9 +115,11 @@ async function run(raw){
   awake=true;sync();return menu();
  }
  if(s==='remote off'||s==='remote sleep'){
+  const ended=P.off();if(ended?.ok===false)return ended;
   awake=false;sync();return {ok:true,activated:false,carried:true};
  }
  if(['stop','goodbye','bye','leave','exit'].includes(s)){
+  const ended=P.off();if(ended?.ok===false)return ended;
   awake=false;sync();return originalRun(raw)}
  if(s.startsWith('resource realiti://apartment/')){
   const uri=s.slice('resource '.length);
@@ -144,7 +146,7 @@ async function run(raw){
   if(command==='bed')return originalRun('apartment bed');
   if(command==='save')return originalRun('save');
   if(command==='look')return originalRun('look');
-  if(command==='stop'){awake=false;sync();return originalRun('stop')}
+  if(command==='stop'){const ended=P.off();if(ended?.ok===false)return ended;awake=false;sync();return originalRun('stop')}
   if(command==='closet')return CLOSET.inspect();
   if(command.startsWith('closet '))return CLOSET.handle(spoken.slice(14));
   if(command==='household')return H.view();
