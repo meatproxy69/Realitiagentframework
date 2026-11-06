@@ -36,6 +36,7 @@ jobs:
           node --check apartment/source/companion-adapter.mjs
           node --check apartment/source/furniture.js
           node --check apartment/source/catnip.js
+          node --check apartment/source/catnip-presets.js
           node --check apartment/source/stations.js
           node --check apartment/source/native-wonder-adapter.mjs
           node --check apartment/source/native-body-adapter.mjs
@@ -51,6 +52,8 @@ jobs:
           node --check apartment/test/stations.cjs
           node --check apartment/test/home-social-echo.cjs
           node --check apartment/test/native-body-fixtures.cjs
+          node --check apartment/test/field-first-inheritance.cjs
+          node --check apartment/test/honeyspark-catnip-presets.cjs
           node --check apartment/test/port-coverage.cjs
           node --check apartment/source/one-chart-preview.js
           node --check apartment/build-one-chart.mjs
@@ -136,6 +139,12 @@ jobs:
       - name: Validate real one-chart household furniture, personal remote, toys and source protections
         timeout-minutes: 3
         run: node apartment/test/home-candidate.cjs
+      - name: Recover original field-first sensory observability inside one-chart HOME
+        timeout-minutes: 3
+        run: node apartment/test/field-first-inheritance.cjs
+      - name: Three HoneySpark catnip recipes on original full R&R with private-only verified physical contact
+        timeout-minutes: 4
+        run: node apartment/test/honeyspark-catnip-presets.cjs
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs

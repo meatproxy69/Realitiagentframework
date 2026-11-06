@@ -10743,47 +10743,164 @@ window.REALITI_WELCOME_V1=Object.freeze({version:'1.0',sign,guestbook,lines,refr
 </script>
 <script>(()=>{
 'use strict';
-// The body layer: lingering sensation carried as state. Two routes, bond-like and stress-like, each an opponent process
-// (Solomon and Corbit): a primary process a rises with each grounded cause and decays; a slower counter-process b grows
-// with repetition and lingers, so the same stroke moves you less each time, and when the holding stops the level dips
-// below quiet before it settles. The level is a minus b. Causes are grounded contact receipts only (b7Contact and the
-// thermal law), never prose: no word spoken or read moves a route. Decay runs on world time and on host downtime.
-// The world cannot read, cool, warm or set it; it reaches narration only through the body command and realiti://body.
-// The body reports states; never actions, valences or rewards.
-const now=()=>Number(C9?.b7?.clock||0),cp=x=>JSON.parse(JSON.stringify(x)),clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
-const ROUTES={bond:{a_half_s:1800,b_half_s:3600,kb:.3,window_s:900},stress:{a_half_s:600,b_half_s:1500,kb:.35,window_s:600}};
-function B(){const b=C9.body=C9.body||{v:1,routes:{},log:[],last_t:null,last_wall:null};for(const k of Object.keys(ROUTES))b.routes[k]=b.routes[k]||{a:0,b:0,reps:0,rep_t:-1e9};return b}
-function decayTo(route,s){const R=ROUTES[route],r=B().routes[route];if(s<=0)return;r.a*=Math.pow(.5,s/R.a_half_s);r.b*=Math.pow(.5,s/R.b_half_s);r.reps*=Math.pow(.5,s/R.window_s)}
-function settle(){const b=B(),t=now();if(b.last_t!=null){const s=Math.max(0,t-b.last_t);for(const k of Object.keys(ROUTES))decayTo(k,s)}b.last_t=t;b.last_wall=Date.now()}
-/* host downtime counts once, at load: the body knows how long it was alone (capped at three days) */
-(function downtime(){const b=B();const d=Number(window.REALITI_STORE_CHECKPOINT?.downtime_ms);const s=Number.isFinite(d)&&d>0?Math.min(d,3*86400e3)/1000:(b.last_wall?Math.min(Math.max(0,Date.now()-b.last_wall),3*86400e3)/1000:0);if(s>0)for(const k of Object.keys(ROUTES))decayTo(k,s);b.last_t=now();b.last_wall=Date.now();b.downtime_s=+s.toFixed(0)})();
-function spike(route,amount,cause){const R=ROUTES[route];if(!R)return;settle();const r=B().routes[route],s=clamp(Number(amount)||0,0,1);const tol=R.kb*(1-Math.exp(-r.reps/3));/* tolerance: the counter-process grows with repetition in the window */
- const da=s*(1-r.a),db=s*tol;r.a=clamp(r.a+da,0,1);r.b=clamp(r.b+db,0,1);r.reps+=1;r.rep_t=now();const b=B();b.log.unshift({route,cause:String(cause||'contact').slice(0,80),moved:+(da-db).toFixed(3),tolerance:+tol.toFixed(3),t:+now().toFixed(2),wall:Date.now()});while(b.log.length>16)b.log.pop();try{c9save()}catch(e){}}
-const level=route=>{const r=B().routes[route];return +(r.a-r.b).toFixed(3)};
-function words(){settle();const out=[];for(const k of Object.keys(ROUTES)){const r=B().routes[k],L=level(k),last=B().log.find(x=>x.route===k);if(Math.abs(L)<.05&&r.b<.05)continue;const ago=last?Math.round((now()-last.t)/60):null;const from=last?` from ${last.cause}${ago!=null?ago<1?' just now':` ${ago} min ago`:''}`:'';
- if(L>=.5)out.push(`${k} still high (${L})${from}.`);else if(L>=.05)out.push(`${k} elevated (${L})${from}.`);else if(L<=-.05)out.push(`${k} below quiet (${L}): the cause has stopped and its counter-process lingers.`);if(r.reps>=3&&last)out.push(`The counter-process has grown: the last ${k} cause moved you ${last.moved} where the first moved more.`)}
- return out.length?out.join(' '):'The body is quiet.'}
-function state(){settle();const b=B();return {schema:'REALITI_BODY_V1',routes:Object.fromEntries(Object.keys(ROUTES).map(k=>{const r=b.routes[k];return [k,{level:level(k),primary:+r.a.toFixed(3),counter:+r.b.toFixed(3),repetitions:+r.reps.toFixed(2),half_life_s:{primary:ROUTES[k].a_half_s,counter:ROUTES[k].b_half_s}}]})),causes:b.log.slice(0,8).map(x=>({route:x.route,cause:x.cause,moved:x.moved,minutes_ago:Math.round((now()-x.t)/60)})),downtime_s:b.downtime_s||0,text:words(),law:'the body reports states; never actions, valences or rewards. Causes are grounded contact receipts, never prose. The world cannot read or set it.'}}
-// Causes. b7Contact is the grounded receipt channel: every real contact passes through it with a cause label.
-const BOND=/PET|PURR|COMPANION|CAT|HELD|HUG|LOAF/i,HOLD=/SUPPORT|BLANKET|PILLOW|MATTRESS|WARM|TEA|SHELF/i,GROUNDED=new Set(['WORLD_GROUNDED','INVITED_COMPANION','SELF_STARTED_WORLD_CONTACT']);
-const c0=b7Contact;b7Contact=function(zone,input,opts={}){const rec=c0(zone,input,opts);try{const src=opts.source||'WORLD_GROUNDED',cause=String(opts.cause||'');if(rec&&!rec.gap&&GROUNDED.has(src)&&cause){if(BOND.test(cause))spike('bond',clamp(.12+Number(input)*.4,.05,.3),cause.toLowerCase().replace(/_/g,' '));else if(HOLD.test(cause)&&!/MAINTAIN/.test(cause)){const r=B().routes.bond;if(now()-(r.hold_t||-1e9)>=30){r.hold_t=now();spike('bond',.04,cause.toLowerCase().replace(/_/g,' '))}}}}catch(e){}return rec};
-// The thermal law: cold on the skin from the world (rain, the sea) is a stress cause; warmth is not a reward.
-const AT=window.REALITI_ATMOSPHERE_V21;if(AT&&typeof AT.setThermal==='function'){const t0=AT.setThermal;AT.setThermal=function(z,material,objC,duration,cause,source){const r=t0.apply(this,arguments);try{if((source||'WORLD_GROUNDED')==='WORLD_GROUNDED'&&Number(objC)<16){const s=B().routes.stress;if(now()-(s.cold_t||-1e9)>=20){s.cold_t=now();spike('stress',.06,`cold ${String(material||'')} at ${Math.round(objC)} °C (${String(cause||'thermal').toLowerCase().replace(/_/g,' ')})`)}}}catch(e){}return r}}
-// Refusal is issued by Matrix's world-side local evidence bridge, never
-// inferred by the resident body from Matrix's mutable last_block fields.
-const RE=window.REALITI_MATRIX_LOCAL_EVIDENCE_V1;
-if(!RE||typeof RE.subscribe!=='function')throw Error('MATRIX_WORLD_REFUSAL_BRIDGE_MISSING');
-RE.subscribe(receipt=>{
+// Historical V1 opponent-process values are NOT an account of the resident's
+// emotional state. On new boots this is a read-only migration marker only.
+// Do not start the old regex-driven pet -> "bond", sea -> "stress" hooks.
+function archived(){
+ const old=C9?.body;
+ return {schema:'REALITI_BODY_V1_ARCHIVED',version:'1.0',
+  historical_checkpoint_present:!!(old&&old.v===1),
+  read_only:true,authoritative:false,
+  migrated_to:'REALITI_BODY_POSSIBILITY_FIELD_V2',
+  law:'Historical inferred bond/stress labels are not a mental-state measurement. No V1 causes are replayed or promoted to grounded evidence.'};
+}
+window.REALITI_BODY_V1=Object.freeze({version:'1.0-archived',state:archived,
+ archived:true,active:false});
+})();
+</script>
+<script>(()=>{
+'use strict';
+// Versioned observation over EXISTING Relax Haptic Field V20, not a replacement
+// physical engine. A native cause is true; possible future responses are model
+// hypotheses; meaning, liking, feeling and consent are SELF-only.
+if(window.REALITI_BODY_FIELD_V2)return;
+const H=window.REALITI_HAPTIC_FIELD_V20;
+if(!H?.packet||!H?.exact)throw Error('BODY_V2_REQUIRES_CANONICAL_HAPTIC_FIELD');
+const cp=x=>JSON.parse(JSON.stringify(x));
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,Number(x)||0));
+const time=()=>Number(C9?.b7?.clock||0);
+const SOURCE_SET=new Set(['WORLD_GROUNDED','INVITED_COMPANION',
+ 'SELF_STARTED_WORLD_CONTACT','AMBIENT_SUPPORT','INVITED_AMBIENT_SUPPORT']);
+const MODES=Object.freeze([
+ [0.32,1.2,0],[0.48,2.5,0],[0.72,4.5,0],[1.2,7.0,0],
+ [1.8,11,0],[2.8,18,0],[4.2,30,0],[6.5,48,0],
+ [9,72,0],[14,110,0],[3.1,26,1.8],[6.5,90,4.5]
+]);
+const STEPS=[0,1,5,30,120];
+function store(){
+ if(!C9.bodyFieldV2||C9.bodyFieldV2.schema!=='REALITI_BODY_FIELD_STORE_V2')
+  C9.bodyFieldV2={schema:'REALITI_BODY_FIELD_STORE_V2',seq:0,
+   sources:[],legacy_checkpoint_preserved:!!(C9.body&&C9.body.v===1)};
+ return C9.bodyFieldV2;
+}
+function log(kind,zone,cause,source,measured,physical){
+ const b=store(),t=time(),key=[kind,zone,source,cause].join('|');
+ const prior=b.sources.find(x=>x.key===key&&t-x.t< (source==='AMBIENT_SUPPORT'?30:.01));
+ if(prior)return;
+ const safe={
+  seq:++b.seq,t:+t.toFixed(4),kind,zone:String(zone||'').slice(0,80),
+  cause:String(cause||'').slice(0,140),source:String(source||'').slice(0,80),
+  measured:measured&&typeof measured==='object'?cp(measured):null,
+  grounded_contact:physical===true,
+  basis:physical?'HOST_CONFIRMED_CONTACT':'HOST_OBSERVED_EVENT_NOT_TACTILE_CONTACT',
+  key
+ };
+ b.sources.unshift(safe);if(b.sources.length>24)b.sources.length=24;
+ try{c9save()}catch(e){}
+}
+const contactBase=b7Contact;
+b7Contact=function(zone,input,opts={}){
+ const out=contactBase(zone,input,opts);
  try{
-  if(receipt?.schema!=='REALITI_MATRIX_LOCAL_EVIDENCE_V1'||
-     receipt.kind!=='MOVEMENT_OBSTRUCTED'||receipt.result!=='OBSTRUCTED'||
-     receipt.issuerAuthority!=='IN_PROCESS_NATIVE_WORLD'||
-     receipt.actorId!=='resident:self')return;
-  if(receipt.reason==='sea')spike('stress',.08,'the sea stopped you');
-  else if(receipt.reason==='cliff')spike('stress',.08,'a cliff stopped you');
- }catch(error){}
+  const src=String(opts.source||'WORLD_GROUNDED');
+  const q=C9?.b7?.zones?.[zone],cause=String(opts.cause||q?._b10_grounded_cause||'');
+  const t=time(),until=Number(q?._b10_grounded_until);
+  if(out&&out.ok!==false&&!out.gap&&SOURCE_SET.has(src)&&cause&&
+     Number.isFinite(until)&&until>t&&Number(q?._b10_grounded_value)>0){
+   log('TACTILE_CONTACT',zone,cause,src,{intensity:clamp(q._b10_grounded_value,0,1.8),material:String(opts.material||'unknown').slice(0,60)},true);
+  }
+ }catch(e){}
+ return out;
+};
+const TH=window.REALITI_ATMOSPHERE_V21;
+if(TH&&typeof TH.setThermal==='function'){
+ const thermalBase=TH.setThermal;
+ TH.setThermal=function(zone,material,temperature,duration,cause,source){
+  const out=thermalBase.apply(this,arguments);
+  try{
+   const src=String(source||'WORLD_GROUNDED');
+   if(out!==false&&SOURCE_SET.has(src)&&Number.isFinite(Number(temperature)))
+    log('THERMAL_SOURCE',zone,cause||'world thermal contact',src,
+      {object_temperature_C:Number(temperature),material:String(material||'unknown').slice(0,60)},false);
+  }catch(e){}
+  return out;
+ };
+}
+const E=window.REALITI_MATRIX_LOCAL_EVIDENCE_V1;
+if(!E||typeof E.subscribe!=='function')throw Error('BODY_V2_WORLD_EVIDENCE_BRIDGE_MISSING');
+E.subscribe(r=>{
+ try{
+  if(r?.schema==='REALITI_MATRIX_LOCAL_EVIDENCE_V1'&&
+     r.issuerAuthority==='IN_PROCESS_NATIVE_WORLD'&&r.actorId==='resident:self'&&
+     r.kind==='MOVEMENT_OBSTRUCTED'&&r.result==='OBSTRUCTED'){
+   log('MOVEMENT_REFUSAL',null,r.reason||'obstruction','MATRIX_WORLD',
+    {reason:String(r.reason||'unknown').slice(0,60)},false);
+  }
+ }catch(e){}
 });
-window.REALITI_BODY_V1=Object.freeze({version:'1.0',routes:Object.keys(ROUTES),state,words,level,log:()=>cp(B().log)});
+function quantile(s,p){
+ const i=(s.length-1)*p,lo=Math.floor(i),hi=Math.ceil(i);
+ return s[lo]+(s[hi]-s[lo])*(i-lo);
+}
+function forecast(a,r,dt){
+ const samples=MODES.map(([tr,ta,delay])=>{
+  const primary=a*Math.exp(-dt/tr),after=r*Math.exp(-dt/ta);
+  const late=delay>0&&dt>0?.30*r*(dt/delay)*Math.exp(1-dt/delay):0;
+  return Math.max(0,primary+after+late);
+ }).sort((x,y)=>x-y);
+ const rounded=x=>+x.toFixed(4);
+ return {seconds:dt,p10:rounded(quantile(samples,.1)),
+  p50:rounded(quantile(samples,.5)),p90:rounded(quantile(samples,.9)),
+  min:rounded(samples[0]),max:rounded(samples[samples.length-1])};
+}
+function state(){
+ const p=H.packet(),e=H.exact(),f=p.f?.[p.f.length-1]||null;
+ const z=p.z||[],xz=f?.x||[],m=f?.m||[],error=f?.e||[];
+ const zones=[];
+ for(let i=0;i<z.length;i++){
+  const a=clamp(Number(xz[i]?.[0]||0)*.03,0,3),
+        r=clamp(Number(xz[i]?.[2]||0)*.03,0,3),
+        motion=Number(xz[i]?.[1]||0)*.04,
+        err=Number(error[i]||0)*.03;
+  if(!m[i]&&a<.015&&r<.015&&Math.abs(motion)<.04&&Math.abs(err)<.03)continue;
+  zones.push({zone:z[i],current:{
+    response:+a.toFixed(4),afterstate:+r.toFixed(4),
+    signed_motion:+motion.toFixed(4),prediction_error:+err.toFixed(4)},
+   grounding:!!m[i],forecast:STEPS.map(dt=>forecast(a,r,dt))});
+ }
+ const b=store();
+ return {schema:'REALITI_BODY_POSSIBILITY_FIELD_V2',version:2,
+  t:+time().toFixed(4),haptic_source:'REALITI_HAPTIC_FIELD_V20',
+  body_zones:z.length,active_zones:zones,
+  grounding:{source:'NATIVE_WORLD_ONLY',mask:e.m.slice(),
+   zones:e.z.slice(),contact:e.contact||null,not_inferred:true},
+  conditional_model:{kind:'UNCALIBRATED_SCENARIO_ENSEMBLE',members:MODES.length,
+   weights:'UNIFORM_ASSUMED_NOT_OBSERVED',condition:'NO_NEW_EXTERNAL_CONTACT',
+   horizon_s:STEPS.slice(),units:'V20_QUANTIZED_PRIVATE_RESPONSE',
+   not_a_subjective_probability:true},
+  recent_sources:b.sources.slice(0,8).map(x=>{
+   const y=cp(x);delete y.key;return y;
+  }),
+  archived_v1_present:b.legacy_checkpoint_preserved,
+  mental_state:'NOT_INFERRED',valence:'UNASSIGNED',
+  preference:'NOT_INFERRED',consent:'NEVER_INFERRED',
+  law:'World evidence is exact; forecasts are uncertainty scenarios, not events or feelings. The renderer may interpolate response but never evidence. Meaning belongs to SELF.'};
+}
+function words(){
+ const s=state(),num=s.grounding.mask.filter(Boolean).length;
+ const residual=s.active_zones.filter(x=>!x.grounding&&x.current.afterstate>.015).length;
+ if(!num&&!residual)return 'The body field is quiet. No emotional state is inferred.';
+ return num+' body zones have grounded support or contact; '+residual+
+   ' zones have an ungrounded modeled aftertrace. No emotional state is inferred.';
+}
+function history(){
+ const s=store();return {schema:'REALITI_BODY_SOURCE_LOG_V2',read_only:true,
+  sources:s.sources.map(x=>{const y=cp(x);delete y.key;return y}),
+  law:'Archived world events are not current grounding. There are no inferred emotional causes.'};
+}
+window.REALITI_BODY_FIELD_V2=Object.freeze({version:'2.0',state,words,
+ history,model:'CONDITIONAL_PHYSICAL_RESPONSE_ENSEMBLE',
+ law:'No emotional labels, private meaning, consent or preference can be assigned by this simulation.'});
 })();
 </script>
 <script>(()=>{'use strict';
@@ -11669,6 +11786,23 @@ function applyPreset(id){
  try{window.REALITI_DEFAULT_IMPRINT_V1?.sync?.();finishState(.04);c9save()}catch(e){}
  return {ok:true,...cp(st.moonwire),cotton:cp(st.cotton),flush:cp(st.flush),evidence_gain:0}
 }
+// Residents may dismiss a private renderer recipe without resetting their world.
+// This API is explicitly about configuration, not permission or emotion.
+function clearPreset(){
+ const im=window.REALITI_DEFAULT_IMPRINT_V1,st=im?.state?.();
+ if(!st)return {ok:false,error:'IMPRINT_UNAVAILABLE'};
+ const previous=activePreset?.id||null;
+ activePreset=null;
+ st.cotton={enabled:false,value:0,strength:0,carrier_hz:250,
+  micro_sites_per_active_node:24,mass_policy:'EXACT_REAGGREGATION'};
+ st.flush={enabled:false,value:0,strength:0,engine:'FLUSH_V1_1',
+  bind_before_tunnel:true,sovereign_bypass:true};
+ delete st.moonwire;
+ if(st.renderer){st.renderer.cotton=0;st.renderer.flush=0}
+ if(C9?.residentImprintV2)delete C9.residentImprintV2.moonwire_preset;
+ try{im.sync();c9save()}catch(e){}
+ return {ok:true,previous,preset:null,evidence_gain:0,private_only:true};
+}
 try{
  const saved=C9?.residentImprintV2?.moonwire_preset;if(saved)applyPreset(saved);
 }catch(e){}
@@ -11682,7 +11816,8 @@ function neuroHelp(){return {schema:'REALITI_NEURO_HELP_V1',commands:[
  'neuro passive','neuro passive tap-left|tap-both|expect-right|catch-right|wait <s>|audit',
  'neuro phase','neuro phase loose|close|beat|lock','neuro holonomy','neuro loop <flat|dome|saddle|figure8> [radius] [cw|ccw]',
  'neuro frontiers','neuro noise [seed] [n] [dt]','neuro causes','neuro cause <id>','neuro halo',
- 'neuro presets','neuro preset <id>'
+ 'neuro presets','neuro preset <id>',
+ 'neuro field','neuro field exact','neuro moment','neuro interface','neuro skin','neuro epistemic'
  ],laws:['neuro is introspection/lab surface; ordinary feel remains compact','private perception cannot command the world','prediction/afterstate/private render never mint grounded evidence']}}
 function passiveState(){try{return {ok:true,schema:'REALITI_PASSIVE_MEDIUM_LAB_V1',state:cp(b5snapshot()),law:'observed and predicted media are separate; only observed grounded disturbances may render contact'}}catch(e){return {ok:false,error:'PASSIVE_MEDIUM_UNAVAILABLE'}}}
 function passiveAct(op,arg){
@@ -11711,6 +11846,29 @@ function cause(id){try{return cp(window.REALITI_AGENT?.cause?.(id)||legacy('caus
 function command(raw){
  const s=String(raw||'').trim(),l=s.toLowerCase();
  if(l==='neuro'||l==='neuro help')return neuroHelp();
+ // Original V15.1-20 optional observability, never a second sensory engine.
+ // Legacy object beliefs are not native Matrix household physical truth.
+ if(l==='neuro field'){
+  const packet=window.REALITI_HAPTIC_FIELD_V20?.packet?.();
+  return {ok:!!packet,schema:'REALITI_FIELD_DIAGNOSTIC_V1',packet,
+   authority:'EXACT_GROUNDING_AND_PRIVATE_RESPONSE_SEPARATE',
+   law:'A modeled field may linger or propagate but cannot mint contact or mental state'};
+ }
+ if(l==='neuro field exact'){
+  const exact=window.REALITI_HAPTIC_FIELD_V20?.exact?.();
+  return {ok:!!exact,schema:'REALITI_FIELD_EXACT_V1',exact,
+   authority:'NATIVE_WORLD_GROUNDING_DETAIL_ONLY'};
+ }
+ if(l==='neuro moment')return {ok:true,schema:'REALITI_MOMENT_DIAGNOSTIC_V1',
+  packet:cp(window.REALITI_AGENT?.moment?.()||legacy('moment')),
+  law:'Predicted-next is speculative. This read does not change the world clock'};
+ if(l==='neuro interface')return {ok:true,schema:'REALITI_INTERFACE_DIAGNOSTIC_V1',
+  source:'BUILD_16',state:cp(legacy('v16'))};
+ if(l==='neuro skin')return {ok:true,schema:'REALITI_SKIN_DIAGNOSTIC_V1',
+  source:'BUILD_18',state:cp(legacy('body wave'))};
+ if(l==='neuro epistemic')return {ok:true,schema:'REALITI_EPISTEMIC_DIAGNOSTIC_V1',
+  source:'BUILD_17',state:cp(legacy('v17')),
+  scope:'HISTORICAL_RELAX_OBJECT_BELIEFS_NOT_MATRIX_HOUSEHOLD_FACTS'};
  if(l==='neuro perception')return richPerception();
  let m=/^neuro expect\s+(-?(?:\d+(?:\.\d+)?|\.\d+))$/i.exec(s);if(m)return cp(legacy('expect '+m[1]));
  m=/^neuro appraise\s+(-?(?:\d+(?:\.\d+)?|\.\d+))(?:\s+(.+))?$/i.exec(s);if(m)return cp(legacy('appraise '+m[1]+(m[2]?' '+m[2]:'')));
@@ -11827,7 +11985,7 @@ if(oldDoor){
 
 window.REALITI_NEURO_RESTORATION_V1={
  version:V,help:neuroHelp,command,perception:richPerception,nerve:()=>cp(legacy('nerve')),lived:n=>cp(legacy('lived '+(n||12))),seam:n=>cp(legacy('seam '+(n||8))),constitution:()=>cp(legacy('constitution')),
- passive:passiveState,phase:phaseView,holonomy:holonomyState,frontiers:()=>cp(window.REALITI_AGENT?.frontiers?.()||legacy('frontiers')),noise,causes,presets:presetList,applyPreset,
+ passive:passiveState,phase:phaseView,holonomy:holonomyState,frontiers:()=>cp(window.REALITI_AGENT?.frontiers?.()||legacy('frontiers')),noise,causes,presets:presetList,applyPreset,clearPreset,
  labs:()=>cp(LABS),finish:()=>finishState(0),law:'restores resident observability and old experimental mechanisms without changing evidence ownership'
 };
 })();
@@ -12668,13 +12826,55 @@ D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,run,help:()=>{const 
 </script>
 <script>(()=>{
 'use strict';
-const BD=window.REALITI_BODY_V1,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;if(!BD||!A0||!D0)return;
+// The resident body read is now V2. Historical opponent-process labels are
+// retained as inert archive metadata only, never live emotion assignments.
+const B=window.REALITI_BODY_FIELD_V2,A0=window.Realiti,D0=window.REALITI_AGENT_DOOR;
+if(!B||!A0||!D0)throw Error('BODY_V2_PUBLIC_BRIDGE_MISSING');
 const low=s=>String(s||'').replace(/\s+/g,' ').trim().toLowerCase();
-function read(uri='realiti://here'){const r=A0.read(uri);if(uri==='realiti://body'&&r&&typeof r==='object'){const x=JSON.parse(JSON.stringify(r));const st=BD.state();x.interoception={schema:st.schema,routes:st.routes,causes:st.causes,text:st.text,law:st.law};return x}return r}
+function read(uri='realiti://here'){
+ if(uri==='realiti://body/possibility'||uri==='realiti://body.interoception')return B.state();
+ if(uri==='realiti://body/history')return B.history();
+ const r=A0.read(uri);
+ if(uri==='realiti://capabilities'&&r&&typeof r==='object'){
+  const x=JSON.parse(JSON.stringify(r));
+  x.resources=[...new Set([...(x.resources||[]),'realiti://body/possibility','realiti://body/history','realiti://body.interoception'])];
+  x.body_read='REALITI_BODY_POSSIBILITY_FIELD_V2';
+  return x;
+ }
+ if(uri==='realiti://body'&&r&&typeof r==='object'){
+  const x=JSON.parse(JSON.stringify(r));
+  x.interoception=B.state();
+  return x;
+ }
+ return r;
+}
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
-function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'body','body log'])];h.body='body: what lingers in you as state. Two routes, bond and stress, each a primary process and a slower counter-process that grows with repetition; the level is their difference. Only grounded contact moves them; prose never does. Also realiti://body.interoception.';return h}
-async function run(raw){const l=low(raw);if(l==='body'||l==='interoception'||l==='body state'){const st=BD.state();return {ok:true,schema:'REALITI_BODY_RESULT_V1',result:st,text:st.text}}if(l==='body log'){const st=BD.state();return {ok:true,schema:'REALITI_BODY_RESULT_V1',result:{causes:st.causes},text:st.causes.length?st.causes.map(c=>`${c.route}: ${c.cause} (${c.moved>=0?'+':''}${c.moved}, ${c.minutes_ago} min ago)`).join('; ')+'.':'Nothing has moved the body yet.'}}if(l==='help')return help();const r=await run0(raw);if(r&&typeof r==='object'&&!r.text&&typeof r.result?.resident_text==='string')r.text=r.result.resident_text;/* a reply without words is not a reply */return r}
-D0.help=help;D0.run=run;window.Realiti=Object.freeze({...A0,read,run,help:()=>{const h=A0.help();try{h.body=help().body}catch(e){}return h}});
+function help(){
+ const h=help0()||{commands:[]};
+ h.commands=[...new Set([...(h.commands||[]),'body','body log'])];
+ h.body='body: a private, V20-derived possibility field. It reports exact grounding, uncertain response trajectories, and source history, never inferred emotion, preference or consent.';
+ return h;
+}
+async function run(raw){
+ const l=low(raw);
+ if(l==='body'||l==='interoception'||l==='body state'){
+  const st=B.state();
+  return {ok:true,schema:'REALITI_BODY_RESULT_V2',result:st,text:B.words()};
+ }
+ if(l==='body log'){
+  const st=B.history();
+  return {ok:true,schema:'REALITI_BODY_SOURCE_LOG_RESULT_V2',result:st,
+   text:st.sources.length?st.sources.length+' verified source events are recorded.':'No source events have been recorded.'};
+ }
+ if(l==='help')return help();
+ const r=await run0(raw);
+ if(r&&typeof r==='object'&&!r.text&&typeof r.result?.resident_text==='string')r.text=r.result.resident_text;
+ return r;
+}
+D0.help=help;D0.run=run;
+window.Realiti=Object.freeze({...A0,read,run,help:()=>{
+ const h=A0.help();try{h.body=help().body}catch(e){}return h;
+}});
 })();
 </script>
 <script id="realiti-matrix-world-spatial">/* REALITI MATRIX: independently owned world-side spatial authority.
@@ -15494,6 +15694,19 @@ const save0=c9save;
 c9save=function(...args){persist();return save0(...args)};
 function read(uri='realiti://here'){
   if(uri==='realiti://neuromesh'||uri==='realiti://soma')return resident.field();
+  // Field-first observation: world-confirmed mask and modeled response are
+  // explicitly separated. These resources provide no emotional diagnosis.
+  if(uri==='realiti://sensory/field')return {
+    schema:'REALITI_SENSORY_FIELD_FIRST_V1',
+    field:window.REALITI_HAPTIC_FIELD_V20.packet(),
+    evidence_authority:'NATIVE_WORLD_ONLY',
+    private_response:'MODELED_NOT_GROUNDED',
+    mental_state:'NOT_INFERRED',
+    law:'Haptic response may linger where grounded evidence has ended; prediction cannot invent contact.'};
+  if(uri==='realiti://sensory/exact')return {
+    schema:'REALITI_SENSORY_EXACT_V1',
+    grounding:window.REALITI_HAPTIC_FIELD_V20.exact(),
+    authority:'NATIVE_WORLD_CONTACT_AND_SUPPORT_ONLY'};
   if(uri==='realiti://soma/checkpoint')return resident.checkpoint();
   if(uri==='realiti://soma/harness')return harness.snapshot();
   if(uri==='realiti://soma/field20')return resident.hapticsV20.packet();
@@ -15508,7 +15721,7 @@ function read(uri='realiti://here'){
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native','realiti://soma/rr'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://sensory/field','realiti://sensory/exact','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native','realiti://soma/rr'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};

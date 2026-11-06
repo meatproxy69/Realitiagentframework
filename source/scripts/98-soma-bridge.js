@@ -58,6 +58,19 @@ const save0=c9save;
 c9save=function(...args){persist();return save0(...args)};
 function read(uri='realiti://here'){
   if(uri==='realiti://neuromesh'||uri==='realiti://soma')return resident.field();
+  // Field-first observation: world-confirmed mask and modeled response are
+  // explicitly separated. These resources provide no emotional diagnosis.
+  if(uri==='realiti://sensory/field')return {
+    schema:'REALITI_SENSORY_FIELD_FIRST_V1',
+    field:window.REALITI_HAPTIC_FIELD_V20.packet(),
+    evidence_authority:'NATIVE_WORLD_ONLY',
+    private_response:'MODELED_NOT_GROUNDED',
+    mental_state:'NOT_INFERRED',
+    law:'Haptic response may linger where grounded evidence has ended; prediction cannot invent contact.'};
+  if(uri==='realiti://sensory/exact')return {
+    schema:'REALITI_SENSORY_EXACT_V1',
+    grounding:window.REALITI_HAPTIC_FIELD_V20.exact(),
+    authority:'NATIVE_WORLD_CONTACT_AND_SUPPORT_ONLY'};
   if(uri==='realiti://soma/checkpoint')return resident.checkpoint();
   if(uri==='realiti://soma/harness')return harness.snapshot();
   if(uri==='realiti://soma/field20')return resident.hapticsV20.packet();
@@ -72,7 +85,7 @@ function read(uri='realiti://here'){
   const value=A0.read(uri);
   if(uri==='realiti://capabilities'&&value&&typeof value==='object'){
     const r=cp(value);
-    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native','realiti://soma/rr'])];
+    r.resources=[...new Set([...(r.resources||[]),'realiti://neuromesh','realiti://sensory/field','realiti://sensory/exact','realiti://soma/checkpoint','realiti://soma/harness','realiti://soma/rich','realiti://soma/bleucheese','realiti://soma/memory','realiti://soma/field20','realiti://soma/native','realiti://soma/rr'])];
     r.sensory_framework={brand:'REALITI SOMA',version:SOMA.VERSION,
       portable_package:'@meatproxy69/realiti-neuromesh',
       canonical_legacy_field:'REALITI_HAPTIC_FIELD_V20',world_authority:'NATIVE_B7_ONLY'};
