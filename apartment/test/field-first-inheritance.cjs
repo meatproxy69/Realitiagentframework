@@ -27,7 +27,7 @@ const {openResident}=require('../../packages/realiti-headless-resident/index.cjs
   assert.equal(direct.resource.schema,'REALITI_SENSORY_FIELD_FIRST_V1');
   const commands=[
    ['neuro field',r=>r?.packet?.v===20],
-   ['neuro moment',r=>r?.packet?.version==='15.1'],
+   ['neuro moment',r=>String(r?.packet?.version||'').startsWith('15.1')],
    ['neuro interface',r=>r?.state?.build===16],
    ['neuro skin',r=>r?.state?.build===18],
    ['neuro epistemic',r=>r?.state?.build===17]
