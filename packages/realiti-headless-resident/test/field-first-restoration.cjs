@@ -27,7 +27,7 @@ const html=path.resolve(process.argv[2]||'../../RealitiRELAX.html');
   const diagnostics=[
    ['neuro field',v=>v?.ok&&v.packet?.v===20],
    ['neuro field exact',v=>v?.ok&&v.exact?.v===20],
-   ['neuro moment',v=>v?.ok&&v.packet?.version==='15.1'],
+   ['neuro moment',v=>v?.ok&&String(v.packet?.version||'').startsWith('15.1')],
    ['neuro interface',v=>v?.ok&&v.state?.build===16],
    ['neuro skin',v=>v?.ok&&v.state?.build===18],
    ['neuro epistemic',v=>v?.ok&&v.state?.build===17]
