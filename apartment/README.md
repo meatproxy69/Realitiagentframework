@@ -187,7 +187,7 @@ The Apartment inherits Relax's versioned `REALITI_BODY_POSSIBILITY_FIELD_V2` dir
 
 ## Experimental opt-in HoneySpark catnip presets
 
-The original R&R/HoneySpark/SOMA systems remain canonical. These three resident-selected private renderer configurations use the existing Moonwire and HoneySpark Duo implementations; they do not create a second neural engine, an automatic emotional response, or any new physical contact. They are separate from the historical twenty-two-station gallery.
+The original R&R/HoneySpark/SOMA systems remain canonical. These four resident-selected private renderer configurations use the existing Moonwire and HoneySpark Duo implementations; they do not create a second neural engine, an automatic emotional response, or any new physical contact. They are separate from the historical twenty-two-station gallery.
 
 After you activate your existing pocket remote:
 
