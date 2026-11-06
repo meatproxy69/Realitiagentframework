@@ -57,7 +57,13 @@ jobs:
         run: node test/pocket-recovery.cjs ../../RealitiRELAX.html
 
   test:
+    name: Headless Agent Door smoke shard ${{ matrix.shard }}
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3]
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -80,13 +86,15 @@ jobs:
       - name: Install package dependency
         working-directory: packages/realiti-headless-resident
         run: npm install --no-package-lock
-      - name: Headless Agent Door smoke
+      - name: Headless Agent Door smoke shard ${{ matrix.shard }}
         working-directory: packages/realiti-headless-resident
-        run: npm test
+        run: node ci-smoke-shard.cjs ${{ matrix.shard }} 4
       - name: Agent-neutral resident example
+        if: matrix.shard == 0
         working-directory: packages/realiti-headless-resident
         run: npm run play:resident
       - name: CLI closes cleanly
+        if: matrix.shard == 0
         working-directory: packages/realiti-headless-resident
         run: |
           node cli.cjs --html ../../RealitiRELAX.html help >/tmp/realiti-help.json
