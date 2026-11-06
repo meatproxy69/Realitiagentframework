@@ -51,6 +51,7 @@ jobs:
           node --check apartment/test/stations.cjs
           node --check apartment/test/home-social-echo.cjs
           node --check apartment/test/native-body-fixtures.cjs
+          node --check apartment/test/body-interoception.cjs
           node --check apartment/test/port-coverage.cjs
           node --check apartment/source/one-chart-preview.js
           node --check apartment/build-one-chart.mjs
