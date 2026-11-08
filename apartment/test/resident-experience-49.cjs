@@ -50,6 +50,8 @@ async function solo(){
   assert.doesNotMatch(glance.text,/Chosen presentation:|\bthe The Apartment Book\b/);
   assert.match(glance.text,/silver crescent pin/);
   assert.equal(glance.appearance.native_clothing,false);
+  const help=await run('help');
+  assert.ok(help.commands.includes('auto plan'),'autonomy must be discoverable from the short Agent Door');
   const plan=await run('auto plan');
   assert.equal(plan.read_only,true);
   assert.ok(plan.sites.some(s=>s.id==='apartment.bedroom.book.library'));
