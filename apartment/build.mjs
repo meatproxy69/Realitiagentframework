@@ -34,14 +34,23 @@ if(html.split(dynSource).length!==2||html.split(pillowSource).length!==2)
 const apartmentDyn=adaptDynamics(dynSource),apartmentPillow=adaptNativePillow(pillowSource);
 html=html.replace(dynSource,apartmentDyn).replace(pillowSource,apartmentPillow);
 // Keep original architecture modules and their order. Remote wraps their commands last.
-const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/catnip.js',
+const overlays=['source/home-pets.js','source/extras.js','source/furniture.js','source/bedrooms.js','source/catnip.js',
   'source/catnip-presets.js','source/stations.js','source/closet.js','source/household-view.js','source/remote.js'];
+const bedroomSpecRaw=await read('bedroom-spec.json');
+const bedroomSpec=JSON.parse(bedroomSpecRaw);
+if(bedroomSpec.schema!=='REALITI_APARTMENT_BEDROOM_SPEC_V1')throw Error('APARTMENT_BEDROOM_SPEC_INVALID');
 for(const filename of overlays){
- const body=await read(filename);
+ let body=await read(filename);
+ if(filename==='source/bedrooms.js'){
+  const placeholder='__REALITI_APARTMENT_BEDROOM_SPEC__';
+  if(body.split(placeholder).length!==2)throw Error('APARTMENT_BEDROOM_SPEC_ANCHOR_DRIFT');
+  body=body.replace(placeholder,JSON.stringify(bedroomSpec));
+ }
  if(/<\/script/i.test(body))throw Error('APARTMENT_SCRIPT_ESCAPE_NOT_ALLOWED: '+filename);
  const ids={'source/home-pets.js':'realiti-apartment-home-pets',
   'source/extras.js':'realiti-apartment-extras',
   'source/furniture.js':'realiti-apartment-furniture',
+  'source/bedrooms.js':'realiti-apartment-bedrooms',
   'source/catnip.js':'realiti-apartment-catnip',
   'source/catnip-presets.js':'realiti-apartment-catnip-presets',
   'source/stations.js':'realiti-apartment-native-stations',
@@ -71,6 +80,9 @@ const validation={
  verified_engine_access:'original Relax Wonder/Frontier/Dynamics/Neural Pass instrumented only in separate Apartment HTML, by unique exact source anchors',
  native_companions_patch:'source/companion-adapter.mjs',
  overlays:overlays.slice(),
+ bedroom_spec_source:'bedroom-spec.json',
+ bedroom_spec_sha256:hash(bedroomSpecRaw),
+ bedroom_ownership:'ONE_NATIVE_HOME_FOUR_CLAIMABLE_ALCOVES',
  closet_preset_source:'unchanged native REALITI_NEURO_RESTORATION_V1.presets()',
  native_relax_harness_reused:true,
  extra_sensory_stack_created:false,

@@ -7,6 +7,7 @@ const {openResident,keystorePathFor}=require('../packages/realiti-headless-resid
 const {createNativeClosetManager}=require('./native-closet-host.cjs');
 const {createPrivateJournal}=require('./private-memory.cjs');
 const {createSharedScene}=require('./shared-scene.cjs');
+const {createBedroomManager}=require('./bedrooms-host.cjs');
 const {createPeerPhysics}=require('./household-physics.cjs');
 const {createHouseholdPet}=require('./household-pet.cjs');
 const SCHEMA='REALITI_APARTMENT_HOUSEHOLD_STORE_V1';
@@ -94,9 +95,11 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  const allEntries=()=>[...active.values(),...guests.values()];
  const scene=createSharedScene({getData:()=>data,persist,
   participants:allEntries,atHome:entry=>atHome(entry)});
+ const bedrooms=createBedroomManager({getData:()=>data,persist,
+  participants:allEntries,atHome:entry=>atHome(entry)});
  const physics=createPeerPhysics({getEntries:allEntries,atHome:entry=>atHome(entry)});
  const sharedPet=createHouseholdPet({getData:()=>data,persist,atHome:entry=>atHome(entry),options});
- try{sharedPet.validate(data.pet)}
+ try{bedrooms.validate(data.bedrooms,data.members);sharedPet.validate(data.pet)}
  catch(e){fs.closeSync(fd);try{fs.unlinkSync(lockPath)}catch{}throw e}
  function validateLocalFile(p){noLink(p);if(fs.existsSync(p)&&!fs.statSync(p).isFile())throw Error('UNSAFE_RESIDENT_STORAGE')}
  function atHome(entry){
@@ -134,7 +137,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  function broadcast(){
   ensureOpen();
   const entries=allEntries();
-  for(const entry of entries)scene.apply(entry);
+  for(const entry of entries){scene.apply(entry);bedrooms.apply(entry)}
   const clearance=physics.reconcile();
   if(!clearance.ok)throw Error(clearance.error);
   const truth=entries.map(e=>({entry:e,position:atHome(e)}));
@@ -147,9 +150,9 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
 
    const feed={schema:FEED,connected:true,capacity:MAX_RESIDENTS,revision:data.revision,
     residents:summary.residents,guests:summary.visitors,board:cp(data.board.slice(-64)),
-    scene:scene.view(),physics:physics.publicView(receiver),
+    scene:scene.view(),bedrooms:cp(data.bedrooms),physics:physics.publicView(receiver),
     pet:sharedPet.status(),
-    law:'Host-verified native colliding capsules and companion, public board and scene. No private resident memories or keys replicated.'};
+    law:'Host-verified native colliding capsules, shared bedroom ownership and position-checked decor. No private resident memories, body state or keys replicated.'};
    // A limited, immutable display snapshot, never a host mutation port.
    Object.defineProperty(w,'REALITI_APARTMENT_HOUSEHOLD_SNAPSHOT',{
     value:Object.freeze(cp(feed)),configurable:true,enumerable:false});
@@ -259,6 +262,18 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
       return entry.journal.forget(raw.slice('remote memory forget '.length).toUpperCase());
      return refusal('UNKNOWN_PRIVATE_MEMORY_COMMAND');
     }
+    // Owner-scoped bedrooms and dropped items belong to the same trusted host
+    // as household furniture: claims, configurations and Matrix placement are
+    // serialized and never admitted through a resident-local Javascript API.
+    if(lower==='remote bedrooms'||lower.startsWith('remote bedroom ')||
+       lower.startsWith('remote decor ')){
+      if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+       return refusal('REMOTE_ASLEEP');
+      const result=bedrooms.handle(entry,raw.slice('remote '.length));
+      if(result.ok&&result.schema==='REALITI_APARTMENT_BEDROOM_COMMIT_V1')
+       broadcast();
+      return result;
+    }
     // Shared scene modifications are admitted by this host, never by a
     // resident's direct JavaScript setter or private furniture preference.
     if(lower==='remote household furniture')return scene.view();
@@ -318,11 +333,14 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     if(uri==='realiti://apartment/memory')
      return entry.role==='resident'?entry.journal.stats():refusal('GUEST_PRIVATE_MEMORY_DENIED');
     if(uri==='realiti://apartment/scene')return scene.view();
+    if(uri==='realiti://apartment/bedrooms')return bedrooms.view();
+    if(uri==='realiti://apartment/decor')return bedrooms.catalog();
     if(uri==='realiti://apartment/physics')return physics.publicView(entry);
     if(uri==='realiti://apartment/household/pet'||uri==='realiti://apartment/pet')
      return sharedPet.status();
     if(entry.role==='guest'&&![
       'realiti://apartment/household','realiti://apartment/board',
+      'realiti://apartment/bedrooms','realiti://apartment/decor',
       'realiti://apartment/closet','realiti://space','realiti://harness',
       'realiti://soma/harness'].includes(uri))return refusal('GUEST_RESOURCE_DENIED');
     return cp(entry.session.window.Realiti.read(uri));
@@ -353,7 +371,8 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     {value:role,configurable:false})}
   });
   if(!session.window.REALITI_APARTMENT_CLOSET_V1||
-      !session.window.REALITI_APARTMENT_HOUSEHOLD_V1){
+      !session.window.REALITI_APARTMENT_HOUSEHOLD_V1||
+      !session.window.REALITI_APARTMENT_BEDROOMS_V1){
    session.close();throw Error('APARTMENT_HOUSEHOLD_FEATURES_MISSING');
   }
   if(!guest&&String(session.residentId)!==id){
@@ -392,6 +411,9 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     online:[...active.keys()],visiting:[...guests.keys()],
     shared_board_count:data.board.length,revision:data.revision,
     shared_scene_revision:data.scene?.revision||0,
+    shared_bedroom_revision:data.bedrooms?.revision||0,
+    owned_bedrooms:Object.values(data.bedrooms?.rooms||{}).filter(r=>r.owner).length,
+    owned_decor_items:data.bedrooms?.items?.length||0,
     encrypted_private_journals:data.members.length,
     solid_native_peer_capsules:true,
     companion:sharedPet.status().pet,
