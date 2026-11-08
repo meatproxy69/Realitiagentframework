@@ -38,7 +38,10 @@ assert.ok(apartment.includes('realiti-apartment-extras'),'apartment overlay appe
  assert.equal(result.error,'REMOTE_ASLEEP');
  assert.equal((await s.door.run('remote activate')).activated,true);
  result=await s.door.run('remote extras rain');
- assert.equal(result.error,'EXTRAS_MENU_CLOSED');
+ assert.equal(result.ok,true,'read-only rain belongs to the world, not a submenu');
+ assert.equal(result.native_rain,true);
+ assert.equal(s.window.Realiti.read('realiti://apartment/extras').open,false,
+  'an observational read does not open optional equipment controls');
  result=await s.door.run('remote extras');
  assert.equal(result.ok,true);
  assert.equal(result.open,true);
