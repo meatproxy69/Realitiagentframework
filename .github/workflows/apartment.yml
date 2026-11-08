@@ -44,6 +44,8 @@ jobs:
           node --check apartment/source/home-life.js
           node --check apartment/source/home-book.js
           node --check apartment/source/style-binder.js
+          node --check apartment/source/style-appearance.js
+          node --check apartment/test/style-appearance.cjs
           node --check apartment/test/book-swatches.cjs
           node --check apartment/test/style-binder.cjs
           node --check apartment/source/native-home-welcome-adapter.mjs
@@ -178,6 +180,9 @@ jobs:
       - name: Resident-private style profiles, 200 creative choices and immutable binder generations
         timeout-minutes: 6
         run: node apartment/test/style-binder.cjs
+      - name: Appearance checkpoint 3 - presentation wardrobe and explicitly shared style cards
+        timeout-minutes: 6
+        run: node apartment/test/style-appearance.cjs
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs
