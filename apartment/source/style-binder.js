@@ -95,7 +95,7 @@ function persist(next){
  }catch(e){return fail('STYLE_BINDER_STORAGE_REFUSED',{reason:String(e.message).slice(0,100)})}
 }
 function tallies(answers){
- const stats=Object.fromEntries(BANK.styles.map(style=>[style,{style,selections:0,offered:0}]));
+ const stats=Object.fromEntries(BANK.styles.map(name=>[name,{style:name,selections:0,offered:0}]));
  for(const [id,n] of Object.entries(answers)){
   if(n===0)continue;
   const q=qmap.get(id);
