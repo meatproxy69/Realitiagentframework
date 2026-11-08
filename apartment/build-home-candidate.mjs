@@ -56,9 +56,9 @@ const styleHashPlaceholder='__REALITI_APARTMENT_STYLE_BANK_SHA256__';
 if(styleSource.split(stylePlaceholder).length!==2||
    styleSource.split(styleHashPlaceholder).length!==2)
  throw Error('HOME_STYLE_BINDER_SOURCE_ANCHOR_DRIFT');
-const style=styleSource.replace(stylePlaceholder,JSON.stringify(styleQuestions))
+const binderCode=styleSource.replace(stylePlaceholder,JSON.stringify(styleQuestions))
  .replace(styleHashPlaceholder,JSON.stringify(hash(styleQuestionsRaw)));
-if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book)||/<\/script/i.test(style))
+if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book)||/<\/script/i.test(binderCode))
  throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(clean))throw Error('HOME_CANDIDATE_HTML_END_MISSING');
@@ -66,7 +66,7 @@ const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\
  source+'\n</script>\n<script id="realiti-apartment-home-life">\n'+
  life+'\n</script>\n<script id="realiti-apartment-optional-book">\n'+
  book+'\n</script>\n<script id="realiti-apartment-private-style-binder">\n'+
- style+'\n</script>\n</body></html>');
+ binderCode+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
  version:'4.3.0-beta.1',candidate_only:true,preview_only:true,
