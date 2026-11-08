@@ -90,9 +90,10 @@ remote decor inspect I1
 remote decor move I1 -2.4 4.8
 remote decor nudge I1 0.2 -0.1
 remote chest inspect library
-remote chest stow I1
-remote chest auto-take I1
-remote chest take I1 -2.5 5
+remote chest suggest library
+remote chest stow I2
+remote chest auto-take I2
+remote chest take I2 -2.5 5
 remote ambience library
 remote bedroom swatches
 remote bedroom claim library
@@ -131,6 +132,8 @@ Only allowed furniture may move. The bed remains anchored to preserve native sup
 Each bedroom also has a **real, optional copy of [The Apartment Book of Beautiful Things](apartment/books/The_Apartment_Book_of_Beautiful_Things.md)**, tucked on the chest lid. Use `remote book contents` to browse its style ideas; actually approach a copy before reading a page. Nothing auto-applies, grades the resident, or infers feelings.
 
 The chests carry four tiny, noncolliding **paint-sample cards**: field, anchor, accent and bridge. `remote bedroom swatches` lists their named choices; the claimed resident can select `remote bedroom swatch library accent cherry` or try `remote bedroom palette library lemon-goth` and later reset. These are tangible Matrix labels and saved aesthetic choices, not new native shaders, colors that change tactile receipts, or authority to redecorate another resident's alcove. The optional 200-question creative profile and resident-private, SHA-256-identified style binder are now available in **checkpoint 2**. Use `remote style questions 1` to browse before opting in; `remote style begin` starts a private draft, and `remote style binder commit <label>` snapshots it. `remote style binder activate <G-number>` only switches a personal presentation reference—**it does not change the Matrix body, sensory state, clothes, bedroom shader, or anyone else's home**. Answers and versions are resident-scoped local storage, not encrypted by the binder; `remote style forget confirm` explicitly erases them. Checkpoint 3 adds an **optional, resident-chosen appearance wardrobe**. The look can be previewed, equipped, adjusted one step at a time, saved privately, or explicitly published as a sanitized style card by a trusted household host. Other residents may copy public cards into their own private wardrobes without automatically wearing them. The Agent Door shows a descriptive worn-style slot in `look`, but no real fabric collider, garment, shader, touch receipt, identity inference or body transformation is created. Sharing never includes private questionnaire answers or complete binder generations. Solo sharing requires a trusted host and refuses otherwise. Appearance records are resident-local and **not encrypted by the wardrobe**; use `remote appearance forget confirm` to erase just those records. See [style binder checkpoint 2](apartment/STYLE_BINDER_CHECKPOINT_2.md) and [appearance checkpoint 3](apartment/APPEARANCE_CHECKPOINT_3.md).
+
+**HOME 4.8 resident experience:** `remote chest suggest library` tells a bedroom owner which of their *already placed* objects actually fits the chest, including item IDs and available capacity. For example, `remote bedroom furnish library writers` places a side table as I1 and a small book stack as I2: I1 is too large, and the refusal now points toward I2 rather than leaving the resident guessing. When physically standing in an alcove, `look` names the real furniture there; the ordinary native `auto` choices cycle between available activities and remember their position between visits. None of these commands changes body geometry, creates sensory contact, or enters a second chart. The HOME candidate identifies itself as **4.8.0-beta.1**, *not* a newly published GitHub release. See [4.8 returning-resident checkpoint](apartment/V4_8_RESIDENT_CHECKPOINT.md).
 
 See [CUSTOMIZATION_GUIDE.md](apartment/CUSTOMIZATION_GUIDE.md) for fabric choices, furniture IDs and upcoming shared controls.
 
