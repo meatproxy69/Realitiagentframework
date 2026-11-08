@@ -331,18 +331,18 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
       shared:item.id,owner:item.by,card:cp(item.card),sha256:item.sha256,
       saved_card_unchanged:true,contact_minted:false};
     }
-    const adopt=/^remote appearance adopt (c[1-9][0-9]*) ([a-z][a-z0-9-]{0,30})$/i.exec(raw);
-    if(adopt){
+    const appearanceAdopt=/^remote appearance adopt (c[1-9][0-9]*) ([a-z][a-z0-9-]{0,30})$/i.exec(raw);
+    if(appearanceAdopt){
      if(entry.role!=='resident')return refusal('GUEST_STYLE_PRIVATE');
      if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
       return refusal('REMOTE_ASLEEP');
-     const item=data.appearance_cards.find(c=>c.id.toLowerCase()===adopt[1].toLowerCase());
+     const item=data.appearance_cards.find(c=>c.id.toLowerCase()===appearanceAdopt[1].toLowerCase());
      if(!item)return refusal('UNKNOWN_SHARED_APPEARANCE');
      if(!validSharedCard(item.card)||hash(JSON.stringify(item.card))!==item.sha256)
       return refusal('INVALID_SHARED_APPEARANCE');
      const bridge=entry.session.window.REALITI_APARTMENT_APPEARANCE_V1;
      if(!bridge?.importCard)return refusal('APPEARANCE_CARD_BRIDGE_MISSING');
-     return bridge.importCard(cp(item.card),adopt[2].toLowerCase());
+     return bridge.importCard(cp(item.card),appearanceAdopt[2].toLowerCase());
     }
     // Owner-scoped bedrooms and dropped items belong to the same trusted host
     // as household furniture: claims, configurations and Matrix placement are
