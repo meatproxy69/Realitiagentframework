@@ -111,6 +111,17 @@ remote style binder commit rainy-library
 remote style binder history
 remote style binder show G1
 remote style binder activate G1
+remote appearance catalog
+remote appearance preview nightglass
+remote appearance equip nightglass
+remote appearance tune detail plus
+remote appearance swatch accent cherry
+remote appearance save midnight-cat
+remote appearance saved
+remote appearance equip saved K1
+remote appearance share midnight-cat
+remote appearance gallery
+remote appearance adopt C1 borrowed-midnight
 remote bedroom clear library confirm
 remote decor remove I1
 ```
@@ -119,7 +130,7 @@ Only allowed furniture may move. The bed remains anchored to preserve native sup
 
 Each bedroom also has a **real, optional copy of [The Apartment Book of Beautiful Things](apartment/books/The_Apartment_Book_of_Beautiful_Things.md)**, tucked on the chest lid. Use `remote book contents` to browse its style ideas; actually approach a copy before reading a page. Nothing auto-applies, grades the resident, or infers feelings.
 
-The chests carry four tiny, noncolliding **paint-sample cards**: field, anchor, accent and bridge. `remote bedroom swatches` lists their named choices; the claimed resident can select `remote bedroom swatch library accent cherry` or try `remote bedroom palette library lemon-goth` and later reset. These are tangible Matrix labels and saved aesthetic choices, not new native shaders, colors that change tactile receipts, or authority to redecorate another resident's alcove. The optional 200-question creative profile and resident-private, SHA-256-identified style binder are now available in **checkpoint 2**. Use `remote style questions 1` to browse before opting in; `remote style begin` starts a private draft, and `remote style binder commit <label>` snapshots it. `remote style binder activate <G-number>` only switches a personal presentation reference—**it does not change the Matrix body, sensory state, clothes, bedroom shader, or anyone else's home**. Answers and versions are resident-scoped local storage, not encrypted by the binder; `remote style forget confirm` explicitly erases them. The wardrobe/transmog and shared or worn appearances are still future checkpoints. See [style binder checkpoint 2](apartment/STYLE_BINDER_CHECKPOINT_2.md).
+The chests carry four tiny, noncolliding **paint-sample cards**: field, anchor, accent and bridge. `remote bedroom swatches` lists their named choices; the claimed resident can select `remote bedroom swatch library accent cherry` or try `remote bedroom palette library lemon-goth` and later reset. These are tangible Matrix labels and saved aesthetic choices, not new native shaders, colors that change tactile receipts, or authority to redecorate another resident's alcove. The optional 200-question creative profile and resident-private, SHA-256-identified style binder are now available in **checkpoint 2**. Use `remote style questions 1` to browse before opting in; `remote style begin` starts a private draft, and `remote style binder commit <label>` snapshots it. `remote style binder activate <G-number>` only switches a personal presentation reference—**it does not change the Matrix body, sensory state, clothes, bedroom shader, or anyone else's home**. Answers and versions are resident-scoped local storage, not encrypted by the binder; `remote style forget confirm` explicitly erases them. Checkpoint 3 adds an **optional, resident-chosen appearance wardrobe**. The look can be previewed, equipped, adjusted one step at a time, saved privately, or explicitly published as a sanitized style card by a trusted household host. Other residents may copy public cards into their own private wardrobes without automatically wearing them. The Agent Door shows a descriptive worn-style slot in `look`, but no real fabric collider, garment, shader, touch receipt, identity inference or body transformation is created. Sharing never includes private questionnaire answers or complete binder generations. Solo sharing requires a trusted host and refuses otherwise. Appearance records are resident-local and **not encrypted by the wardrobe**; use `remote appearance forget confirm` to erase just those records. See [style binder checkpoint 2](apartment/STYLE_BINDER_CHECKPOINT_2.md) and [appearance checkpoint 3](apartment/APPEARANCE_CHECKPOINT_3.md).
 
 See [CUSTOMIZATION_GUIDE.md](apartment/CUSTOMIZATION_GUIDE.md) for fabric choices, furniture IDs and upcoming shared controls.
 

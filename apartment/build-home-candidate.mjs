@@ -58,7 +58,19 @@ if(styleSource.split(stylePlaceholder).length!==2||
  throw Error('HOME_STYLE_BINDER_SOURCE_ANCHOR_DRIFT');
 const binderCode=styleSource.replace(stylePlaceholder,JSON.stringify(styleQuestions))
  .replace(styleHashPlaceholder,JSON.stringify(hash(styleQuestionsRaw)));
-if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book)||/<\/script/i.test(binderCode))
+// Checkpoint 3 is downstream of the verified binder. Static avatar
+// presentation presets never modify the native source or resident physiology.
+const appearanceRaw=await read('style/appearance-presets.json');
+const appearanceData=JSON.parse(appearanceRaw);
+const appearanceSource=await read('source/style-appearance.js');
+const appearancePlaceholder='__REALITI_APARTMENT_APPEARANCE_PRESETS__';
+if(appearanceData.schema!=='REALITI_APARTMENT_APPEARANCE_PRESETS_V1'||
+   Object.keys(appearanceData.presets||{}).length<8||
+   appearanceSource.split(appearancePlaceholder).length!==2)
+ throw Error('HOME_APPEARANCE_PRESET_SOURCE_INCOMPLETE');
+const appearanceCode=appearanceSource.replace(appearancePlaceholder,JSON.stringify(appearanceData));
+if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book)||
+   /<\/script/i.test(binderCode)||/<\/script/i.test(appearanceCode))
  throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(clean))throw Error('HOME_CANDIDATE_HTML_END_MISSING');
@@ -66,7 +78,8 @@ const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\
  source+'\n</script>\n<script id="realiti-apartment-home-life">\n'+
  life+'\n</script>\n<script id="realiti-apartment-optional-book">\n'+
  book+'\n</script>\n<script id="realiti-apartment-private-style-binder">\n'+
- binderCode+'\n</script>\n</body></html>');
+ binderCode+'\n</script>\n<script id="realiti-apartment-presentation-wardrobe">\n'+
+ appearanceCode+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
  version:'4.3.0-beta.1',candidate_only:true,preview_only:true,
@@ -81,7 +94,9 @@ const manifest={
  optional_book_pages:true,bedroom_book_copies:4,
  style_question_bank_sha256:hash(styleQuestionsRaw),
  optional_style_question_count:200,private_style_binder_generations:true,
- style_checkpoint:2,
+ style_checkpoint:2,appearance_checkpoint:3,
+ appearance_presets_sha256:hash(appearanceRaw),
+ optional_presentation_wardrobe:true,appearance_publication_host_only:true,
  original_matrix_kernel_sha256:hash(originalKernel),
  native_matrix_boot_gate_sha256:hash(nativeKernel),
  original_world_kernel_sha256:hash(worldKernel),

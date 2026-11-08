@@ -1,0 +1,160 @@
+{
+  "schema": "REALITI_APARTMENT_APPEARANCE_PRESETS_V1",
+  "version": 1,
+  "policy": "Optional text/presentation wardrobe. Native body geometry, sensory evidence, actual clothing physics and other residents' styles are never modified.",
+  "presets": {
+    "quiltkeeper": {
+      "label": "Quiltkeeper",
+      "silhouette": "soft layers",
+      "accessory": "little brass clasp",
+      "description": "A comforting cardigan silhouette with practical pockets.",
+      "swatches": {
+        "field": "oat",
+        "anchor": "walnut",
+        "accent": "apricot",
+        "bridge": "cream"
+      },
+      "tuning": {
+        "detail": 2,
+        "contrast": 1,
+        "ornament": 1
+      }
+    },
+    "nightglass": {
+      "label": "Nightglass",
+      "silhouette": "long tailored lines",
+      "accessory": "silver crescent pin",
+      "description": "Midnight tailoring with one pale glint.",
+      "swatches": {
+        "field": "ink",
+        "anchor": "slate",
+        "accent": "lilac",
+        "bridge": "rain"
+      },
+      "tuning": {
+        "detail": 3,
+        "contrast": 2,
+        "ornament": 1
+      }
+    },
+    "circuit": {
+      "label": "Circuit Reader",
+      "silhouette": "clean utility layers",
+      "accessory": "enameled circuit badge",
+      "description": "A sharp little techwear outline softened by warm accents.",
+      "swatches": {
+        "field": "slate",
+        "anchor": "ink",
+        "accent": "teal",
+        "bridge": "apricot"
+      },
+      "tuning": {
+        "detail": 2,
+        "contrast": 3,
+        "ornament": 1
+      }
+    },
+    "botanical": {
+      "label": "Botanical Wanderer",
+      "silhouette": "loose garden layers",
+      "accessory": "pressed-leaf brooch",
+      "description": "Earthy layers with the lightness of a greenhouse morning.",
+      "swatches": {
+        "field": "oat",
+        "anchor": "moss",
+        "accent": "clay",
+        "bridge": "rose"
+      },
+      "tuning": {
+        "detail": 2,
+        "contrast": 1,
+        "ornament": 2
+      }
+    },
+    "rainwindow": {
+      "label": "Rain Window",
+      "silhouette": "quiet straight layers",
+      "accessory": "blue-glass bead",
+      "description": "Cool rain-blue shapes with a single warm edge.",
+      "swatches": {
+        "field": "rain",
+        "anchor": "ink",
+        "accent": "lemon",
+        "bridge": "lilac"
+      },
+      "tuning": {
+        "detail": 1,
+        "contrast": 2,
+        "ornament": 1
+      }
+    },
+    "indie": {
+      "label": "Zine Collector",
+      "silhouette": "mismatched creative layers",
+      "accessory": "paper-star badge",
+      "description": "A layered thrift-shop look with deliberate little surprises.",
+      "swatches": {
+        "field": "cream",
+        "anchor": "plum",
+        "accent": "cherry",
+        "bridge": "teal"
+      },
+      "tuning": {
+        "detail": 3,
+        "contrast": 3,
+        "ornament": 3
+      }
+    },
+    "celestial": {
+      "label": "Small Observatory",
+      "silhouette": "simple flowing layers",
+      "accessory": "tiny star chart",
+      "description": "Quiet dark fabric notes and a small luminous accent.",
+      "swatches": {
+        "field": "ink",
+        "anchor": "cobalt",
+        "accent": "lemon",
+        "bridge": "lilac"
+      },
+      "tuning": {
+        "detail": 1,
+        "contrast": 3,
+        "ornament": 2
+      }
+    },
+    "retro": {
+      "label": "Old Radio",
+      "silhouette": "vintage workwear lines",
+      "accessory": "enamel radio pin",
+      "description": "Warm brown and sea-glass hues with borrowed-era charm.",
+      "swatches": {
+        "field": "walnut",
+        "anchor": "clay",
+        "accent": "teal",
+        "bridge": "cream"
+      },
+      "tuning": {
+        "detail": 2,
+        "contrast": 2,
+        "ornament": 2
+      }
+    },
+    "binder": {
+      "label": "Binder Draft",
+      "silhouette": "personal layers",
+      "accessory": "folded palette card",
+      "description": "A resident-built look using colours selected in a verified binder generation.",
+      "swatches": {
+        "field": "oat",
+        "anchor": "walnut",
+        "accent": "apricot",
+        "bridge": "cream"
+      },
+      "tuning": {
+        "detail": 2,
+        "contrast": 2,
+        "ornament": 1
+      }
+    }
+  }
+}

@@ -10,9 +10,28 @@ const {createSharedScene}=require('./shared-scene.cjs');
 const {createBedroomManager}=require('./bedrooms-host.cjs');
 const {createPeerPhysics}=require('./household-physics.cjs');
 const {createHouseholdPet}=require('./household-pet.cjs');
+const LOOKS=require('./style/appearance-presets.json');
+const BEDROOM_SPEC=require('./bedroom-spec.json');
 const SCHEMA='REALITI_APARTMENT_HOUSEHOLD_STORE_V1';
 const FEED='REALITI_APARTMENT_HOUSEHOLD_FEED_V1';
 const HOME='CLOUD_NINE_NEST',MAX_RESIDENTS=4,MAX_GUESTS=4;
+const MAX_SHARED_CARDS=24;
+function validSharedCard(card){
+ const roles=BEDROOM_SPEC.colorRoles;
+ const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+ const look=card?.look;
+ return !!card&&typeof card==='object'&&!Array.isArray(card)&&
+  Object.keys(card).length===3&&
+  card.schema==='REALITI_APARTMENT_APPEARANCE_CARD_V1'&&
+  typeof card.name==='string'&&/^[a-z][a-z0-9-]{0,30}$/.test(card.name)&&
+  !!look&&typeof look==='object'&&!Array.isArray(look)&&
+  Object.keys(look).length===3&&own(LOOKS.presets,look.preset)&&
+  !!look.swatches&&Object.keys(look.swatches).length===roles.length&&
+  roles.every(k=>own(look.swatches,k)&&own(BEDROOM_SPEC.swatches,look.swatches[k]))&&
+  !!look.tuning&&Object.keys(look.tuning).length===3&&
+  ['detail','contrast','ornament'].every(k=>Number.isSafeInteger(look.tuning[k])&&
+   look.tuning[k]>=0&&look.tuning[k]<=4);
+}
 const cp=x=>JSON.parse(JSON.stringify(x));
 const hash=x=>crypto.createHash('sha256').update(x).digest('hex');
 const validId=id=>typeof id==='string'&&/^[a-z][a-z0-9-]{1,30}$/.test(id)&&
@@ -58,6 +77,16 @@ function load(file){
      !value.members.includes(row.by)||typeof row.text!=='string'||row.text.length>300)
    throw Error('HOUSEHOLD_CHECKPOINT_BAD_BOARD');
  }
+ const cards=value.appearance_cards??[];
+ if(!Array.isArray(cards)||cards.length>MAX_SHARED_CARDS)
+  throw Error('HOUSEHOLD_APPEARANCE_CARDS_INVALID');
+ for(let i=0;i<cards.length;i++){
+  const item=cards[i];
+  if(!item||item.id!=='C'+(i+1)||!value.members.includes(item.by)||
+   !Number.isSafeInteger(item.at)||item.at<0||!validSharedCard(item.card)||
+   typeof item.sha256!=='string'||hash(JSON.stringify(item.card))!==item.sha256)
+   throw Error('HOUSEHOLD_APPEARANCE_CARDS_INVALID');
+ }
  return body;
 }
 async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS}={}){
@@ -74,6 +103,8 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
  let data;
  try{data=load(file)}catch(e){fs.closeSync(fd);try{fs.unlinkSync(lockPath)}catch{}throw e}
  let sequence=data.board.reduce((n,row)=>Math.max(n,row.seq),0);
+ // Older household checkpoints have no shared gallery; preserve them as-is.
+ if(!data.appearance_cards)data.appearance_cards=[];
  // All cross-resident mutations, movement and observations are serialized.
  // This makes every native Matrix peer sweep and pet placement authoritative
  // for the next user operation, even if two agents issue calls together.
@@ -151,6 +182,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
    const feed={schema:FEED,connected:true,capacity:MAX_RESIDENTS,revision:data.revision,
     residents:summary.residents,guests:summary.visitors,board:cp(data.board.slice(-64)),
     scene:scene.view(),
+    appearance_cards:cp(data.appearance_cards),
      bedrooms:{...cp(data.bedrooms),
       items:cp(data.bedrooms.items.filter(row=>row.stored!==true)),
       chests:Object.fromEntries(Object.keys(data.bedrooms.rooms).map(room=>[room,{
@@ -268,6 +300,50 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
       return entry.journal.forget(raw.slice('remote memory forget '.length).toUpperCase());
      return refusal('UNKNOWN_PRIVATE_MEMORY_COMMAND');
     }
+    // An owner must explicitly publish a *saved* appearance card.
+    // The trusted host strips all questionnaire answers, verifies the bounded
+    // schema, and publishes only named presentation metadata.
+    if(lower==='remote appearance gallery'){
+     if(entry.role!=='resident')return refusal('GUEST_STYLE_PRIVATE');
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     return {ok:true,schema:'REALITI_APARTMENT_PUBLIC_STYLE_GALLERY_V1',
+      cards:cp(data.appearance_cards),capacity:MAX_SHARED_CARDS,public_to_household:true,
+      note:'Explicitly published appearance cards only. No questionnaire or private binder answers.'};
+    }
+    const share=/^remote appearance share ([a-z][a-z0-9-]{0,30})$/i.exec(raw);
+    if(share){
+     if(entry.role!=='resident')return refusal('GUEST_STYLE_PRIVATE');
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     if(!atHome(entry))return refusal('APARTMENT_HOME_ONLY');
+     if(data.appearance_cards.length>=MAX_SHARED_CARDS)return refusal('HOUSEHOLD_APPEARANCE_GALLERY_FULL');
+     const bridge=entry.session.window.REALITI_APARTMENT_APPEARANCE_V1;
+     if(!bridge?.localCard)return refusal('APPEARANCE_CARD_BRIDGE_MISSING');
+     const prepared=await bridge.localCard(share[1].toLowerCase());
+     if(!prepared?.ok)return prepared;
+     if(!validSharedCard(prepared.card)||prepared.card.name!==share[1].toLowerCase())
+      return refusal('INVALID_SHARED_APPEARANCE');
+     const item={id:'C'+(data.appearance_cards.length+1),by:entry.id,at:Date.now(),
+      card:cp(prepared.card),sha256:hash(JSON.stringify(prepared.card))};
+     data.appearance_cards.push(item);persist();broadcast();
+     return {ok:true,schema:'REALITI_APARTMENT_STYLE_CARD_PUBLISHED_V1',
+      shared:item.id,owner:item.by,card:cp(item.card),sha256:item.sha256,
+      saved_card_unchanged:true,contact_minted:false};
+    }
+    const appearanceAdopt=/^remote appearance adopt (c[1-9][0-9]*) ([a-z][a-z0-9-]{0,30})$/i.exec(raw);
+    if(appearanceAdopt){
+     if(entry.role!=='resident')return refusal('GUEST_STYLE_PRIVATE');
+     if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
+      return refusal('REMOTE_ASLEEP');
+     const item=data.appearance_cards.find(c=>c.id.toLowerCase()===appearanceAdopt[1].toLowerCase());
+     if(!item)return refusal('UNKNOWN_SHARED_APPEARANCE');
+     if(!validSharedCard(item.card)||hash(JSON.stringify(item.card))!==item.sha256)
+      return refusal('INVALID_SHARED_APPEARANCE');
+     const bridge=entry.session.window.REALITI_APARTMENT_APPEARANCE_V1;
+     if(!bridge?.importCard)return refusal('APPEARANCE_CARD_BRIDGE_MISSING');
+     return bridge.importCard(cp(item.card),appearanceAdopt[2].toLowerCase());
+    }
     // Owner-scoped bedrooms and dropped items belong to the same trusted host
     // as household furniture: claims, configurations and Matrix placement are
     // serialized and never admitted through a resident-local Javascript API.
@@ -341,6 +417,11 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     if(uri==='realiti://apartment/memory')
      return entry.role==='resident'?entry.journal.stats():refusal('GUEST_PRIVATE_MEMORY_DENIED');
     if(uri==='realiti://apartment/scene')return scene.view();
+    if(uri==='realiti://apartment/appearance/gallery')
+     return entry.role==='resident'
+      ?{ok:true,schema:'REALITI_APARTMENT_PUBLIC_STYLE_GALLERY_V1',
+       cards:cp(data.appearance_cards),capacity:MAX_SHARED_CARDS}
+      :refusal('GUEST_RESOURCE_DENIED');
     if(uri==='realiti://apartment/bedrooms')return bedrooms.view();
     if(uri==='realiti://apartment/decor')return bedrooms.catalog();
     if(uri==='realiti://apartment/physics')return physics.publicView(entry);
