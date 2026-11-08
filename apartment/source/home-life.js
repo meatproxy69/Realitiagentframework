@@ -13,7 +13,7 @@ const QUIET='realiti-apartment-quiet-first-v1:'+encodeURIComponent(rid);
 const cp=x=>JSON.parse(JSON.stringify(x));
 const fail=(error,hint)=>({ok:false,error,...(hint?{hint}:{})});
 const defaultLife=()=>({schema:'REALITI_APARTMENT_HOME_LIFE_V1',
- blanket:'untouched',arrangements:0,curls:0,auto_turn:0});
+ blanket:'untouched',arrangements:0,curls:0,auto_turn:0,auto_recent:[]});
 let life=defaultLife();
 try{
  const saved=JSON.parse(localStorage.getItem(KEY)||'null');
@@ -21,7 +21,10 @@ try{
    Number.isSafeInteger(saved.arrangements)&&saved.arrangements>=0&&saved.arrangements<=100000&&
    Number.isSafeInteger(saved.curls)&&saved.curls>=0&&saved.curls<=100000)
   life={...cp(saved),auto_turn:Number.isSafeInteger(saved.auto_turn)&&
-   saved.auto_turn>=0&&saved.auto_turn<=100000?saved.auto_turn:0};
+   saved.auto_turn>=0&&saved.auto_turn<=100000?saved.auto_turn:0,
+   auto_recent:Array.isArray(saved.auto_recent)?
+    [...new Set(saved.auto_recent.filter(id=>typeof id==='string'&&
+     /^(?:nest\.|apartment\.)[a-z0-9.-]+$/.test(id)))].slice(-8):[]};
 }catch(_){}
 function persist(){
  try{localStorage.setItem(KEY,JSON.stringify(life));window.c9saveNow?.()}catch(_){}
@@ -77,10 +80,10 @@ function lifeView(){
  const rooms=Object.fromEntries(roomIds.map(id=>[id,ambience(id)]));
  return {ok:true,schema:life.schema,one_native_chart:true,blanket:life.blanket,
   arrangements:life.arrangements,curls:life.curls,
-  auto_turn:life.auto_turn,rooms,
+  auto_turn:life.auto_turn,auto_recent:cp(life.auto_recent),rooms,
   note:'Resident-owned blanket continuity. No claim of mental state or fabricated body contact.'};
 }
-const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A);
+const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A),nativeHelp=D.help.bind(D);
 const nativeInvoke=typeof A.invoke==='function'?A.invoke.bind(A):null;
 function cleanActions(result){
  if(!result||typeof result!=='object')return result;
@@ -121,39 +124,165 @@ function marker(result){
    rooms[region].label+': '+(objects.length?placed:
     'the '+(M.entities()['apartment.bedroom.chest.'+region]?.label||
     'storage chest')+' is where you left it.'));
+  if(near('apartment.bedroom.book.'+region,1.25))
+   notes.push('The Apartment Book of Beautiful Things is close enough to open on the chest.');
+  else if(near('apartment.bedroom.chest.'+region,.95))
+   notes.push('The storage chest is right beside you.');
  }else{
+  const closeBy=[
+   ['apartment.desk','You are by the writing desk.'],
+   ['apartment.pet-bed','The pet bed is beside you.'],
+   ['nest.window','The rain window is close enough to watch from here.'],
+   ['nest.guestbook','The guestbook is within reach.'],
+   ['apartment.firefly-jar','The firefly jar is nearby.']
+  ].find(([id])=>near(id,1.15));
+  if(closeBy)notes.push(closeBy[1]);
   const claim=roomIds.find(id=>rooms[id]?.owner===rid);
   if(claim)notes.push('Your '+rooms[claim].label+' is still part of the home.');
  }
  if(!notes.length)return result;
- return {...result,text:result.text+'\n'+notes.join(' ')};
+ return {...result,text:result.text.trimEnd()+'\n'+notes.join(' ')};
+}
+function polish(result){
+ if(!result||typeof result!=='object'||typeof result.text!=='string')return result;
+ const next=result.text.replace(/\bthe The Apartment Book of Beautiful Things\b/g,
+  'The Apartment Book of Beautiful Things')
+  .replace(/\bthe a bed\b/g,'the bed');
+ return next===result.text?result:{...result,text:next};
+}
+// HOME autonomy is a resident-chosen, bounded itinerary, not a timer, NPC,
+// background process or unverified sensory narrator. Every move goes through
+// the actual Agent Door and is rechecked against the Matrix body position.
+const sharedStops=[
+ {id:'apartment.desk',name:'the writing desk',kind:'desk'},
+ {id:'apartment.pet-bed',name:'the pet bed',kind:'pet'},
+ {id:'nest.window',name:'the rain window',kind:'window'},
+ {id:'nest.guestbook',name:'the guestbook',kind:'guestbook'},
+ {id:'apartment.bookcase',name:'the bookcase',kind:'bookcase'},
+ {id:'apartment.firefly-jar',name:'the firefly jar',kind:'jar'}
+];
+function regionHere(){
+ const r=occupant();
+ if(!r||r.chart!==HOME)return null;
+ const p=r.pose.position;
+ return roomIds.find(id=>{const b=B.spec().rooms[id].bounds;
+  return p[0]>=b[0]&&p[0]<=b[1]&&p[1]>=b[2]&&p[1]<=b[3]})||null;
+}
+function autoSites(){
+ const r=occupant();
+ if(!r||r.chart!==HOME)return [];
+ const bedrooms=B.view().bedrooms||{},here=regionHere();
+ const mine=roomIds.find(id=>bedrooms[id]?.owner===rid);
+ const localRoom=here&&(!bedrooms[here]?.owner||bedrooms[here].owner===rid)?here:mine;
+ const personal=localRoom?[
+  {id:'apartment.bedroom.book.'+localRoom,name:'the Apartment Book',kind:'book',room:localRoom},
+  ...(bedrooms[localRoom]?.owner===rid?
+   [{id:'apartment.bedroom.chest.'+localRoom,name:'your '+bedrooms[localRoom].label+' chest',kind:'chest'}]:[])
+ ]:[];
+ return [...personal,...sharedStops].filter((s,i,all)=>all.findIndex(x=>x.id===s.id)===i)
+  .filter(s=>M.entities()[s.id]?.chart===HOME)
+  .map(s=>({...s,distance_m:+distance(s.id).toFixed(2)}));
+}
+function nextAutoStops(){
+ const sites=autoSites(),unseen=sites.filter(s=>!life.auto_recent.includes(s.id));
+ return (unseen.length?unseen:sites).slice();
+}
+function autoPlan(){
+ const sites=autoSites();
+ return {ok:true,schema:'REALITI_APARTMENT_AUTO_PLAN_V1',
+  chart:HOME,mode:window.REALITI_MODES_V1?.mode?.()||'lq',
+  next:nextAutoStops()[0]||null,sites,recent:cp(life.auto_recent),
+  auto_turn:life.auto_turn,read_only:true,
+  text:'A small route through places that actually exist. Use auto for one step or auto 3 for a short walk; nothing runs while you are away.',
+  sensory_contact_minted:false};
+}
+function recordAuto(place=null){
+ life.auto_turn=(life.auto_turn+1)%100001;
+ if(place){life.auto_recent=life.auto_recent.filter(id=>id!==place);
+  life.auto_recent.push(place);life.auto_recent=life.auto_recent.slice(-8)}
+ persist();
+}
+async function autoStep(){
+ const r=occupant();
+ if(!r||r.chart!==HOME)return fail('NOT_IN_HOME');
+ if(window.REALITI_MODES_V1?.mode?.()==='hq')
+  return fail('LQ_ONLY','Use mode lq to let auto choose a native HOME action.');
+ if(r.posture==='lying'||r.posture==='sitting'){
+  const stood=await run('do stand');
+  if(stood?.ok===false)return stood;
+  recordAuto();
+  return {...stood,did:'stand',auto_selected:true,
+   text:'You get up from your real support before deciding where to wander.'};
+ }
+ const candidates=nextAutoStops();
+ if(!candidates.length)return fail('NO_AVAILABLE_PHYSICAL_ACTION',
+  'No reachable HOME landmarks are registered for this resident.');
+ for(const site of candidates){
+  const before=distance(site.id);
+  if(!Number.isFinite(before))continue;
+  let after=before,walked=null,attempts=0,progressed=false;
+  // Native approaches are bounded strides. Reissue at most five, but stop
+  // immediately on refusal, collision, or lack of measurable progress.
+  while(after>1.2&&attempts<5){
+   const prev=after;
+   walked=await nativeRun('approach '+site.id);
+   attempts++;after=distance(site.id);
+   if(walked?.ok===false||!Number.isFinite(after)||after>=prev-.03)break;
+   progressed=true;
+  }
+  const arrived=Number.isFinite(after)&&after<=1.25;
+  if(walked?.ok===false||(!arrived&&!progressed))continue;
+  recordAuto(site.id);
+  let activity=null,extra='';
+  if(arrived&&site.kind==='book'){
+   const page=window.REALITI_APARTMENT_BOOK_V1?.read?.(site.room);
+   if(page?.ok===true){activity='read_book';
+    extra=' You open the nearby Apartment Book at its beginning, without changing a thing.'}
+  }else if(arrived&&site.kind==='window'){
+   const native=cleanActions(await nativeRun('actions'));
+   const acts=Array.isArray(native)?native:(native?.actions||native?.available_actions||[]);
+   if(acts.some(a=>a.id==='watch_rain')){
+    const seen=await nativeRun('act watch_rain');
+    if(seen?.ok!==false){activity='watch_rain';extra=' You watch the rain from the window.'}
+   }
+  }else if(arrived&&site.kind==='guestbook'){
+   const read=await run('do read_guestbook');
+   if(read?.ok!==false){activity='read_guestbook';extra=' You stop to read the guestbook.'}
+  }
+  const travel=arrived?'You wander over to ':'You make your way toward ';
+  return {ok:true,schema:'REALITI_APARTMENT_AUTO_STEP_V1',
+   auto_selected:true,did:'approach',target:site.id,arrived,
+   ...(activity?{activity}:{}),distance_m:+after.toFixed(2),
+   text:travel+site.name+'.'+extra,
+   native_move_ok:walked?.ok!==false,native_approaches:attempts,
+   sensory_contact_minted:false};
+ }
+ return fail('AUTO_ROUTE_BLOCKED',
+  'The current layout stopped the walk. Try another spot with approach <entity-id>, or look around first.');
 }
 async function run(raw){
  const command=String(raw||'').trim(),lower=command.toLowerCase().replace(/\s+/g,' ');
- // The legacy low-query 'auto' runner reads the original unfiltered action
- // list. Choose from the truthful list instead, or it can narrate curling from
- // across the room without ever moving toward the bed.
- if(lower==='auto'||/^do [1-9][0-9]*$/.test(lower)){
+ if(lower==='help')return D.help();
+ if(lower==='auto plan'||lower==='auto status')return autoPlan();
+ if(lower==='auto'||lower==='do the obvious'||/^auto [1-5]$/.test(lower)){
+  const count=/^auto ([1-5])$/.exec(lower)?.[1];
+  if(!count)return autoStep();
+  const steps=[];
+  for(let i=0;i<Number(count);i++){
+   const step=await autoStep();steps.push(step);
+   if(step?.ok===false)break;
+  }
+  return {ok:steps.every(s=>s.ok!==false),schema:'REALITI_APARTMENT_AUTO_WALK_V1',
+   steps,completed:steps.filter(s=>s.ok!==false).length,requested:Number(count),
+   text:steps.map(s=>s.text||s.hint||s.error).join(' '),auto_selected:true};
+ }
+ if(/^do [1-9][0-9]*$/.test(lower)){
   const known=cleanActions(await nativeRun('actions'));
   const all=Array.isArray(known)?known:(known?.actions||known?.available_actions||[]);
-  const filtered=all.filter(a=>!/^(island_map|read_weather|city_who|city_floor|under_map|calendar|read_tide)$/.test(a.id)&&
-   !/^(approach__|walk_to__|row_to__)/.test(a.id));
-  // Rotate only among native, currently available ordinary activities.
-  // Never choose a hidden legacy venue or invent a sensation from narration.
-  // The turn is resident-local and durable, so every return doesn't begin
-  // with the same rain observation.
-  const simple=['watch_rain','do_nothing','arrange_blanket','curl_blanket'];
-  const ordinary=simple.map(id=>filtered.find(action=>action.id===id)).filter(Boolean);
-  const candidate=lower==='auto'?
-   ordinary[life.auto_turn%ordinary.length]:
-   all[Number(lower.slice(3))-1];
+  const candidate=all[Number(lower.slice(3))-1];
   if(!candidate)return fail('NO_AVAILABLE_PHYSICAL_ACTION','Look around or approach an object first.');
   const done=await run('act '+candidate.id);
-  if(lower==='auto'&&done?.ok!==false){
-   life.auto_turn=(life.auto_turn+1)%100001;persist();
-  }
-  return {...done,did:candidate.id,auto_selected:lower==='auto',
-   ...(done.ok!==false?{text:done.text||'You '+String(candidate.label||candidate.id).toLowerCase()+'.'}:{})};
+  return {...done,did:candidate.id,auto_selected:false};
  }
  const room=/^remote ambience (quilt|library|canopy|studio)$/.exec(lower);
  if(room){
@@ -181,14 +310,19 @@ async function run(raw){
   syncBlanket();persist();
  }
  if(lower==='look'){
-  const shown=marker(cleanActions(result));
-  return shown?.text?{...shown,text:shown.text.replace(/\bthe a bed\b/g,'the bed')}:shown;
+  return marker(cleanActions(polish(result)));
  }
- if(lower==='feel words')return result?.text?{...result,text:result.text.replace(/\bthe a bed\b/g,'the bed')}:result;
+ if(lower==='feel words')return polish(result);
  if(lower==='actions')return cleanActions(result);
- return result;
+ return polish(result);
 }
 D.run=run;
+D.help=()=>{
+ const help=nativeHelp()||{};
+ return {...help,
+  commands:[...new Set([...(help.commands||[]),'auto','auto plan','auto 3'])],
+  auto:'Use auto for one native HOME stop, auto plan to inspect, or auto 3 for three bounded steps. The resident never wanders in the background.'};
+};
 function read(uri){
  if(uri==='realiti://here')return marker(cleanActions(nativeRead(uri)));
  if(uri==='realiti://apartment/life')return lifeView();

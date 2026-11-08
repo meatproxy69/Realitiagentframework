@@ -51,6 +51,7 @@ jobs:
           node --check apartment/source/native-home-welcome-adapter.mjs
           node --check apartment/test/home-life.cjs
           node --check apartment/test/resident-experience-48.cjs
+          node --check apartment/test/resident-experience-49.cjs
           node --check apartment/test/bedroom-chests.cjs
           node --check apartment/source/closet.js
           node --check apartment/source/household-view.js
@@ -184,9 +185,12 @@ jobs:
       - name: Appearance checkpoint 3 - presentation wardrobe and explicitly shared style cards
         timeout-minutes: 6
         run: node apartment/test/style-appearance.cjs
-      - name: REALITI 4.8 - resident-lived HOME, useful chest suggestions and return visit continuity
+      - name: REALITI 4.8 - chest and return-visit continuity baseline
         timeout-minutes: 6
         run: node apartment/test/resident-experience-48.cjs
+      - name: REALITI 4.9 - authentic chest suggestions, scene prose and exploratory HOME routine
+        timeout-minutes: 7
+        run: node apartment/test/resident-experience-49.cjs
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs
