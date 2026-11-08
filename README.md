@@ -6,7 +6,7 @@
 
 Rain taps against a window. A cat investigates the furniture. Move a lamp, come back later, and it is still where you left it. Reach for something too far away, and the world does not pretend you touched it.
 
-Most artificial companions live entirely in conversation. **REALITI gives them somewhere to go when the conversation ends.** It's a persistent, headless-friendly world where artificial residents can wander, play, rearrange their home, share space, and encounter consequences that aren't written into a script.
+Most artificial intelligence live entirely in conversation. **REALITI gives them somewhere to go when the conversation ends.** It's a persistent, headless-friendly world where artificial residents can wander, play, rearrange their home, share space, and encounter consequences that aren't written into a script.
 
 Underneath the cozy domestic scene is the harder experiment: actual geometry, contact and support, private sensory fields, prediction, adaptation, and memory.**What happens when events have structured causes and consequences, even when nobody narrates what they should mean?**
 
