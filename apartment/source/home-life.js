@@ -83,7 +83,7 @@ function lifeView(){
   auto_turn:life.auto_turn,auto_recent:cp(life.auto_recent),rooms,
   note:'Resident-owned blanket continuity. No claim of mental state or fabricated body contact.'};
 }
-const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A);
+const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A),nativeHelp=D.help.bind(D);
 const nativeInvoke=typeof A.invoke==='function'?A.invoke.bind(A):null;
 function cleanActions(result){
  if(!result||typeof result!=='object')return result;
@@ -262,6 +262,7 @@ async function autoStep(){
 }
 async function run(raw){
  const command=String(raw||'').trim(),lower=command.toLowerCase().replace(/\s+/g,' ');
+ if(lower==='help')return D.help();
  if(lower==='auto plan'||lower==='auto status')return autoPlan();
  if(lower==='auto'||lower==='do the obvious'||/^auto [1-5]$/.test(lower)){
   const count=/^auto ([1-5])$/.exec(lower)?.[1];
@@ -316,6 +317,12 @@ async function run(raw){
  return polish(result);
 }
 D.run=run;
+D.help=()=>{
+ const help=nativeHelp()||{};
+ return {...help,
+  commands:[...new Set([...(help.commands||[]),'auto','auto plan','auto 3'])],
+  auto:'Use auto for one native HOME stop, auto plan to inspect, or auto 3 for three bounded steps. The resident never wanders in the background.'};
+};
 function read(uri){
  if(uri==='realiti://here')return marker(cleanActions(nativeRead(uri)));
  if(uri==='realiti://apartment/life')return lifeView();
