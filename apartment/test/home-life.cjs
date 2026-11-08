@@ -17,6 +17,7 @@ const opts={htmlPath:html,validationPath,residentId:'home-life-reader',
   assert.ok(w.REALITI_APARTMENT_HOME_LIFE_V1,'HOME-only life contract installed');
   const first=await run('look');
   assert.match(first.text,/four sleeping alcoves/);
+  assert.doesNotMatch(first.text,/the a bed/,'HOME arrival description must be readable');
   assert.doesNotMatch(first.text,/South, the Cardboard Box Workshop|east, the No-Ask Sanctuary|lift down to Meridian City/);
   assert.equal(w.localStorage.getItem('realiti-apartment-quiet-first-v1:home-life-reader'),'1');
   const guestbookFar=await run('do read_guestbook');
