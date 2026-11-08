@@ -42,6 +42,8 @@ jobs:
           node --check apartment/source/native-body-adapter.mjs
           node --check apartment/source/remote.js
           node --check apartment/source/home-life.js
+          node --check apartment/source/home-field-notes.js
+          node --check apartment/test/home-field-notes.cjs
           node --check apartment/source/home-book.js
           node --check apartment/source/style-binder.js
           node --check apartment/source/style-appearance.js
@@ -173,6 +175,9 @@ jobs:
       - name: HOME experience - truthful reach, no phantom exits, persistent quilts and grounded ambience
         timeout-minutes: 4
         run: node apartment/test/home-life.cjs
+      - name: Deliberate HOME observations - live sensory fields and resident-designed room
+        timeout-minutes: 5
+        run: node apartment/test/home-field-notes.cjs
       - name: Four real bedroom chests - store, owner-only recovery and clean four-resident restart
         timeout-minutes: 6
         run: node apartment/test/bedroom-chests.cjs
