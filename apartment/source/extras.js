@@ -92,10 +92,12 @@ function handle(raw){
  if(s==='extras'){opened=true;return explain();}
  if(s==='extras close'){opened=false;return {ok:true,open:false};}
  if(!s.startsWith('extras '))return null;
- if(!opened)return {ok:false,error:'EXTRAS_MENU_CLOSED',hint:'Use extras to open the optional menu.'};
+ // Rain is an existing, read-only native field: it should never require
+ // opening a separate menu just to see what is happening at the window.
+ if(s==='extras rain'||s==='extras rain watch')return rain();
+ if(!opened)return {ok:false,error:'EXTRAS_MENU_CLOSED',hint:'Use extras to open optional controls.'};
  if(s==='extras cloak')return cloak('status');
  if(/^extras cloak (wear|map|wiggle|remove)$/.test(s))return cloak(s.split(' ')[2]);
- if(s==='extras rain'||s==='extras rain watch')return rain();
  if(s==='extras rain touch'){
    if(!inHome()||!closeEnough(WINDOW))return {ok:false,error:'WINDOW_NOT_IN_REACH',hint:'Approach the native window before touching the glass.'};
    const actual=MW.reach(WINDOW);

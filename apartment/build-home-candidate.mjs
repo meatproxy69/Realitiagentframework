@@ -69,8 +69,9 @@ if(appearanceData.schema!=='REALITI_APARTMENT_APPEARANCE_PRESETS_V1'||
    appearanceSource.split(appearancePlaceholder).length!==2)
  throw Error('HOME_APPEARANCE_PRESET_SOURCE_INCOMPLETE');
 const appearanceCode=appearanceSource.replace(appearancePlaceholder,JSON.stringify(appearanceData));
+const fieldNotes=await read('source/home-field-notes.js');
 if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book)||
-   /<\/script/i.test(binderCode)||/<\/script/i.test(appearanceCode))
+   /<\/script/i.test(binderCode)||/<\/script/i.test(appearanceCode)||/<\/script/i.test(fieldNotes))
  throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(clean))throw Error('HOME_CANDIDATE_HTML_END_MISSING');
@@ -79,7 +80,8 @@ const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\
  life+'\n</script>\n<script id="realiti-apartment-optional-book">\n'+
  book+'\n</script>\n<script id="realiti-apartment-private-style-binder">\n'+
  binderCode+'\n</script>\n<script id="realiti-apartment-presentation-wardrobe">\n'+
- appearanceCode+'\n</script>\n</body></html>');
+ appearanceCode+'\n</script>\n<script id="realiti-apartment-field-notes">\n'+
+ fieldNotes+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
  version:'4.9.0-beta.1',candidate_only:true,preview_only:true,
@@ -90,6 +92,8 @@ const manifest={
  canonical_relax_source_sha256:validated.source_html_sha256,
  source_gate_sha256:hash(source),
  home_life_sha256:hash(life),
+ field_notes_sha256:hash(fieldNotes),field_notes_passive_only:true,
+ home_autonomous_actions_disabled:true,
  optional_book_markdown_sha256:hash(bookMarkdown),
  optional_book_pages:true,bedroom_book_copies:4,
  style_question_bank_sha256:hash(styleQuestionsRaw),
