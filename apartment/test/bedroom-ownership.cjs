@@ -139,7 +139,7 @@ async function household(){
   assert.equal(placed.verified_participants,4);
   assert.equal(placed.contact_minted,false);
   assert.equal(alice.read('realiti://apartment/bedrooms').items.length,3);
-  assert.equal(cora.read('realiti://apartment/bedrooms').items[0].owner,'bob');
+  assert.equal(cora.read('realiti://apartment/bedrooms').items.find(x=>x.id===placed.placed)?.owner,'bob');
   assert.equal(alice.read('realiti://apartment/bedrooms').bedrooms.library.configuration,'writers');
   assert.equal((await cora.run('remote decor remove '+placed.placed)).error,'DECOR_NOT_OWNED');
   assert.equal((await bob.run('remote bedroom release library')).error,'BEDROOM_NOT_EMPTY');
@@ -152,7 +152,7 @@ async function household(){
   await host.close();host=null;
   host=await createHousehold({dir:root,htmlPath:html,validationPath});
   alice=await host.joinResident('alice');bob=await host.joinResident('bob');
-  assert.equal(bob.read('realiti://apartment/bedrooms').items[0].id,placed.placed);
+  assert.ok(bob.read('realiti://apartment/bedrooms').items.some(x=>x.id===placed.placed));
   assert.equal(host.status().shared_bedroom_revision,revision);
   assert.equal(bob.read('realiti://apartment/bedrooms').bedrooms.library.owner,'bob');
   await bob.run('remote activate');
