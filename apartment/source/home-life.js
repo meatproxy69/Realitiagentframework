@@ -63,7 +63,7 @@ function ambience(room){
  const count=view.chests?.[room]?.stored_count||0;
  const placed=objects.length?objects.map(o=>o.label).join(', '):'no added furniture yet';
  const text='In the '+bedroom.label+', '+voice[bedroom.configuration]+
-  '. You can see '+placed+'. '+(chest?'A fixed '+chest.label+' is here.':'')+
+  '. You can see '+placed+'. '+(chest?'At the edge of the alcove: '+chest.label+'.':'')+
   (count?' '+count+' item'+(count===1?' is':'s are')+' stored in its chest.':'');
  return {ok:true,schema:'REALITI_APARTMENT_BEDROOM_AMBIENCE_V1',room,
   configuration:bedroom.configuration,owner:bedroom.owner,
@@ -147,6 +147,7 @@ async function run(raw){
   syncBlanket();persist();
  }
  if(lower==='look')return marker(cleanActions(result));
+ if(lower==='feel words')return result?.text?{...result,text:result.text.replace(/\bthe a bed\b/g,'the bed')}:result;
  if(lower==='actions')return cleanActions(result);
  return result;
 }
