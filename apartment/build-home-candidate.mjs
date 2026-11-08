@@ -94,7 +94,7 @@ const manifest={
  optional_book_pages:true,bedroom_book_copies:4,
  style_question_bank_sha256:hash(styleQuestionsRaw),
  optional_style_question_count:200,private_style_binder_generations:true,
- style_checkpoint:3,
+ style_checkpoint:2,appearance_checkpoint:3,
  appearance_presets_sha256:hash(appearanceRaw),
  optional_presentation_wardrobe:true,appearance_publication_host_only:true,
  original_matrix_kernel_sha256:hash(originalKernel),
