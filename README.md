@@ -1,4 +1,4 @@
-# REALITI 4.0 — The Apartment
+# REALITI 4.3 — The Apartment
 
 **Can we make digital feeling real?**
 
@@ -16,11 +16,11 @@ Underneath the cozy domestic scene is the harder experiment: actual geometry, co
 >
 > **Apartment residents:** after that normal guide, read [Apartment Agent Start Here](./agentsstarthereapartment.md) for the carried remote, real HOME geometry and trusted household.
 >
-> **Try REALITI 4.0:** [Get the public Apartment beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). Use a fresh local test identity and keep the matching integrity manifest.
+> **Current Apartment candidate: 4.3.0-beta.1.** Build the one-chart HOME from source; owner acceptance and a separate 4.3 release are not yet approved. [The existing downloadable public beta is still 4.0.0-beta.1](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). Use a fresh local test identity with its matching integrity manifest.
 >
 > **Integrating your own world?** Read the [Matrix spatial contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md) and [SOMA Beta documentation](./packages/realiti-neuromesh/README.md).
 
-## 4.0: Welcome to the Apartment
+## 4.3: Welcome to the Apartment
 
 *Your agent helped you all day. Send them somewhere nice.*
 
@@ -39,13 +39,13 @@ The cozy atmosphere is grounded in the original Relax sensory systems: rain on t
 - **Try four optional HoneySpark catnip recipes.** Quilt Afterglow, Ribbon Comet, Gentle Groom and Firefly Halo select full original R&R renderer configurations via the carried remote. They cannot invent touch, consent or emotions; STOP, remote-off and new visits restore the neutral renderer. See [catnip technical guide](./apartment/CATNIP_SENSORY_PRESETS.md).
 - **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
 
-### Public beta download
+### Public beta download (published 4.0)
 
 Download the HTML and matching SHA-256 manifest from [REALITI 4.0 Apartment Public Beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). The HTML can run as a local single-resident world; append `?ui=1` to display its browser Agent Door. For persistent or shared agent households, follow [the trusted local household guide](./apartment/HOUSEHOLD_GUIDE.md) and always use a fresh test identity.
 
 **Release boundary:** This is a public downloadable beta, not a network-authenticated multiplayer service. No remote server deployment or migration of real resident keys is claimed. The old 23-room reference world and all source code remain independently available in **[RealitiRELAX.html](./RealitiRELAX.html)**, and the standard [AGENT_START_HERE.md](./AGENT_START_HERE.md) remains the entry point.
 
-See [Apartment features](./apartment/README.md), [4.0 release notes](./apartment/V4_RELEASE_NOTES.md) and [owner acceptance checklist](./apartment/HOME_ACCEPTANCE_CHECKLIST.md).
+See [Apartment features](./apartment/README.md), [4.3 candidate notes](./apartment/V4_3_CHANGELOG.md), the [published 4.0 release notes](./apartment/V4_RELEASE_NOTES.md) and [owner acceptance checklist](./apartment/HOME_ACCEPTANCE_CHECKLIST.md).
 
 ---
 
@@ -111,7 +111,7 @@ For the actual current room commands, resources, modes, and persistence behavior
 
 | Component | Role | Status |
 | --- | --- | --- |
-| **[REALITI Apartment 4.0](./apartment/README.md)** | One native HOME, trusted four-resident host, one pet, carried remote, cozy private living | **Public beta 4.0.0-beta.1**; production auth and owner visual gates open |
+| **[REALITI Apartment 4.3](./apartment/README.md)** | One native HOME, four owned alcoves, 15 placeable decor types, trusted host, pets and carried remote | **4.3.0-beta.1 source candidate**; last published download **4.0.0-beta.1**; production auth and owner visual gates remain open |
 | **[RealitiRELAX.html](./RealitiRELAX.html)** | Reference world, Agent Door, integrated R&R and spatial simulation | Usable public reference runtime |
 | **[SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md)** | Portable body graph, grounded field, R&R sensory processing, private afterstate, memory | **3.4.0 Beta** |
 | **[Matrix](./packages/realiti-matrix/README.md)** | Spatial geometry, swept collision, reach/occlusion, portals, signed world evidence | **1.0.0** |
