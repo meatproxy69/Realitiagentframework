@@ -162,10 +162,10 @@ jobs:
       - name: Four owner-assigned bedrooms, synchronized Matrix items, guest and checkpoint authority
         timeout-minutes: 6
         run: node apartment/test/bedroom-ownership.cjs household
-      - name: HOME experience: truthful reach, no phantom exits, persistent quilts and grounded ambience
+      - name: HOME experience - truthful reach, no phantom exits, persistent quilts and grounded ambience
         timeout-minutes: 4
         run: node apartment/test/home-life.cjs
-      - name: Four real bedroom chests: store, owner-only recovery and clean four-resident restart
+      - name: Four real bedroom chests - store, owner-only recovery and clean four-resident restart
         timeout-minutes: 6
         run: node apartment/test/bedroom-chests.cjs
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
