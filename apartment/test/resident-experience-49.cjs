@@ -67,15 +67,16 @@ async function solo(){
   assert.ok(walking.steps.every(s=>s.distance_m>=0));
   assert.equal(JSON.stringify(M.resident().shape),shape);
   assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,3);
-  const seen=a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_recent;
-  assert.deepEqual(seen,walking.steps.map(s=>s.target));
+  const seen=JSON.parse(JSON.stringify(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_recent));
+  assert.deepEqual(seen,JSON.parse(JSON.stringify(walking.steps.map(s=>s.target))),
+   'compare resident JS-realm arrays as pure JSON data');
   const glance2=await run('look');
   assert.doesNotMatch(glance2.text,/Chosen presentation:|\bthe The Apartment Book\b/);
   assert.equal((await run('save')).ok,true);
   await run('goodbye');a.close();a=null;
 
   a=await openResident(opts);
-  assert.deepEqual(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_recent,seen);
+  assert.deepEqual(JSON.parse(JSON.stringify(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_recent)),seen);
   assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,3);
   const next=await a.door.run('auto plan');
   assert.ok(next.next&&!seen.includes(next.next.id),
