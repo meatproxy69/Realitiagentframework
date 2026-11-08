@@ -86,7 +86,7 @@ function checked(s){
    !Array.isArray(s.items)||s.items.length>SPEC.limits.maxTotal)
   throw Error('INVALID_BEDROOMS_SNAPSHOT');
  if(Object.keys(s.rooms).length!==roomIds.length)throw Error('INVALID_BEDROOMS_ROOMS');
- const ids=new Set(),owners=new Set();
+ const ids=new Set(),owners=new Set();let highest=0;
  for(const key of roomIds){
   const room=s.rooms[key];
   if(!room||!styleIds.includes(room.configuration)||!own(room,'owner')||
@@ -100,10 +100,21 @@ function checked(s){
     !Number.isFinite(row.x)||!Number.isFinite(row.y)||
     s.rooms[row.room].owner!==row.owner||!bounded(row.room,row.kind,row.x,row.y).ok)
     throw Error('INVALID_BEDROOM_ITEM');
-  ids.add(row.id);
+  ids.add(row.id);highest=Math.max(highest,Number(row.id.slice(1)));
  }
+ if(highest>=s.next_id)throw Error('BEDROOMS_INVALID_NEXT_ID');
  for(const key of roomIds)if(s.items.filter(x=>x.room===key).length>SPEC.limits.maxPerRoom)
   throw Error('BEDROOM_CAPACITY_EXCEEDED');
+ // Check saved solid-on-solid contacts without trusting the current native
+ // chart to already contain the other persisted entities during restoration.
+ const solid=s.items.filter(row=>SPEC.items[row.kind].collision);
+ for(let i=0;i<solid.length;i++)for(let j=0;j<i;j++){
+  const a=solid[i],b=solid[j];
+  const ah=SPEC.items[a.kind].half,bh=SPEC.items[b.kind].half;
+  if(Math.abs(a.x-b.x)<ah[0]+bh[0]+.04&&
+     Math.abs(a.y-b.y)<ah[1]+bh[1]+.04)
+   throw Error('BEDROOMS_OVERLAPPING_ITEMS');
+ }
  return s;
 }
 function auditShared(snapshot){
@@ -265,6 +276,15 @@ function soloAction(raw){
   next.revision++;
   return {...persist(next),bedroom:room,configuration:configurationName,placed,contact_minted:false};
  }
+ if((m=/^decor preview (quilt|library|canopy|studio) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(s))){
+  const [_,room,kind]=m;
+  if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
+  if(next.items.filter(x=>x.room===room).length>=SPEC.limits.maxPerRoom||
+     next.items.length>=SPEC.limits.maxTotal)return error('BEDROOM_ITEM_CAPACITY');
+  const p=preview(kind,room,num(m[3]),num(m[4]));
+  return {...p,schema:'REALITI_APARTMENT_DECOR_PREVIEW_V1',read_only:true,
+   revision:solo.revision,position:p.ok?[p.x,p.y]:undefined};
+ }
  if((m=/^decor place (quilt|library|canopy|studio) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(s))){
   const [_,room,kind]=m;
   if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
@@ -317,6 +337,7 @@ function commands(){return [
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
+ 'decor preview <room> <kind> <x> <y>',
  'decor place <room> <kind> <x> <y>',
  'decor inspect <I-number>','decor move <I-number> <x> <y>',
  'decor remove <I-number>','bedroom clear <room> confirm'];}
