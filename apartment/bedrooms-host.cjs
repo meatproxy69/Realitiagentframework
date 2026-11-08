@@ -46,6 +46,17 @@ function validate(checkpoint,members=[]){
  if(highest>=x.next_id)throw Error('BEDROOMS_INVALID_NEXT_ID');
  for(const id of ROOMS)if(x.items.filter(q=>q.room===id).length>SPEC.limits.maxPerRoom)
   throw Error('BEDROOMS_OVER_CAPACITY');
+ // Native Matrix ignores noncolliding items as obstacles, but two solid
+ // persisted props must never occupy the same floor footprint. An externally
+ // rehashed checkpoint cannot rely on an empty native chart to evade this.
+ const solid=x.items.filter(row=>SPEC.items[row.kind].collision);
+ for(let i=0;i<solid.length;i++)for(let j=0;j<i;j++){
+  const a=solid[i],b=solid[j];
+  const ah=SPEC.items[a.kind].half,bh=SPEC.items[b.kind].half;
+  if(Math.abs(a.x-b.x)<ah[0]+bh[0]+.04&&
+     Math.abs(a.y-b.y)<ah[1]+bh[1]+.04)
+   throw Error('BEDROOMS_OVERLAPPING_ITEMS');
+ }
  return x;
 }
 function createBedroomManager({getData,persist,participants,atHome}={}){
@@ -97,6 +108,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote bedroom configure <room> <configuration> [if-rev <n>]',
   'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
   'remote decor catalog',
+  'remote decor preview <room> <kind> <x> <y> [if-rev <n>]',
   'remote decor place <room> <kind> <x> <y> [if-rev <n>]',
   'remote decor inspect <I-number>',
   'remote decor move <I-number> <x> <y> [if-rev <n>]',
@@ -135,6 +147,27 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     return fail('SHARED_FURNITURE_BEDROOM_OWNER_ONLY',{bedroom:room,owner});
   }
   return {ok:true};
+ }
+ // A preview and a commit must use precisely the same host authorization,
+ // capacity limits, and live Matrix collision checks. Preview never persists.
+ function assessPlacement(actor,store,room,kind,x,y){
+  if(!ROOMS.includes(room)||!KINDS.includes(kind))return fail('UNKNOWN_BEDROOM_OR_ITEM');
+  if(store.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+  if(store.items.length>=MAX||
+     store.items.filter(row=>row.room===room).length>=SPEC.limits.maxPerRoom)
+   return fail('BEDROOM_ITEM_CAPACITY');
+  const entries=participants();
+  for(const entry of entries)apply(entry);
+  const refusals=[];
+  for(const entry of entries){
+   const result=bridge(entry).preview(kind,room,x,y);
+   if(!result?.ok)refusals.push({participant:entry.id,
+    error:result?.error||'UNKNOWN_MATRIX_REFUSAL',
+    obstacle:result?.obstacle||null});
+  }
+  if(refusals.length)return fail('BEDROOM_MATRIX_REFUSED',{refusals});
+  return {ok:true,room,kind,position:[+x.toFixed(2),+y.toFixed(2)],
+   verified_participants:entries.length,contact_minted:false};
  }
  function handle(actor,raw){
   const cmd=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
@@ -226,26 +259,19 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    }
    operation={bedroom:room,configuration:configurationName,placed,
     verified_participants:members.length,world_contact_minted:false};
+  }else if((m=/^decor preview ([a-z-]+) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
+   const result=assessPlacement(actor,next,m[1],m[2],Number(m[3]),Number(m[4]));
+   return {...result,schema:'REALITI_APARTMENT_DECOR_PREVIEW_V1',
+    read_only:true,revision:current.revision};
   }else if((m=/^decor place ([a-z-]+) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
    const [_,room,kind]=m;
-   if(!ROOMS.includes(room)||!KINDS.includes(kind))return fail('UNKNOWN_BEDROOM_OR_ITEM');
-   if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
-   if(next.items.length>=MAX||next.items.filter(row=>row.room===room).length>=SPEC.limits.maxPerRoom)
-    return fail('BEDROOM_ITEM_CAPACITY');
-   const x=Number(m[3]),y=Number(m[4]);
-   const entries=participants();
-   for(const entry of entries)apply(entry);
-   const refusal=[];
-   for(const entry of entries){
-    const result=bridge(entry).preview(kind,room,x,y);
-    if(!result?.ok)refusal.push({participant:entry.id,error:result?.error||'UNKNOWN_MATRIX_REFUSAL',
-     obstacle:result?.obstacle||null});
-   }
-   if(refusal.length)return fail('BEDROOM_MATRIX_REFUSED',{refusals:refusal});
+   const check=assessPlacement(actor,next,room,kind,Number(m[3]),Number(m[4]));
+   if(!check.ok)return check;
    const id='I'+next.next_id++;
-   next.items.push({id,room,kind,owner:actor.id,x:+x.toFixed(2),y:+y.toFixed(2)});
-   operation={placed:id,room,kind,position:[+x.toFixed(2),+y.toFixed(2)],
-    verified_participants:entries.length};
+   next.items.push({id,room,kind,owner:actor.id,
+    x:check.position[0],y:check.position[1]});
+   operation={placed:id,room,kind,position:check.position,
+    verified_participants:check.verified_participants};
   }else if((m=/^decor move (i[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
    const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
    if(!item)return fail('UNKNOWN_DECOR_ITEM');
