@@ -103,7 +103,7 @@ async function resident(scene,name,storePath){
   for(const c of ['look','feel words','remote status','remote activate','remote pet status',
    'remote bedrooms','remote ambience library','remote chest inspect library',
    'remote appearance worn','remote appearance saved','remote style binder history',
-   'recall Ember','remote book shelves','auto','remote off','save'])
+   'recall Ember','remote book shelves','auto','auto','auto','auto','auto','auto','auto','auto','stay 30000','look','remote off','save'])
    await command('DAY-2',alice.door,c);
   alice.close();alice=null;
   const state2=path.join(root,'newcomer.json');
