@@ -11,6 +11,11 @@ const role=String(window.REALITI_APARTMENT_ROLE||'resident');
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default');
 const KEY='realiti-apartment-bedrooms-v1:'+encodeURIComponent(rid);
 const cp=x=>JSON.parse(JSON.stringify(x));
+const ownColor=x=>typeof x==='string'&&/^#[0-9a-f]{6}$/.test(x);
+const validPalette=x=>x&&typeof x==='object'&&!Array.isArray(x)&&
+ Object.keys(x).length===SPEC.colorRoles.length&&
+ SPEC.colorRoles.every(role=>Object.prototype.hasOwnProperty.call(x,role)&&ownColor(x[role]));
+const paletteFor=r=>cp(r.palette||SPEC.colorDefaults[r.configuration]);
 const own=(obj,key)=>Object.prototype.hasOwnProperty.call(obj,key);
 const num=s=>Number.isFinite(Number(s))&&String(s).trim()!==''?Number(s):NaN;
 const error=(code,detail={})=>({ok:false,error:code,...detail});
@@ -104,7 +109,8 @@ function checked(s){
  for(const key of roomIds){
   const room=s.rooms[key];
   if(!room||!styleIds.includes(room.configuration)||!own(room,'owner')||
-   room.owner!==null&&!/^[a-z][a-z0-9-]{1,30}$/.test(room.owner))
+   room.owner!==null&&!/^[a-z][a-z0-9-]{1,30}$/.test(room.owner)||
+   own(room,'palette')&&!validPalette(room.palette))
    throw Error('INVALID_BEDROOM_ROOM_STATE');
   if(room.owner)owners.add(room.owner);
  }
@@ -166,6 +172,16 @@ function applyShared(snapshot){
  if(!audit.ok)throw Error(audit.error+':'+audit.item+':'+audit.reason);
  const s=cp(snapshot),placed=s.items.filter(row=>row.stored!==true),
   desired=new Set(placed.map(x=>PREFIX+x.id));
+ // Color metadata lives on a fixed chest: in-place tag changes never remove
+ // occupied furniture or claim to alter underlying material/light physics.
+ for(const id of roomIds){
+  const chest=M.entities()[CHEST+id];
+  if(!chest)continue;
+  const tags=(chest.tags||[]).filter(tag=>!tag.startsWith('palette-'));
+  const colors=paletteFor(s.rooms[id]);
+  for(const role of SPEC.colorRoles)tags.push('palette-'+role+':'+colors[role]);
+  if(JSON.stringify(chest.tags)!==JSON.stringify(tags)){chest.tags=tags;M.bump()}
+ }
  let changed=0;
  for(const [id,e] of Object.entries(M.entities())){
   if(id.startsWith(PREFIX)&&e.chart===HOME&&!desired.has(id)){
@@ -219,6 +235,8 @@ function view(){
   one_native_chart:true,bedrooms:Object.fromEntries(roomIds.map(id=>[id,{
    label:SPEC.rooms[id].name,bounds:SPEC.rooms[id].bounds.slice(),
    owner:s.rooms[id].owner,configuration:s.rooms[id].configuration,
+   palette:paletteFor(s.rooms[id]),
+   palette_source:own(s.rooms[id],'palette')?'custom':'configuration',
    item_count:s.items.filter(item=>item.room===id).length,
    note:SPEC.rooms[id].note
   }])),
@@ -240,6 +258,7 @@ function catalog(){return {ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1'
   items:cp(SPEC.items),bedrooms:cp(SPEC.rooms),
   chests:cp(SPEC.chests),storable_kinds:SPEC.storableKinds.slice(),
   configurations:cp(SPEC.configurations),max_per_room:SPEC.limits.maxPerRoom,
+  color_roles:SPEC.colorRoles.slice(),palette_recipes:cp(SPEC.aestheticPalettes),
   note:'All objects are actual native Matrix entities, not Blender assets, and have finite collision/size. A preset changes metadata; owners place individual objects.'};
 }
 // Solo floor-finding uses the same finite Matrix collision preview as manual place.
@@ -267,6 +286,31 @@ function soloAction(raw){
  if(!inHome())return error('APARTMENT_HOME_ONLY');
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
  const next=cp(solo);let m;
+ if((m=/^bedroom color (quilt|library|canopy|studio) (field|anchor|accent|bridge) (#[0-9a-f]{6})$/.exec(s))){
+  const [_,room,role,color]=m,r=next.rooms[room];
+  if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
+  const palette=paletteFor(r);
+  if(palette[role]===color)return {ok:true,unchanged:true,room,
+   colors:palette,revision:solo.revision};
+  palette[role]=color;r.palette=palette;next.revision++;
+  return {...persist(next),room,colors:palette,changed_role:role,
+   shader_applied:false,contact_minted:false};
+ }
+ if((m=/^bedroom palette (quilt|library|canopy|studio) ([a-z0-9-]+)$/.exec(s))){
+  const [_,room,recipe]=m,r=next.rooms[room];
+  if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
+  if(recipe==='reset'){
+   if(!own(r,'palette'))return {ok:true,unchanged:true,room,
+    colors:paletteFor(r),revision:solo.revision};
+   delete r.palette;
+  }else{
+   if(!own(SPEC.aestheticPalettes,recipe))return error('UNKNOWN_PALETTE_RECIPE');
+   r.palette=cp(SPEC.aestheticPalettes[recipe].colors);
+  }
+  next.revision++;
+  return {...persist(next),room,colors:paletteFor(r),palette_recipe:recipe,
+   shader_applied:false,contact_minted:false};
+ }
  if((m=/^chest stow (I[1-9][0-9]*)$/i.exec(s))){
   const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
   if(!item)return error('UNKNOWN_DECOR_ITEM');
@@ -428,6 +472,8 @@ function soloAction(raw){
 function commands(){return [
  'bedrooms','bedroom claim <quilt|library|canopy|studio>',
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
+ 'bedroom colors <room>','bedroom color <room> <role> <#RRGGBB>',
+ 'bedroom palette <room> <recipe|reset>','bedroom palette catalog',
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
  'decor preview <room> <kind> <x> <y>',
@@ -443,6 +489,15 @@ function handle(raw){
  if(s==='bedrooms'||s==='bedroom status'||s==='decor list')return view();
  if(s==='decor catalog'||s==='bedroom configurations')return catalog();
  if(s==='bedroom help'||s==='decor help')return {ok:true,commands:commands()};
+ if(s==='bedroom palette catalog')return {ok:true,schema:'REALITI_APARTMENT_PALETTES_V1',
+  roles:SPEC.colorRoles.slice(),recipes:cp(SPEC.aestheticPalettes),read_only:true};
+ const colors=/^bedroom colors (quilt|library|canopy|studio)$/.exec(s);
+ if(colors){
+  const r=state().rooms[colors[1]];
+  return {ok:true,schema:'REALITI_APARTMENT_BEDROOM_COLORS_V1',
+   room:colors[1],owner:r.owner,colors:paletteFor(r),
+   source:own(r,'palette')?'custom':'configuration',read_only:true,shader_applied:false};
+ }
  const inspected=/^decor inspect (i[1-9][0-9]*)$/.exec(s);
  if(inspected){
   const row=state().items.find(item=>item.id===inspected[1].toUpperCase());
