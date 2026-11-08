@@ -89,7 +89,6 @@ async function household(){
   let alice=await host.joinResident('alice'),bob=await host.joinResident('bob'),
    cora=await host.joinResident('cora'),dina=await host.joinResident('dina');
   for(const a of [alice,bob,cora,dina]){
-   oneChart({REALITI_MATRIX_V1:{charts:()=>({CLOUD_NINE_NEST:true}),portals:()=>({})}});
    assert.equal(a.read('realiti://apartment/bedrooms').one_native_chart,true);
    assert.equal((await a.run('remote activate')).activated,true);
   }
