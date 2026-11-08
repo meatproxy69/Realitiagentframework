@@ -40,7 +40,7 @@ function cues(){
   'REALITI_DYNAMICS_V1.rain',{rain_intensity:round(rain)});
  const chime=seen(nativeSound,'sources','apartment.rain-chime');
  add('rain-glass','apartment.wind-chime',1.5,measurableRain&&chime,
-  'The little glass chime has a measured sound here; the rain is driving it.',
+  'The little glass chime sounds nearby while rain moves past the window.',
   'apartment.rain-chime',{rain_intensity:round(rain),native_sound_detected:true});
  const light=seen(nativeLight,'lights','apartment.firefly-glow');
  const order=dynamic.fireflies?.order;
@@ -101,7 +101,7 @@ async function run(raw){
  if(low==='look'&&result?.ok!==false&&typeof result?.text==='string'){
   const local=cues();
   // One modest aside, only if an actually measured, nearby detail is present.
-  if(local.length)return {...result,text:result.text.trimEnd()+'\n'+local[0].text,
+  if(local.length)return {...result,text:result.text.trimEnd()+' '+local[0].text,
    field_note:{id:local[0].id,field_source:local[0].field_source,
     distance_m:local[0].distance_m,contact_minted:false}};
  }
