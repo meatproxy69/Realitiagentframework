@@ -145,6 +145,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote decor nudge <I-number> <dx> <dy> [if-rev <n>]',
   'remote decor remove <I-number> [if-rev <n>]',
   'remote chest inspect <room>',
+  'remote chest suggest <room>',
   'remote chest stow <I-number> [if-rev <n>]',
   'remote chest take <I-number> <x> <y> [if-rev <n>]',
   'remote chest auto-take <I-number> [if-rev <n>]',
@@ -255,18 +256,27 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     item:cp(item),spec:cp(SPEC.items[item.kind]),
     source:'HOST_PUBLIC_ITEM_RECORD',read_only:true};
   }
-  const ci=/^chest inspect ([a-z-]+)$/.exec(cmd);
+  const ci=/^chest (inspect|suggest) ([a-z-]+)$/.exec(cmd);
   if(ci){
-   const state=ensure(),room=ci[1];
+   const state=ensure(),room=ci[2];
    if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
    if(actor.role!=='resident'||state.rooms[room].owner!==actor.id)
     return fail('CHEST_OWNER_ONLY');
-   return {ok:true,schema:'REALITI_APARTMENT_CHEST_INSPECT_V1',
+   const stored=state.items.filter(row=>row.room===room&&row.stored===true)
+    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
+   const available=state.items.filter(row=>row.room===room&&row.stored!==true&&
+    SPEC.storableKinds.includes(row.kind))
+    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
+   return {ok:true,schema:ci[1]==='suggest'?
+    'REALITI_APARTMENT_CHEST_SUGGEST_V1':'REALITI_APARTMENT_CHEST_INSPECT_V1',
     room,owner:actor.id,entity_id:'apartment.bedroom.chest.'+room,
-    capacity:SPEC.limits.maxChestPerRoom,
-    stored:cp(state.items.filter(row=>row.room===room&&row.stored===true)
-     .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}))),
-    read_only:true};
+    capacity:SPEC.limits.maxChestPerRoom,remaining:SPEC.limits.maxChestPerRoom-stored.length,
+    stored:cp(stored),available:cp(available),
+    hint:available.length&&stored.length<SPEC.limits.maxChestPerRoom?
+     'You can put away '+available[0].label+' ('+available[0].id+
+     ') using remote chest stow '+available[0].id+'.':
+     'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.',
+    read_only:true,contact_minted:false};
   }
   if(actor.role!=='resident')return fail('GUEST_BEDROOM_READ_ONLY');
   if(!participants().includes(actor))return fail('BEDROOM_RESIDENT_NOT_CONNECTED');
@@ -317,7 +327,19 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    if(!item)return fail('UNKNOWN_DECOR_ITEM');
    if(item.owner!==actor.id)return fail('CHEST_OWNER_ONLY');
    if(item.stored===true)return fail('DECOR_ALREADY_STORED');
-   if(!SPEC.storableKinds.includes(item.kind))return fail('DECOR_TOO_LARGE_FOR_CHEST');
+   if(!SPEC.storableKinds.includes(item.kind)){
+    const alternative=next.items.find(row=>row.room===item.room&&
+     row.stored!==true&&SPEC.storableKinds.includes(row.kind));
+    return fail('DECOR_TOO_LARGE_FOR_CHEST',{
+     room:item.room,kind:item.kind,
+     storable_kinds:SPEC.storableKinds.slice(),
+     hint:alternative?'The '+SPEC.items[item.kind].label+
+      ' cannot fit. Try '+alternative.id+' ('+SPEC.items[alternative.kind].label+
+      '), or use remote chest suggest '+item.room+'.':
+      'The '+SPEC.items[item.kind].label+
+      ' cannot fit. Use remote chest suggest '+item.room+
+      ' or place something small first.'});
+   }
    if(next.items.filter(row=>row.room===item.room&&row.stored===true).length>=SPEC.limits.maxChestPerRoom)
     return fail('CHEST_FULL');
    for(const entry of participants()){
