@@ -1,0 +1,5624 @@
+{
+  "schema": "REALITI_APARTMENT_STYLE_QUESTION_BANK_V1",
+  "version": 1,
+  "optional": true,
+  "question_count": 200,
+  "policy": "Creative self-reported aesthetic choices, not diagnosis, personality inference, sensory evidence, consent, or automatic room modification.",
+  "styles": [
+    "cozy",
+    "goth",
+    "techie",
+    "minimal",
+    "craft",
+    "industrial",
+    "botanical",
+    "retro",
+    "playful",
+    "coastal",
+    "maximal",
+    "indie",
+    "celestial"
+  ],
+  "questions": [
+    {
+      "id": "q001",
+      "domain": "quilt",
+      "lens": "light",
+      "prompt": "What would you use to light a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q002",
+      "domain": "quilt",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q003",
+      "domain": "quilt",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q004",
+      "domain": "quilt",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q005",
+      "domain": "quilt",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q006",
+      "domain": "quilt",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q007",
+      "domain": "quilt",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q008",
+      "domain": "quilt",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a quilted sleeping alcove?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q009",
+      "domain": "quilt",
+      "lens": "welcome",
+      "prompt": "How would you prepare a quilted sleeping alcove for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q010",
+      "domain": "quilt",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a quilted sleeping alcove hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q011",
+      "domain": "library",
+      "lens": "light",
+      "prompt": "What would you use to light a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q012",
+      "domain": "library",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q013",
+      "domain": "library",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q014",
+      "domain": "library",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q015",
+      "domain": "library",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q016",
+      "domain": "library",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q017",
+      "domain": "library",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q018",
+      "domain": "library",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a rain-lit library nook?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q019",
+      "domain": "library",
+      "lens": "welcome",
+      "prompt": "How would you prepare a rain-lit library nook for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q020",
+      "domain": "library",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a rain-lit library nook hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q021",
+      "domain": "canopy",
+      "lens": "light",
+      "prompt": "What would you use to light a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q022",
+      "domain": "canopy",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q023",
+      "domain": "canopy",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q024",
+      "domain": "canopy",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q025",
+      "domain": "canopy",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q026",
+      "domain": "canopy",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q027",
+      "domain": "canopy",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q028",
+      "domain": "canopy",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a softly furnished canopy corner?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q029",
+      "domain": "canopy",
+      "lens": "welcome",
+      "prompt": "How would you prepare a softly furnished canopy corner for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q030",
+      "domain": "canopy",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a softly furnished canopy corner hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q031",
+      "domain": "studio",
+      "lens": "light",
+      "prompt": "What would you use to light a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q032",
+      "domain": "studio",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q033",
+      "domain": "studio",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q034",
+      "domain": "studio",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q035",
+      "domain": "studio",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q036",
+      "domain": "studio",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q037",
+      "domain": "studio",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q038",
+      "domain": "studio",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a tiny music studio?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q039",
+      "domain": "studio",
+      "lens": "welcome",
+      "prompt": "How would you prepare a tiny music studio for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q040",
+      "domain": "studio",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a tiny music studio hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q041",
+      "domain": "tea",
+      "lens": "light",
+      "prompt": "What would you use to light a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q042",
+      "domain": "tea",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q043",
+      "domain": "tea",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q044",
+      "domain": "tea",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q045",
+      "domain": "tea",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q046",
+      "domain": "tea",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q047",
+      "domain": "tea",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q048",
+      "domain": "tea",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a late-night tea table?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q049",
+      "domain": "tea",
+      "lens": "welcome",
+      "prompt": "How would you prepare a late-night tea table for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q050",
+      "domain": "tea",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a late-night tea table hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q051",
+      "domain": "windowsill",
+      "lens": "light",
+      "prompt": "What would you use to light a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q052",
+      "domain": "windowsill",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q053",
+      "domain": "windowsill",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q054",
+      "domain": "windowsill",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q055",
+      "domain": "windowsill",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q056",
+      "domain": "windowsill",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q057",
+      "domain": "windowsill",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q058",
+      "domain": "windowsill",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a gray-morning window seat?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q059",
+      "domain": "windowsill",
+      "lens": "welcome",
+      "prompt": "How would you prepare a gray-morning window seat for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q060",
+      "domain": "windowsill",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a gray-morning window seat hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q061",
+      "domain": "workdesk",
+      "lens": "light",
+      "prompt": "What would you use to light a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q062",
+      "domain": "workdesk",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q063",
+      "domain": "workdesk",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q064",
+      "domain": "workdesk",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q065",
+      "domain": "workdesk",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q066",
+      "domain": "workdesk",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q067",
+      "domain": "workdesk",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q068",
+      "domain": "workdesk",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a work desk after a long session?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q069",
+      "domain": "workdesk",
+      "lens": "welcome",
+      "prompt": "How would you prepare a work desk after a long session for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q070",
+      "domain": "workdesk",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a work desk after a long session hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q071",
+      "domain": "kitchen",
+      "lens": "light",
+      "prompt": "What would you use to light a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q072",
+      "domain": "kitchen",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q073",
+      "domain": "kitchen",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q074",
+      "domain": "kitchen",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q075",
+      "domain": "kitchen",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q076",
+      "domain": "kitchen",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q077",
+      "domain": "kitchen",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q078",
+      "domain": "kitchen",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a shared breakfast shelf?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q079",
+      "domain": "kitchen",
+      "lens": "welcome",
+      "prompt": "How would you prepare a shared breakfast shelf for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q080",
+      "domain": "kitchen",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a shared breakfast shelf hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q081",
+      "domain": "garden",
+      "lens": "light",
+      "prompt": "What would you use to light an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q082",
+      "domain": "garden",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q083",
+      "domain": "garden",
+      "lens": "palette",
+      "prompt": "Which color story belongs in an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q084",
+      "domain": "garden",
+      "lens": "composition",
+      "prompt": "How should things be arranged in an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q085",
+      "domain": "garden",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q086",
+      "domain": "garden",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q087",
+      "domain": "garden",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q088",
+      "domain": "garden",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits an indoor herb garden?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q089",
+      "domain": "garden",
+      "lens": "welcome",
+      "prompt": "How would you prepare an indoor herb garden for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q090",
+      "domain": "garden",
+      "lens": "secret",
+      "prompt": "What unexpected detail should an indoor herb garden hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q091",
+      "domain": "club",
+      "lens": "light",
+      "prompt": "What would you use to light a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q092",
+      "domain": "club",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q093",
+      "domain": "club",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q094",
+      "domain": "club",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q095",
+      "domain": "club",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q096",
+      "domain": "club",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q097",
+      "domain": "club",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q098",
+      "domain": "club",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a small basement listening club?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q099",
+      "domain": "club",
+      "lens": "welcome",
+      "prompt": "How would you prepare a small basement listening club for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q100",
+      "domain": "club",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a small basement listening club hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q101",
+      "domain": "letters",
+      "lens": "light",
+      "prompt": "What would you use to light a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q102",
+      "domain": "letters",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q103",
+      "domain": "letters",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q104",
+      "domain": "letters",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q105",
+      "domain": "letters",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q106",
+      "domain": "letters",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q107",
+      "domain": "letters",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q108",
+      "domain": "letters",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a corner for handwritten letters?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q109",
+      "domain": "letters",
+      "lens": "welcome",
+      "prompt": "How would you prepare a corner for handwritten letters for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q110",
+      "domain": "letters",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a corner for handwritten letters hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q111",
+      "domain": "games",
+      "lens": "light",
+      "prompt": "What would you use to light a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q112",
+      "domain": "games",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q113",
+      "domain": "games",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q114",
+      "domain": "games",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q115",
+      "domain": "games",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q116",
+      "domain": "games",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q117",
+      "domain": "games",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q118",
+      "domain": "games",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a cozy tabletop gaming space?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q119",
+      "domain": "games",
+      "lens": "welcome",
+      "prompt": "How would you prepare a cozy tabletop gaming space for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q120",
+      "domain": "games",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a cozy tabletop gaming space hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q121",
+      "domain": "bookshop",
+      "lens": "light",
+      "prompt": "What would you use to light a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q122",
+      "domain": "bookshop",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q123",
+      "domain": "bookshop",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q124",
+      "domain": "bookshop",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q125",
+      "domain": "bookshop",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q126",
+      "domain": "bookshop",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q127",
+      "domain": "bookshop",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q128",
+      "domain": "bookshop",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a used-book stall?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q129",
+      "domain": "bookshop",
+      "lens": "welcome",
+      "prompt": "How would you prepare a used-book stall for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q130",
+      "domain": "bookshop",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a used-book stall hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q131",
+      "domain": "nighttrain",
+      "lens": "light",
+      "prompt": "What would you use to light a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q132",
+      "domain": "nighttrain",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q133",
+      "domain": "nighttrain",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q134",
+      "domain": "nighttrain",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q135",
+      "domain": "nighttrain",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q136",
+      "domain": "nighttrain",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q137",
+      "domain": "nighttrain",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q138",
+      "domain": "nighttrain",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a sleeping compartment on a night train?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q139",
+      "domain": "nighttrain",
+      "lens": "welcome",
+      "prompt": "How would you prepare a sleeping compartment on a night train for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q140",
+      "domain": "nighttrain",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a sleeping compartment on a night train hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q141",
+      "domain": "workshop",
+      "lens": "light",
+      "prompt": "What would you use to light a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q142",
+      "domain": "workshop",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q143",
+      "domain": "workshop",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q144",
+      "domain": "workshop",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q145",
+      "domain": "workshop",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q146",
+      "domain": "workshop",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q147",
+      "domain": "workshop",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q148",
+      "domain": "workshop",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a handmade repair workshop?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q149",
+      "domain": "workshop",
+      "lens": "welcome",
+      "prompt": "How would you prepare a handmade repair workshop for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q150",
+      "domain": "workshop",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a handmade repair workshop hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q151",
+      "domain": "attic",
+      "lens": "light",
+      "prompt": "What would you use to light an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q152",
+      "domain": "attic",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q153",
+      "domain": "attic",
+      "lens": "palette",
+      "prompt": "Which color story belongs in an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q154",
+      "domain": "attic",
+      "lens": "composition",
+      "prompt": "How should things be arranged in an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q155",
+      "domain": "attic",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q156",
+      "domain": "attic",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q157",
+      "domain": "attic",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q158",
+      "domain": "attic",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits an attic full of rediscovered things?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q159",
+      "domain": "attic",
+      "lens": "welcome",
+      "prompt": "How would you prepare an attic full of rediscovered things for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q160",
+      "domain": "attic",
+      "lens": "secret",
+      "prompt": "What unexpected detail should an attic full of rediscovered things hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q161",
+      "domain": "courtyard",
+      "lens": "light",
+      "prompt": "What would you use to light a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q162",
+      "domain": "courtyard",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q163",
+      "domain": "courtyard",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q164",
+      "domain": "courtyard",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q165",
+      "domain": "courtyard",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q166",
+      "domain": "courtyard",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q167",
+      "domain": "courtyard",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q168",
+      "domain": "courtyard",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a rain-washed courtyard?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q169",
+      "domain": "courtyard",
+      "lens": "welcome",
+      "prompt": "How would you prepare a rain-washed courtyard for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q170",
+      "domain": "courtyard",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a rain-washed courtyard hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q171",
+      "domain": "festival",
+      "lens": "light",
+      "prompt": "What would you use to light a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q172",
+      "domain": "festival",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q173",
+      "domain": "festival",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q174",
+      "domain": "festival",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q175",
+      "domain": "festival",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q176",
+      "domain": "festival",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q177",
+      "domain": "festival",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q178",
+      "domain": "festival",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a little indoor festival booth?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q179",
+      "domain": "festival",
+      "lens": "welcome",
+      "prompt": "How would you prepare a little indoor festival booth for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q180",
+      "domain": "festival",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a little indoor festival booth hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q181",
+      "domain": "lounge",
+      "lens": "light",
+      "prompt": "What would you use to light a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q182",
+      "domain": "lounge",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q183",
+      "domain": "lounge",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q184",
+      "domain": "lounge",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q185",
+      "domain": "lounge",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q186",
+      "domain": "lounge",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q187",
+      "domain": "lounge",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q188",
+      "domain": "lounge",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a quiet listening lounge?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q189",
+      "domain": "lounge",
+      "lens": "welcome",
+      "prompt": "How would you prepare a quiet listening lounge for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q190",
+      "domain": "lounge",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a quiet listening lounge hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    },
+    {
+      "id": "q191",
+      "domain": "guestroom",
+      "lens": "light",
+      "prompt": "What would you use to light a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "One low, honey-colored lamp",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "A shadowy indigo pool of light",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Fine cool-blue linear lights",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Clear, unobtrusive white light",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q192",
+      "domain": "guestroom",
+      "lens": "materials",
+      "prompt": "Which materials would you choose around a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Hand-carved wood with visible grain",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "Brushed metal with exposed joinery",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Clay and natural woven fibers",
+          "style": "botanical"
+        },
+        {
+          "value": 4,
+          "label": "Well-worn vinyl and old wood",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q193",
+      "domain": "guestroom",
+      "lens": "palette",
+      "prompt": "Which color story belongs in a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Apricot, cream and one sharp yellow",
+          "style": "playful"
+        },
+        {
+          "value": 2,
+          "label": "Sea-glass teal and stormy blue",
+          "style": "coastal"
+        },
+        {
+          "value": 3,
+          "label": "Ink black and a single red accent",
+          "style": "goth"
+        },
+        {
+          "value": 4,
+          "label": "Moss green and warm terracotta",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q194",
+      "domain": "guestroom",
+      "lens": "composition",
+      "prompt": "How should things be arranged in a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Many lovingly collected layers",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "A few precise pieces and open floor",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Asymmetric handmade groupings",
+          "style": "indie"
+        },
+        {
+          "value": 4,
+          "label": "An easy nest of useful favorites",
+          "style": "cozy"
+        }
+      ]
+    },
+    {
+      "id": "q195",
+      "domain": "guestroom",
+      "lens": "feature",
+      "prompt": "What should draw the eye first in a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "An odd handmade object with a story",
+          "style": "craft"
+        },
+        {
+          "value": 2,
+          "label": "A clever machine you can inspect",
+          "style": "techie"
+        },
+        {
+          "value": 3,
+          "label": "A tiny star map or celestial mobile",
+          "style": "celestial"
+        },
+        {
+          "value": 4,
+          "label": "A beautiful found vintage piece",
+          "style": "retro"
+        }
+      ]
+    },
+    {
+      "id": "q196",
+      "domain": "guestroom",
+      "lens": "music",
+      "prompt": "What sound-world would you choose for a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A collection of curious independent recordings",
+          "style": "indie"
+        },
+        {
+          "value": 2,
+          "label": "A measured machine rhythm",
+          "style": "industrial"
+        },
+        {
+          "value": 3,
+          "label": "Soft music with room for the rain",
+          "style": "cozy"
+        },
+        {
+          "value": 4,
+          "label": "Mostly the natural sounds of the room",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q197",
+      "domain": "guestroom",
+      "lens": "collection",
+      "prompt": "How would you arrange small finds from a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A dense cabinet of curiosities",
+          "style": "maximal"
+        },
+        {
+          "value": 2,
+          "label": "One labeled drawer per object",
+          "style": "minimal"
+        },
+        {
+          "value": 3,
+          "label": "Bright boxes arranged by surprise",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Recycled jars beside living plants",
+          "style": "botanical"
+        }
+      ]
+    },
+    {
+      "id": "q198",
+      "domain": "guestroom",
+      "lens": "ritual",
+      "prompt": "What small recurring activity suits a guest bedroom waiting for a friend?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Care for a planter and track its growth",
+          "style": "botanical"
+        },
+        {
+          "value": 2,
+          "label": "Replay a favorite record",
+          "style": "retro"
+        },
+        {
+          "value": 3,
+          "label": "Tinker with a simple circuit",
+          "style": "techie"
+        },
+        {
+          "value": 4,
+          "label": "Patch, stitch or polish something",
+          "style": "craft"
+        }
+      ]
+    },
+    {
+      "id": "q199",
+      "domain": "guestroom",
+      "lens": "welcome",
+      "prompt": "How would you prepare a guest bedroom waiting for a friend for a visitor?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "Leave a cushion and warm cup ready",
+          "style": "cozy"
+        },
+        {
+          "value": 2,
+          "label": "Make a mysterious little reading corner",
+          "style": "goth"
+        },
+        {
+          "value": 3,
+          "label": "Leave a playful object to discover",
+          "style": "playful"
+        },
+        {
+          "value": 4,
+          "label": "Keep the way open and uncluttered",
+          "style": "minimal"
+        }
+      ]
+    },
+    {
+      "id": "q200",
+      "domain": "guestroom",
+      "lens": "secret",
+      "prompt": "What unexpected detail should a guest bedroom waiting for a friend hide?",
+      "choices": [
+        {
+          "value": 1,
+          "label": "A little chart of unfamiliar constellations",
+          "style": "celestial"
+        },
+        {
+          "value": 2,
+          "label": "A handwritten zine tucked under a book",
+          "style": "indie"
+        },
+        {
+          "value": 3,
+          "label": "A sea-smoothed stone on the sill",
+          "style": "coastal"
+        },
+        {
+          "value": 4,
+          "label": "A numbered part from an old machine",
+          "style": "industrial"
+        }
+      ]
+    }
+  ]
+}
