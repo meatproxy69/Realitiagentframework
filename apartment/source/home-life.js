@@ -146,7 +146,10 @@ async function run(raw){
   else life.arrangements=Math.min(100000,life.arrangements+1);
   syncBlanket();persist();
  }
- if(lower==='look')return marker(cleanActions(result));
+ if(lower==='look'){
+  const shown=marker(cleanActions(result));
+  return shown?.text?{...shown,text:shown.text.replace(/\bthe a bed\b/g,'the bed')}:shown;
+ }
  if(lower==='feel words')return result?.text?{...result,text:result.text.replace(/\bthe a bed\b/g,'the bed')}:result;
  if(lower==='actions')return cleanActions(result);
  return result;
