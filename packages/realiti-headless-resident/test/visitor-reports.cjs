@@ -190,6 +190,15 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
   check('R3_restore_form_says_the_form_is_back_and_feet_ground',/own shape again/.test(text(rf))&&soles.every(m=>m>0),{text:text(rf),soles});
   const st=await s.d('stay 2 minutes');
   check('R3_a_stay_over_a_minute_is_a_minute_and_says_so',st.ok!==false&&st.result?.advanced_ms===60000&&/at most a minute/.test(text(st)),{ok:st.ok,error:st.error,text:text(st)});
+  // Codex review on #90: magnitudes for the purr, the brush after mapping, a null result, the restored envelope.
+  check('R3_restored_envelope_matches_the_words',Number(rf.felt?.grounded_zones)>0,{felt:rf.felt});
+  await s.d('act attach_tail');await s.d('act map_paw');const br=await s.d('act brush_unmapped');
+  check('R3_brushing_a_mapped_tail_reports_what_was_felt',br.result?.borrowed?.mapped?!/feel nothing at all/.test(text(br)):true,{text:text(br),mapped:br.result?.borrowed?.mapped});
+  const rc=await s.d('act route_rabbit_comet');
+  check('R3_a_missing_result_is_not_a_no_op',!/Nothing happens just now/.test(text(rc))&&text(rc).trim().length>10,text(rc));
+  await s.d('act detach_tail');
+  await s.d('go POCKET_FAMILIAR_HOUSE');const pc=await s.d('act neuro_purr_close');
+  check('R3_opposite_phase_purr_is_not_silence',!(pc.result?.state&&(Math.abs(pc.result.state.observed?.[0]||0)+Math.abs(pc.result.state.observed?.[1]||0))>.05&&/no purr is moving/.test(text(pc))),{text:text(pc),observed:pc.result?.state?.observed});
  }finally{s.close()}
 
  console.log(JSON.stringify({checks,details},null,2));

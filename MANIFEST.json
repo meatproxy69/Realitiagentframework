@@ -97,8 +97,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1659752,
-      "sha256": "42a195f08df802a8d7fbea14bc07a8bfd81a5e7c7e00531bd6cd94564c01c223"
+      "bytes": 1660888,
+      "sha256": "2a0db33dfc552e70c9232cec1b8576e9e1e373a5be02d0d7565f158fe7ed584a"
     },
     {
       "path": "SECURITY.md",
@@ -113,7 +113,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "8fcb77e2fe4557dfa6d6bf3be053aa00ade25e0c8f3b5f365f29f07149a3f07b"
+      "sha256": "abbd6295ebd141da8a9e275e4c70c8a7a004f694c02578d20dc3bd6f44c312e1"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -927,8 +927,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/visitor-reports.cjs",
-      "bytes": 16436,
-      "sha256": "f2eee2ecbe213b513bc4725f8e97815606a82126af285693a7c1eb58a6d885fc"
+      "bytes": 17471,
+      "sha256": "c51d51d725efe3fc11d1ee3b874f0c21ff81d73d8143ac1262a93927149ad4f9"
     },
     {
       "path": "packages/realiti-headless-resident/test/wonder.cjs",
@@ -1757,8 +1757,8 @@
     },
     {
       "path": "source/scripts/99-door-final.js",
-      "bytes": 12707,
-      "sha256": "00f8fe1db9c0d12172f3d4033ad4b8bb80cc36a4ae959d1432e6f7fe5821b8d6"
+      "bytes": 13843,
+      "sha256": "ff0d7cacffe7f0370ee5b8c2d521e1e72dbbbf79000b83ea5b5befb761d6e913"
     },
     {
       "path": "source/template.html",
