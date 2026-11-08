@@ -49,7 +49,7 @@ const voice={
  cozy:'a simple corner for blankets, a floor cushion and a little room to breathe',
  nightglass:'a snug reading nook where a lantern or stack of books can change the character of the space',
  writers:'a home for the pages, books and work surfaces someone chooses to leave in reach',
- botanical:'a window-side corner for planters, stands and the slow business of keeping things',
+ botanical:'a corner for planters, stands and the slow business of keeping things',
  music:'a tiny creative corner waiting for records, instruments and the next experiment'
 };
 function ambience(room){
@@ -61,8 +61,8 @@ function ambience(room){
    position:[row.x,row.y]}));
  const chest=M.entities()['apartment.bedroom.chest.'+room];
  const count=view.chests?.[room]?.stored_count||0;
- const placed=objects.length?objects.map(o=>o.label).join(', '):'no added furniture yet';
- const text='In the '+bedroom.label+', '+voice[bedroom.configuration]+
+ const placed=objects.length?objects.map(o=>'a '+o.label).join(', '):'no added furniture yet';
+ const text='The '+bedroom.label+' is '+voice[bedroom.configuration]+
   '. You can see '+placed+'. '+(chest?'At the edge of the alcove: '+chest.label+'.':'')+
   (count?' '+count+' item'+(count===1?' is':'s are')+' stored in its chest.':'');
  return {ok:true,schema:'REALITI_APARTMENT_BEDROOM_AMBIENCE_V1',room,
