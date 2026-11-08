@@ -6,6 +6,7 @@ import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import {adaptNativeHomeBoot} from './source/native-home-boot-adapter.mjs';
 import {adaptHomeBedAlcove} from './source/native-home-bedroom-adapter.mjs';
+import {adaptHomeWelcome} from './source/native-home-welcome-adapter.mjs';
 const apartment=new URL('./',import.meta.url);
 const read=async name=>fs.readFile(new URL(name,apartment),'utf8');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -28,16 +29,19 @@ if(base.split(worldKernel).length!==2)
 const bedroomKernel=adaptHomeBedAlcove(worldKernel);
 // The bedroom's initial spawn is moved *with* its native mattress before
 // the original world layer registers geometry. No after-boot teleportation.
-const clean=base.replace(originalKernel,nativeKernel)
- .replace(worldKernel,bedroomKernel);
+const clean=adaptHomeWelcome(base.replace(originalKernel,nativeKernel)
+ .replace(worldKernel,bedroomKernel));
 if(clean.includes('realiti-apartment-home-first-configuration'))
  throw Error('HOME_CANDIDATE_LEGACY_LATE_CONFIG_MUST_NOT_BE_PRESENT');
 const source=await read('source/one-chart-preview.js');
-if(/<\/script/i.test(source))throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
+const life=await read('source/home-life.js');
+if(/<\/script/i.test(source)||/<\/script/i.test(life))
+ throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(clean))throw Error('HOME_CANDIDATE_HTML_END_MISSING');
 const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\n'+
- source+'\n</script>\n</body></html>');
+ source+'\n</script>\n<script id="realiti-apartment-home-life">\n'+
+ life+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
  version:'4.3.0-beta.1',candidate_only:true,preview_only:true,
@@ -47,6 +51,7 @@ const manifest={
  parent_apartment_sha256:validated.single_html_sha256,
  canonical_relax_source_sha256:validated.source_html_sha256,
  source_gate_sha256:hash(source),
+ home_life_sha256:hash(life),
  original_matrix_kernel_sha256:hash(originalKernel),
  native_matrix_boot_gate_sha256:hash(nativeKernel),
  original_world_kernel_sha256:hash(worldKernel),
