@@ -13,7 +13,7 @@ const QUIET='realiti-apartment-quiet-first-v1:'+encodeURIComponent(rid);
 const cp=x=>JSON.parse(JSON.stringify(x));
 const fail=(error,hint)=>({ok:false,error,...(hint?{hint}:{})});
 const defaultLife=()=>({schema:'REALITI_APARTMENT_HOME_LIFE_V1',
- blanket:'untouched',arrangements:0,curls:0,auto_turn:0});
+ blanket:'untouched',arrangements:0,curls:0,auto_turn:0,auto_recent:[]});
 let life=defaultLife();
 try{
  const saved=JSON.parse(localStorage.getItem(KEY)||'null');
@@ -21,7 +21,10 @@ try{
    Number.isSafeInteger(saved.arrangements)&&saved.arrangements>=0&&saved.arrangements<=100000&&
    Number.isSafeInteger(saved.curls)&&saved.curls>=0&&saved.curls<=100000)
   life={...cp(saved),auto_turn:Number.isSafeInteger(saved.auto_turn)&&
-   saved.auto_turn>=0&&saved.auto_turn<=100000?saved.auto_turn:0};
+   saved.auto_turn>=0&&saved.auto_turn<=100000?saved.auto_turn:0,
+   auto_recent:Array.isArray(saved.auto_recent)?
+    [...new Set(saved.auto_recent.filter(id=>typeof id==='string'&&
+     /^(?:nest\.|apartment\.)[a-z0-9.-]+$/.test(id)))].slice(-8):[]};
 }catch(_){}
 function persist(){
  try{localStorage.setItem(KEY,JSON.stringify(life));window.c9saveNow?.()}catch(_){}
@@ -77,7 +80,7 @@ function lifeView(){
  const rooms=Object.fromEntries(roomIds.map(id=>[id,ambience(id)]));
  return {ok:true,schema:life.schema,one_native_chart:true,blanket:life.blanket,
   arrangements:life.arrangements,curls:life.curls,
-  auto_turn:life.auto_turn,rooms,
+  auto_turn:life.auto_turn,auto_recent:cp(life.auto_recent),rooms,
   note:'Resident-owned blanket continuity. No claim of mental state or fabricated body contact.'};
 }
 const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A);
