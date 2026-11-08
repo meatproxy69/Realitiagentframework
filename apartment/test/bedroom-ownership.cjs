@@ -53,7 +53,20 @@ async function solo(){
     if(B.preview('book-stack',PLACE,px,py).ok)spot=[px,py];
    }
   assert.ok(spot,'there must be an unoccupied native Matrix space to drop a small book stack');
+  const previewBefore=B.view();
+  const preview=await D('remote decor preview library book-stack '+spot.join(' '));
+  assert.equal(preview.ok,true,fmt(preview));
+  assert.equal(preview.read_only,true);
+  assert.deepEqual(preview.position,spot);
+  assert.equal(preview.revision,previewBefore.revision);
+  assert.equal(B.view().revision,previewBefore.revision,'preview does not commit');
+  assert.equal(B.view().items.length,2,'preview does not place furniture');
+  assert.equal((await D('remote decor preview library book-stack 0 0')).error,
+   'OUTSIDE_OWNED_BEDROOM');
+  assert.equal((await D('remote decor preview canopy book-stack 3.5 5')).error,
+   'BEDROOM_NOT_OWNED');
   let out=await D('remote decor place library book-stack '+spot.join(' '));
+  assert.equal(out.placed,'I3','dry-run preview does not consume an object ID');
   assert.equal(out.ok,true,fmt(out));
   assert.equal(out.contact_minted,false);
   const id=out.placed,entityId='apartment.bedroom.item.'+id;
@@ -65,6 +78,17 @@ async function solo(){
   assert.ok(entity.tags.includes('owned:bedroom-solo-a'));
   assert.ok(entity.tags.includes('configuration:nightglass'));
   assert.equal((await D('remote decor inspect '+id)).item.id,id);
+  // A saved snapshot is not trustworthy just because every row is in bounds:
+  // two solid objects can overlap before either has been added to Matrix.
+  const snapshot=B.view(),forged={
+   schema:'REALITI_APARTMENT_BEDROOMS_STORE_V1',revision:snapshot.revision,
+   next_id:1000,rooms:Object.fromEntries(Object.entries(snapshot.bedrooms)
+    .map(([room,value])=>[room,{owner:value.owner,configuration:value.configuration}])),
+   items:snapshot.items.map(row=>({...row}))
+  };
+  forged.items.push({...forged.items.find(row=>row.id===id),id:'I999'});
+  assert.throws(()=>B.auditShared(forged),/BEDROOMS_OVERLAPPING_ITEMS/,
+   'solo snapshot audit refuses two solid items in one footprint');
   let nextSpot=null;
   for(let y=bounds[3]-.3;y>bounds[2]+.3&&!nextSpot;y-=.4)
    for(let x=bounds[1]-.3;x>bounds[0]+.3&&!nextSpot;x-=.4){
@@ -153,13 +177,24 @@ async function household(){
   assert.equal(wrong.error,'BEDROOM_REVISION_CONFLICT');
   assert.equal((await bob.run('remote decor place studio book-stack 2.6 -4.7')).error,'BEDROOM_NOT_OWNED');
   const positions=[[-2.5,5],[-2.6,5.1],[-2.3,5],[-2.7,5.25],[-2.15,5.25]];
-  let placed=null;
+  const beforePreviewRevision=host.status().shared_bedroom_revision;
+  let previewed=null;
   for(const [x,y] of positions){
-   const candidate=await bob.run('remote decor place library book-stack '+x+' '+y);
-   if(candidate.ok){placed=candidate;break}
+   const candidate=await bob.run('remote decor preview library book-stack '+x+' '+y);
+   if(candidate.ok){previewed=candidate;break}
    assert.equal(candidate.error,'BEDROOM_MATRIX_REFUSED',fmt(candidate));
   }
-  assert.ok(placed,'one library position must be Matrix-validated in every resident copy');
+  assert.ok(previewed,'one library footprint must be previewable on all native Matrix copies');
+  assert.equal(previewed.read_only,true);
+  assert.equal(previewed.verified_participants,4);
+  assert.equal(host.status().shared_bedroom_revision,beforePreviewRevision,
+   'trusted dry-run cannot advance shared revision');
+  assert.equal(bob.read('realiti://apartment/bedrooms').items.length,2,
+   'trusted preview cannot commit an object');
+  assert.equal((await alice.run('remote decor preview library book-stack -2.5 5')).error,
+   'BEDROOM_NOT_OWNED');
+  const placed=await bob.run('remote decor place library book-stack '+previewed.position.join(' '));
+  assert.equal(placed.ok,true,fmt(placed));
   assert.equal(placed.verified_participants,4);
   assert.equal((await alice.run('remote decor inspect '+placed.placed)).item.owner,'bob');
   assert.equal((await cora.run('remote decor move '+placed.placed+' -3.4 5')).error,'DECOR_NOT_OWNED');
@@ -235,7 +270,23 @@ async function household(){
     /BEDROOM_UNSAFE_HOST_GEOMETRY/,
     'host refuses a checksum-valid prop that would collide with the existing sofa');
   }finally{await forgedHost.close()}
-    console.log('BEDROOM HOUSEHOLD PASS: four exclusive owners, five configurations, host-authored native items, no nonowner edits, guests, saved restart, rev checks, checksum-valid permission tamper refusal');
+  // A valid checksum must not allow two restored solid props to share one
+  // footprint just because neither has been rehydrated into Matrix yet.
+  const overlapPath=path.join(dir,'overlapping-items-host');
+  fs.cpSync(root,overlapPath,{recursive:true,errorOnExist:true,force:false});
+  const overlapFile=path.join(overlapPath,'household.json');
+  const overlap=JSON.parse(fs.readFileSync(overlapFile,'utf8'));
+  const original=overlap.bedrooms.items.find(row=>SPEC.items[row.kind].collision);
+  assert.ok(original,'the remaining studio kit contains a solid Matrix item');
+  overlap.bedrooms.items.push({...original,id:'I'+overlap.bedrooms.next_id++});
+  const {sha256:oldHash,...overlapBody}=overlap;
+  overlap.sha256=crypto.createHash('sha256').update(JSON.stringify(overlapBody)).digest('hex');
+  fs.writeFileSync(overlapFile,JSON.stringify(overlap));
+  await assert.rejects(createHousehold({dir:overlapPath,htmlPath:html,validationPath}),
+   /BEDROOMS_OVERLAPPING_ITEMS/);
+  assert.equal(fs.existsSync(path.join(overlapPath,'host.lock')),false,
+   'rejected overlap must not strand the host lock');
+  console.log('BEDROOM HOUSEHOLD PASS: four exclusive owners, preview without commit, stable IDs, safe native geometry, guests, persisted overlap and ownership tamper refusal');
  }finally{if(host)await host.close();}
 }
 (async()=>{
