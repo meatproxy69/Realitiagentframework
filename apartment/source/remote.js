@@ -64,6 +64,7 @@ function menu(){
   bedrooms:['remote bedrooms','remote bedroom configurations','remote bedroom claim <room>',
     'remote bedroom configure <room> <configuration>',
     'remote bedroom furnish <room> <configuration>','remote decor catalog',
+    'remote decor preview <room> <kind> <x> <y>',
     'remote decor place <room> <kind> <x> <y>',
     'remote decor inspect <id>','remote decor move <id> <x> <y>',
     'remote decor remove <id>','remote bedroom clear <room> confirm'],
