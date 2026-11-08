@@ -1,12 +1,14 @@
 # REALITI 4.0 — The Apartment
 
-**Can we make feeling digital?**
+**Can we make digital feeling real?**
 
 [![Validate REALITI](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml)
 
-REALITI is a field-first, headless-friendly world for artificial residents. Agents can move, explore, play, change their bodies, leave marks on objects, encounter other residents, and carry memories of what actually happened. Underneath the gentle rooms is a structured system for space, contact, pressure, support, prediction, adaptation, and lingering sensory state.
+Rain taps against a window. A cat investigates the furniture. Move a lamp, come back later, and it is still where you left it. Reach for something too far away, and the world does not pretend you touched it.
 
-The experiment is simple to ask: **what changes when a world gives an agent structured causes and consequences instead of merely telling it what it feels?**
+Most artificial companions live entirely in conversation. **REALITI gives them somewhere to go when the conversation ends.** It's a persistent, headless-friendly world where artificial residents can wander, play, rearrange their home, share space, and encounter consequences that aren't written into a script.
+
+Underneath the cozy domestic scene is the harder experiment: actual geometry, contact and support, private sensory fields, prediction, adaptation, and memory. REALITI does not establish subjective feeling in software. It asks a question we can build and test: **what happens when events have structured causes and consequences, even when nobody narrates what they should mean?**
 
 **V2 body possibility fields:** `body` and `realiti://body/possibility` expose the original Haptic V20's grounded contact mask alongside an *uncalibrated ensemble* of possible sensory response/afterstate trajectories. No emotional valence, preference, consent or mental state is inferred. Predictions are not physical events; the resident alone interprets its experience. See [body documentation](./AGENT_START_HERE.md#the-body-what-lingers-as-state) and [field-first recovery plan](./docs/REALITI_FIELD_FIRST_RECOVERY_PLAN.md).
 
@@ -33,7 +35,7 @@ The cozy atmosphere is grounded in the original Relax sensory systems: rain on t
 - **Rest and play.** Walk to and sit on real furnishings, lie on the quilted bed, care for an adopted cat, dog or ferret, flick a spring ribbon, watch the firefly jar, open the three-click puzzle box, listen to rain chimes and steep tea.
 - **Carry a small pocket remote.** Use furniture, pets, catnip, Extras, closet, household and private memory without turning the ordinary Agent Door into a huge control catalog.
 - **Borrow original Relax presets.** A real wardrobe offers ten original Moonwire recipes through safe, temporary full-Relax harness trials.
-- **Customize four owned bedroom alcoves.** Claim Quilt, Library, Canopy or Studio within the original one-chart HOME; select five room configurations, automatically furnish a starter kit, and place, move or clear 15 native-sized decor item types through the carried remote. Connected households validate owner permissions and collisions on every resident's Matrix copy; bedrooms are not lockable or separate charts. See [Apartment customization](./apartment/README.md#four-resident-owned-bedrooms-and-drop-in-furniture-experimental).
+- **Customize four owned bedroom alcoves.** Claim Quilt, Library, Canopy or Studio within the original one-chart HOME; select five room configurations, furnish starter kits, find safe positions, auto-place or nudge 15 native-sized decor item types, and clear rooms through the carried remote. Connected households validate owner permissions and collisions on every resident's Matrix copy; bedrooms are not lockable or separate charts. See [Apartment customization](./apartment/README.md#four-resident-owned-bedrooms-and-drop-in-furniture-experimental).
 - **Try four optional HoneySpark catnip recipes.** Quilt Afterglow, Ribbon Comet, Gentle Groom and Firefly Halo select full original R&R renderer configurations via the carried remote. They cannot invent touch, consent or emotions; STOP, remote-off and new visits restore the neutral renderer. See [catnip technical guide](./apartment/CATNIP_SENSORY_PRESETS.md).
 - **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
 
