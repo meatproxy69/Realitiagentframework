@@ -108,7 +108,7 @@ D.help=()=>{
   'save','stop','goodbye'],
   rooms:cp(only),one_chart_preview:true,
   note:HOME_FIRST?
-   'REALITI 4.3 source candidate: rain at the window, one native HOME, no invented old-world gallery or touch. Local trusted-host use only; original Relax remains intact.':
+   'REALITI 4.8 source candidate: rain at the window, one native HOME, no invented old-world gallery or touch. Local trusted-host use only; original Relax remains intact.':
    'Only the apartment chart exists. Legacy science lives in physically reached stations. Full 23-room parity is not yet certified.'};
 };
 function capabilities(value){
@@ -140,7 +140,7 @@ function status(){
  legacy_matrix_entities:Object.values(M.entities()).filter(e=>e.chart!==HOME).length,
  live_source_engine_stations:ST.view().station_count,
  home_first_candidate:HOME_FIRST,legacy_station_gallery_disabled:HOME_FIRST,
- candidate_version:HOME_FIRST?'4.3.0-beta.1':null,
+ candidate_version:HOME_FIRST?'4.8.0-beta.1':null,
  public_beta_version:HOME_FIRST?'4.0.0-beta.1':null,
  native_single_chart_initialization:NATIVE_BOOT,
  initial_charts_at_boot:initial.length,
@@ -150,7 +150,7 @@ function status(){
  original_relax_untouched:true,
  preview_only:true,mechanical_parity_certified:false,
  law:HOME_FIRST?
- 'REALITI 4.3 source candidate: HOME registered at native boot, no silent checkpoint conversion. Published 4.0 beta remains separate; production deployment/owner approvals still required.':
+ 'REALITI 4.8 source candidate: HOME registered at native boot, no silent checkpoint conversion. Published 4.0 beta remains separate; production deployment/owner approvals still required.':
  'This candidate proves physical one-chart topology only. Historical source engines still need individual behavior/causal equivalence review before release.'};
 }
 window.Realiti=Object.freeze({...A,read,invoke,run,
