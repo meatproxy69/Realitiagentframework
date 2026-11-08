@@ -55,7 +55,7 @@ async function solo(){
   assert.equal(equip.equipped,true,printable(equip));
   assert.equal(equip.worn_slot.appearance.preset,'nightglass');
   const chosenLook=await run('look');
-  assert.match(chosenLook.text,/Chosen presentation: Nightglass/);
+  assert.match(chosenLook.text,/you describe your chosen Nightglass look/i);
   assert.match(chosenLook.text,/and a silver crescent pin/,
    'Nightglass narration must use a natural accessory article');
   assert.equal((await run('remote appearance tune detail plus')).value,4);
