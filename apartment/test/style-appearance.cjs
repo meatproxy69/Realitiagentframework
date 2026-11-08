@@ -50,12 +50,17 @@ async function solo(){
   const preview=await run('remote appearance preview nightglass');
   assert.equal(preview.preview_only,true);
   assert.equal(preview.appearance.native_clothing,false);
+  assert.match(preview.appearance.text,/Nightglass begins with long tailored lines/);
+  assert.doesNotMatch(preview.appearance.text,/\ba (?:ornate|unadorned) finish\b/i);
+  const enamel=await run('remote appearance preview retro');
+  assert.match(enamel.appearance.text,/an enamel radio pin/);
+  assert.equal(enamel.appearance.rendered_shader,false);
   assert.equal((await run('remote appearance worn')).worn_slot,null);
   const equip=await run('remote appearance equip nightglass');
   assert.equal(equip.equipped,true,printable(equip));
   assert.equal(equip.worn_slot.appearance.preset,'nightglass');
   const chosenLook=await run('look');
-  assert.match(chosenLook.text,/you describe your chosen Nightglass look/i);
+  assert.match(chosenLook.text,/Your Nightglass design uses long tailored lines/i);
   assert.match(chosenLook.text,/and a silver crescent pin/,
    'Nightglass narration must use a natural accessory article');
   assert.equal((await run('remote appearance tune detail plus')).value,4);
