@@ -46,11 +46,11 @@ function mattressSupport(){
 }
 const roomIds=['quilt','library','canopy','studio'];
 const voice={
- cozy:'A soft, ordinary corner for unhurried time',
- nightglass:'A darker-named arrangement for lamplight and books, with no invented light source',
- writers:'A writing corner where the objects and pages you leave can stay',
- botanical:'A corner for planters and things worth checking on again',
- music:'A studio corner for instruments you can actually place, without pretending to play unheard notes'
+ cozy:'a simple corner for blankets, a floor cushion and a little room to breathe',
+ nightglass:'a snug reading nook where a lantern or stack of books can change the character of the space',
+ writers:'a home for the pages, books and work surfaces someone chooses to leave in reach',
+ botanical:'a window-side corner for planters, stands and the slow business of keeping things',
+ music:'a tiny creative corner waiting for records, instruments and the next experiment'
 };
 function ambience(room){
  const view=B.view(),bedroom=view?.bedrooms?.[room];
