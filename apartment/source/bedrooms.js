@@ -258,6 +258,32 @@ function soloAction(raw){
   next.items.push({id,room,kind,owner:rid,x:p.x,y:p.y});next.revision++;
   return {...persist(next),placed:id,room,kind,position:[p.x,p.y],contact_minted:false};
  }
+ if((m=/^decor move (I[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/i.exec(s))){
+  const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
+  if(!item)return error('UNKNOWN_DECOR_ITEM');
+  if(item.owner!==rid)return error('DECOR_NOT_OWNED');
+  const x=num(m[2]),y=num(m[3]);
+  if(item.x===+x.toFixed(2)&&item.y===+y.toFixed(2))
+   return {ok:true,unchanged:true,item:id,position:[item.x,item.y],revision:solo.revision};
+  const inUse=previewRemove(id);
+  if(!inUse.ok)return inUse;
+  const proposed=preview(item.kind,item.room,x,y,PREFIX+id);
+  if(!proposed.ok)return proposed;
+  item.x=proposed.x;item.y=proposed.y;next.revision++;
+  return {...persist(next),moved:id,room:item.room,position:[item.x,item.y],contact_minted:false};
+ }
+ if((m=/^bedroom clear (quilt|library|canopy|studio) confirm$/.exec(s))){
+  const room=m[1];
+  if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
+  const items=next.items.filter(row=>row.room===room);
+  if(!items.length)return {ok:true,unchanged:true,bedroom:room,revision:solo.revision};
+  for(const row of items){
+   const checked=previewRemove(row.id);
+   if(!checked.ok)return error('DECOR_ITEM_IN_USE',{item:row.id});
+  }
+  next.items=next.items.filter(row=>row.room!==room);next.revision++;
+  return {...persist(next),cleared:room,removed:items.map(row=>row.id),contact_minted:false};
+ }
  if((m=/^decor remove (I[1-9][0-9]*)$/i.exec(s))){
   const id=m[1].toUpperCase(),index=next.items.findIndex(x=>x.id===id);
   if(index<0)return error('UNKNOWN_DECOR_ITEM');
@@ -273,12 +299,21 @@ function commands(){return [
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
- 'decor place <room> <kind> <x> <y>','decor remove <I-number>'];}
+ 'decor place <room> <kind> <x> <y>',
+ 'decor inspect <I-number>','decor move <I-number> <x> <y>',
+ 'decor remove <I-number>','bedroom clear <room> confirm'];}
 function handle(raw){
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
  if(s==='bedrooms'||s==='bedroom status'||s==='decor list')return view();
  if(s==='decor catalog'||s==='bedroom configurations')return catalog();
  if(s==='bedroom help'||s==='decor help')return {ok:true,commands:commands()};
+ const inspected=/^decor inspect (i[1-9][0-9]*)$/.exec(s);
+ if(inspected){
+  const row=state().items.find(item=>item.id===inspected[1].toUpperCase());
+  return row?{ok:true,schema:'REALITI_APARTMENT_DECOR_INSPECT_V1',
+   item:cp(row),spec:cp(SPEC.items[row.kind]),read_only:true}
+   :error('UNKNOWN_DECOR_ITEM');
+ }
  return soloAction(s);
 }
 window.REALITI_APARTMENT_BEDROOMS_V1=Object.freeze({
