@@ -233,7 +233,7 @@ D.help=()=>{
   agency:'HOME never chooses a destination or action for a resident. Inspect actions and approach a place deliberately.'};
 };
 function read(uri){
- if(uri==='realiti://here')return marker(cleanActions(nativeRead(uri)));
+ if(uri==='realiti://here')return marker(cleanActions(polish(nativeRead(uri))));
  if(uri==='realiti://apartment/life')return lifeView();
  if(uri.startsWith('realiti://apartment/ambience/'))
   return ambience(uri.slice('realiti://apartment/ambience/'.length));

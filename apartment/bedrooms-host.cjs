@@ -74,6 +74,19 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  if([getData,persist,participants,atHome].some(x=>typeof x!=='function'))
   throw TypeError('BEDROOM_HOST_DEPENDENCIES_REQUIRED');
  const bridge=entry=>entry.session.window.REALITI_APARTMENT_BEDROOMS_V1;
+ // Read-only suggestions have to agree with actual live Matrix support in
+ // every household copy; the mutation path rechecks the same occupancy.
+ function canStowNow(item,owner){
+  if(!item||item.owner!==owner||item.stored===true||
+     !SPEC.storableKinds.includes(item.kind))return false;
+  const entries=participants();
+  return entries.length>0&&entries.every(entry=>{
+   const entity=entry.session.window.REALITI_MATRIX_V1.entities()
+    ['apartment.bedroom.item.'+item.id];
+   return entity?.chart===SPEC.chart&&
+    bridge(entry)?.previewRemove?.(item.id)?.ok===true;
+  });
+ }
  function ensure(){
   const data=getData();
   if(!data.bedrooms){
@@ -264,20 +277,27 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     return fail('CHEST_OWNER_ONLY');
    const stored=state.items.filter(row=>row.room===room&&row.stored===true)
     .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
-   const available=state.items.filter(row=>row.room===room&&row.stored!==true&&
-    SPEC.storableKinds.includes(row.kind))
-    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
+   const remaining=SPEC.limits.maxChestPerRoom-stored.length;
+   const small=state.items.filter(row=>row.room===room&&row.owner===actor.id&&
+    row.stored!==true&&SPEC.storableKinds.includes(row.kind));
+   const available=remaining>0?small.filter(row=>canStowNow(row,actor.id))
+    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label})):[];
+   const blocked=small.filter(row=>!canStowNow(row,actor.id))
+    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label,
+     reason:'DECOR_NOT_SAFE_TO_STOW'}));
    return {ok:true,schema:ci[1]==='suggest'?
     'REALITI_APARTMENT_CHEST_SUGGEST_V1':'REALITI_APARTMENT_CHEST_INSPECT_V1',
     room,owner:actor.id,entity_id:'apartment.bedroom.chest.'+room,
-    capacity:SPEC.limits.maxChestPerRoom,remaining:SPEC.limits.maxChestPerRoom-stored.length,
-    stored:cp(stored),available:cp(available),
-    hint:available.length&&stored.length<SPEC.limits.maxChestPerRoom?
+    capacity:SPEC.limits.maxChestPerRoom,remaining,
+    stored:cp(stored),available:cp(available),blocked:cp(blocked),
+    hint:available.length?
      'You can put away a '+available[0].label+' ('+available[0].id+
      ') using remote chest stow '+available[0].id+'.':
-     (stored.length?'The chest holds a '+stored[0].label+' ('+stored[0].id+
-    '). You can retrieve it with remote chest auto-take '+stored[0].id+'.':
-    'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.'),
+     (remaining<=0?'The chest is full. Take out an item before storing anything else.':
+     blocked.length?'The smaller belongings are in use or unavailable right now. Try again when they are free.':
+     stored.length?'The chest holds a '+stored[0].label+' ('+stored[0].id+
+     '). You can retrieve it with remote chest auto-take '+stored[0].id+'.':
+     'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.'),
     read_only:true,contact_minted:false};
   }
   if(actor.role!=='resident')return fail('GUEST_BEDROOM_READ_ONLY');
@@ -333,7 +353,9 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     const remaining=SPEC.limits.maxChestPerRoom-
      next.items.filter(row=>row.room===item.room&&row.stored===true).length;
     const alternative=remaining>0?next.items.find(row=>row.room===item.room&&
-     row.owner===actor.id&&row.stored!==true&&SPEC.storableKinds.includes(row.kind)):null;
+     canStowNow(row,actor.id)):null;
+    const smaller=next.items.some(row=>row.room===item.room&&row.owner===actor.id&&
+     row.stored!==true&&SPEC.storableKinds.includes(row.kind));
     const suggestedAction=alternative?'remote chest stow '+alternative.id:null;
     return fail('DECOR_TOO_LARGE_FOR_CHEST',{
      room:item.room,kind:item.kind,storable_kinds:SPEC.storableKinds.slice(),
@@ -343,7 +365,8 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
       (remaining<=0?'The chest is full; make some room first.':
        alternative?'The '+SPEC.items[alternative.kind].label+' ('+alternative.id+
         ') fits instead. Try '+suggestedAction+'.':
-        'Try remote chest suggest '+item.room+' to see what fits, or place something smaller.')});
+        smaller?'The smaller belongings cannot be moved safely right now. Try again when they are free.':
+         'Try remote chest suggest '+item.room+' to see what fits, or place something smaller.')});
    }
    if(next.items.filter(row=>row.room===item.room&&row.stored===true).length>=SPEC.limits.maxChestPerRoom)
     return fail('CHEST_FULL');

@@ -94,10 +94,10 @@ function depiction(look){
  return {preset:look.preset,label:preset.label,
   silhouette:preset.silhouette,accessory:preset.accessory,colors:names,
   tuning:cp(d),
-  text:preset.label+' takes shape in '+preset.silhouette+', with '+names.field+
-   ' beside '+names.anchor+' and a note of '+names.accent+'. The '+detail+
-   ' details make room for '+contrast+' contrast and a '+trim+
-   ' finish; '+article+preset.accessory+' completes the idea.',
+  text:preset.label+' begins with '+preset.silhouette+' in '+names.field+
+   ' and '+names.anchor+'. '+names.accent+' picks out '+detail+' details; '+
+   contrast+' contrast and the '+trim+' finish leave room for '+
+   article+preset.accessory+'.',
   category:'RESIDENT_CHOSEN_PRESENTATION_ONLY',rendered_shader:false,
   native_clothing:false,physical_contact_minted:false};
 }
@@ -155,20 +155,13 @@ async function run(raw){
   const result=await previousRun(raw);
   if(cmd==='look'&&result&&typeof result==='object'&&result.ok!==false&&state.worn&&!loadError){
    const worn=depiction(state.worn.look);
-   const MATRIX=window.REALITI_MATRIX_V1;
-   const pose=MATRIX?.state().residents?.['resident:self'];
-   const rooms=B.spec().rooms;
-   const where=pose?.chart==='CLOUD_NINE_NEST'?
-    Object.keys(rooms).find(id=>{const [x0,x1,y0,y1]=rooms[id].bounds;
-     return pose.pose.position[0]>=x0&&pose.pose.position[0]<=x1&&
-      pose.pose.position[1]>=y0&&pose.pose.position[1]<=y1;}):null;
-   const setting=where?'In this '+B.view().bedrooms[where].label.toLowerCase():
-    'As you move through HOME';
    const article=/^(?:enamel|enameled)/i.test(worn.accessory)?'an':'a';
-   const scene=setting+', you describe your chosen '+worn.label+
-    ' look in '+worn.silhouette+' — '+worn.colors.field+' alongside '+
-    worn.colors.anchor+', a hint of '+worn.colors.accent+
-    ', and '+article+' '+worn.accessory+'.';
+   // This is the resident's chosen description, not a spawned costume.
+   // HOME already names the actual alcove; avoid repeating its heading.
+   const scene='Your '+worn.label+' design uses '+worn.silhouette+' in '+
+    worn.colors.field+' and '+worn.colors.anchor+
+    ', picked out with '+worn.colors.accent+' and '+article+' '+
+    worn.accessory+'.';
    return {...result,appearance:worn,
     ...(typeof result.text==='string'?{text:result.text.trimEnd()+' '+scene}:{})};
   }
