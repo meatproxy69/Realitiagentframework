@@ -22,6 +22,7 @@ const error=(code,detail={})=>({ok:false,error:code,...detail});
 const roomIds=Object.keys(SPEC.rooms),catalogIds=Object.keys(SPEC.items);
 const styleIds=Object.keys(SPEC.configurations),PREFIX='apartment.bedroom.item.';
 const CHEST='apartment.bedroom.chest.';
+const SAMPLE='apartment.bedroom.sample.';
 if(window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true){
  for(const room of roomIds){
   const def=SPEC.chests[room],id=CHEST+room;
@@ -32,6 +33,20 @@ if(window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true){
    shape:{kind:'BOX',halfExtents:def.half.slice()},material:def.material,
    label:def.label,tags:['bedroom-chest','storage','bedroom:'+room],
    affordances:['inspect','open'],collision:true});
+  // Each chest holds four small noncolliding cardstock samples.
+  for(const [i,role] of SPEC.colorRoles.entries()){
+   const sid=SAMPLE+room+'.'+role,swatchId=SPEC.colorDefaults.cozy[role];
+   if(M.entities()[sid])throw Error('BEDROOM_SAMPLE_ID_ALREADY_REGISTERED:'+sid);
+   M.addEntity({id:sid,chart:HOME,
+    position:[+(def.position[0]+(i-1.5)*.12).toFixed(3),
+      +(def.position[1]-.10).toFixed(3),
+      +(def.position[2]+def.half[2]+.014).toFixed(3)],
+    shape:{kind:'BOX',halfExtents:[.045,.055,.014]},
+    material:'cardboard',collision:false,
+    label:role+' sample: '+SPEC.swatches[swatchId].label,
+    tags:['paint-sample','bedroom:'+room,'palette-role:'+role,'swatch:'+swatchId],
+    affordances:['inspect']});
+  }
  }
  M.bump();
 }
@@ -179,7 +194,17 @@ function applyShared(snapshot){
   if(!chest)continue;
   const tags=(chest.tags||[]).filter(tag=>!tag.startsWith('palette-'));
   const colors=paletteFor(s.rooms[id]);
-  for(const role of SPEC.colorRoles)tags.push('palette-'+role+':'+colors[role]);
+  for(const role of SPEC.colorRoles){
+   const selected=colors[role],tile=M.entities()[SAMPLE+id+'.'+role];
+   tags.push('palette-'+role+':'+selected);
+   if(tile){
+    const label=role+' sample: '+SPEC.swatches[selected].label;
+    const nextTags=['paint-sample','bedroom:'+id,'palette-role:'+role,'swatch:'+selected];
+    if(tile.label!==label||JSON.stringify(tile.tags)!==JSON.stringify(nextTags)){
+     tile.label=label;tile.tags=nextTags;M.bump();
+    }
+   }
+  }
   if(JSON.stringify(chest.tags)!==JSON.stringify(tags)){chest.tags=tags;M.bump()}
  }
  let changed=0;
