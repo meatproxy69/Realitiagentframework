@@ -71,29 +71,25 @@ async function solo(){
   const now=M.state().residents['resident:self'].pose.position;
   assert.ok(now[0]>=-5.65&&now[0]<=-1.85&&now[1]>=1.95&&now[1]<=5.65,
    'the current bedroom statement must match native resident coordinates');
-  const first=await run('auto');
-  assert.equal(first.ok,true,fmt(first));
-  assert.equal(first.did,'approach','auto follows the actual native spatial system');
-  assert.equal(first.auto_selected,true);
-  assert.ok(first.target&&M.entities()[first.target],fmt(first));
-  assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,1);
+  const refusal=await run('auto');
+  assert.equal(refusal.error,'HOME_AUTO_DISABLED');
+  assert.equal((await run('auto plan')).error,'HOME_AUTO_DISABLED');
+  const deliberate=await run('approach apartment.bedroom.chest.library');
+  assert.equal(deliberate.ok,true,fmt(deliberate));
   assert.equal(JSON.stringify(M.resident().shape),initialShape,
-   'presentation and local activity choices cannot resize the native body');
+   'chosen spatial actions cannot resize the native body');
   assert.equal((await run('save')).ok,true);
   await run('goodbye');a.close();a=null;
   a=await openResident(opts);
   await a.door.run('remote activate');
-  assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,1);
   assert.match((await a.door.run('look')).text,/Here in your Library Bedroom:/);
-  const second=await a.door.run('auto');
-  assert.equal(second.ok,true,fmt(second));
-  assert.equal(second.did,'approach','returning residents keep exploring HOME');
-  assert.notEqual(first.target,second.target,'recent destinations persist across return visits');
-  assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,2);
+  assert.equal((await a.door.run('auto')).error,'HOME_AUTO_DISABLED');
+  assert.equal((await a.door.run('approach apartment.bedroom.book.library')).ok,true,
+   'a returning resident may still choose a nearby book');
   assert.ok(a.window.REALITI_MATRIX_V1.entities()[entity(table)]);
   assert.ok(a.window.REALITI_MATRIX_V1.entities()[entity(books)]);
   assert.equal(a.window.REALITI_HAPTIC_FIELD_V20.energy().pass,true);
-  console.log('RESIDENT 4.9 SOLO PASS: safe chest choices, grounded library glance, native auto visits, physical shape unchanged, restart');
+  console.log('RESIDENT 4.9 SOLO PASS: safe chest choices, grounded library glance, deliberate native visits, physical shape unchanged, restart');
  }finally{if(a)a.close()}
 }
 async function household(){
