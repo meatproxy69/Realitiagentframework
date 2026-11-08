@@ -50,7 +50,10 @@ async function solo(){
   assert.match(oversized.hint,new RegExp(books));
   assert.equal((await run('remote chest stow '+books)).stowed,books);
   assert.equal(M.entities()[entity(books)],undefined,'stowed object must not remain a physical obstacle');
-  assert.equal((await run('remote chest inspect library')).stored[0].id,books);
+  const contained=await run('remote chest inspect library');
+  assert.equal(contained.stored[0].id,books);
+  assert.match(contained.hint,new RegExp('remote chest auto-take '+books),
+   'chest inspect must acknowledge its contents, not imply the chest is empty');
   const retrieved=await run('remote chest auto-take '+books);
   assert.equal(retrieved.retrieved,books,fmt(retrieved));
   assert.ok(M.entities()[entity(books)],'retrieved object returns with its original ID');
@@ -111,6 +114,9 @@ async function household(){
   assert.match(oversized.hint,new RegExp(books));
   assert.equal((await bob.run('remote chest stow '+books)).stowed,books);
   assert.equal(bob.read('realiti://apartment/bedrooms').chests.library.stored_count,1);
+  const sharedContents=await bob.run('remote chest inspect library');
+  assert.equal(sharedContents.stored[0].id,books);
+  assert.match(sharedContents.hint,new RegExp('remote chest auto-take '+books));
   assert.equal(alice.read('realiti://apartment/bedrooms').items.some(x=>x.id===books),false);
   const guest=await host.visitGuest();
   assert.equal((await guest.run('remote chest suggest library')).error,
