@@ -87,6 +87,13 @@ const shaped=x=>JSON.stringify(x).slice(0,500);
   const heard=sounds.sources.some(x=>x.id==='apartment.rain-chime');
   assert.equal(notes().observations.some(x=>x.id==='rain-glass'),
    intensity>.18&&heard);
+  if(intensity>.18&&heard){
+   const chime=await run('notice rain-glass');
+   assert.match(chime.text,/glass chime sounds nearby while rain moves past the window/);
+   assert.doesNotMatch(chime.text,/rain is driving it/i,
+    'two measurements alone do not establish the direction of causation');
+   assert.equal(chime.read_only,true);
+  }
   await approach('apartment.puzzle-box',.95);
   for(const side of ['left','right','left'])
    assert.equal((await run('remote catnip puzzle press '+side)).ok,true);
