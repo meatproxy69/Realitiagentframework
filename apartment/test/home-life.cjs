@@ -38,6 +38,11 @@ const opts={htmlPath:html,validationPath,residentId:'home-life-reader',
   const guestbook=await run('do read_guestbook');
   assert.equal(guestbook.ok,true,JSON.stringify(guestbook).slice(0,300));
   assert.equal((await run('do arrange_blanket')).error,'BLANKET_OUT_OF_REACH');
+  const automatic=await run('auto');
+  assert.notEqual(automatic.did,'curl_blanket',
+   'autonomous action chooser cannot curl from the distant guestbook shelf');
+  assert.equal(w.REALITI_APARTMENT_HOME_LIFE_V1.view().curls,1,
+   'an automatic choice cannot fake a second blanket visit');
   assert.equal((await run('remote activate')).activated,true);
   assert.equal((await run('remote bedroom claim library')).ok,true);
   const empty=await run('remote ambience library');
@@ -48,6 +53,8 @@ const opts={htmlPath:html,validationPath,residentId:'home-life-reader',
   assert.equal(placed.ok,true,JSON.stringify(placed).slice(0,300));
   const filled=await run('remote ambience library');
   assert.equal(filled.objects[0].kind,'lantern');
+  assert.doesNotMatch(filled.text,/A fixed an|, A soft/i,
+   'bedroom language should read like a place, not joined metadata');
   assert.match(filled.text,/decorative lantern|lantern/);
   assert.equal(filled.sensory_contact_minted,false);
   assert.equal((await run('save')).ok,true);
