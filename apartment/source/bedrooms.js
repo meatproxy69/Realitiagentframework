@@ -42,7 +42,7 @@ const bounded=(r,kind,x,y)=>{
  return {ok:true,x:+x.toFixed(2),y:+y.toFixed(2)};
 };
 const overlaps=(a,b,pad=0)=>Math.abs(a.x-b.x)<a.hx+b.hx+pad&&Math.abs(a.y-b.y)<a.hy+b.hy+pad;
-function preview(kind,room,x,y,except=null){
+function preview(kind,room,x,y,except=null,ignoreResidents=false){
  const q=bounded(room,kind,Number(x),Number(y));
  if(!q.ok)return q;
  if(!inHome())return error('APARTMENT_HOME_ONLY');
@@ -63,7 +63,7 @@ function preview(kind,room,x,y,except=null){
   if(overlaps(candidate,{x:e.pose.position[0],y:e.pose.position[1],hx:half[0],hy:half[1]},.04))
    return error('DECOR_MATRIX_COLLISION',{obstacle:e.id});
  }
- for(const r of Object.values(M.state().residents||{})){
+ if(!ignoreResidents)for(const r of Object.values(M.state().residents||{})){
   if(!r||r.chart!==HOME)continue;
   const radius=Math.max(.1,Math.min(.8,Number(r.shape?.radius)||.35));
   if(overlaps(candidate,{x:r.pose.position[0],y:r.pose.position[1],hx:radius,hy:radius},.12))
@@ -106,6 +106,18 @@ function checked(s){
   throw Error('BEDROOM_CAPACITY_EXCEEDED');
  return s;
 }
+function auditShared(snapshot){
+ checked(snapshot);
+ // Check currently known native world geometry. This catches a valid-hash
+ // checkpoint with an illegal prop location; current occupants are excluded
+ // because this is rehydration, not an attempted new placement.
+ for(const row of snapshot.items){
+  const result=preview(row.kind,row.room,row.x,row.y,PREFIX+row.id,true);
+  if(!result.ok)return error('BEDROOM_PERSISTED_MATRIX_CONFLICT',{
+   item:row.id,reason:result.error,obstacle:result.obstacle||null});
+ }
+ return {ok:true,verified_items:snapshot.items.length};
+}
 function entityPayload(row,s){
  const def=SPEC.items[row.kind],configurationName=s.rooms[row.room].configuration;
  const cfg=SPEC.configurations[configurationName];
@@ -119,7 +131,10 @@ function entityPayload(row,s){
   affordances:def.affordances.slice()};
 }
 function applyShared(snapshot){
- checked(snapshot);const s=cp(snapshot),desired=new Set(s.items.map(x=>PREFIX+x.id));
+ checked(snapshot);
+ const audit=auditShared(snapshot);
+ if(!audit.ok)throw Error(audit.error+':'+audit.item+':'+audit.reason);
+ const s=cp(snapshot),desired=new Set(s.items.map(x=>PREFIX+x.id));
  let changed=0;
  for(const [id,e] of Object.entries(M.entities())){
   if(id.startsWith(PREFIX)&&e.chart===HOME&&!desired.has(id)){
@@ -159,7 +174,10 @@ function restore(){
   }catch(e){warnings.push('BEDROOM_STORAGE_REJECTED');solo=defaultState()}
  }
  if(role==='guest')solo=defaultState();
- applyShared(solo);
+ try{applyShared(solo)}catch(e){
+  warnings.push('BEDROOM_GEOMETRY_REJECTED');solo=defaultState();
+  applyShared(solo);
+ }
 }
 restore();
 function view(){
@@ -258,6 +276,32 @@ function soloAction(raw){
   next.items.push({id,room,kind,owner:rid,x:p.x,y:p.y});next.revision++;
   return {...persist(next),placed:id,room,kind,position:[p.x,p.y],contact_minted:false};
  }
+ if((m=/^decor move (I[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/i.exec(s))){
+  const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
+  if(!item)return error('UNKNOWN_DECOR_ITEM');
+  if(item.owner!==rid)return error('DECOR_NOT_OWNED');
+  const x=num(m[2]),y=num(m[3]);
+  if(item.x===+x.toFixed(2)&&item.y===+y.toFixed(2))
+   return {ok:true,unchanged:true,item:id,position:[item.x,item.y],revision:solo.revision};
+  const inUse=previewRemove(id);
+  if(!inUse.ok)return inUse;
+  const proposed=preview(item.kind,item.room,x,y,PREFIX+id);
+  if(!proposed.ok)return proposed;
+  item.x=proposed.x;item.y=proposed.y;next.revision++;
+  return {...persist(next),moved:id,room:item.room,position:[item.x,item.y],contact_minted:false};
+ }
+ if((m=/^bedroom clear (quilt|library|canopy|studio) confirm$/.exec(s))){
+  const room=m[1];
+  if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
+  const items=next.items.filter(row=>row.room===room);
+  if(!items.length)return {ok:true,unchanged:true,bedroom:room,revision:solo.revision};
+  for(const row of items){
+   const checked=previewRemove(row.id);
+   if(!checked.ok)return error('DECOR_ITEM_IN_USE',{item:row.id});
+  }
+  next.items=next.items.filter(row=>row.room!==room);next.revision++;
+  return {...persist(next),cleared:room,removed:items.map(row=>row.id),contact_minted:false};
+ }
  if((m=/^decor remove (I[1-9][0-9]*)$/i.exec(s))){
   const id=m[1].toUpperCase(),index=next.items.findIndex(x=>x.id===id);
   if(index<0)return error('UNKNOWN_DECOR_ITEM');
@@ -273,15 +317,24 @@ function commands(){return [
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
- 'decor place <room> <kind> <x> <y>','decor remove <I-number>'];}
+ 'decor place <room> <kind> <x> <y>',
+ 'decor inspect <I-number>','decor move <I-number> <x> <y>',
+ 'decor remove <I-number>','bedroom clear <room> confirm'];}
 function handle(raw){
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
  if(s==='bedrooms'||s==='bedroom status'||s==='decor list')return view();
  if(s==='decor catalog'||s==='bedroom configurations')return catalog();
  if(s==='bedroom help'||s==='decor help')return {ok:true,commands:commands()};
+ const inspected=/^decor inspect (i[1-9][0-9]*)$/.exec(s);
+ if(inspected){
+  const row=state().items.find(item=>item.id===inspected[1].toUpperCase());
+  return row?{ok:true,schema:'REALITI_APARTMENT_DECOR_INSPECT_V1',
+   item:cp(row),spec:cp(SPEC.items[row.kind]),read_only:true}
+   :error('UNKNOWN_DECOR_ITEM');
+ }
  return soloAction(s);
 }
 window.REALITI_APARTMENT_BEDROOMS_V1=Object.freeze({
- spec:()=>cp(SPEC),view,catalog,preview,previewRemove,applyShared,handle,
+ spec:()=>cp(SPEC),view,catalog,preview,previewRemove,auditShared,applyShared,handle,
  law:'Ownership gates shared decoration. Host validates physical changes; source item placements never mint touch, consent, or private emotion.'});
 })();

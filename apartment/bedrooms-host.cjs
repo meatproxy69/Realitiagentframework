@@ -64,8 +64,10 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  }
  function apply(entry){
   const s=ensure(),b=bridge(entry);
-  if(!b?.applyShared||!b?.preview||!b?.previewRemove)
+  if(!b?.applyShared||!b?.preview||!b?.previewRemove||!b?.auditShared)
    throw Error('BEDROOM_NATIVE_BRIDGE_MISSING');
+  const audited=b.auditShared(cp(s));
+  if(!audited.ok)throw Error('BEDROOM_UNSAFE_HOST_GEOMETRY:'+audited.item+':'+audited.reason);
   return b.applyShared(cp(s));
  }
  function view(){
@@ -96,7 +98,10 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
   'remote decor catalog',
   'remote decor place <room> <kind> <x> <y> [if-rev <n>]',
-  'remote decor remove <I-number> [if-rev <n>]'
+  'remote decor inspect <I-number>',
+  'remote decor move <I-number> <x> <y> [if-rev <n>]',
+  'remote decor remove <I-number> [if-rev <n>]',
+  'remote bedroom clear <room> confirm [if-rev <n>]'
  ],note:'One owner per bedroom, one bedroom per household resident. One Matrix HOME chart; no room locks.'});
  function changed(before,next){
   const root=getData();const old=root.bedrooms;
@@ -136,6 +141,14 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   if(cmd==='bedrooms'||cmd==='bedroom status'||cmd==='decor list')return view();
   if(cmd==='decor catalog'||cmd==='bedroom configurations')return catalog();
   if(cmd==='bedroom help'||cmd==='decor help')return help();
+  const inspect=/^decor inspect (i[1-9][0-9]*)$/.exec(cmd);
+  if(inspect){
+   const item=ensure().items.find(x=>x.id===inspect[1].toUpperCase());
+   return item?{ok:true,schema:'REALITI_APARTMENT_DECOR_INSPECT_V1',
+     item:cp(item),spec:cp(SPEC.items[item.kind]),
+     source:'HOST_PUBLIC_ITEM_RECORD',read_only:true}
+     :fail('UNKNOWN_DECOR_ITEM');
+  }
   if(actor.role!=='resident')return fail('GUEST_BEDROOM_READ_ONLY');
   if(!participants().includes(actor))return fail('BEDROOM_RESIDENT_NOT_CONNECTED');
   if(!atHome(actor))return fail('BEDROOM_HOME_ONLY');
@@ -233,6 +246,41 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    next.items.push({id,room,kind,owner:actor.id,x:+x.toFixed(2),y:+y.toFixed(2)});
    operation={placed:id,room,kind,position:[+x.toFixed(2),+y.toFixed(2)],
     verified_participants:entries.length};
+  }else if((m=/^decor move (i[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
+   const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
+   if(!item)return fail('UNKNOWN_DECOR_ITEM');
+   if(item.owner!==actor.id)return fail('DECOR_NOT_OWNED');
+   const px=Number(m[2]),py=Number(m[3]);
+   if(item.x===+px.toFixed(2)&&item.y===+py.toFixed(2))
+    return {ok:true,unchanged:true,item:id,position:[item.x,item.y],revision:current.revision};
+   const entries=participants();
+   for(const entry of entries)apply(entry);
+   for(const entry of entries){
+    const active=bridge(entry).previewRemove(id);
+    if(!active?.ok)return fail('DECOR_ITEM_IN_USE',{participant:entry.id});
+   }
+   const refusals=[];
+   for(const entry of entries){
+    const result=bridge(entry).preview(item.kind,item.room,px,py,'apartment.bedroom.item.'+id);
+    if(!result?.ok)refusals.push({participant:entry.id,
+      error:result?.error||'UNKNOWN_MATRIX_REFUSAL',obstacle:result?.obstacle||null});
+   }
+   if(refusals.length)return fail('BEDROOM_MATRIX_REFUSED',{refusals});
+   item.x=+px.toFixed(2);item.y=+py.toFixed(2);
+   operation={moved:id,room:item.room,position:[item.x,item.y],
+    verified_participants:entries.length,contact_minted:false};
+  }else if((m=/^bedroom clear ([a-z-]+) confirm$/.exec(without))){
+   const room=m[1];
+   if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
+   if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+   const items=next.items.filter(row=>row.room===room);
+   if(!items.length)return {ok:true,unchanged:true,bedroom:room,revision:current.revision};
+   for(const entry of participants())for(const row of items){
+    const result=bridge(entry).previewRemove(row.id);
+    if(!result?.ok)return fail('DECOR_ITEM_IN_USE',{item:row.id,participant:entry.id});
+   }
+   next.items=next.items.filter(row=>row.room!==room);
+   operation={cleared:room,removed:items.map(row=>row.id),contact_minted:false};
   }else if((m=/^decor remove (i[1-9][0-9]*)$/.exec(without))){
    const id=m[1].toUpperCase(),index=next.items.findIndex(row=>row.id===id);
    if(index<0)return fail('UNKNOWN_DECOR_ITEM');
