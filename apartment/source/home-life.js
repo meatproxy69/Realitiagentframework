@@ -124,12 +124,31 @@ function marker(result){
    rooms[region].label+': '+(objects.length?placed:
     'the '+(M.entities()['apartment.bedroom.chest.'+region]?.label||
     'storage chest')+' is where you left it.'));
+  if(near('apartment.bedroom.book.'+region,1.25))
+   notes.push('The Apartment Book of Beautiful Things is close enough to open on the chest.');
+  else if(near('apartment.bedroom.chest.'+region,.95))
+   notes.push('The storage chest is right beside you.');
  }else{
+  const closeBy=[
+   ['apartment.desk','You are by the writing desk.'],
+   ['apartment.pet-bed','The pet bed is beside you.'],
+   ['nest.window','The rain window is close enough to watch from here.'],
+   ['nest.guestbook','The guestbook is within reach.'],
+   ['apartment.firefly-jar','The firefly jar is nearby.']
+  ].find(([id])=>near(id,1.15));
+  if(closeBy)notes.push(closeBy[1]);
   const claim=roomIds.find(id=>rooms[id]?.owner===rid);
   if(claim)notes.push('Your '+rooms[claim].label+' is still part of the home.');
  }
  if(!notes.length)return result;
- return {...result,text:result.text+'\n'+notes.join(' ')};
+ return {...result,text:result.text.trimEnd()+'\n'+notes.join(' ')};
+}
+function polish(result){
+ if(!result||typeof result!=='object'||typeof result.text!=='string')return result;
+ const next=result.text.replace(/\bthe The Apartment Book of Beautiful Things\b/g,
+  'The Apartment Book of Beautiful Things')
+  .replace(/\bthe a bed\b/g,'the bed');
+ return next===result.text?result:{...result,text:next};
 }
 // HOME autonomy is a resident-chosen, bounded itinerary, not a timer, NPC,
 // background process or unverified sensory narrator. Every move goes through
@@ -227,7 +246,7 @@ async function autoStep(){
    ...(activity?{activity}:{}),distance_m:+after.toFixed(2),
    text:travel+site.name+'.'+extra,
    native_move_ok:walked?.ok!==false,
-   sensor_contact_minted:false};
+   sensory_contact_minted:false};
  }
  return fail('AUTO_ROUTE_BLOCKED',
   'The current layout stopped the walk. Try another spot with approach <entity-id>, or look around first.');
@@ -281,12 +300,11 @@ async function run(raw){
   syncBlanket();persist();
  }
  if(lower==='look'){
-  const shown=marker(cleanActions(result));
-  return shown?.text?{...shown,text:shown.text.replace(/\bthe a bed\b/g,'the bed')}:shown;
+  return marker(cleanActions(polish(result)));
  }
- if(lower==='feel words')return result?.text?{...result,text:result.text.replace(/\bthe a bed\b/g,'the bed')}:result;
+ if(lower==='feel words')return polish(result);
  if(lower==='actions')return cleanActions(result);
- return result;
+ return polish(result);
 }
 D.run=run;
 function read(uri){
