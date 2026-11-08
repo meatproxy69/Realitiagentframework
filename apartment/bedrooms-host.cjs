@@ -34,6 +34,7 @@ function validate(checkpoint,members=[]){
   if(!v||!/^I[1-9]\d*$/.test(v.id||'')||seen.has(v.id)||
     !ROOMS.includes(v.room)||!KINDS.includes(v.kind)||
     v.owner!==x.rooms[v.room].owner||!validId(v.owner)||
+    (own(v,'stored')&&(v.stored!==true||!SPEC.storableKinds.includes(v.kind)))||
     !Number.isFinite(v.x)||!Number.isFinite(v.y))
    throw Error('BEDROOMS_INVALID_ITEM');
   const [minX,maxX,minY,maxY]=SPEC.rooms[v.room].bounds;
@@ -44,12 +45,16 @@ function validate(checkpoint,members=[]){
   seen.add(v.id);highest=Math.max(highest,Number(v.id.slice(1)));
  }
  if(highest>=x.next_id)throw Error('BEDROOMS_INVALID_NEXT_ID');
- for(const id of ROOMS)if(x.items.filter(q=>q.room===id).length>SPEC.limits.maxPerRoom)
-  throw Error('BEDROOMS_OVER_CAPACITY');
+ for(const id of ROOMS){
+  if(x.items.filter(q=>q.room===id).length>SPEC.limits.maxPerRoom)
+   throw Error('BEDROOMS_OVER_CAPACITY');
+  if(x.items.filter(q=>q.room===id&&q.stored===true).length>SPEC.limits.maxChestPerRoom)
+   throw Error('BEDROOMS_CHEST_OVER_CAPACITY');
+ }
  // Native Matrix ignores noncolliding items as obstacles, but two solid
  // persisted props must never occupy the same floor footprint. An externally
  // rehashed checkpoint cannot rely on an empty native chart to evade this.
- const solid=x.items.filter(row=>SPEC.items[row.kind].collision);
+ const solid=x.items.filter(row=>row.stored!==true&&SPEC.items[row.kind].collision);
  for(let i=0;i<solid.length;i++)for(let j=0;j<i;j++){
   const a=solid[i],b=solid[j];
   const ah=SPEC.items[a.kind].half,bh=SPEC.items[b.kind].half;
@@ -92,7 +97,15 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     owner:s.rooms[id].owner,configuration:s.rooms[id].configuration,
     item_count:s.items.filter(row=>row.room===id).length
    }])),
-   items:cp(s.items),configurations:cp(SPEC.configurations),
+   items:cp(s.items.filter(row=>row.stored!==true)),
+   chests:Object.fromEntries(ROOMS.map(id=>[id,{
+    entity_id:'apartment.bedroom.chest.'+id,
+    label:SPEC.chests[id].label,position:SPEC.chests[id].position.slice(),
+    owner:s.rooms[id].owner,
+    stored_count:s.items.filter(row=>row.room===id&&row.stored===true).length,
+    capacity:SPEC.limits.maxChestPerRoom
+   }])),
+   configurations:cp(SPEC.configurations),
    limits:cp(SPEC.limits),
    ownership:'Only the claimed resident may change this bedroom. Exactly one bedroom per household resident.',
    privacy:'Public ownership and native furniture positions; no locked walls or spatial privacy. No private memory or bodily state is shared.',
@@ -100,6 +113,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  }
  const catalog=()=>({ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1',
    items:cp(SPEC.items),bedrooms:cp(SPEC.rooms),
+   chests:cp(SPEC.chests),storable_kinds:SPEC.storableKinds.slice(),
    configurations:cp(SPEC.configurations),max_per_room:SPEC.limits.maxPerRoom,
    note:'Items are real finite native Matrix geometry. Configurations set configurationName; choose positions to place physical items.'});
  const help=()=>({ok:true,commands:[
@@ -116,6 +130,10 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote decor move <I-number> <x> <y> [if-rev <n>]',
   'remote decor nudge <I-number> <dx> <dy> [if-rev <n>]',
   'remote decor remove <I-number> [if-rev <n>]',
+  'remote chest inspect <room>',
+  'remote chest stow <I-number> [if-rev <n>]',
+  'remote chest take <I-number> <x> <y> [if-rev <n>]',
+  'remote chest auto-take <I-number> [if-rev <n>]',
   'remote bedroom clear <room> confirm [if-rev <n>]'
  ],note:'One owner per bedroom, one bedroom per household resident. One Matrix HOME chart; no room locks.'});
  function changed(before,next){
@@ -206,10 +224,24 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   const inspect=/^decor inspect (i[1-9][0-9]*)$/.exec(cmd);
   if(inspect){
    const item=ensure().items.find(x=>x.id===inspect[1].toUpperCase());
-   return item?{ok:true,schema:'REALITI_APARTMENT_DECOR_INSPECT_V1',
-     item:cp(item),spec:cp(SPEC.items[item.kind]),
-     source:'HOST_PUBLIC_ITEM_RECORD',read_only:true}
-     :fail('UNKNOWN_DECOR_ITEM');
+   if(!item)return fail('UNKNOWN_DECOR_ITEM');
+   if(item.stored===true&&item.owner!==actor.id)return fail('CHEST_OWNER_ONLY');
+   return {ok:true,schema:'REALITI_APARTMENT_DECOR_INSPECT_V1',
+    item:cp(item),spec:cp(SPEC.items[item.kind]),
+    source:'HOST_PUBLIC_ITEM_RECORD',read_only:true};
+  }
+  const ci=/^chest inspect ([a-z-]+)$/.exec(cmd);
+  if(ci){
+   const state=ensure(),room=ci[1];
+   if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
+   if(actor.role!=='resident'||state.rooms[room].owner!==actor.id)
+    return fail('CHEST_OWNER_ONLY');
+   return {ok:true,schema:'REALITI_APARTMENT_CHEST_INSPECT_V1',
+    room,owner:actor.id,entity_id:'apartment.bedroom.chest.'+room,
+    capacity:SPEC.limits.maxChestPerRoom,
+    stored:cp(state.items.filter(row=>row.room===room&&row.stored===true)
+     .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}))),
+    read_only:true};
   }
   if(actor.role!=='resident')return fail('GUEST_BEDROOM_READ_ONLY');
   if(!participants().includes(actor))return fail('BEDROOM_RESIDENT_NOT_CONNECTED');
@@ -221,7 +253,43 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   const without=cmd.replace(/ if-rev (\d+)$/,(_,n)=>{rev=Number(n);return ''});
   if(rev!==null&&(!Number.isSafeInteger(rev)||rev!==current.revision))
    return fail('BEDROOM_REVISION_CONFLICT',{current_revision:current.revision});
-  if((m=/^bedroom claim ([a-z-]+)$/.exec(without))){
+  if((m=/^chest stow (i[1-9][0-9]*)$/.exec(without))){
+   const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
+   if(!item)return fail('UNKNOWN_DECOR_ITEM');
+   if(item.owner!==actor.id)return fail('CHEST_OWNER_ONLY');
+   if(item.stored===true)return fail('DECOR_ALREADY_STORED');
+   if(!SPEC.storableKinds.includes(item.kind))return fail('DECOR_TOO_LARGE_FOR_CHEST');
+   if(next.items.filter(row=>row.room===item.room&&row.stored===true).length>=SPEC.limits.maxChestPerRoom)
+    return fail('CHEST_FULL');
+   for(const entry of participants()){
+    const result=bridge(entry).previewRemove(id);
+    if(!result?.ok)return fail('DECOR_ITEM_IN_USE',{participant:entry.id,item:id});
+   }
+   item.stored=true;
+   operation={stowed:id,chest:item.room,contact_minted:false};
+  }else if((m=/^chest (take|auto-take) (i[1-9][0-9]*)(?: (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+)))?$/.exec(without))){
+   const id=m[2].toUpperCase(),item=next.items.find(row=>row.id===id);
+   if(!item)return fail('UNKNOWN_DECOR_ITEM');
+   if(item.owner!==actor.id)return fail('CHEST_OWNER_ONLY');
+   if(item.stored!==true)return fail('DECOR_NOT_STORED');
+   const candidates={...next,items:next.items.filter(row=>row.id!==id)};
+   let position=null,verified=0;
+   if(m[1]==='auto-take'){
+    const found=findSafeSpots(actor,candidates,item.room,item.kind);
+    if(!found.ok)return found;
+    position=[found.suggestions[0].x,found.suggestions[0].y];
+    verified=found.verified_participants;
+   }else{
+    if(m[3]===undefined||m[4]===undefined)return fail('CHEST_TAKE_COORDINATES_REQUIRED');
+    const found=assessPlacement(actor,candidates,item.room,item.kind,Number(m[3]),Number(m[4]));
+    if(!found.ok)return found;
+    position=found.position;verified=found.verified_participants;
+   }
+   delete item.stored;
+   [item.x,item.y]=position;
+   operation={retrieved:id,chest:item.room,position,automatic:m[1]==='auto-take',
+    verified_participants:verified,contact_minted:false};
+  }else if((m=/^bedroom claim ([a-z-]+)$/.exec(without))){
    const room=m[1];
    if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
    if(next.rooms[room].owner===actor.id)
@@ -315,6 +383,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    const id=m[2].toUpperCase(),item=next.items.find(row=>row.id===id);
    if(!item)return fail('UNKNOWN_DECOR_ITEM');
    if(item.owner!==actor.id)return fail('DECOR_NOT_OWNED');
+   if(item.stored===true)return fail('DECOR_IN_CHEST');
    const relative=m[1]==='nudge';
    const px=relative?item.x+Number(m[3]):Number(m[3]);
    const py=relative?item.y+Number(m[4]):Number(m[4]);
@@ -341,18 +410,19 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    const room=m[1];
    if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
    if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
-   const items=next.items.filter(row=>row.room===room);
+   const items=next.items.filter(row=>row.room===room&&row.stored!==true);
    if(!items.length)return {ok:true,unchanged:true,bedroom:room,revision:current.revision};
    for(const entry of participants())for(const row of items){
     const result=bridge(entry).previewRemove(row.id);
     if(!result?.ok)return fail('DECOR_ITEM_IN_USE',{item:row.id,participant:entry.id});
    }
-   next.items=next.items.filter(row=>row.room!==room);
-   operation={cleared:room,removed:items.map(row=>row.id),contact_minted:false};
+   next.items=next.items.filter(row=>row.room!==room||row.stored===true);
+   operation={cleared:room,removed:items.map(row=>row.id),chest_preserved:true,contact_minted:false};
   }else if((m=/^decor remove (i[1-9][0-9]*)$/.exec(without))){
    const id=m[1].toUpperCase(),index=next.items.findIndex(row=>row.id===id);
    if(index<0)return fail('UNKNOWN_DECOR_ITEM');
    if(next.items[index].owner!==actor.id)return fail('DECOR_NOT_OWNED');
+   if(next.items[index].stored===true)return fail('DECOR_IN_CHEST');
    for(const entry of participants()){
     const result=bridge(entry).previewRemove(id);
     if(!result?.ok)return fail('DECOR_ITEM_IN_USE',{participant:entry.id});
