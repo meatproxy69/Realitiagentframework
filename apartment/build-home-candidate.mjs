@@ -6,6 +6,7 @@ import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
 import {adaptNativeHomeBoot} from './source/native-home-boot-adapter.mjs';
 import {adaptHomeBedAlcove} from './source/native-home-bedroom-adapter.mjs';
+import {adaptHomeWelcome} from './source/native-home-welcome-adapter.mjs';
 const apartment=new URL('./',import.meta.url);
 const read=async name=>fs.readFile(new URL(name,apartment),'utf8');
 const hash=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
@@ -28,8 +29,8 @@ if(base.split(worldKernel).length!==2)
 const bedroomKernel=adaptHomeBedAlcove(worldKernel);
 // The bedroom's initial spawn is moved *with* its native mattress before
 // the original world layer registers geometry. No after-boot teleportation.
-const clean=base.replace(originalKernel,nativeKernel)
- .replace(worldKernel,bedroomKernel);
+const clean=adaptHomeWelcome(base.replace(originalKernel,nativeKernel)
+ .replace(worldKernel,bedroomKernel));
 if(clean.includes('realiti-apartment-home-first-configuration'))
  throw Error('HOME_CANDIDATE_LEGACY_LATE_CONFIG_MUST_NOT_BE_PRESENT');
 const source=await read('source/one-chart-preview.js');
