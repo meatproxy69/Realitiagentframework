@@ -354,7 +354,18 @@ function soloAction(raw){
   if(!item)return error('UNKNOWN_DECOR_ITEM');
   if(item.owner!==rid)return error('CHEST_OWNER_ONLY');
   if(item.stored===true)return error('DECOR_ALREADY_STORED');
-  if(!SPEC.storableKinds.includes(item.kind))return error('DECOR_TOO_LARGE_FOR_CHEST');
+  if(!SPEC.storableKinds.includes(item.kind)){
+   const alternative=next.items.find(row=>row.room===item.room&&
+    row.stored!==true&&SPEC.storableKinds.includes(row.kind));
+   return error('DECOR_TOO_LARGE_FOR_CHEST',{
+    room:item.room,kind:item.kind,storable_kinds:SPEC.storableKinds.slice(),
+    hint:alternative?'The '+SPEC.items[item.kind].label+
+     ' cannot fit. Try '+alternative.id+' ('+SPEC.items[alternative.kind].label+
+     '), or use remote chest suggest '+item.room+'.':
+     'The '+SPEC.items[item.kind].label+
+     ' cannot fit. Use remote chest suggest '+item.room+
+     ' or place something small first.'});
+  }
   if(next.items.filter(row=>row.room===item.room&&row.stored===true).length>=SPEC.limits.maxChestPerRoom)
    return error('CHEST_FULL');
   const safe=previewRemove(id);if(!safe.ok)return safe;
@@ -522,7 +533,7 @@ function commands(){return [
  'decor inspect <I-number>','decor move <I-number> <x> <y>',
  'decor nudge <I-number> <dx> <dy>',
  'decor remove <I-number>','bedroom clear <room> confirm',
- 'chest inspect <room>','chest stow <I-number>',
+ 'chest inspect <room>','chest suggest <room>','chest stow <I-number>',
  'chest take <I-number> <x> <y>','chest auto-take <I-number>'];}
 function handle(raw){
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
@@ -547,15 +558,28 @@ function handle(raw){
   return {ok:true,schema:'REALITI_APARTMENT_DECOR_INSPECT_V1',
    item:cp(row),spec:cp(SPEC.items[row.kind]),read_only:true};
  }
- const chest=/^chest inspect (quilt|library|canopy|studio)$/.exec(s);
+ const chest=/^chest (inspect|suggest) (quilt|library|canopy|studio)$/.exec(s);
  if(chest){
-  const room=chest[1],current=state();
+  const room=chest[2],current=state();
   if(role==='guest'||current.rooms[room].owner!==rid)
    return error('CHEST_OWNER_ONLY');
-  return {ok:true,schema:'REALITI_APARTMENT_CHEST_INSPECT_V1',
+  const stored=current.items.filter(row=>row.room===room&&row.stored===true)
+   .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
+  const available=current.items.filter(row=>row.room===room&&row.stored!==true&&
+   SPEC.storableKinds.includes(row.kind))
+   .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
+  return {ok:true,schema:chest[1]==='suggest'?
+   'REALITI_APARTMENT_CHEST_SUGGEST_V1':'REALITI_APARTMENT_CHEST_INSPECT_V1',
    room,entity_id:CHEST+room,owner:rid,capacity:SPEC.limits.maxChestPerRoom,
-   stored:cp(current.items.filter(item=>item.room===room&&item.stored===true)
-    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}))),read_only:true};
+   remaining:SPEC.limits.maxChestPerRoom-stored.length,
+   stored:cp(stored),available:cp(available),
+   hint:available.length&&stored.length<SPEC.limits.maxChestPerRoom?
+    'You can put away a '+available[0].label+' ('+available[0].id+
+    ') using remote chest stow '+available[0].id+'.':
+    (stored.length?'The chest holds a '+stored[0].label+' ('+stored[0].id+
+    '). You can retrieve it with remote chest auto-take '+stored[0].id+'.':
+    'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.'),
+   read_only:true,contact_minted:false};
  }
  return soloAction(s);
 }

@@ -32,7 +32,7 @@ for(const room of ROOMS){
   shape:{kind:'BOX',halfExtents:[.13,.075,.017]},
   collision:false,material:'cardboard',
   tags:['optional-book','aesthetics','bedroom:'+room],
-  label:'The Apartment Book of Beautiful Things, open whenever you like',
+  label:'Apartment Book of Beautiful Things, open whenever you like',
   affordances:['inspect','read']});
 }
 M.bump();

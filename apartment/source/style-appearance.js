@@ -89,13 +89,13 @@ function depiction(look){
  const d=look.tuning;
  const detail=d.detail>=3?'intricate':d.detail>=1?'considered':'spare';
  const contrast=d.contrast>=3?'striking':d.contrast>=1?'measured':'soft';
- const trim=d.ornament>=3?'many':d.ornament>=1?'a few':'no';
+ const trim=d.ornament>=3?'ornate':d.ornament>=1?'subtle':'plain';
  return {preset:look.preset,label:preset.label,
   silhouette:preset.silhouette,accessory:preset.accessory,colors:names,
   tuning:cp(d),
-  text:preset.label+': '+preset.silhouette+' in '+names.field+' and '+names.anchor+
-   ', with '+names.accent+' accents. '+detail+' detailing, '+contrast+
-   ' contrast and '+trim+' ornamental notes; '+preset.accessory+'.',
+  text:preset.label+' — '+preset.silhouette+' in '+names.field+' and '+names.anchor+
+   ', picked out with '+names.accent+'. '+detail[0].toUpperCase()+detail.slice(1)+
+   ' detailing, '+contrast+' contrast, a '+trim+' finish, and '+(/^(?:enamel|enameled)/i.test(preset.accessory)?'an ':'a ')+preset.accessory+'.',
   category:'RESIDENT_CHOSEN_PRESENTATION_ONLY',rendered_shader:false,
   native_clothing:false,physical_contact_minted:false};
 }
@@ -155,8 +155,7 @@ async function run(raw){
    const worn=depiction(state.worn.look);
    return {...result,appearance:worn,
     ...(typeof result.text==='string'?{text:result.text+
-      '\nChosen presentation: '+worn.text+
-      ' (a descriptive avatar style, not physical clothing).'}:{})};
+      '\nChosen presentation: '+worn.text}:{})};
   }
   return result;
  }

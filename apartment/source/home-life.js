@@ -12,14 +12,16 @@ const KEY='realiti-apartment-life-v1:'+encodeURIComponent(rid);
 const QUIET='realiti-apartment-quiet-first-v1:'+encodeURIComponent(rid);
 const cp=x=>JSON.parse(JSON.stringify(x));
 const fail=(error,hint)=>({ok:false,error,...(hint?{hint}:{})});
-const defaultLife=()=>({schema:'REALITI_APARTMENT_HOME_LIFE_V1',blanket:'untouched',arrangements:0,curls:0});
+const defaultLife=()=>({schema:'REALITI_APARTMENT_HOME_LIFE_V1',
+ blanket:'untouched',arrangements:0,curls:0,auto_turn:0});
 let life=defaultLife();
 try{
  const saved=JSON.parse(localStorage.getItem(KEY)||'null');
  if(saved?.schema===life.schema&&['untouched','folded','rumpled'].includes(saved.blanket)&&
    Number.isSafeInteger(saved.arrangements)&&saved.arrangements>=0&&saved.arrangements<=100000&&
    Number.isSafeInteger(saved.curls)&&saved.curls>=0&&saved.curls<=100000)
-  life=cp(saved);
+  life={...cp(saved),auto_turn:Number.isSafeInteger(saved.auto_turn)&&
+   saved.auto_turn>=0&&saved.auto_turn<=100000?saved.auto_turn:0};
 }catch(_){}
 function persist(){
  try{localStorage.setItem(KEY,JSON.stringify(life));window.c9saveNow?.()}catch(_){}
@@ -74,7 +76,8 @@ function ambience(room){
 function lifeView(){
  const rooms=Object.fromEntries(roomIds.map(id=>[id,ambience(id)]));
  return {ok:true,schema:life.schema,one_native_chart:true,blanket:life.blanket,
-  arrangements:life.arrangements,curls:life.curls,rooms,
+  arrangements:life.arrangements,curls:life.curls,
+  auto_turn:life.auto_turn,rooms,
   note:'Resident-owned blanket continuity. No claim of mental state or fabricated body contact.'};
 }
 const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A);
@@ -99,9 +102,29 @@ function marker(result){
  const notes=[];
  if(life.blanket==='folded')notes.push('The quilt folds you arranged are still tucked along the bed.');
  if(life.blanket==='rumpled')notes.push('The quilt is still rumpled where you last curled beneath it.');
- const rooms=B.view().bedrooms||{};
- const claim=roomIds.find(id=>rooms[id]?.owner===rid);
- if(claim)notes.push('Your '+rooms[claim].label+' is still here; its chest has a place against the wall.');
+ const snapshot=B.view(),rooms=snapshot.bedrooms||{},r=occupant();
+ const pos=r?.chart===HOME?r.pose.position:null;
+ const region=pos&&roomIds.find(id=>{
+  const bounds=B.spec().rooms[id].bounds;
+  return pos[0]>=bounds[0]&&pos[0]<=bounds[1]&&
+   pos[1]>=bounds[2]&&pos[1]<=bounds[3];
+ });
+ if(region){
+  const local=(snapshot.items||[]).filter(row=>row.room===region&&
+   !!M.entities()['apartment.bedroom.item.'+row.id]);
+  const catalog=B.catalog().items;
+  const objects=local.slice(0,3).map(row=>'a '+(catalog[row.kind]?.label||row.kind));
+  const placed=objects.length===1?objects[0]+' is still where it was placed.':
+   objects.slice(0,-1).join(', ')+(objects.length>2?', and ':' and ')+
+   objects[objects.length-1]+' are still where they were placed.';
+  notes.push('Here in '+(rooms[region].owner===rid?'your ':'the ')+
+   rooms[region].label+': '+(objects.length?placed:
+    'the '+(M.entities()['apartment.bedroom.chest.'+region]?.label||
+    'storage chest')+' is where you left it.'));
+ }else{
+  const claim=roomIds.find(id=>rooms[id]?.owner===rid);
+  if(claim)notes.push('Your '+rooms[claim].label+' is still part of the home.');
+ }
  if(!notes.length)return result;
  return {...result,text:result.text+'\n'+notes.join(' ')};
 }
@@ -115,9 +138,20 @@ async function run(raw){
   const all=Array.isArray(known)?known:(known?.actions||known?.available_actions||[]);
   const filtered=all.filter(a=>!/^(island_map|read_weather|city_who|city_floor|under_map|calendar|read_tide)$/.test(a.id)&&
    !/^(approach__|walk_to__|row_to__)/.test(a.id));
-  const candidate=lower==='auto'?filtered[0]:all[Number(lower.slice(3))-1];
+  // Rotate only among native, currently available ordinary activities.
+  // Never choose a hidden legacy venue or invent a sensation from narration.
+  // The turn is resident-local and durable, so every return doesn't begin
+  // with the same rain observation.
+  const simple=['watch_rain','do_nothing','arrange_blanket','curl_blanket'];
+  const ordinary=simple.map(id=>filtered.find(action=>action.id===id)).filter(Boolean);
+  const candidate=lower==='auto'?
+   ordinary[life.auto_turn%ordinary.length]:
+   all[Number(lower.slice(3))-1];
   if(!candidate)return fail('NO_AVAILABLE_PHYSICAL_ACTION','Look around or approach an object first.');
   const done=await run('act '+candidate.id);
+  if(lower==='auto'&&done?.ok!==false){
+   life.auto_turn=(life.auto_turn+1)%100001;persist();
+  }
   return {...done,did:candidate.id,auto_selected:lower==='auto',
    ...(done.ok!==false?{text:done.text||'You '+String(candidate.label||candidate.id).toLowerCase()+'.'}:{})};
  }
