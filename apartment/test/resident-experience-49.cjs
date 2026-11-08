@@ -39,6 +39,34 @@ async function solo(){
   assert.equal((await run(refusal.suggested_action)).stowed,books);
   assert.equal((await run('remote chest auto-take '+books)).retrieved,books);
   assert.ok(M.entities()['apartment.bedroom.item.'+books]);
+  // Deliberately simulated native-support safety fixture, NOT a contact
+  // event: the suggestion path must respect the removal gate's refusal.
+  assert.equal((await run('do stand')).ok,true);
+  const pillow=await run('remote decor auto-place library floor-pillow');
+  assert.equal(pillow.ok,true,fmt(pillow));
+  const occupant=M.state().residents['resident:self'],priorSupport=occupant.support;
+  occupant.support='apartment.bedroom.item.'+pillow.placed;
+  try{
+   assert.equal(a.window.REALITI_APARTMENT_BEDROOMS_V1.previewRemove(pillow.placed).error,
+    'DECOR_ITEM_IN_USE');
+   const beforeGuidance=a.window.REALITI_APARTMENT_BEDROOMS_V1.view().revision;
+   const guidance=await run('remote chest suggest library');
+   assert.equal(guidance.read_only,true);
+   assert.equal(guidance.available.some(item=>item.id===pillow.placed),false);
+   assert.ok(guidance.blocked.some(item=>item.id===pillow.placed));
+   assert.equal(guidance.available.some(item=>item.id===books),true);
+   assert.equal(a.window.REALITI_APARTMENT_BEDROOMS_V1.view().revision,beforeGuidance);
+   assert.equal((await run('remote chest stow '+books)).stowed,books);
+   const oversized=await run('remote chest stow '+table);
+   assert.equal(oversized.error,'DECOR_TOO_LARGE_FOR_CHEST');
+   assert.equal('suggested_action' in oversized,false,
+    'never recommend an occupied item as a safe alternative');
+   assert.equal((await run('remote chest stow '+pillow.placed)).error,
+    'DECOR_ITEM_IN_USE');
+  }finally{occupant.support=priorSupport}
+  const nowFree=await run('remote chest suggest library');
+  assert.equal(nowFree.available.some(item=>item.id===pillow.placed),true);
+  assert.equal((await run('remote chest auto-take '+books)).retrieved,books);
 
   const book=await run('approach apartment.bedroom.book.library');
   assert.equal(book.ok,true,fmt(book));
@@ -46,10 +74,13 @@ async function solo(){
   assert.equal((await run('remote appearance equip nightglass')).equipped,true);
   const glance=await run('look');
   assert.match(glance.text,/Here in your Library Bedroom:/);
-  assert.match(glance.text,/you describe your chosen Nightglass look/i);
+  assert.match(glance.text,/Your Nightglass design uses long tailored lines/i);
   assert.doesNotMatch(glance.text,/Chosen presentation:|\bthe The Apartment Book\b/);
   assert.match(glance.text,/silver crescent pin/);
   assert.equal(glance.appearance.native_clothing,false);
+  const here=a.window.Realiti.read('realiti://here');
+  if(typeof here?.text==='string')
+   assert.doesNotMatch(here.text,/\bthe The Apartment Book\b/);
   const help=await run('help');
   assert.ok(!help.commands.some(x=>/^auto(?:\s|$)/i.test(x)),
    'HOME must not advertise an action chooser');
