@@ -169,6 +169,11 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
    if(next.rooms[room].configuration===style)
     return {ok:true,unchanged:true,bedroom:room,configuration:style,revision:current.revision};
+   // A style edit changes native entity tags/labels. Never remove/recreate
+   // a sleeping pad or seat that any resident is actually using.
+   for(const row of next.items.filter(x=>x.room===room))
+    for(const entry of participants())if(!bridge(entry).previewRemove(row.id)?.ok)
+     return fail('BEDROOM_ITEM_IN_USE',{item:row.id,participant:entry.id});
    next.rooms[room].configuration=style;
    operation={bedroom:room,configuration:style,suggested:cp(SPEC.configurations[style].suggested)};
   }else if((m=/^bedroom furnish ([a-z-]+) ([a-z-]+)$/.exec(without))){

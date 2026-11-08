@@ -209,6 +209,8 @@ function soloAction(raw){
   if(!own(SPEC.configurations,style))return error('UNKNOWN_BEDROOM_CONFIGURATION');
   if(next.rooms[id].owner!==rid)return error('BEDROOM_NOT_OWNED');
   if(next.rooms[id].configuration===style)return {ok:true,unchanged:true,configuration:style};
+  for(const row of next.items.filter(x=>x.room===id))
+   if(!previewRemove(row.id).ok)return error('BEDROOM_ITEM_IN_USE',{item:row.id});
   next.rooms[id].configuration=style;next.revision++;
   return {...persist(next),bedroom:id,configuration:style,
    suggested:cp(SPEC.configurations[style].suggested),native_entities_restyled:true};
