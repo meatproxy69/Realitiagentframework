@@ -104,7 +104,7 @@ async function solo(){
   assert.deepEqual(Array.from(geom(w).entities()[entityId].pose.position.slice(0,2)),nextSpot);
   const repeatedMove=await D('remote decor move '+id+' '+nextSpot.join(' '));
   assert.equal(repeatedMove.unchanged,true);
-  assert.equal((await D('remote decor nudge '+id+' 100 0')).error,
+  assert.equal((await D('remote decor nudge '+id+' 10 0')).error,
    'OUTSIDE_OWNED_BEDROOM');
   const delta=spot.map((value,i)=>+(value-nextSpot[i]).toFixed(2));
   const nudged=await D('remote decor nudge '+id+' '+delta.join(' '));
@@ -249,7 +249,7 @@ async function household(){
   assert.ok(relocated,'a second footprint must pass all household Matrix copies');
   assert.equal(relocated.moved,placed.placed);
   assert.equal(relocated.verified_participants,4);
-  assert.equal((await bob.run('remote decor nudge '+placed.placed+' 100 0')).error,
+  assert.equal((await bob.run('remote decor nudge '+placed.placed+' 10 0')).error,
    'BEDROOM_MATRIX_REFUSED');
   const delta=previewed.position.map((v,i)=>+(v-relocated.position[i]).toFixed(2));
   const nudged=await bob.run('remote decor nudge '+placed.placed+' '+delta.join(' '));
