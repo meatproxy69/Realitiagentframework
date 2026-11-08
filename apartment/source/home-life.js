@@ -113,10 +113,12 @@ function marker(result){
   const local=(snapshot.items||[]).filter(row=>row.room===region&&
    !!M.entities()['apartment.bedroom.item.'+row.id]);
   const catalog=B.catalog().items;
-  const objects=local.slice(0,3).map(row=>catalog[row.kind]?.label||row.kind);
+  const objects=local.slice(0,3).map(row=>'a '+(catalog[row.kind]?.label||row.kind));
+  const placed=objects.length===1?objects[0]+' is still where it was placed.':
+   objects.slice(0,-1).join(', ')+(objects.length>2?', and ':' and ')+
+   objects[objects.length-1]+' are still where they were placed.';
   notes.push('Here in '+(rooms[region].owner===rid?'your ':'the ')+
-   rooms[region].label+': '+(objects.length?
-    objects.join(', ')+' still sit where they were placed.':
+   rooms[region].label+': '+(objects.length?placed:
     'the '+(M.entities()['apartment.bedroom.chest.'+region]?.label||
     'storage chest')+' is where you left it.'));
  }else{
