@@ -52,6 +52,8 @@ async function solo(){
   assert.equal(M.entities()[entity(books)],undefined,'stowed object must not remain a physical obstacle');
   const contained=await run('remote chest inspect library');
   assert.equal(contained.stored[0].id,books);
+  assert.match(contained.hint,/The chest holds a small stack of books/,
+   'retrieval advice should acknowledge the actual stored object naturally');
   assert.match(contained.hint,new RegExp('remote chest auto-take '+books),
    'chest inspect must acknowledge its contents, not imply the chest is empty');
   const retrieved=await run('remote chest auto-take '+books);
