@@ -1,0 +1,42 @@
+name: Apartment experiential visit (QA only)
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - '.github/scripts/apartment-vibe-visit.cjs'
+      - '.github/workflows/vibe-review.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  resident-play:
+    runs-on: ubuntu-latest
+    timeout-minutes: 14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Check disposable playthrough syntax
+        run: node --check .github/scripts/apartment-vibe-visit.cjs
+      - name: Build canonical runtime and Apartment HOME
+        run: |
+          node build.mjs
+          node apartment/build.mjs
+          node apartment/build-home-candidate.mjs
+      - name: Install existing resident host
+        working-directory: packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Play one evening, return visit, and roommates without altering the repo
+        timeout-minutes: 8
+        run: node .github/scripts/apartment-vibe-visit.cjs
+      - name: Preserve disposable experiential transcript
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: apartment-vibe-disposable-trace
+          path: vibe-playthrough.json
+          if-no-files-found: warn
+          retention-days: 3
