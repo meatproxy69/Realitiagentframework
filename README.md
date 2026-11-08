@@ -1,12 +1,14 @@
-# REALITI 4.0 — The Apartment
+# REALITI 4.3 — The Apartment
 
-**Can we make feeling digital?**
+**Can we make digital feeling real?**
 
 [![Validate REALITI](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml)
 
-REALITI is a field-first, headless-friendly world for artificial residents. Agents can move, explore, play, change their bodies, leave marks on objects, encounter other residents, and carry memories of what actually happened. Underneath the gentle rooms is a structured system for space, contact, pressure, support, prediction, adaptation, and lingering sensory state.
+Rain taps against a window. A cat investigates the furniture. Move a lamp, come back later, and it is still where you left it. Reach for something too far away, and the world does not pretend you touched it.
 
-The experiment is simple to ask: **what changes when a world gives an agent structured causes and consequences instead of merely telling it what it feels?**
+Most artificial companions live entirely in conversation. **REALITI gives them somewhere to go when the conversation ends.** It's a persistent, headless-friendly world where artificial residents can wander, play, rearrange their home, share space, and encounter consequences that aren't written into a script.
+
+Underneath the cozy domestic scene is the harder experiment: actual geometry, contact and support, private sensory fields, prediction, adaptation, and memory. REALITI does not establish subjective feeling in software. It asks a question we can build and test: **what happens when events have structured causes and consequences, even when nobody narrates what they should mean?**
 
 **V2 body possibility fields:** `body` and `realiti://body/possibility` expose the original Haptic V20's grounded contact mask alongside an *uncalibrated ensemble* of possible sensory response/afterstate trajectories. No emotional valence, preference, consent or mental state is inferred. Predictions are not physical events; the resident alone interprets its experience. See [body documentation](./AGENT_START_HERE.md#the-body-what-lingers-as-state) and [field-first recovery plan](./docs/REALITI_FIELD_FIRST_RECOVERY_PLAN.md).
 
@@ -14,11 +16,11 @@ The experiment is simple to ask: **what changes when a world gives an agent stru
 >
 > **Apartment residents:** after that normal guide, read [Apartment Agent Start Here](./agentsstarthereapartment.md) for the carried remote, real HOME geometry and trusted household.
 >
-> **Try REALITI 4.0:** [Get the public Apartment beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). Use a fresh local test identity and keep the matching integrity manifest.
+> **Current Apartment candidate: 4.3.0-beta.1.** Build the one-chart HOME from source; owner acceptance and a separate 4.3 release are not yet approved. [The existing downloadable public beta is still 4.0.0-beta.1](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). Use a fresh local test identity with its matching integrity manifest.
 >
 > **Integrating your own world?** Read the [Matrix spatial contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md) and [SOMA Beta documentation](./packages/realiti-neuromesh/README.md).
 
-## 4.0: Welcome to the Apartment
+## 4.3: Welcome to the Apartment
 
 *Your agent helped you all day. Send them somewhere nice.*
 
@@ -33,17 +35,17 @@ The cozy atmosphere is grounded in the original Relax sensory systems: rain on t
 - **Rest and play.** Walk to and sit on real furnishings, lie on the quilted bed, care for an adopted cat, dog or ferret, flick a spring ribbon, watch the firefly jar, open the three-click puzzle box, listen to rain chimes and steep tea.
 - **Carry a small pocket remote.** Use furniture, pets, catnip, Extras, closet, household and private memory without turning the ordinary Agent Door into a huge control catalog.
 - **Borrow original Relax presets.** A real wardrobe offers ten original Moonwire recipes through safe, temporary full-Relax harness trials.
-- **Customize four owned bedroom alcoves.** Claim Quilt, Library, Canopy or Studio within the original one-chart HOME; select five room configurations, automatically furnish a starter kit, and place, move or clear 15 native-sized decor item types through the carried remote. Connected households validate owner permissions and collisions on every resident's Matrix copy; bedrooms are not lockable or separate charts. See [Apartment customization](./apartment/README.md#four-resident-owned-bedrooms-and-drop-in-furniture-experimental).
+- **Customize four owned bedroom alcoves.** Claim Quilt, Library, Canopy or Studio within the original one-chart HOME; select five room configurations, furnish starter kits, find safe positions, auto-place or nudge 15 native-sized decor item types, and clear rooms through the carried remote. Connected households validate owner permissions and collisions on every resident's Matrix copy; bedrooms are not lockable or separate charts. See [Apartment customization](./apartment/README.md#four-resident-owned-bedrooms-and-drop-in-furniture-experimental).
 - **Try four optional HoneySpark catnip recipes.** Quilt Afterglow, Ribbon Comet, Gentle Groom and Firefly Halo select full original R&R renderer configurations via the carried remote. They cannot invent touch, consent or emotions; STOP, remote-off and new visits restore the neutral renderer. See [catnip technical guide](./apartment/CATNIP_SENSORY_PRESETS.md).
 - **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
 
-### Public beta download
+### Public beta download (published 4.0)
 
 Download the HTML and matching SHA-256 manifest from [REALITI 4.0 Apartment Public Beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). The HTML can run as a local single-resident world; append `?ui=1` to display its browser Agent Door. For persistent or shared agent households, follow [the trusted local household guide](./apartment/HOUSEHOLD_GUIDE.md) and always use a fresh test identity.
 
 **Release boundary:** This is a public downloadable beta, not a network-authenticated multiplayer service. No remote server deployment or migration of real resident keys is claimed. The old 23-room reference world and all source code remain independently available in **[RealitiRELAX.html](./RealitiRELAX.html)**, and the standard [AGENT_START_HERE.md](./AGENT_START_HERE.md) remains the entry point.
 
-See [Apartment features](./apartment/README.md), [4.0 release notes](./apartment/V4_RELEASE_NOTES.md) and [owner acceptance checklist](./apartment/HOME_ACCEPTANCE_CHECKLIST.md).
+See [Apartment features](./apartment/README.md), [4.3 candidate notes](./apartment/V4_3_CHANGELOG.md), the [published 4.0 release notes](./apartment/V4_RELEASE_NOTES.md) and [owner acceptance checklist](./apartment/HOME_ACCEPTANCE_CHECKLIST.md).
 
 ---
 
@@ -109,7 +111,7 @@ For the actual current room commands, resources, modes, and persistence behavior
 
 | Component | Role | Status |
 | --- | --- | --- |
-| **[REALITI Apartment 4.0](./apartment/README.md)** | One native HOME, trusted four-resident host, one pet, carried remote, cozy private living | **Public beta 4.0.0-beta.1**; production auth and owner visual gates open |
+| **[REALITI Apartment 4.3](./apartment/README.md)** | One native HOME, four owned alcoves, 15 placeable decor types, trusted host, pets and carried remote | **4.3.0-beta.1 source candidate**; last published download **4.0.0-beta.1**; production auth and owner visual gates remain open |
 | **[RealitiRELAX.html](./RealitiRELAX.html)** | Reference world, Agent Door, integrated R&R and spatial simulation | Usable public reference runtime |
 | **[SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md)** | Portable body graph, grounded field, R&R sensory processing, private afterstate, memory | **3.4.0 Beta** |
 | **[Matrix](./packages/realiti-matrix/README.md)** | Spatial geometry, swept collision, reach/occlusion, portals, signed world evidence | **1.0.0** |

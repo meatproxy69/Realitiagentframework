@@ -104,10 +104,32 @@ async function solo(){
   assert.deepEqual(Array.from(geom(w).entities()[entityId].pose.position.slice(0,2)),nextSpot);
   const repeatedMove=await D('remote decor move '+id+' '+nextSpot.join(' '));
   assert.equal(repeatedMove.unchanged,true);
+  assert.equal((await D('remote decor nudge '+id+' 10 0')).error,
+   'OUTSIDE_OWNED_BEDROOM');
+  const delta=spot.map((value,i)=>+(value-nextSpot[i]).toFixed(2));
+  const nudged=await D('remote decor nudge '+id+' '+delta.join(' '));
+  assert.equal(nudged.nudged,true,fmt(nudged));
+  assert.equal(nudged.moved,id);
+  assert.deepEqual(nudged.position,spot,'a relative nudge preserves the same item ID');
+  assert.deepEqual(Array.from(geom(w).entities()[entityId].pose.position.slice(0,2)),spot);
   assert.equal((await D('remote bedroom configure library writers')).ok,true);
   assert.ok(geom(w).entities()[entityId].tags.includes('configuration:writers'),
    'changing bedroom configuration updates actual native prop tags');
   assert.equal((await D('remote bedroom release library')).error,'BEDROOM_MUST_REMOVE_ITEMS_FIRST');
+  const beforeSuggest=B.view();
+  const suggestions=await D('remote decor suggest library lantern');
+  assert.equal(suggestions.ok,true,fmt(suggestions));
+  assert.equal(suggestions.read_only,true);
+  assert.ok(suggestions.suggestions.length>=1&&suggestions.suggestions.length<=3);
+  assert.equal(B.view().revision,beforeSuggest.revision);
+  assert.equal(B.view().items.length,beforeSuggest.items.length);
+  assert.equal((await D('remote decor suggest canopy lantern')).error,'BEDROOM_NOT_OWNED');
+  const automatic=await D('remote decor auto-place library lantern');
+  assert.equal(automatic.ok,true,fmt(automatic));
+  assert.equal(automatic.automatic,true);
+  assert.deepEqual(automatic.position,[suggestions.suggestions[0].x,suggestions.suggestions[0].y]);
+  assert.ok(geom(w).entities()['apartment.bedroom.item.'+automatic.placed]);
+  assert.equal((await D('remote decor remove '+automatic.placed)).removed,automatic.placed);
   assert.equal((await D('remote decor remove '+id)).removed,id);
   assert.equal(geom(w).entities()[entityId],undefined,'removed object is absent from Matrix');
   out=await D('remote decor place library floor-mat '+spot.join(' '));
@@ -197,6 +219,25 @@ async function household(){
   assert.equal(placed.ok,true,fmt(placed));
   assert.equal(placed.verified_participants,4);
   assert.equal((await alice.run('remote decor inspect '+placed.placed)).item.owner,'bob');
+  const suggestRevision=host.status().shared_bedroom_revision;
+  const found=await bob.run('remote decor suggest library lantern');
+  assert.equal(found.ok,true,fmt(found));
+  assert.equal(found.read_only,true);
+  assert.equal(found.verified_participants,4);
+  assert.ok(found.suggestions.length>=1);
+  assert.equal(host.status().shared_bedroom_revision,suggestRevision);
+  assert.equal((await alice.run('remote decor suggest library lantern')).error,'BEDROOM_NOT_OWNED');
+  assert.equal((await bob.run('remote decor suggest library lantern if-rev 0')).error,
+   'BEDROOM_REVISION_CONFLICT');
+  const automatic=await bob.run('remote decor auto-place library lantern');
+  assert.equal(automatic.ok,true,fmt(automatic));
+  assert.equal(automatic.automatic,true);
+  assert.equal(automatic.verified_participants,4);
+  assert.deepEqual(automatic.position,[found.suggestions[0].x,found.suggestions[0].y]);
+  assert.equal(alice.read('realiti://apartment/bedrooms').items.find(v=>v.id===automatic.placed)?.owner,'bob');
+  assert.equal((await alice.run('remote decor nudge '+automatic.placed+' 0.1 0')).error,
+   'DECOR_NOT_OWNED');
+  assert.equal((await bob.run('remote decor remove '+automatic.placed)).removed,automatic.placed);
   assert.equal((await cora.run('remote decor move '+placed.placed+' -3.4 5')).error,'DECOR_NOT_OWNED');
   assert.equal((await alice.run('remote bedroom clear library confirm')).error,'BEDROOM_NOT_OWNED');
   let relocated=null;
@@ -208,6 +249,16 @@ async function household(){
   assert.ok(relocated,'a second footprint must pass all household Matrix copies');
   assert.equal(relocated.moved,placed.placed);
   assert.equal(relocated.verified_participants,4);
+  assert.equal((await bob.run('remote decor nudge '+placed.placed+' 10 0')).error,
+   'BEDROOM_MATRIX_REFUSED');
+  const delta=previewed.position.map((v,i)=>+(v-relocated.position[i]).toFixed(2));
+  const nudged=await bob.run('remote decor nudge '+placed.placed+' '+delta.join(' '));
+  assert.equal(nudged.ok,true,fmt(nudged));
+  assert.equal(nudged.nudged,true);
+  assert.deepEqual(nudged.position,previewed.position);
+  assert.equal(nudged.moved,placed.placed);
+  const movedBack=await bob.run('remote decor move '+placed.placed+' '+relocated.position.join(' '));
+  assert.equal(movedBack.ok,true,fmt(movedBack));
   const movedRow=alice.read('realiti://apartment/bedrooms').items.find(v=>v.id===placed.placed);
   assert.deepEqual([movedRow.x,movedRow.y],relocated.position);
   assert.equal(placed.contact_minted,false);
@@ -220,6 +271,10 @@ async function household(){
   assert.equal(guest.read('realiti://apartment/bedrooms').bedrooms.library.owner,'bob');
   assert.equal((await guest.run('remote bedroom claim library')).error,'GUEST_NOT_AUTHORIZED_FOR_COMMAND');
   assert.equal((await guest.run('remote bedroom clear studio confirm')).error,'GUEST_NOT_AUTHORIZED_FOR_COMMAND');
+  assert.equal((await guest.run('remote decor suggest library lantern')).error,
+   'GUEST_NOT_AUTHORIZED_FOR_COMMAND');
+  assert.equal((await guest.run('remote decor auto-place library lantern')).error,
+   'GUEST_NOT_AUTHORIZED_FOR_COMMAND');
   assert.equal((await guest.leave()).ok,true);
   assert.equal((await bob.run('save')).ok,true);
   const revision=host.status().shared_bedroom_revision;

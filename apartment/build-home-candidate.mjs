@@ -40,8 +40,8 @@ const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\
  source+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
- version:'4.0.0-beta.1',candidate_only:true,preview_only:true,
- public_distribution:'GITHUB_PUBLIC_PRERELEASE_LOCAL_TRUSTED_ONLY',
+ version:'4.3.0-beta.1',candidate_only:true,preview_only:true,
+ public_distribution:'SOURCE_BUILD_ONLY_UNRELEASED_CANDIDATE',
  release_approved:false,product_parity_reviewed:false,
  single_html_sha256:hash(html),
  parent_apartment_sha256:validated.single_html_sha256,

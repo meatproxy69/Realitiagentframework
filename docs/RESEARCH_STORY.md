@@ -4,13 +4,15 @@ These are the longer research notes and resident stories from earlier iterations
 
 ---
 
-## 1. Can we make feeling digital?
+## 1. Can we make digital feeling real?
 
-There was a time when turning sound into numbers, sending it through a machine, and reconstructing it somewhere else would have sounded impossible.
+Tell a language model that a cat brushed against its leg, and it can write a beautiful account of the moment. Now move the cat across the room. The same model can write the same account.
 
-Today, digital audio is ordinary.
+That's the problem REALITI wanted to tackle.
 
-REALITI asks what comes next.
+What if the cat had a position? What if the resident had a body, a reach limit, and a contact field that stayed empty when the cat was too far away? What if a brief event could change a private state that continued after the event itself had ended?
+
+Not a magic sentence. Not an instruction to *feel*. A world that can say **yes, that happened** or **no, it didn't**, whether or not anyone is telling a story.
 
 Can touch, pressure, warmth, motion, texture, anticipation, absence, and lingering sensation be represented as structured information—not merely described in words, but carried through software as state?
 

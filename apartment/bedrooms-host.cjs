@@ -109,9 +109,12 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
   'remote decor catalog',
   'remote decor preview <room> <kind> <x> <y> [if-rev <n>]',
+  'remote decor suggest <room> <kind> [if-rev <n>]',
+  'remote decor auto-place <room> <kind> [if-rev <n>]',
   'remote decor place <room> <kind> <x> <y> [if-rev <n>]',
   'remote decor inspect <I-number>',
   'remote decor move <I-number> <x> <y> [if-rev <n>]',
+  'remote decor nudge <I-number> <dx> <dy> [if-rev <n>]',
   'remote decor remove <I-number> [if-rev <n>]',
   'remote bedroom clear <room> confirm [if-rev <n>]'
  ],note:'One owner per bedroom, one bedroom per household resident. One Matrix HOME chart; no room locks.'});
@@ -150,14 +153,14 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  }
  // A preview and a commit must use precisely the same host authorization,
  // capacity limits, and live Matrix collision checks. Preview never persists.
- function assessPlacement(actor,store,room,kind,x,y){
+ function assessPlacement(actor,store,room,kind,x,y,synchronize=true){
   if(!ROOMS.includes(room)||!KINDS.includes(kind))return fail('UNKNOWN_BEDROOM_OR_ITEM');
   if(store.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
   if(store.items.length>=MAX||
      store.items.filter(row=>row.room===room).length>=SPEC.limits.maxPerRoom)
    return fail('BEDROOM_ITEM_CAPACITY');
   const entries=participants();
-  for(const entry of entries)apply(entry);
+  if(synchronize)for(const entry of entries)apply(entry);
   const refusals=[];
   for(const entry of entries){
    const result=bridge(entry).preview(kind,room,x,y);
@@ -168,6 +171,32 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   if(refusals.length)return fail('BEDROOM_MATRIX_REFUSED',{refusals});
   return {ok:true,room,kind,position:[+x.toFixed(2),+y.toFixed(2)],
    verified_participants:entries.length,contact_minted:false};
+ }
+ // Search only inside the owner's room, on a bounded deterministic grid.
+ // Suggestions are alternatives, not simultaneously reserved positions.
+ // Every candidate is tested in all connected native Matrix copies.
+ function findSafeSpots(actor,store,room,kind){
+  if(!ROOMS.includes(room)||!KINDS.includes(kind))return fail('UNKNOWN_BEDROOM_OR_ITEM');
+  if(store.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+  if(store.items.length>=MAX||
+     store.items.filter(row=>row.room===room).length>=SPEC.limits.maxPerRoom)
+   return fail('BEDROOM_ITEM_CAPACITY');
+  const entries=participants();
+  for(const entry of entries)apply(entry);
+  const bounds=SPEC.rooms[room].bounds,[hx,hy]=SPEC.items[kind].half;
+  const suggested=[];
+  for(let y=bounds[3]-hy-.16;y>=bounds[2]+hy+.16&&suggested.length<3;y-=.4){
+   for(let x=bounds[1]-hx-.16;x>=bounds[0]+hx+.16&&suggested.length<3;x-=.4){
+    const px=+x.toFixed(2),py=+y.toFixed(2);
+    if(suggested.some(p=>Math.hypot(p.x-px,p.y-py)<.75))continue;
+    const result=assessPlacement(actor,store,room,kind,px,py,false);
+    if(result.ok)suggested.push({x:px,y:py});
+   }
+  }
+  if(!suggested.length)return fail('BEDROOM_NO_SAFE_FOOTPRINT',{room,kind});
+  return {ok:true,schema:'REALITI_APARTMENT_DECOR_SUGGEST_V1',
+   room,kind,suggestions:suggested,revision:store.revision,
+   verified_participants:entries.length,read_only:true,contact_minted:false};
  }
  function handle(actor,raw){
   const cmd=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
@@ -263,6 +292,16 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    const result=assessPlacement(actor,next,m[1],m[2],Number(m[3]),Number(m[4]));
    return {...result,schema:'REALITI_APARTMENT_DECOR_PREVIEW_V1',
     read_only:true,revision:current.revision};
+  }else if((m=/^decor (suggest|auto-place) ([a-z-]+) ([a-z-]+)$/.exec(without))){
+   const [_,action,room,kind]=m;
+   const found=findSafeSpots(actor,next,room,kind);
+   if(!found.ok)return found;
+   if(action==='suggest')return found;
+   // The scan and commit occur in the host's serialized command turn.
+   const {x,y}=found.suggestions[0],id='I'+next.next_id++;
+   next.items.push({id,room,kind,owner:actor.id,x,y});
+   operation={placed:id,room,kind,position:[x,y],automatic:true,
+    verified_participants:found.verified_participants,contact_minted:false};
   }else if((m=/^decor place ([a-z-]+) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
    const [_,room,kind]=m;
    const check=assessPlacement(actor,next,room,kind,Number(m[3]),Number(m[4]));
@@ -272,11 +311,13 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     x:check.position[0],y:check.position[1]});
    operation={placed:id,room,kind,position:check.position,
     verified_participants:check.verified_participants};
-  }else if((m=/^decor move (i[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
-   const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
+  }else if((m=/^decor (move|nudge) (i[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
+   const id=m[2].toUpperCase(),item=next.items.find(row=>row.id===id);
    if(!item)return fail('UNKNOWN_DECOR_ITEM');
    if(item.owner!==actor.id)return fail('DECOR_NOT_OWNED');
-   const px=Number(m[2]),py=Number(m[3]);
+   const relative=m[1]==='nudge';
+   const px=relative?item.x+Number(m[3]):Number(m[3]);
+   const py=relative?item.y+Number(m[4]):Number(m[4]);
    if(item.x===+px.toFixed(2)&&item.y===+py.toFixed(2))
     return {ok:true,unchanged:true,item:id,position:[item.x,item.y],revision:current.revision};
    const entries=participants();
@@ -294,6 +335,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    if(refusals.length)return fail('BEDROOM_MATRIX_REFUSED',{refusals});
    item.x=+px.toFixed(2);item.y=+py.toFixed(2);
    operation={moved:id,room:item.room,position:[item.x,item.y],
+    ...(relative?{nudged:true}:{}),
     verified_participants:entries.length,contact_minted:false};
   }else if((m=/^bedroom clear ([a-z-]+) confirm$/.exec(without))){
    const room=m[1];
