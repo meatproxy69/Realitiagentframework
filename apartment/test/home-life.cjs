@@ -39,11 +39,13 @@ const opts={htmlPath:html,validationPath,residentId:'home-life-reader',
   const guestbook=await run('do read_guestbook');
   assert.equal(guestbook.ok,true,JSON.stringify(guestbook).slice(0,300));
   assert.equal((await run('do arrange_blanket')).error,'BLANKET_OUT_OF_REACH');
-  const automatic=await run('auto');
-  assert.notEqual(automatic.did,'curl_blanket',
-   'autonomous action chooser cannot curl from the distant guestbook shelf');
+  const beforeAuto=JSON.stringify(w.REALITI_MATRIX_V1.resident().pose.position);
+  for(const command of ['auto','auto plan','auto 3','do the obvious'])
+   assert.equal((await run(command)).error,'HOME_AUTO_DISABLED',
+    'HOME must never choose an activity or destination for the resident');
+  assert.equal(JSON.stringify(w.REALITI_MATRIX_V1.resident().pose.position),beforeAuto);
   assert.equal(w.REALITI_APARTMENT_HOME_LIFE_V1.view().curls,1,
-   'an automatic choice cannot fake a second blanket visit');
+   'a disabled shortcut cannot fake another blanket visit');
   assert.equal((await run('remote activate')).activated,true);
   assert.equal((await run('remote bedroom claim library')).ok,true);
   const empty=await run('remote ambience library');
