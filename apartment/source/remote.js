@@ -74,7 +74,7 @@ function menu(){
     'remote decor inspect <id>','remote decor move <id> <x> <y>',
     'remote decor nudge <id> <dx> <dy>',
     'remote decor remove <id>','remote bedroom clear <room> confirm',
-    'remote chest inspect <room>','remote chest stow <id>',
+    'remote chest inspect <room>','remote chest suggest <room>','remote chest stow <id>',
     'remote chest take <id> <x> <y>','remote chest auto-take <id>'],
   ...(HOME_FIRST?{aesthetics:['remote book shelves','remote book contents',
    'remote book read <room> <section> [page]',
