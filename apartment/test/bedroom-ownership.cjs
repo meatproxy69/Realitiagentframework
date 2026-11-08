@@ -276,9 +276,9 @@ async function household(){
   fs.cpSync(root,overlapPath,{recursive:true,errorOnExist:true,force:false});
   const overlapFile=path.join(overlapPath,'household.json');
   const overlap=JSON.parse(fs.readFileSync(overlapFile,'utf8'));
-  const original=overlap.bedrooms.items.find(row=>SPEC.items[row.kind].collision);
-  assert.ok(original,'the remaining studio kit contains a solid Matrix item');
-  overlap.bedrooms.items.push({...original,id:'I'+overlap.bedrooms.next_id++});
+  const overlappingItem=overlap.bedrooms.items.find(row=>SPEC.items[row.kind].collision);
+  assert.ok(overlappingItem,'the remaining studio kit contains a solid Matrix item');
+  overlap.bedrooms.items.push({...overlappingItem,id:'I'+overlap.bedrooms.next_id++});
   const {sha256:oldHash,...overlapBody}=overlap;
   overlap.sha256=crypto.createHash('sha256').update(JSON.stringify(overlapBody)).digest('hex');
   fs.writeFileSync(overlapFile,JSON.stringify(overlap));
