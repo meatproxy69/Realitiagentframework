@@ -51,40 +51,24 @@ async function solo(){
   assert.match(glance.text,/silver crescent pin/);
   assert.equal(glance.appearance.native_clothing,false);
   const help=await run('help');
-  assert.ok(help.commands.includes('auto plan'),'autonomy must be discoverable from the short Agent Door');
-  const plan=await run('auto plan');
-  assert.equal(plan.read_only,true);
-  assert.ok(plan.sites.some(s=>s.id==='apartment.bedroom.book.library'));
-  assert.ok(plan.sites.some(s=>s.id==='nest.window'));
-  assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,0);
-  const walking=await run('auto 3');
-  assert.equal(walking.ok,true,fmt(walking));
-  assert.equal(walking.completed,3);
-  assert.equal(walking.steps.length,3);
-  assert.ok(walking.steps.every(s=>s.did==='approach'&&s.auto_selected));
-  assert.ok(walking.steps.every(s=>M.entities()[s.target]?.chart==='CLOUD_NINE_NEST'));
-  assert.ok(walking.steps.every(s=>s.native_approaches<=5));
-  assert.equal(new Set(walking.steps.map(s=>s.target)).size,3,
-   'the routine must vary its destinations, not merely alternate adjectives');
-  assert.ok(walking.steps.every(s=>s.distance_m>=0));
+  assert.ok(!help.commands.some(x=>/^auto(?:\s|$)/i.test(x)),
+   'HOME must not advertise an action chooser');
+  for(const command of ['auto','auto plan','auto 3','do the obvious'])
+   assert.equal((await run(command)).error,'HOME_AUTO_DISABLED');
+  assert.equal((await run('approach nest.window')).ok,true,
+   'resident deliberately chooses a destination');
   assert.equal(JSON.stringify(M.resident().shape),shape);
-  assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,3);
-  const seen=JSON.parse(JSON.stringify(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_recent));
-  assert.deepEqual(seen,JSON.parse(JSON.stringify(walking.steps.map(s=>s.target))),
-   'compare resident JS-realm arrays as pure JSON data');
   const glance2=await run('look');
   assert.doesNotMatch(glance2.text,/Chosen presentation:|\bthe The Apartment Book\b/);
   assert.equal((await run('save')).ok,true);
   await run('goodbye');a.close();a=null;
 
   a=await openResident(opts);
-  assert.deepEqual(JSON.parse(JSON.stringify(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_recent)),seen);
-  assert.equal(a.window.REALITI_APARTMENT_HOME_LIFE_V1.view().auto_turn,3);
-  const next=await a.door.run('auto plan');
-  assert.ok(next.next&&!seen.includes(next.next.id),
-   'after a return visit the next destination must not be one of the recent stops');
+  assert.equal((await a.door.run('auto')).error,'HOME_AUTO_DISABLED');
+  assert.equal((await a.door.run('approach apartment.bedroom.book.library')).ok,true,
+   'the resident chooses its own return visit');
   assert.equal(a.window.REALITI_HAPTIC_FIELD_V20.energy().pass,true);
-  console.log('4.9 SOLO PASS: exact chest action, contextual prose, three grounded auto stops and persistent returning route');
+  console.log('4.9 SOLO PASS: exact chest action, contextual prose, resident-directed movement and manual return');
  }finally{if(a)a.close()}
 }
 async function household(){
