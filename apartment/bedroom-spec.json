@@ -374,8 +374,76 @@
   "limits": {
     "maxPerRoom": 8,
     "maxTotal": 32,
-    "maxClaimsPerResident": 1
+    "maxClaimsPerResident": 1,
+    "maxChestPerRoom": 4
   },
   "coordinateUnits": "native_matrix_metres",
-  "setup": "Owners can pick a semantic configuration or use bedroom furnish <room> <configuration> to atomically place two suggested items in verified free native Matrix floor space."
+  "setup": "Owners can pick a semantic configuration or use bedroom furnish <room> <configuration> to atomically place two suggested items in verified free native Matrix floor space.",
+  "chests": {
+    "quilt": {
+      "label": "a cedar keepsake chest beside the quilt",
+      "position": [
+        -4.45,
+        -4.75,
+        0.3
+      ],
+      "half": [
+        0.28,
+        0.26,
+        0.3
+      ],
+      "material": "wood"
+    },
+    "library": {
+      "label": "an ink-dark writer's storage chest",
+      "position": [
+        -3.65,
+        5.05,
+        0.3
+      ],
+      "half": [
+        0.28,
+        0.26,
+        0.3
+      ],
+      "material": "wood"
+    },
+    "canopy": {
+      "label": "a linen-lined canopy chest",
+      "position": [
+        5.05,
+        5.05,
+        0.3
+      ],
+      "half": [
+        0.28,
+        0.26,
+        0.3
+      ],
+      "material": "wood"
+    },
+    "studio": {
+      "label": "a small studio equipment trunk",
+      "position": [
+        2.5,
+        -4.85,
+        0.3
+      ],
+      "half": [
+        0.28,
+        0.26,
+        0.3
+      ],
+      "material": "metal"
+    }
+  },
+  "storableKinds": [
+    "book-stack",
+    "mini-synth",
+    "record-crate",
+    "lantern",
+    "floor-mat",
+    "floor-pillow"
+  ],
+  "chestPolicy": "Every alcove contains one fixed, colliding Matrix chest. Only its claimed owner can store and retrieve previously placed small decor. IDs stay stable; stored decor has no world geometry, contact, or occupancy."
 }
