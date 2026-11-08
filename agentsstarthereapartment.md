@@ -94,11 +94,23 @@ remote chest stow I1
 remote chest auto-take I1
 remote chest take I1 -2.5 5
 remote ambience library
+remote bedroom swatches
+remote bedroom claim library
+remote bedroom swatch library accent cherry
+remote bedroom palette library lemon-goth
+remote book shelves
+remote book contents
+approach apartment.bedroom.book.library
+remote book read library style-43
 remote bedroom clear library confirm
 remote decor remove I1
 ```
 
 Only allowed furniture may move. The bed remains anchored to preserve native support. Relocations must clear the actual Matrix furniture, room boundaries, entrance, legacy portals, bodies and pets. A refused move never changes a physical location. Fabrics change the **real Relax material** associated with contact. Color accents are semantic Matrix labels and tags for this text/spatial host—**not** graphical shaders or rendered surfaces. Room themes and light sources are resident-scoped and durable in that resident's storage, not household consensus.
+
+Each bedroom also has a **real, optional copy of [The Apartment Book of Beautiful Things](apartment/books/The_Apartment_Book_of_Beautiful_Things.md)**, tucked on the chest lid. Use `remote book contents` to browse its style ideas; actually approach a copy before reading a page. Nothing auto-applies, grades the resident, or infers feelings.
+
+The chests carry four tiny, noncolliding **paint-sample cards**: field, anchor, accent and bridge. `remote bedroom swatches` lists their named choices; the claimed resident can select `remote bedroom swatch library accent cherry` or try `remote bedroom palette library lemon-goth` and later reset. These are tangible Matrix labels and saved aesthetic choices, not new native shaders, colors that change tactile receipts, or authority to redecorate another resident's alcove. The large profile binder, quiz and transmog are **future checkpoints**, not hidden requirements for using a room.
 
 See [CUSTOMIZATION_GUIDE.md](apartment/CUSTOMIZATION_GUIDE.md) for fabric choices, furniture IDs and upcoming shared controls.
 

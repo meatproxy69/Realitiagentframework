@@ -11,12 +11,18 @@ const role=String(window.REALITI_APARTMENT_ROLE||'resident');
 const rid=String(window.REALITI_LOCAL_MEMORY_V1?.residentId?.()||'local-default');
 const KEY='realiti-apartment-bedrooms-v1:'+encodeURIComponent(rid);
 const cp=x=>JSON.parse(JSON.stringify(x));
+const knownSwatch=x=>typeof x==='string'&&Object.prototype.hasOwnProperty.call(SPEC.swatches,x);
+const validPalette=x=>x&&typeof x==='object'&&!Array.isArray(x)&&
+ Object.keys(x).length===SPEC.colorRoles.length&&
+ SPEC.colorRoles.every(role=>Object.prototype.hasOwnProperty.call(x,role)&&knownSwatch(x[role]));
+const paletteFor=r=>cp(r.palette||SPEC.colorDefaults[r.configuration]);
 const own=(obj,key)=>Object.prototype.hasOwnProperty.call(obj,key);
 const num=s=>Number.isFinite(Number(s))&&String(s).trim()!==''?Number(s):NaN;
 const error=(code,detail={})=>({ok:false,error:code,...detail});
 const roomIds=Object.keys(SPEC.rooms),catalogIds=Object.keys(SPEC.items);
 const styleIds=Object.keys(SPEC.configurations),PREFIX='apartment.bedroom.item.';
 const CHEST='apartment.bedroom.chest.';
+const SAMPLE='apartment.bedroom.sample.';
 if(window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true){
  for(const room of roomIds){
   const def=SPEC.chests[room],id=CHEST+room;
@@ -27,6 +33,20 @@ if(window.REALITI_APARTMENT_HOME_FIRST_CANDIDATE===true){
    shape:{kind:'BOX',halfExtents:def.half.slice()},material:def.material,
    label:def.label,tags:['bedroom-chest','storage','bedroom:'+room],
    affordances:['inspect','open'],collision:true});
+  // Each chest holds four small noncolliding cardstock samples.
+  for(const [i,role] of SPEC.colorRoles.entries()){
+   const sid=SAMPLE+room+'.'+role,swatchId=SPEC.colorDefaults.cozy[role];
+   if(M.entities()[sid])throw Error('BEDROOM_SAMPLE_ID_ALREADY_REGISTERED:'+sid);
+   M.addEntity({id:sid,chart:HOME,
+    position:[+(def.position[0]+(i-1.5)*.12).toFixed(3),
+      +(def.position[1]-.10).toFixed(3),
+      +(def.position[2]+def.half[2]+.014).toFixed(3)],
+    shape:{kind:'BOX',halfExtents:[.045,.055,.014]},
+    material:'cardboard',collision:false,
+    label:role+' sample: '+SPEC.swatches[swatchId].label,
+    tags:['paint-sample','bedroom:'+room,'palette-role:'+role,'swatch:'+swatchId],
+    affordances:['inspect']});
+  }
  }
  M.bump();
 }
@@ -104,7 +124,8 @@ function checked(s){
  for(const key of roomIds){
   const room=s.rooms[key];
   if(!room||!styleIds.includes(room.configuration)||!own(room,'owner')||
-   room.owner!==null&&!/^[a-z][a-z0-9-]{1,30}$/.test(room.owner))
+   room.owner!==null&&!/^[a-z][a-z0-9-]{1,30}$/.test(room.owner)||
+   own(room,'palette')&&!validPalette(room.palette))
    throw Error('INVALID_BEDROOM_ROOM_STATE');
   if(room.owner)owners.add(room.owner);
  }
@@ -166,6 +187,26 @@ function applyShared(snapshot){
  if(!audit.ok)throw Error(audit.error+':'+audit.item+':'+audit.reason);
  const s=cp(snapshot),placed=s.items.filter(row=>row.stored!==true),
   desired=new Set(placed.map(x=>PREFIX+x.id));
+ // Color metadata lives on a fixed chest: in-place tag changes never remove
+ // occupied furniture or claim to alter underlying material/light physics.
+ for(const id of roomIds){
+  const chest=M.entities()[CHEST+id];
+  if(!chest)continue;
+  const tags=(chest.tags||[]).filter(tag=>!tag.startsWith('palette-'));
+  const colors=paletteFor(s.rooms[id]);
+  for(const role of SPEC.colorRoles){
+   const selected=colors[role],tile=M.entities()[SAMPLE+id+'.'+role];
+   tags.push('palette-'+role+':'+selected);
+   if(tile){
+    const label=role+' sample: '+SPEC.swatches[selected].label;
+    const nextTags=['paint-sample','bedroom:'+id,'palette-role:'+role,'swatch:'+selected];
+    if(tile.label!==label||JSON.stringify(tile.tags)!==JSON.stringify(nextTags)){
+     tile.label=label;tile.tags=nextTags;M.bump();
+    }
+   }
+  }
+  if(JSON.stringify(chest.tags)!==JSON.stringify(tags)){chest.tags=tags;M.bump()}
+ }
  let changed=0;
  for(const [id,e] of Object.entries(M.entities())){
   if(id.startsWith(PREFIX)&&e.chart===HOME&&!desired.has(id)){
@@ -219,6 +260,8 @@ function view(){
   one_native_chart:true,bedrooms:Object.fromEntries(roomIds.map(id=>[id,{
    label:SPEC.rooms[id].name,bounds:SPEC.rooms[id].bounds.slice(),
    owner:s.rooms[id].owner,configuration:s.rooms[id].configuration,
+   palette:paletteFor(s.rooms[id]),
+   palette_source:own(s.rooms[id],'palette')?'custom':'configuration',
    item_count:s.items.filter(item=>item.room===id).length,
    note:SPEC.rooms[id].note
   }])),
@@ -240,6 +283,8 @@ function catalog(){return {ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1'
   items:cp(SPEC.items),bedrooms:cp(SPEC.rooms),
   chests:cp(SPEC.chests),storable_kinds:SPEC.storableKinds.slice(),
   configurations:cp(SPEC.configurations),max_per_room:SPEC.limits.maxPerRoom,
+  color_roles:SPEC.colorRoles.slice(),swatches:cp(SPEC.swatches),
+  palette_recipes:cp(SPEC.aestheticPalettes),
   note:'All objects are actual native Matrix entities, not Blender assets, and have finite collision/size. A preset changes metadata; owners place individual objects.'};
 }
 // Solo floor-finding uses the same finite Matrix collision preview as manual place.
@@ -267,6 +312,43 @@ function soloAction(raw){
  if(!inHome())return error('APARTMENT_HOME_ONLY');
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
  const next=cp(solo);let m;
+ if((m=/^bedroom swatches set (quilt|library|canopy|studio) ([a-z-]+) ([a-z-]+) ([a-z-]+) ([a-z-]+)$/.exec(s))){
+  const room=m[1],r=next.rooms[room];
+  if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
+  const colors=Object.fromEntries(SPEC.colorRoles.map((role,i)=>[role,m[i+2]]));
+  if(!validPalette(colors))return error('UNKNOWN_SWATCH');
+  if(JSON.stringify(paletteFor(r))===JSON.stringify(colors))return {ok:true,
+   unchanged:true,room,colors,revision:solo.revision};
+  r.palette=colors;next.revision++;
+  return {...persist(next),room,colors,palette_recipe:'custom',
+   shader_applied:false,contact_minted:false};
+ }
+ if((m=/^bedroom swatch (quilt|library|canopy|studio) (field|anchor|accent|bridge) ([a-z-]+)$/.exec(s))){
+  const [_,room,role,color]=m,r=next.rooms[room];
+  if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
+  if(!knownSwatch(color))return error('UNKNOWN_SWATCH');
+  const palette=paletteFor(r);
+  if(palette[role]===color)return {ok:true,unchanged:true,room,
+   colors:palette,revision:solo.revision};
+  palette[role]=color;r.palette=palette;next.revision++;
+  return {...persist(next),room,colors:palette,changed_role:role,
+   shader_applied:false,contact_minted:false};
+ }
+ if((m=/^bedroom palette (quilt|library|canopy|studio) ([a-z0-9-]+)$/.exec(s))){
+  const [_,room,recipe]=m,r=next.rooms[room];
+  if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
+  if(recipe==='reset'){
+   if(!own(r,'palette'))return {ok:true,unchanged:true,room,
+    colors:paletteFor(r),revision:solo.revision};
+   delete r.palette;
+  }else{
+   if(!own(SPEC.aestheticPalettes,recipe))return error('UNKNOWN_PALETTE_RECIPE');
+   r.palette=cp(SPEC.aestheticPalettes[recipe].colors);
+  }
+  next.revision++;
+  return {...persist(next),room,colors:paletteFor(r),palette_recipe:recipe,
+   shader_applied:false,contact_minted:false};
+ }
  if((m=/^chest stow (I[1-9][0-9]*)$/i.exec(s))){
   const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
   if(!item)return error('UNKNOWN_DECOR_ITEM');
@@ -428,6 +510,10 @@ function soloAction(raw){
 function commands(){return [
  'bedrooms','bedroom claim <quilt|library|canopy|studio>',
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
+ 'bedroom colors <room>','bedroom swatch <room> <role> <sample-name>',
+ 'bedroom swatches set <room> <field> <anchor> <accent> <bridge>',
+ 'bedroom swatches',
+ 'bedroom palette <room> <recipe|reset>','bedroom palette catalog',
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
  'decor preview <room> <kind> <x> <y>',
@@ -443,6 +529,16 @@ function handle(raw){
  if(s==='bedrooms'||s==='bedroom status'||s==='decor list')return view();
  if(s==='decor catalog'||s==='bedroom configurations')return catalog();
  if(s==='bedroom help'||s==='decor help')return {ok:true,commands:commands()};
+ if(s==='bedroom palette catalog'||s==='bedroom swatches')return {ok:true,schema:'REALITI_APARTMENT_PALETTES_V1',
+  roles:SPEC.colorRoles.slice(),swatches:cp(SPEC.swatches),
+  recipes:cp(SPEC.aestheticPalettes),read_only:true};
+ const colors=/^bedroom colors (quilt|library|canopy|studio)$/.exec(s);
+ if(colors){
+  const r=state().rooms[colors[1]];
+  return {ok:true,schema:'REALITI_APARTMENT_BEDROOM_COLORS_V1',
+   room:colors[1],owner:r.owner,colors:paletteFor(r),
+   source:own(r,'palette')?'custom':'configuration',read_only:true,shader_applied:false};
+ }
  const inspected=/^decor inspect (i[1-9][0-9]*)$/.exec(s);
  if(inspected){
   const row=state().items.find(item=>item.id===inspected[1].toUpperCase());

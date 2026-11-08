@@ -42,6 +42,8 @@ jobs:
           node --check apartment/source/native-body-adapter.mjs
           node --check apartment/source/remote.js
           node --check apartment/source/home-life.js
+          node --check apartment/source/home-book.js
+          node --check apartment/test/book-swatches.cjs
           node --check apartment/source/native-home-welcome-adapter.mjs
           node --check apartment/test/home-life.cjs
           node --check apartment/test/bedroom-chests.cjs
@@ -168,6 +170,9 @@ jobs:
       - name: Four real bedroom chests - store, owner-only recovery and clean four-resident restart
         timeout-minutes: 6
         run: node apartment/test/bedroom-chests.cjs
+      - name: Book and named swatches - optional reading and household-safe room colors
+        timeout-minutes: 7
+        run: node apartment/test/book-swatches.cjs
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs

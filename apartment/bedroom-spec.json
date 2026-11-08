@@ -445,5 +445,210 @@
     "floor-mat",
     "floor-pillow"
   ],
-  "chestPolicy": "Every alcove contains one fixed, colliding Matrix chest. Only its claimed owner can store and retrieve previously placed small decor. IDs stay stable; stored decor has no world geometry, contact, or occupancy."
+  "chestPolicy": "Every alcove contains one fixed, colliding Matrix chest. Only its claimed owner can store and retrieve previously placed small decor. IDs stay stable; stored decor has no world geometry, contact, or occupancy.",
+  "colorRoles": [
+    "field",
+    "anchor",
+    "accent",
+    "bridge"
+  ],
+  "colorDefaults": {
+    "cozy": {
+      "field": "oat",
+      "anchor": "walnut",
+      "accent": "apricot",
+      "bridge": "cream"
+    },
+    "nightglass": {
+      "field": "slate",
+      "anchor": "ink",
+      "accent": "lilac",
+      "bridge": "rain"
+    },
+    "writers": {
+      "field": "cream",
+      "anchor": "plum",
+      "accent": "rose",
+      "bridge": "walnut"
+    },
+    "botanical": {
+      "field": "oat",
+      "anchor": "moss",
+      "accent": "clay",
+      "bridge": "rose"
+    },
+    "music": {
+      "field": "rain",
+      "anchor": "ink",
+      "accent": "teal",
+      "bridge": "apricot"
+    }
+  },
+  "aestheticPalettes": {
+    "apricot-circuitry": {
+      "label": "Apricot Circuitry",
+      "book_anchor": "style-43",
+      "description": "Warm color meets clean technical lines",
+      "colors": {
+        "field": "apricot",
+        "anchor": "slate",
+        "accent": "teal",
+        "bridge": "cream"
+      }
+    },
+    "plum-breakfast": {
+      "label": "Plum Breakfast",
+      "book_anchor": "style-44",
+      "description": "Dark plum and one cheerful bright note",
+      "colors": {
+        "field": "cream",
+        "anchor": "plum",
+        "accent": "lemon",
+        "bridge": "walnut"
+      }
+    },
+    "library-of-weather": {
+      "label": "Library of Weather",
+      "book_anchor": "style-45",
+      "description": "Rain-colored background, one pale surprise",
+      "colors": {
+        "field": "rain",
+        "anchor": "ink",
+        "accent": "lemon",
+        "bridge": "lilac"
+      }
+    },
+    "moss-and-pebble": {
+      "label": "Moss and Pebble",
+      "book_anchor": "style-15",
+      "description": "Earthy greens and a small unexpected berry note",
+      "colors": {
+        "field": "oat",
+        "anchor": "moss",
+        "accent": "clay",
+        "bridge": "plum"
+      }
+    },
+    "rain-window-modern": {
+      "label": "Rain-window Modern",
+      "book_anchor": "style-28",
+      "description": "Cool window colors answered by one warm detail",
+      "colors": {
+        "field": "rain",
+        "anchor": "slate",
+        "accent": "lemon",
+        "bridge": "lilac"
+      }
+    },
+    "lemon-goth": {
+      "label": "Lemon Goth",
+      "book_anchor": "house-blends",
+      "description": "A serious silhouette and one outrageous yellow",
+      "colors": {
+        "field": "cream",
+        "anchor": "plum",
+        "accent": "lemon",
+        "bridge": "ink"
+      }
+    }
+  },
+  "colorPolicy": "Owner chooses physical named sample cards for field, anchor, accent, bridge. No user-facing color codes. Matrix sample tiles carry names and materials as lightweight objects; swatch chips in the browser are visual appearance, not native shader or sensory evidence.",
+  "swatches": {
+    "oat": {
+      "label": "Oat linen",
+      "look": "pale, woven cream",
+      "display": "linen",
+      "texture": "cloth"
+    },
+    "ink": {
+      "label": "Midnight ink",
+      "look": "deep blue-black",
+      "display": "midnightblue",
+      "texture": "paper"
+    },
+    "walnut": {
+      "label": "Walnut",
+      "look": "warm dark wood",
+      "display": "saddlebrown",
+      "texture": "wood"
+    },
+    "apricot": {
+      "label": "Apricot",
+      "look": "soft peach-orange",
+      "display": "peachpuff",
+      "texture": "paper"
+    },
+    "plum": {
+      "label": "Plum velvet",
+      "look": "deep purple",
+      "display": "rebeccapurple",
+      "texture": "cloth"
+    },
+    "moss": {
+      "label": "Moss",
+      "look": "muffled green",
+      "display": "olivedrab",
+      "texture": "paper"
+    },
+    "lemon": {
+      "label": "Lemon",
+      "look": "bright yellow",
+      "display": "gold",
+      "texture": "paper"
+    },
+    "rain": {
+      "label": "Rain blue",
+      "look": "muted rainwater blue",
+      "display": "slateblue",
+      "texture": "paper"
+    },
+    "lilac": {
+      "label": "Lilac",
+      "look": "pale lavender",
+      "display": "thistle",
+      "texture": "paper"
+    },
+    "cream": {
+      "label": "Warm cream",
+      "look": "gentle off-white",
+      "display": "cornsilk",
+      "texture": "paper"
+    },
+    "clay": {
+      "label": "Clay rust",
+      "look": "red-brown clay",
+      "display": "chocolate",
+      "texture": "clay"
+    },
+    "teal": {
+      "label": "Sea glass",
+      "look": "clear blue-green",
+      "display": "lightseagreen",
+      "texture": "paper"
+    },
+    "rose": {
+      "label": "Dusty rose",
+      "look": "muted rose-pink",
+      "display": "rosybrown",
+      "texture": "paper"
+    },
+    "slate": {
+      "label": "Slate",
+      "look": "deep cool gray",
+      "display": "slategray",
+      "texture": "paper"
+    },
+    "cobalt": {
+      "label": "Cobalt",
+      "look": "bold clear blue",
+      "display": "royalblue",
+      "texture": "paper"
+    },
+    "cherry": {
+      "label": "Cherry",
+      "look": "brilliant red",
+      "display": "crimson",
+      "texture": "paper"
+    }
+  }
 }

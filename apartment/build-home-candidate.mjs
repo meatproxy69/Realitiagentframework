@@ -35,13 +35,20 @@ if(clean.includes('realiti-apartment-home-first-configuration'))
  throw Error('HOME_CANDIDATE_LEGACY_LATE_CONFIG_MUST_NOT_BE_PRESENT');
 const source=await read('source/one-chart-preview.js');
 const life=await read('source/home-life.js');
-if(/<\/script/i.test(source)||/<\/script/i.test(life))
+const bookMarkdown=await read('books/The_Apartment_Book_of_Beautiful_Things.md');
+const bookSource=await read('source/home-book.js');
+const placeholder='__REALITI_APARTMENT_BOOK_MD__';
+if(bookSource.split(placeholder).length!==2||bookMarkdown.length<50000)
+ throw Error('HOME_OPTIONAL_BOOK_SOURCE_INCOMPLETE');
+const book=bookSource.replace(placeholder,JSON.stringify(bookMarkdown));
+if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book))
  throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(clean))throw Error('HOME_CANDIDATE_HTML_END_MISSING');
 const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\n'+
  source+'\n</script>\n<script id="realiti-apartment-home-life">\n'+
- life+'\n</script>\n</body></html>');
+ life+'\n</script>\n<script id="realiti-apartment-optional-book">\n'+
+ book+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
  version:'4.3.0-beta.1',candidate_only:true,preview_only:true,
@@ -52,6 +59,8 @@ const manifest={
  canonical_relax_source_sha256:validated.source_html_sha256,
  source_gate_sha256:hash(source),
  home_life_sha256:hash(life),
+ optional_book_markdown_sha256:hash(bookMarkdown),
+ optional_book_pages:true,bedroom_book_copies:4,
  original_matrix_kernel_sha256:hash(originalKernel),
  native_matrix_boot_gate_sha256:hash(nativeKernel),
  original_world_kernel_sha256:hash(worldKernel),
