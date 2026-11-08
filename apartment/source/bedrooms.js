@@ -107,13 +107,13 @@ function checked(s){
  return s;
 }
 function entityPayload(row,s){
- const def=SPEC.items[row.kind],style=s.rooms[row.room].configuration;
- const cfg=SPEC.configurations[style];
+ const def=SPEC.items[row.kind],configurationName=s.rooms[row.room].configuration;
+ const cfg=SPEC.configurations[configurationName];
  return {id:PREFIX+row.id,chart:HOME,
   position:[row.x,row.y,def.half[2]],
   shape:{kind:'BOX',halfExtents:def.half.slice()},
   tags:[...def.tags,'bedroom-item','owned:'+row.owner,'bedroom:'+row.room,
-   'configuration:'+style,'accent:'+cfg.accent],
+   'configuration:'+configurationName,'accent:'+cfg.accent],
   collision:def.collision,material:def.material,
   label:def.label+' ('+cfg.label+', '+row.owner+"'s "+row.room+' bedroom)',
   affordances:def.affordances.slice()};
@@ -205,22 +205,22 @@ function soloAction(raw){
   return {...persist(next),released:id};
  }
  if((m=/^bedroom configure (quilt|library|canopy|studio) ([a-z-]+)$/.exec(s))){
-  const [_,id,style]=m;
-  if(!own(SPEC.configurations,style))return error('UNKNOWN_BEDROOM_CONFIGURATION');
+  const [_,id,configurationName]=m;
+  if(!own(SPEC.configurations,configurationName))return error('UNKNOWN_BEDROOM_CONFIGURATION');
   if(next.rooms[id].owner!==rid)return error('BEDROOM_NOT_OWNED');
-  if(next.rooms[id].configuration===style)return {ok:true,unchanged:true,configuration:style};
+  if(next.rooms[id].configuration===configurationName)return {ok:true,unchanged:true,configuration:configurationName};
   for(const row of next.items.filter(x=>x.room===id))
    if(!previewRemove(row.id).ok)return error('BEDROOM_ITEM_IN_USE',{item:row.id});
-  next.rooms[id].configuration=style;next.revision++;
-  return {...persist(next),bedroom:id,configuration:style,
-   suggested:cp(SPEC.configurations[style].suggested),native_entities_restyled:true};
+  next.rooms[id].configuration=configurationName;next.revision++;
+  return {...persist(next),bedroom:id,configuration:configurationName,
+   suggested:cp(SPEC.configurations[configurationName].suggested),native_entities_restyled:true};
  }
  if((m=/^bedroom furnish (quilt|library|canopy|studio) ([a-z-]+)$/.exec(s))){
-  const room=m[1],style=m[2];
-  if(!own(SPEC.configurations,style))return error('UNKNOWN_BEDROOM_CONFIGURATION');
+  const room=m[1],configurationName=m[2];
+  if(!own(SPEC.configurations,configurationName))return error('UNKNOWN_BEDROOM_CONFIGURATION');
   if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
   if(next.items.some(x=>x.room===room))return error('BEDROOM_NOT_EMPTY_FOR_CONFIGURATION');
-  const kit=SPEC.configurations[style].suggested.slice(0,2),planned=[];
+  const kit=SPEC.configurations[configurationName].suggested.slice(0,2),planned=[];
   const bounds=SPEC.rooms[room].bounds;
   for(const kind of kit){
    const [hx,hy]=SPEC.items[kind].half;
@@ -234,10 +234,10 @@ function soloAction(raw){
      }))continue;
      if(preview(kind,room,px,py).ok)found={kind,x:px,y:py};
     }
-   if(!found)return error('BEDROOM_CONFIGURATION_NO_SAFE_FOOTPRINT',{room,style,kind});
+   if(!found)return error('BEDROOM_CONFIGURATION_NO_SAFE_FOOTPRINT',{room,configurationName,kind});
    planned.push(found);
   }
-  next.rooms[room].configuration=style;
+  next.rooms[room].configuration=configurationName;
   const placed=[];
   for(const p of planned){
    const id='I'+next.next_id++;
@@ -245,7 +245,7 @@ function soloAction(raw){
    placed.push({id,kind:p.kind,position:[p.x,p.y]});
   }
   next.revision++;
-  return {...persist(next),bedroom:room,configuration:style,placed,contact_minted:false};
+  return {...persist(next),bedroom:room,configuration:configurationName,placed,contact_minted:false};
  }
  if((m=/^decor place (quilt|library|canopy|studio) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(s))){
   const [_,room,kind]=m;

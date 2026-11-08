@@ -88,7 +88,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  const catalog=()=>({ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1',
    items:cp(SPEC.items),bedrooms:cp(SPEC.rooms),
    configurations:cp(SPEC.configurations),max_per_room:SPEC.limits.maxPerRoom,
-   note:'Items are real finite native Matrix geometry. Configurations set style; choose positions to place physical items.'});
+   note:'Items are real finite native Matrix geometry. Configurations set configurationName; choose positions to place physical items.'});
  const help=()=>({ok:true,commands:[
   'remote bedrooms','remote bedroom claim <room> [if-rev <n>]',
   'remote bedroom release <room> [if-rev <n>]',
@@ -163,26 +163,26 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    next.rooms[room]={owner:null,configuration:'cozy'};
    operation={released:room};
   }else if((m=/^bedroom configure ([a-z-]+) ([a-z-]+)$/.exec(without))){
-   const [_,room,style]=m;
+   const [_,room,configurationName]=m;
    if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
-   if(!STYLES.includes(style))return fail('UNKNOWN_BEDROOM_CONFIGURATION');
+   if(!STYLES.includes(configurationName))return fail('UNKNOWN_BEDROOM_CONFIGURATION');
    if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
-   if(next.rooms[room].configuration===style)
-    return {ok:true,unchanged:true,bedroom:room,configuration:style,revision:current.revision};
-   // A style edit changes native entity tags/labels. Never remove/recreate
+   if(next.rooms[room].configuration===configurationName)
+    return {ok:true,unchanged:true,bedroom:room,configuration:configurationName,revision:current.revision};
+   // A configurationName edit changes native entity tags/labels. Never remove/recreate
    // a sleeping pad or seat that any resident is actually using.
    for(const row of next.items.filter(x=>x.room===room))
     for(const entry of participants())if(!bridge(entry).previewRemove(row.id)?.ok)
      return fail('BEDROOM_ITEM_IN_USE',{item:row.id,participant:entry.id});
-   next.rooms[room].configuration=style;
-   operation={bedroom:room,configuration:style,suggested:cp(SPEC.configurations[style].suggested)};
+   next.rooms[room].configuration=configurationName;
+   operation={bedroom:room,configuration:configurationName,suggested:cp(SPEC.configurations[configurationName].suggested)};
   }else if((m=/^bedroom furnish ([a-z-]+) ([a-z-]+)$/.exec(without))){
-   const [_,room,style]=m;
+   const [_,room,configurationName]=m;
    if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
-   if(!STYLES.includes(style))return fail('UNKNOWN_BEDROOM_CONFIGURATION');
+   if(!STYLES.includes(configurationName))return fail('UNKNOWN_BEDROOM_CONFIGURATION');
    if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
    if(next.items.some(item=>item.room===room))return fail('BEDROOM_NOT_EMPTY_FOR_CONFIGURATION');
-   const kit=SPEC.configurations[style].suggested.slice(0,2);
+   const kit=SPEC.configurations[configurationName].suggested.slice(0,2);
    const planned=[],members=participants(),bounds=SPEC.rooms[room].bounds;
    for(const entry of members)apply(entry);
    for(const kind of kit){
@@ -200,18 +200,18 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
        found={kind,x:px,y:py};
      }
     }
-    if(!found)return fail('BEDROOM_CONFIGURATION_NO_SAFE_FOOTPRINT',{room,style,kind});
+    if(!found)return fail('BEDROOM_CONFIGURATION_NO_SAFE_FOOTPRINT',{room,configurationName,kind});
     planned.push(found);
    }
    if(next.items.length+planned.length>MAX)return fail('BEDROOM_ITEM_CAPACITY');
-   next.rooms[room].configuration=style;
+   next.rooms[room].configuration=configurationName;
    const placed=[];
    for(const p of planned){
     const id='I'+next.next_id++;
     next.items.push({id,room,kind:p.kind,owner:actor.id,x:p.x,y:p.y});
     placed.push({id,kind:p.kind,position:[p.x,p.y]});
    }
-   operation={bedroom:room,configuration:style,placed,
+   operation={bedroom:room,configuration:configurationName,placed,
     verified_participants:members.length,world_contact_minted:false};
   }else if((m=/^decor place ([a-z-]+) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
    const [_,room,kind]=m;

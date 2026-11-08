@@ -377,5 +377,5 @@
     "maxClaimsPerResident": 1
   },
   "coordinateUnits": "native_matrix_metres",
-  "setup": "Owners can pick a semantic configuration or use bedroom furnish <room> <style> to atomically place two suggested items in verified free native Matrix floor space."
+  "setup": "Owners can pick a semantic configuration or use bedroom furnish <room> <configuration> to atomically place two suggested items in verified free native Matrix floor space."
 }
