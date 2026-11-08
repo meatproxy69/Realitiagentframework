@@ -576,7 +576,9 @@ function handle(raw){
    hint:available.length&&stored.length<SPEC.limits.maxChestPerRoom?
     'You can put away a '+available[0].label+' ('+available[0].id+
     ') using remote chest stow '+available[0].id+'.':
-    'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.',
+    (stored.length?'The chest holds '+stored[0].label+' ('+stored[0].id+
+    '). You can retrieve it with remote chest auto-take '+stored[0].id+'.':
+    'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.'),
    read_only:true,contact_minted:false};
  }
  return soloAction(s);
