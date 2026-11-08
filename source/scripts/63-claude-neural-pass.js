@@ -439,6 +439,7 @@ if(oldDoorRun){
  };
  window.REALITI_AGENT_DOOR.run=async function(raw){
    const s=String(raw||'').trim(),l=s.toLowerCase();
+   const act0=C9?.b7?.lastAgentAction,rec0=C9?.b4?.lastReceipt;// what was last before this command
    if(l==='help')return window.REALITI_AGENT_DOOR.help();
    if(l==='rooms')return window.Realiti?.rooms?.()||[];
    if(l==='look'){
@@ -471,7 +472,9 @@ if(oldDoorRun){
    }
    if(r?.schema==='REALITI_MUTATION_RESULT_V1'&&!r.text&&r.ok===false){r.text=r.error==='ACTION_UNAVAILABLE'?'That is not something you can do from here; actions lists what is.':`You cannot: ${r.error}.`}// a refusal never borrows the last action's narration
    if(r?.schema==='REALITI_MUTATION_RESULT_V1'&&!r.text){
-     const n=C9?.b7?.lastAgentAction?.narrative||C9?.b4?.lastReceipt?.narrative||C9?.b4?.lastReceipt?.resident_text||null;if(n)r.text=String(n);
+     // Borrow narration only if this command produced it. Borrowing whatever came last made every textless Cloakroom
+     // bench action repeat the cloud-form sentence, and a visiting resident believed it was stuck in that form.
+     const a1=C9?.b7?.lastAgentAction,r1=C9?.b4?.lastReceipt;const n=(a1!==act0?a1?.narrative:null)||(r1!==rec0?(r1?.narrative||r1?.resident_text):null)||null;if(n)r.text=String(n);
    }
    return r;
  };

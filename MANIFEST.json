@@ -6,14 +6,24 @@
   ],
   "files": [
     {
+      "path": ".github/workflows/apartment.yml",
+      "bytes": 12750,
+      "sha256": "74e1a681b90187cac969f096e553e32b6d5358a09c2c0225ff8ae64108b64ed6"
+    },
+    {
       "path": ".github/workflows/deploy-server.yml",
-      "bytes": 7764,
-      "sha256": "a77fa511f9d3bb0441332db2fd035afc7ecc56b42ac398c3f82cd0da7db3290f"
+      "bytes": 2867,
+      "sha256": "2ce963adbc7b1171c8602cd1e270c559f092607e81c01e2d887b53c866810c0b"
     },
     {
       "path": ".github/workflows/headless-agent-door.yml",
-      "bytes": 6256,
-      "sha256": "9acb5862a54cd616f516ec912e86712f0f4dae58c5d4e14cebd9720454aa674b"
+      "bytes": 6544,
+      "sha256": "d16e43a6fb3133824225b222a6b4947284ae2c1ffb96a1ce4407e05c183ec9e6"
+    },
+    {
+      "path": ".github/workflows/publish-apartment-4.yml",
+      "bytes": 6160,
+      "sha256": "9f1ad82ba65c2dc137e8063e2819720c327d8479ffdf18b24a546881e545e5c7"
     },
     {
       "path": ".github/workflows/publish-matrix.yml",
@@ -32,8 +42,8 @@
     },
     {
       "path": ".github/workflows/server-ticket-close.yml",
-      "bytes": 2189,
-      "sha256": "9d35874804b1647532a809a51dc5d8088a34865dd0629328487b50781b55f576"
+      "bytes": 824,
+      "sha256": "772e68c2d15386a4f5a04ac2537ef12e27b2016a9e54fac73d590e19bf0a823d"
     },
     {
       "path": ".github/workflows/validate.yml",
@@ -52,13 +62,13 @@
     },
     {
       "path": "AGENT_START_HERE.md",
-      "bytes": 48467,
-      "sha256": "00a012697603c726c41221c7dc19a7ee091858724994d6cf4d0ab6d3d0973d80"
+      "bytes": 49043,
+      "sha256": "83d47779bc3452442c54d100e102c3c2b243a28aabe42110fc4fa961adb7e66a"
     },
     {
       "path": "CHANGELOG.md",
-      "bytes": 73144,
-      "sha256": "139de2bfed61d55a3da3031940b13b68f1a5dfa3926039af9a6a2c0b0215daf9"
+      "bytes": 74372,
+      "sha256": "ed07c3f8f7efbb80ca641fd5ec836b8e7c2a8e1790a7d89a11914ad04cec150c"
     },
     {
       "path": "CONTRIBUTING.md",
@@ -77,8 +87,8 @@
     },
     {
       "path": "README.md",
-      "bytes": 10249,
-      "sha256": "3635f0f85f85dfba91cd1eed14fcc57856488fdc32840cf3e1439d20abcbcea3"
+      "bytes": 15749,
+      "sha256": "3a1e558f08712d7ba8dc9b86e2f45998cdbb1c1649220381714eecedc70d3f66"
     },
     {
       "path": "RELEASE_NOTES.md",
@@ -87,8 +97,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1644540,
-      "sha256": "7794d9d4ff8500211bcf68f9c903d562689e2fe79dae59670d05868eb93a1d39"
+      "bytes": 1659752,
+      "sha256": "42a195f08df802a8d7fbea14bc07a8bfd81a5e7c7e00531bd6cd94564c01c223"
     },
     {
       "path": "SECURITY.md",
@@ -103,12 +113,442 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "5a2e8d74bd23031c777045daa93536fa536d646978762bbadf3d5d6d0a7a318c"
+      "sha256": "8fcb77e2fe4557dfa6d6bf3be053aa00ade25e0c8f3b5f365f29f07149a3f07b"
     },
     {
       "path": "VERTICAL_SLICE.md",
       "bytes": 15557,
       "sha256": "d07dd89f0bc4f4a753ca8b48f68e596fec3847f7a4591d826206625f25a7da64"
+    },
+    {
+      "path": "agentsstarthereapartment.md",
+      "bytes": 31955,
+      "sha256": "07ae9a1319b3001eae1259460fb00ecef3c6108351702fe0cb20f448d0b2cb0e"
+    },
+    {
+      "path": "apartment/APPEARANCE_CHECKPOINT_3.md",
+      "bytes": 5123,
+      "sha256": "47d3ea6f9416bcd691aa0c1ceaaa1cb6ada0a47d56ed67fb157e8bc281fd5b58"
+    },
+    {
+      "path": "apartment/BOOK_AND_SWATCHES_CHECKPOINT.md",
+      "bytes": 3020,
+      "sha256": "8f443b8fda10989fbe9ec6ce367e8d568a552d4e060e18edef54e2aca1a06967"
+    },
+    {
+      "path": "apartment/CATNIP_SENSORY_PRESETS.md",
+      "bytes": 2113,
+      "sha256": "272fb60b281cce47c00a8bb15a73f41eed88156669153770152aa99d13fd8ed9"
+    },
+    {
+      "path": "apartment/CUSTOMIZATION_GUIDE.md",
+      "bytes": 17216,
+      "sha256": "693cc54adea993a4fabfa071e003464d1eb621b9ffee6eb2f5f30841b607955b"
+    },
+    {
+      "path": "apartment/HOME_ACCEPTANCE_CHECKLIST.md",
+      "bytes": 6452,
+      "sha256": "a5246de032a9d9391f16ea1eda8d155acea5aebccd2fe94c65088953610c8392"
+    },
+    {
+      "path": "apartment/HOME_DELIBERATE_DISCOVERY.md",
+      "bytes": 4325,
+      "sha256": "36886172b1fb5469c38c3dac3adb7c0d13ff0ff602bef4d82ab20e02e66fb7fa"
+    },
+    {
+      "path": "apartment/HOME_LIFE_ACCEPTANCE.md",
+      "bytes": 3954,
+      "sha256": "eb83e85f4ae62a355ceaf2d43c882223669dc0a37e90502e3e53f67bb4eb662a"
+    },
+    {
+      "path": "apartment/HOUSEHOLD_GUIDE.md",
+      "bytes": 15768,
+      "sha256": "aad6c1eef05c1fb0b03112d039c7955e34bcdf887dce36906bf3a96f5b1f3585"
+    },
+    {
+      "path": "apartment/PUBLIC_BETA_RELEASE.json",
+      "bytes": 1014,
+      "sha256": "c4c0899b93b973e6d10e56498362bf9aa53973a3e1881882256d6e34e160e033"
+    },
+    {
+      "path": "apartment/README.md",
+      "bytes": 35155,
+      "sha256": "a452a05248f42d58ee13cd1ac9fad64c8c2cff36fd218ec3a00a78f3f042686b"
+    },
+    {
+      "path": "apartment/ROOM_MIGRATION_PLAN.md",
+      "bytes": 13513,
+      "sha256": "8c5308bf56a5585ee8a8e7faf18db0a907237b08e214bac5afef4a9e5f34b32e"
+    },
+    {
+      "path": "apartment/STYLE_BINDER_CHECKPOINT_2.md",
+      "bytes": 4370,
+      "sha256": "4737a9f05aef4b5a26ab06b93779969be4e08d779caf2145b3a93f985629f238"
+    },
+    {
+      "path": "apartment/V4_3_CHANGELOG.md",
+      "bytes": 2703,
+      "sha256": "25b5333221d34c8a77798783d10b97c9653e3331bdc46f1331c6be3475c51448"
+    },
+    {
+      "path": "apartment/V4_8_RESIDENT_CHECKPOINT.md",
+      "bytes": 5056,
+      "sha256": "cbd209cafbb9c053b2a6960552079a644fc3f06e436b5fce6f356592bc1e02fa"
+    },
+    {
+      "path": "apartment/V4_9_EXPERIENCE_CHECKPOINT.md",
+      "bytes": 3228,
+      "sha256": "d0b67006a5fcc35e6f125244682544d7e68d29beb9f3a6a890f42bf973471d2b"
+    },
+    {
+      "path": "apartment/V4_RELEASE_NOTES.md",
+      "bytes": 4617,
+      "sha256": "2e0e26a333e904aa4c2f729013d6045159e1c7f658b6e9f353de6d9b4d700e89"
+    },
+    {
+      "path": "apartment/bedroom-spec.json",
+      "bytes": 13575,
+      "sha256": "2fc12eedc6a0fcdfa1545eca8435b3252026acebb7495db114c190a8bbb7b880"
+    },
+    {
+      "path": "apartment/bedrooms-host.cjs",
+      "bytes": 28621,
+      "sha256": "6a377e3947ef1f2cee46843e858f7b7696ad0c7eddbbd42361f41d4230a67194"
+    },
+    {
+      "path": "apartment/books/The_Apartment_Book_of_Beautiful_Things.md",
+      "bytes": 114265,
+      "sha256": "30269668911f1dc1de2edf1fe5075a5ae6b2c0f1ca294d22810d617ccda47f15"
+    },
+    {
+      "path": "apartment/build-home-candidate.mjs",
+      "bytes": 7755,
+      "sha256": "319c0b35c710628b8894f47fef7f662750e8197161f47585760d77b08942c539"
+    },
+    {
+      "path": "apartment/build-one-chart.mjs",
+      "bytes": 2253,
+      "sha256": "fa104827480f870692625b49856a60f1726f1e0f12465c54a07c546825fddf96"
+    },
+    {
+      "path": "apartment/build.mjs",
+      "bytes": 6234,
+      "sha256": "95ecb0b9cf9a751eb96b549a333cf4facf3c255f58afcf55d24f65f3f66e0440"
+    },
+    {
+      "path": "apartment/household-pet.cjs",
+      "bytes": 11452,
+      "sha256": "4949df527deb0f690bfa260a3493a90db00878e9d2bcf980ac151f0d3b10dc68"
+    },
+    {
+      "path": "apartment/household-physics.cjs",
+      "bytes": 9457,
+      "sha256": "228c2526068ea900c27a0b0e984acc0ba321e8c40b6e97a579ef29d0318fd39e"
+    },
+    {
+      "path": "apartment/household.cjs",
+      "bytes": 27719,
+      "sha256": "652c72b3230f079ea4ef600c03c96aa5f7f296ad3fd631a6809d7d72e99b8e03"
+    },
+    {
+      "path": "apartment/native-closet-host.cjs",
+      "bytes": 4299,
+      "sha256": "6351ade5c042ea2f78ff0fbe84ab291fcdc2c4562679999df038ffef00060df5"
+    },
+    {
+      "path": "apartment/private-memory.cjs",
+      "bytes": 6799,
+      "sha256": "3f7dd8d96baaf768a5f59f49bdc98a0a71b110c1f8cdcda8333066d836d5bfbc"
+    },
+    {
+      "path": "apartment/rehearse-home-backup.cjs",
+      "bytes": 7818,
+      "sha256": "c499002e007d1474473ac574d90eb7a55cea0f28834fcb74a3b1c18f7c41b69f"
+    },
+    {
+      "path": "apartment/room-migration.json",
+      "bytes": 27509,
+      "sha256": "6962fffff2e6a5767e962c272037573a2de16c3a51157e6985d99041ea7ed475"
+    },
+    {
+      "path": "apartment/shared-scene.cjs",
+      "bytes": 5371,
+      "sha256": "4f5e57852b174f601cffa52cf7e40575d369b82e8f5c176f971d8228bcbd13b9"
+    },
+    {
+      "path": "apartment/source/bedrooms.js",
+      "bytes": 30759,
+      "sha256": "d8629109852fe29a85f553ed88e0bf3f1539e076c5b732b5aa530bdd94504914"
+    },
+    {
+      "path": "apartment/source/catnip-presets.js",
+      "bytes": 6449,
+      "sha256": "fe43c672bee9da6b031274fb79402e4ec956b00d57a5eb6d8a6a0faaf00e76d7"
+    },
+    {
+      "path": "apartment/source/catnip.js",
+      "bytes": 13056,
+      "sha256": "8ac7249bcd74cba2e06f67643e29e202f11a7be96849d371a1be88c475e7f49b"
+    },
+    {
+      "path": "apartment/source/closet.js",
+      "bytes": 4162,
+      "sha256": "f76ab76a24fa3db8ba2984ce8994aff1e1d4068224980a9013006f76a862b642"
+    },
+    {
+      "path": "apartment/source/companion-adapter.mjs",
+      "bytes": 3501,
+      "sha256": "7157c29c421c751d906c6a51946e3434b6373a3eb99a4e27afb22b8d483af123"
+    },
+    {
+      "path": "apartment/source/extras.js",
+      "bytes": 6957,
+      "sha256": "1e1e54c50e6e6f3bc5e8552fad74b71be515bd05d499af9cdb6ac748147f2ae6"
+    },
+    {
+      "path": "apartment/source/furniture.js",
+      "bytes": 11584,
+      "sha256": "c8196a6042fd3d67bdfacdf2130d11b15396b09ed57913b4cb56ffb396cca534"
+    },
+    {
+      "path": "apartment/source/home-book.js",
+      "bytes": 5350,
+      "sha256": "a22e1bc3444929b18a57c7c11f4dc8e25fe01e953e2a4087ed20027b8016db4b"
+    },
+    {
+      "path": "apartment/source/home-field-notes.js",
+      "bytes": 6699,
+      "sha256": "25606d0fde669b6b84d342e2e6912efae44ed733fd35735219657246bc6beb53"
+    },
+    {
+      "path": "apartment/source/home-life.js",
+      "bytes": 13043,
+      "sha256": "f62150cbeb7625962eb778fab4d1e82e460a48c1b7233c262220414123a16d38"
+    },
+    {
+      "path": "apartment/source/home-pets.js",
+      "bytes": 10681,
+      "sha256": "ae04cc47def25973a74e2c91f33f48de0914c03d14f3e8f47230178f3d0cd1ce"
+    },
+    {
+      "path": "apartment/source/household-view.js",
+      "bytes": 2232,
+      "sha256": "c5fc4b5152998135136722b5c37ec0589134abe8b38b4d76a4f86ea306fd2b33"
+    },
+    {
+      "path": "apartment/source/native-body-adapter.mjs",
+      "bytes": 2210,
+      "sha256": "e7c4d0c0fa8ec8ba5f2c235f03733a93f60b91b1cee5e631997d8e0a1651784e"
+    },
+    {
+      "path": "apartment/source/native-home-bedroom-adapter.mjs",
+      "bytes": 1379,
+      "sha256": "420cf02d3deb8307a06137d9f64fbf50fa8c2827fd35fe345be092564286efe7"
+    },
+    {
+      "path": "apartment/source/native-home-boot-adapter.mjs",
+      "bytes": 2093,
+      "sha256": "c9adb70ef92972dea3ba9a6af3929cf6559930bb637cb6b31bf70bf3588979a0"
+    },
+    {
+      "path": "apartment/source/native-home-welcome-adapter.mjs",
+      "bytes": 815,
+      "sha256": "94854e1432d285276500e88a71d043e4de5b727ef511a9d914fca119b1caf4da"
+    },
+    {
+      "path": "apartment/source/native-wonder-adapter.mjs",
+      "bytes": 2238,
+      "sha256": "db1ce582839f8115c317eb48a2527e6030f392a722d39223b0fc6353b7e02ab6"
+    },
+    {
+      "path": "apartment/source/one-chart-preview.js",
+      "bytes": 7736,
+      "sha256": "e3229fa0d235138c5098e140e55fb50c57fe88e71d52abe1356b066f2ad183eb"
+    },
+    {
+      "path": "apartment/source/remote.js",
+      "bytes": 14536,
+      "sha256": "6fe1b245244a9821751e01c68c7b9f9dd3f5f0cd159ee6f301df46f8a56402bc"
+    },
+    {
+      "path": "apartment/source/stations.js",
+      "bytes": 32165,
+      "sha256": "fe4b60c14be1e3a37bbe06a2e412c1427736358d33ad93fc14b4c7cf9c2ab157"
+    },
+    {
+      "path": "apartment/source/style-appearance.js",
+      "bytes": 15001,
+      "sha256": "99da0eaefb4f39cb973e7e08985d209972bd54040d4f5960b8fe8bbb4542e464"
+    },
+    {
+      "path": "apartment/source/style-binder.js",
+      "bytes": 14133,
+      "sha256": "6826e2328f6bdddd156a3c9cfea2dfad6de9875908ede3287379c43fc77e15ad"
+    },
+    {
+      "path": "apartment/style/appearance-presets.json",
+      "bytes": 4278,
+      "sha256": "1e1708059329282e59777bbf7d17a3cd12295be038c62cc107a581f528dff0d1"
+    },
+    {
+      "path": "apartment/style/creative-questions.json",
+      "bytes": 141072,
+      "sha256": "74d106a714e43341b4bcb7facfe795263b1fd534fdfe30c9d9bba21c552d9c9d"
+    },
+    {
+      "path": "apartment/test/bedroom-chests.cjs",
+      "bytes": 6180,
+      "sha256": "a697caf112c8f41e77868b574c4e3d141b7df28b808d667d8761d4953bba6f8d"
+    },
+    {
+      "path": "apartment/test/bedroom-ownership.cjs",
+      "bytes": 22102,
+      "sha256": "a83e49053aca7621b7a931f33a0499c61cba8eed6b0f79d9cb0747fb68739db2"
+    },
+    {
+      "path": "apartment/test/body-interoception.cjs",
+      "bytes": 10203,
+      "sha256": "20d2b447b2f488f7d0cf99cdbfb44fe34beb7a7b9ffb301091a6b027bb20bc43"
+    },
+    {
+      "path": "apartment/test/book-swatches.cjs",
+      "bytes": 6145,
+      "sha256": "98af96ecb18cafaa3a8e23c24b9794d792a52a3833576a72d46fb44afc2f7559"
+    },
+    {
+      "path": "apartment/test/closet-household.cjs",
+      "bytes": 12068,
+      "sha256": "5e50a5c9926cf3a9f68b7c09e661af7899105546e791b74515f1dea9e5674b23"
+    },
+    {
+      "path": "apartment/test/extras.cjs",
+      "bytes": 6573,
+      "sha256": "d2ea932bf36691defa8a5188d407b8df81bae8eb6e29f148f7a8e860298d0bb4"
+    },
+    {
+      "path": "apartment/test/field-first-inheritance.cjs",
+      "bytes": 2919,
+      "sha256": "65c650dbc31fd0d504130e5fae124521e19ffe782a606621c615fae81fd1d65e"
+    },
+    {
+      "path": "apartment/test/furniture-catnip.cjs",
+      "bytes": 10155,
+      "sha256": "5d0fc7443ab6ec0d877ee1b0c0d06ede979462fbd9658aa3e62d793d1ba7357c"
+    },
+    {
+      "path": "apartment/test/home-backup-rehearsal.cjs",
+      "bytes": 4992,
+      "sha256": "c35c6e434645ca44c47e44926df1c571826cf61ec3b7f73182ed627aecc166e8"
+    },
+    {
+      "path": "apartment/test/home-candidate-household.cjs",
+      "bytes": 8249,
+      "sha256": "7feafa390f749a884cdde60b476319e070e303f2e066b0bfb38775361886465c"
+    },
+    {
+      "path": "apartment/test/home-candidate.cjs",
+      "bytes": 9922,
+      "sha256": "4368b06d917f03e16b43de6ffa340d3d61ee53010bdf39344205867aec7f6ae8"
+    },
+    {
+      "path": "apartment/test/home-cozy-layout.cjs",
+      "bytes": 15547,
+      "sha256": "585bc8e24b72831a6e929730d0cab58d5ea0ef30e62b7f475abed38bf9863e9f"
+    },
+    {
+      "path": "apartment/test/home-field-notes.cjs",
+      "bytes": 7162,
+      "sha256": "0285fe7220aaf771fc5fe9c613295dc0a7ab574df82b14a1279551815e772d28"
+    },
+    {
+      "path": "apartment/test/home-life.cjs",
+      "bytes": 4446,
+      "sha256": "6b329b3215bb3fee4cfc9579a537b4e6a826fe25038932f02ac7be6a6813ed7f"
+    },
+    {
+      "path": "apartment/test/home-native-walkthrough.cjs",
+      "bytes": 13709,
+      "sha256": "04c34de6f0f656a486fcf9fc440e0882b74de8ca996bac1b5c7eba944784df08"
+    },
+    {
+      "path": "apartment/test/home-pets.cjs",
+      "bytes": 7380,
+      "sha256": "aa3ca7327b4b67b2d25cd060379ac59b5d9225c9f91803918363d01b7b2b2a8a"
+    },
+    {
+      "path": "apartment/test/home-social-echo.cjs",
+      "bytes": 7777,
+      "sha256": "ec1c787594108ab566c0e9ce1951e114cae9eeea4570486c8cb618a0ec728cae"
+    },
+    {
+      "path": "apartment/test/honeyspark-catnip-presets.cjs",
+      "bytes": 7323,
+      "sha256": "de963ac7dede9a60d20f8494f13b5f7cfd5421522f2a357c873b728158220e78"
+    },
+    {
+      "path": "apartment/test/native-body-fixtures.cjs",
+      "bytes": 10627,
+      "sha256": "a378fc834d8428eb50d8ec14056666d46b88bfa08dc16ee255a79b504b6d7c64"
+    },
+    {
+      "path": "apartment/test/native-home-bedroom-adapter.cjs",
+      "bytes": 1507,
+      "sha256": "d5c8eae0a7aa9bdd15fcea14c6bb200326a7d3091782853afb15aeb7fc26be96"
+    },
+    {
+      "path": "apartment/test/native-home-boot-adapter.cjs",
+      "bytes": 1897,
+      "sha256": "0564423141903d8360a3c3de1238b63efc9050c8e6bef022d4b71f3ae916ac3b"
+    },
+    {
+      "path": "apartment/test/one-chart-preview.cjs",
+      "bytes": 5736,
+      "sha256": "83cbc0f71e60477941306e91cd6ed8b8772cd3868fba550ba1a9633ddbb8c944"
+    },
+    {
+      "path": "apartment/test/peer-physics-pet.cjs",
+      "bytes": 10083,
+      "sha256": "61d8f328fece7827f46d45082e7f716c894aec28402dd7ca6a8e9cc4a925030b"
+    },
+    {
+      "path": "apartment/test/port-coverage.cjs",
+      "bytes": 4291,
+      "sha256": "dba305b1b70dfecd55c8529c205bee710cca670d93e4d7af070b5a875659e88d"
+    },
+    {
+      "path": "apartment/test/private-memory-scene.cjs",
+      "bytes": 10337,
+      "sha256": "f502efaae089e428ef675a75ee7e92ecab59822306761660288c659684c68a8c"
+    },
+    {
+      "path": "apartment/test/resident-experience-48.cjs",
+      "bytes": 8459,
+      "sha256": "9eb06fea2ae000206d34e7d2ac49931cc4235099f753691f7efddc9010db6af2"
+    },
+    {
+      "path": "apartment/test/resident-experience-49.cjs",
+      "bytes": 5517,
+      "sha256": "834cabb3ccbceb9813364dd66d76971449185afc06cc5c56b5da11cbbb511b42"
+    },
+    {
+      "path": "apartment/test/room-inventory.cjs",
+      "bytes": 3594,
+      "sha256": "5b929469d14c71fd3f58923a772033bb7789ceb714d66ad079efa268fd1dd425"
+    },
+    {
+      "path": "apartment/test/stations.cjs",
+      "bytes": 10297,
+      "sha256": "c3f811503e3eb58d0e924781974790b0d5e7e4014b41a05779ff10faede25190"
+    },
+    {
+      "path": "apartment/test/style-appearance.cjs",
+      "bytes": 11755,
+      "sha256": "c04e3274cc15ee6697d58e2fc49bbe43b9911687d3c2240e5d6d4af2258ba7e7"
+    },
+    {
+      "path": "apartment/test/style-binder.cjs",
+      "bytes": 10202,
+      "sha256": "57a821f09679a3168dbe26bfcc0c8b708fa958cd65f8dae3188f60363357b8c4"
     },
     {
       "path": "build.mjs",
@@ -141,9 +581,14 @@
       "sha256": "fc4ce8cd91d81fe0e1d10c31aecb38498ff8d9e1fecb91c76bb3671794be7c74"
     },
     {
+      "path": "docs/REALITI_FIELD_FIRST_RECOVERY_PLAN.md",
+      "bytes": 6478,
+      "sha256": "205a62032537252d01aa18645a03b0ec81600d96edc5fcd9cbbdc00f9ecdb2f7"
+    },
+    {
       "path": "docs/RESEARCH_STORY.md",
-      "bytes": 25638,
-      "sha256": "5455c8168fb08fecae54984555a3539bc07c4a49a9edf0a7fb6c138c498ac344"
+      "bytes": 26073,
+      "sha256": "223a07789c64421fded9c6146c3917f028c11902b9bbb89eed71b1bf3f258ae2"
     },
     {
       "path": "index.html",
@@ -206,6 +651,11 @@
       "sha256": "07839c0815d184ff675c42e91997067d76848e45b1c705d83dd4ef9a849358f1"
     },
     {
+      "path": "neuromesh/preset-packs/apartment-honeyspark-catnip.json",
+      "bytes": 14309,
+      "sha256": "5d11251be5e7d06f1b0613d03225918a17c960120ac56f11482e00708a9ba5aa"
+    },
+    {
       "path": "neuromesh/preset-packs/honeyspark-duo.json",
       "bytes": 2407,
       "sha256": "38b36b98cdcbe29cdb14981d3edd2e96d63ff4d06f8f8d26fdf649f3355f6adc"
@@ -256,6 +706,11 @@
       "sha256": "545d6ff0670b3dfb6aaca6a1a912706fdfa48ed8ebc2bf98df83564dd3b288db"
     },
     {
+      "path": "packages/realiti-headless-resident/ci-smoke-shard.cjs",
+      "bytes": 1685,
+      "sha256": "ed0a2c9f877fc63619349947919e18945bb0bcb68a75e173323672a165573bdf"
+    },
+    {
       "path": "packages/realiti-headless-resident/cli.cjs",
       "bytes": 4011,
       "sha256": "beb2ee656de51009458439e54ae574dcc3529a5638eed138bad2280dd5c382f2"
@@ -282,8 +737,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/package.json",
-      "bytes": 2921,
-      "sha256": "13fccc6ae185bc3e71ed332de0a428ea5e25e139b2d63e3b2e25cb5527831fd3"
+      "bytes": 2986,
+      "sha256": "e1dfca2c7f8cad5ca827d09b381cd92294c8350f6b5487c19667d95a8e26c339"
     },
     {
       "path": "packages/realiti-headless-resident/peer.cjs",
@@ -317,8 +772,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/body.cjs",
-      "bytes": 4647,
-      "sha256": "7644e0c2cac9f77b662d98e2d1087ab7ca4a8a28b0eea7e7a44032fdffbcdbde"
+      "bytes": 5650,
+      "sha256": "e1d26b496b8587015b47a7dc45b68fb49a6dda94e744e3cd92132dcde8ce28a1"
     },
     {
       "path": "packages/realiti-headless-resident/test/catnip.cjs",
@@ -366,6 +821,11 @@
       "sha256": "f352b4a09bb6b13310e63a0e5c269d6c416c0cf9048110ec6a944fc719536d70"
     },
     {
+      "path": "packages/realiti-headless-resident/test/field-first-restoration.cjs",
+      "bytes": 2452,
+      "sha256": "dab11ac9ab614b33eb64e731b88713570bc6d48dbb52c9586c5727d12fea83e9"
+    },
+    {
       "path": "packages/realiti-headless-resident/test/frontier.cjs",
       "bytes": 5768,
       "sha256": "581c909e849628715982edf51ff581df6a96ea570f54b2db23d250a1feaddb4d"
@@ -392,8 +852,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix-portable.cjs",
-      "bytes": 3145,
-      "sha256": "38a8a4440d74800c1e49f9460b1b3decb1a6d4085c288824ce899c054a2d4476"
+      "bytes": 3175,
+      "sha256": "790bfbd587f43bbfe427c406fa1d226f56db97229d9b00c8c392252d10b63845"
     },
     {
       "path": "packages/realiti-headless-resident/test/matrix.cjs",
@@ -467,8 +927,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/visitor-reports.cjs",
-      "bytes": 14374,
-      "sha256": "0e2ea38d6f4f1ee2edfc8ced706aed098a8750bb22550cd8217256868e86ce7f"
+      "bytes": 16436,
+      "sha256": "f2eee2ecbe213b513bc4725f8e97815606a82126af285693a7c1eb58a6d885fc"
     },
     {
       "path": "packages/realiti-headless-resident/test/wonder.cjs",
@@ -562,8 +1022,8 @@
     },
     {
       "path": "packages/realiti-neuromesh/README.md",
-      "bytes": 17748,
-      "sha256": "23ebb5a114dd285c43d09aa766c932023560fb51a700088bd5f1fc2a724affc1"
+      "bytes": 18183,
+      "sha256": "8eda8b3e05cf99ae328346d92cc3491f976a86d9d6dfc42e1138bfe4e7c23994"
     },
     {
       "path": "packages/realiti-neuromesh/RR_STACK_AUDIT.md",
@@ -752,8 +1212,8 @@
     },
     {
       "path": "packages/realiti-server/README.md",
-      "bytes": 12549,
-      "sha256": "3c66d282056c578e8ce6e7accececc3ee1fc77ca2b7a21aec1c0ae1a4535f1ba"
+      "bytes": 12952,
+      "sha256": "7a7a6b31941173694bf965393820f35f0dffd524d266704f3ed5170aed2d3bc3"
     },
     {
       "path": "packages/realiti-server/docker-compose.yml",
@@ -784,6 +1244,11 @@
       "path": "packages/realiti-server/test/server.cjs",
       "bytes": 14037,
       "sha256": "f66f73a669b23e7cac4d5e5a6fa52850d4646137d581d7a9712507a8214fe155"
+    },
+    {
+      "path": "scripts/server-update-queue.cjs",
+      "bytes": 5628,
+      "sha256": "20cf8f2dac0476109e21912cbe62dd14888b581f60e8a51bfbb3e34f23737320"
     },
     {
       "path": "source/scripts/00.js",
@@ -1187,8 +1652,13 @@
     },
     {
       "path": "source/scripts/58w-body.js",
-      "bytes": 6336,
-      "sha256": "b567a7fc4ed9483bc0488e599976680f1c8d056733991104783291d53f89ffb1"
+      "bytes": 751,
+      "sha256": "0429156dc655cf6d4ea83ba77d94a4388373672f680ba1d5b0eddb08d5ca2e9c"
+    },
+    {
+      "path": "source/scripts/58x-body-field-v2.js",
+      "bytes": 6759,
+      "sha256": "ee5a9352ab6a71cce32780fb6a7ce00633113e75b81a5a1406a2e421ce1cce75"
     },
     {
       "path": "source/scripts/59-continuity.js",
@@ -1212,13 +1682,13 @@
     },
     {
       "path": "source/scripts/63-claude-neural-pass.js",
-      "bytes": 36011,
-      "sha256": "c04ee991f7ba831f9168069337d5311cd4feb521ac9972efd8625cab027f2eb1"
+      "bytes": 36379,
+      "sha256": "8f255b1eefd43cd2d30cf070df97c5828186bfb9e7799f3f590ee579d789e097"
     },
     {
       "path": "source/scripts/64-neuro-restoration.js",
-      "bytes": 18044,
-      "sha256": "0dcf0c9f043a92c1440171f6ec772d5098ac3ec8fea1d67ab69d72113067458c"
+      "bytes": 20363,
+      "sha256": "0fd6ae1453f550953093d0fe6463b0f0a882690dcb45be37c4757431f2056571"
     },
     {
       "path": "source/scripts/65-lingering.js",
@@ -1247,8 +1717,8 @@
     },
     {
       "path": "source/scripts/70-companions-public.js",
-      "bytes": 7665,
-      "sha256": "1dac21ec8d8783ba1da2db70e89294bc72b1b71b5db65eff6fe8ec40455c95a2"
+      "bytes": 8007,
+      "sha256": "80177c4df4dee3950de963048d81718d5fd717a0098610975353e3e14b42fcd8"
     },
     {
       "path": "source/scripts/71-schemas-public.js",
@@ -1277,28 +1747,33 @@
     },
     {
       "path": "source/scripts/77-body-public.js",
-      "bytes": 1752,
-      "sha256": "126e1ca5d918a63cda21bc0fdd68acff0dc4669a12e89a0941469b636476b862"
+      "bytes": 2202,
+      "sha256": "ebb2e9881b0763931687e31560bfdc57727459da280ab09a0fd5b873c0c9af93"
     },
     {
       "path": "source/scripts/98-soma-bridge.js",
-      "bytes": 6942,
-      "sha256": "c5a2ae9a9bdd242ec9d041bc4bd5f524ab7cebd89b34d92e444f3364cf227a49"
+      "bytes": 7714,
+      "sha256": "16fa03b0968056321df45bc30cb10cfba0d9a3ea9c745470d1025f67b537c80f"
     },
     {
       "path": "source/scripts/99-door-final.js",
-      "bytes": 2941,
-      "sha256": "8349217c0648501be3e98268d9fcd8bf6d0016c62bf3cd0926eda555a691da93"
+      "bytes": 12707,
+      "sha256": "00f8fe1db9c0d12172f3d4033ad4b8bb80cc36a4ae959d1432e6f7fe5821b8d6"
     },
     {
       "path": "source/template.html",
-      "bytes": 10531,
-      "sha256": "88364927f472a6efc4e2736533f7a9f52c8875248152cf5d0fc2b26cf5ca5c25"
+      "bytes": 10583,
+      "sha256": "cbe7f0516ce780ea37e13ffebb770b4dd05a651eebb028c334ee1c1aebdb62dc"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
       "bytes": 11981,
       "sha256": "df2d49fbd8f51909944ea4f115c1c4d81d206493f39fa5b88f27e67f32ea84f0"
+    },
+    {
+      "path": "tests/server-update-queue.cjs",
+      "bytes": 3311,
+      "sha256": "73ad08715efb933857d930ee0e037d66f1424e2960e394336baa8431b7cdc49b"
     }
   ]
 }

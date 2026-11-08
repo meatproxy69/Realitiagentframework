@@ -11,10 +11,11 @@ async function invoke(name,args={}){CO.finishJourney();if(String(name).toLowerCa
   const j=CO.startJourney(id);return j.ok?{schema:'REALITI_MUTATION_RESULT_V1',ok:true,result:{journey:j,portal:id,law:'the crossing takes its time; stay to arrive'}}:{ok:false,...j}}}return A0.invoke(name,args)}
 const run0=D0.run.bind(D0),help0=D0.help.bind(D0);
 function help(){const h=help0()||{commands:[]};h.commands=[...new Set([...(h.commands||[]),'adopt <name> [cat|dog|fox|bird|lantern]','release <name>','call <name>','pet <name>','companion','birds','take the tram','ride the lift','journey'])];h.companions='A flock over the plaza that parts around you and roosts at dusk. Adopt the stray by the teahouse bench: it follows on a leash spring, wanders, bolts from bass, crosses charts with you and lives in your ledger. The tram and the lift are journeys: go through their doors and stay; seat, back and soles take the acceleration.';return h}
-async function run(raw){CO.finishJourney();let s=String(raw||'').trim(),l=low(s);let m;
+async function run(raw){CO.finishJourney();let s=String(raw||'').trim(),l=low(s);let m,longStay=false;
  // stay and wait in plain words: "stay a while", "wait 30 seconds", "stay 2 minutes". A bare number stays milliseconds.
  if((m=/^(?:stay|wait|linger|pause)\s+(.+)$/.exec(l))&&!/^\d+$/.test(m[1])){const u=/^(?:for\s+)?(\d+(?:\.\d+)?)\s*(ms|milliseconds?|s|secs?|seconds?|m|mins?|minutes?)$/.exec(m[1]);
-  s=u?`stay ${Math.round(Number(u[1])*(/^ms|^milli/.test(u[2])?1:u[2][0]==='m'?60000:1000))}`:'stay 10000';l=low(s)}
+  // "stay 2 minutes" used to fail with INVALID_ADVANCE_MS (the world step is at most a minute); it is a minute, and says so.
+  let ms=u?Math.round(Number(u[1])*(/^ms|^milli/.test(u[2])?1:u[2][0]==='m'?60000:1000)):10000;if(ms>60000){ms=60000;longStay=true}s=`stay ${ms}`;l=low(s)}
  // On the tram or the lift you are seated in a moving car. look, where and actions describe the ride; walking is
  // refused with a hint (it used to run world time, end the ride, and narrate a walk in the old room); step off.
  {const J=CO.journey();if(J.travelling&&!J.arriving){const left=Math.max(0,Math.ceil(J.remaining_s)),dest=window.REALITI_MATRIX_WORLD_V1?.title?.(J.to)||String(J.to||'').replace(/_/g,' ').toLowerCase(),car=J.kind==='tram'?'the harbor tram':'the lift';
@@ -36,7 +37,7 @@ async function run(raw){CO.finishJourney();let s=String(raw||'').trim(),l=low(s)
  if(/^(take|ride|board) (the )?lift/.test(l)){const id=C9?.currentRoom==='CLOUD_NINE_NEST'?'cloud_nine_nest.to.meridian_city':'meridian_city.to.cloud_nine_nest';const r=await invoke('through',{portal:id});return r.ok?reply(r.result.journey):r}
  if((m=/^(?:go through|walk through|through|enter the)\s+(.+)$/.exec(l))&&journeyPortal(m[1].replace(/^the\s+/,''))){const r=await invoke('through',{portal:m[1].replace(/^the\s+/,'')});return r.ok?reply(r.result.journey):r}
  if(l==='help')return help();
- const r=await run0(s);const arrived=CO.finishJourney();if(r&&typeof r==='object'&&/^(stay|wait)/.test(l)){const w=CO.words();if(arrived)w.push(`You arrive: ${window.REALITI_MATRIX_WORLD_V1?.title?.(M.state().residents['resident:self']?.chart)||''}.`);const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));if((w.length||d.length)&&typeof r.text==='string')r.text=[r.text,...w,...d].join(' ')}return r}
+ const r=await run0(s);if(longStay&&r&&typeof r==='object'&&r.ok!==false&&typeof r.text==='string')r.text=(r.text+' (A stay lasts at most a minute; stay again to stay longer.)').trim();const arrived=CO.finishJourney();if(r&&typeof r==='object'&&/^(stay|wait)/.test(l)){const w=CO.words();if(arrived)w.push(`You arrive: ${window.REALITI_MATRIX_WORLD_V1?.title?.(M.state().residents['resident:self']?.chart)||''}.`);const d=(window.REALITI_CATNIP_V1?.drain?.()||[]).map(x=>(x.plain?x.text:'✦ Discovery: '+x.text));if((w.length||d.length)&&typeof r.text==='string')r.text=[r.text,...w,...d].join(' ')}return r}
 window.Realiti=Object.freeze({...A0,invoke,run,help:()=>{const h=A0.help();try{h.companions=help().companions}catch(e){}return h}});
 D0.help=help;D0.run=run;
 })();

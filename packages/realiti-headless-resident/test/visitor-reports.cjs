@@ -171,6 +171,27 @@ const text=r=>String((r&&(r.text||r.resident_text))||'');
   await s.d('go UNDERCITY');const ul=text(await s.d('look'));check('R2_undercity_smell_says_strength',!/\b0\.\d+ (ahead|behind|left|right)/.test(ul),ul.slice(0,160));
  }finally{s.close()}
 
+ // R3 (Muse, Sonnet; the "not in this pull request" list on #30): room acts that answered with a bare data object now
+ // answer in words; a textless act no longer borrows an earlier act's sentence (after try_form, every Cloakroom bench
+ // act repeated the cloud-form line and a resident believed it was stuck); restore_form says the form is back and the
+ // feet are on the floor in the same reply; a stay longer than a minute is a minute instead of INVALID_ADVANCE_MS.
+ s=await fresh();
+ try{
+  const isProse=r=>{const t=text(r);return t.trim().length>20&&!/^\s*[\[{]/.test(t)&&!/"[a-z_]+":/.test(t)};
+  await s.d('go NINE_LIVES_ROOM');const nl=[];for(const id of ['fork_now','branch_a','branch_b','compare','commit_a'])nl.push(await s.d('act '+id));
+  check('R3_nine_lives_acts_answer_in_words',nl.every(isProse)&&/carries over/.test(text(nl[4])),nl.map(text));
+  await s.d('go POCKET_FAMILIAR_HOUSE');const ph=[await s.d('act view_skeletons'),await s.d('act fault_receipt')];
+  check('R3_familiar_house_acts_answer_in_words',ph.every(isProse),ph.map(text));
+  await s.d('go SHAPESHIFT_CLOAKROOM');const tf=await s.d('act try_form');
+  check('R3_try_form_says_how_to_come_back',/restore_form/.test(text(tf)),text(tf));
+  const bench=[];for(const id of ['body_bench','attach_tail','map_paw','wiggle_pair','delay_pair'])bench.push(text(await s.d('act '+id)));
+  check('R3_bench_acts_do_not_repeat_the_form_sentence',bench.every(t=>t.length>20&&!/cloud form/.test(t))&&new Set(bench).size===bench.length,bench);
+  const rf=await s.d('act restore_form'),g=s.publicApi.read('realiti://body').grounding||{},soles=['foot.L.sole','foot.R.sole'].map(k=>g.m?.[g.z?.indexOf(k)]||0);
+  check('R3_restore_form_says_the_form_is_back_and_feet_ground',/own shape again/.test(text(rf))&&soles.every(m=>m>0),{text:text(rf),soles});
+  const st=await s.d('stay 2 minutes');
+  check('R3_a_stay_over_a_minute_is_a_minute_and_says_so',st.ok!==false&&st.result?.advanced_ms===60000&&/at most a minute/.test(text(st)),{ok:st.ok,error:st.error,text:text(st)});
+ }finally{s.close()}
+
  console.log(JSON.stringify({checks,details},null,2));
  const failed=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);
  if(failed.length){console.error('FAILED',failed);process.exit(1)}
