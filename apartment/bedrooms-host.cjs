@@ -64,8 +64,10 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  }
  function apply(entry){
   const s=ensure(),b=bridge(entry);
-  if(!b?.applyShared||!b?.preview||!b?.previewRemove)
+  if(!b?.applyShared||!b?.preview||!b?.previewRemove||!b?.auditShared)
    throw Error('BEDROOM_NATIVE_BRIDGE_MISSING');
+  const audited=b.auditShared(cp(s));
+  if(!audited.ok)throw Error('BEDROOM_UNSAFE_HOST_GEOMETRY:'+audited.item+':'+audited.reason);
   return b.applyShared(cp(s));
  }
  function view(){

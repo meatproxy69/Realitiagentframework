@@ -42,7 +42,7 @@ const bounded=(r,kind,x,y)=>{
  return {ok:true,x:+x.toFixed(2),y:+y.toFixed(2)};
 };
 const overlaps=(a,b,pad=0)=>Math.abs(a.x-b.x)<a.hx+b.hx+pad&&Math.abs(a.y-b.y)<a.hy+b.hy+pad;
-function preview(kind,room,x,y,except=null){
+function preview(kind,room,x,y,except=null,ignoreResidents=false){
  const q=bounded(room,kind,Number(x),Number(y));
  if(!q.ok)return q;
  if(!inHome())return error('APARTMENT_HOME_ONLY');
@@ -63,7 +63,7 @@ function preview(kind,room,x,y,except=null){
   if(overlaps(candidate,{x:e.pose.position[0],y:e.pose.position[1],hx:half[0],hy:half[1]},.04))
    return error('DECOR_MATRIX_COLLISION',{obstacle:e.id});
  }
- for(const r of Object.values(M.state().residents||{})){
+ if(!ignoreResidents)for(const r of Object.values(M.state().residents||{})){
   if(!r||r.chart!==HOME)continue;
   const radius=Math.max(.1,Math.min(.8,Number(r.shape?.radius)||.35));
   if(overlaps(candidate,{x:r.pose.position[0],y:r.pose.position[1],hx:radius,hy:radius},.12))
@@ -106,6 +106,18 @@ function checked(s){
   throw Error('BEDROOM_CAPACITY_EXCEEDED');
  return s;
 }
+function auditShared(snapshot){
+ checked(snapshot);
+ // Check currently known native world geometry. This catches a valid-hash
+ // checkpoint with an illegal prop location; current occupants are excluded
+ // because this is rehydration, not an attempted new placement.
+ for(const row of snapshot.items){
+  const result=preview(row.kind,row.room,row.x,row.y,PREFIX+row.id,true);
+  if(!result.ok)return error('BEDROOM_PERSISTED_MATRIX_CONFLICT',{
+   item:row.id,reason:result.error,obstacle:result.obstacle||null});
+ }
+ return {ok:true,verified_items:snapshot.items.length};
+}
 function entityPayload(row,s){
  const def=SPEC.items[row.kind],configurationName=s.rooms[row.room].configuration;
  const cfg=SPEC.configurations[configurationName];
@@ -119,7 +131,10 @@ function entityPayload(row,s){
   affordances:def.affordances.slice()};
 }
 function applyShared(snapshot){
- checked(snapshot);const s=cp(snapshot),desired=new Set(s.items.map(x=>PREFIX+x.id));
+ checked(snapshot);
+ const audit=auditShared(snapshot);
+ if(!audit.ok)throw Error(audit.error+':'+audit.item+':'+audit.reason);
+ const s=cp(snapshot),desired=new Set(s.items.map(x=>PREFIX+x.id));
  let changed=0;
  for(const [id,e] of Object.entries(M.entities())){
   if(id.startsWith(PREFIX)&&e.chart===HOME&&!desired.has(id)){
@@ -159,7 +174,10 @@ function restore(){
   }catch(e){warnings.push('BEDROOM_STORAGE_REJECTED');solo=defaultState()}
  }
  if(role==='guest')solo=defaultState();
- applyShared(solo);
+ try{applyShared(solo)}catch(e){
+  warnings.push('BEDROOM_GEOMETRY_REJECTED');solo=defaultState();
+  applyShared(solo);
+ }
 }
 restore();
 function view(){
@@ -317,6 +335,6 @@ function handle(raw){
  return soloAction(s);
 }
 window.REALITI_APARTMENT_BEDROOMS_V1=Object.freeze({
- spec:()=>cp(SPEC),view,catalog,preview,previewRemove,applyShared,handle,
+ spec:()=>cp(SPEC),view,catalog,preview,previewRemove,auditShared,applyShared,handle,
  law:'Ownership gates shared decoration. Host validates physical changes; source item placements never mint touch, consent, or private emotion.'});
 })();
