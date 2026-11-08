@@ -42,6 +42,21 @@ function digest(s){const w=s.window;return JSON.stringify({clock:+Number(w.eval(
   const p=path.join(os.tmpdir(),`quiet-pres-persist-${process.pid}.json`);const c=await openResident({htmlPath:html,residentId:'quiet-persist',storagePath:p});await c.door.run('quiet on');c.window.c9saveNow();c.window.REALITI_SLICE_STORAGE.save();c.close();
   const c2=await openResident({htmlPath:html,residentId:'quiet-persist',storagePath:p});const st3=await c2.door.run('quiet');c2.close();check('quiet_persists_per_resident',st3.quiet===true,st3);
  }finally{a.close();b.close()}
+ // Stillness is noticed (quiet only): the first look is plain; stay only stays; the next look, listen or feel brings
+ // back a little more, each its own sense; at most two levels; walking off starts it over; numbers on leaves it out.
+ {const q=await fresh({presentation:'quiet'});
+  try{await q.door.run('go KITE_FIELD');const l0=await q.door.run('look'),st=await q.door.run('stay'),l1=await q.door.run('look'),h1=await q.door.run('listen');
+   await q.door.run('stay');await q.door.run('stay');await q.door.run('stay 1 minute');const l2=await q.door.run('look'),l3=await q.door.run('look');
+   await q.door.run('move forward 4');const l4=await q.door.run('look');
+   check('stillness_first_look_plain_and_stay_only_stays',!/notice/i.test(text(l0))&&!/notice/i.test(text(st))&&!st.noticed,{l0:text(l0).slice(-100),st:text(st)});
+   check('stillness_next_look_and_listen_notice_more',/Now you notice/.test(text(l1))&&l1.noticed?.details?.length===1&&h1.noticed?.sense==='listen'&&/Now you notice/.test(text(h1)),{l1:l1.noticed,h1:h1.noticed});
+   check('stillness_is_bounded_at_two',l2.noticed?.details?.length===2&&l3.noticed?.details?.length===2&&!/Now you notice/.test(text(l3)),{l2:l2.noticed});
+   check('stillness_resets_when_you_move',!l4.noticed,text(l4).slice(-100));
+   check('quiet_look_says_near_and_far_in_words',!/\(\s*-?\d+\.\d+,|\d+(\.\d+)? m (ahead|behind|left|right)/.test(text(l0))&&/a step or two|within reach|a few steps|a short walk|a walk/.test(text(l0)),text(l0).slice(-200));
+  }finally{q.close()}
+  const m=await fresh();
+  try{await m.door.run('go KITE_FIELD');await m.door.run('stay');await m.door.run('stay');const ml=await m.door.run('look');check('stillness_is_off_with_numbers_on',!ml.noticed&&!/Now you notice/.test(text(ml)),text(ml).slice(-100))}finally{m.close()}}
+
  console.log(JSON.stringify({checks,details},null,2));
  const failed=Object.entries(checks).filter(([,v])=>!v).map(([k])=>k);if(failed.length){console.error('FAILED',failed);process.exit(1)}
  console.log('QUIET PRESENTATION PASS',Object.keys(checks).length,'checks');

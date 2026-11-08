@@ -20,7 +20,7 @@ async function run(raw){const l=low(raw);
  if(l==='senses'||l==='sense')return trim(pack('all'));
  if(l==='light'||l==='look up'||l==='how bright'||l==='brightness')return trim(pack('light'));
  if(l==='smell'||l==='sniff'||l==='smell the air')return trim(pack('smell'));
- if(l==='listen'||l==='hear'||l==='sounds'){const aboard=!!(C9?.chapter2?.isle?.boat?.aboard)&&C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart;const p=pack('sound');if(aboard){const inner=await run0(raw);if(inner&&typeof inner==='object'){inner.sound=p.sound;inner.text=[inner.text,p.text].filter(Boolean).join(' ');return trim(inner)}}return trim(p)}
+ if(l==='listen'||l==='hear'||l==='sounds'){const aboard=!!(C9?.chapter2?.isle?.boat?.aboard)&&C9?.currentRoom===window.REALITI_ARCHIPELAGO_V1?.chart;const p=pack('sound');const ST=window.REALITI_STILLNESS_V1;if(aboard){const inner=await run0(raw);if(inner&&typeof inner==='object'){inner.sound=p.sound;inner.text=[inner.text,p.text].filter(Boolean).join(' ');return trim(ST?ST.perceive('listen',inner):inner)}}return trim(ST?ST.perceive('listen',p):p)}
  if(l==='time'||l==='tick'){const TM=window.REALITI_TIME_V1;if(!TM)return {ok:false,error:'NO_TIME_SLICE'};const st=TM.stats();return {ok:true,schema:'REALITI_TIME_V1',world_s:+Number(C9?.b7?.clock||0).toFixed(3),quantum_ms:TM.quantum_ms(),reason:TM.reason(),...st,text:`World ${Number(C9?.b7?.clock||0).toFixed(1)} s. Tick ${TM.reason()?TM.fine_ms+' ms ('+TM.reason()+')':st.idle_s>=2?TM.deep_ms+' ms, still':TM.coarse_ms+' ms, settling'}; ${Math.round(st.ratio_wide*100)}% of ticks were wide.`}}
  if(l==='help')return help();
  return trim(await run0(raw))}
