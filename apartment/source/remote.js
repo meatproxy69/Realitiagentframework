@@ -86,7 +86,7 @@ function menu(){
   memory:['remote memory help','remote memory status','remote memory remember <text>',
    'remote memory recall <query>','remote memory recent'],
   utility:['remote status','remote save','remote off']},
-  note:'Start with remote activate. A carried remote is a Matrix object, not an extra room or a backdoor into another agent.'};
+  note:'Your pocket remote is awake. Choose a page when you need it, or use remote off to put it away. It grants no additional household authority.'};
 }
 function help(){
  const old=originalHelp()||{};
