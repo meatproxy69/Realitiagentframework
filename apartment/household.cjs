@@ -284,6 +284,8 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
       return refusal('REMOTE_ASLEEP');
      const rev=sceneCmd[4]==null?null:Number(sceneCmd[4]);
      if(rev!==null&&!Number.isSafeInteger(rev))return refusal('INVALID_SCENE_REVISION');
+     const ownerCheck=bedrooms.protectSharedFurniture(entry,sceneCmd[1].toLowerCase(),Number(sceneCmd[2]),Number(sceneCmd[3]));
+     if(!ownerCheck.ok)return ownerCheck;
      const out=scene.move(entry,sceneCmd[1].toLowerCase(),Number(sceneCmd[2]),Number(sceneCmd[3]),rev);
      if(out.ok)broadcast();
      return out;

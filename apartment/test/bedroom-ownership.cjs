@@ -103,6 +103,12 @@ async function household(){
   assert.equal((await alice.run('remote bedroom claim studio')).error,'BEDROOM_ALREADY_OWNED');
   assert.equal((await alice.run('remote bedroom configure library nightglass')).error,'BEDROOM_NOT_OWNED');
   assert.equal((await alice.run('remote bedroom configure quilt botanical')).ok,true);
+  assert.equal((await alice.run('remote furniture move sofa 0 3')).error,
+   'SHARED_FURNITURE_BEDROOM_OWNER_ONLY',
+   'a base sofa in Cora-owned Canopy cannot be removed by Alice');
+  assert.equal((await alice.run('remote furniture move desk -2.5 4.9')).error,
+   'SHARED_FURNITURE_BEDROOM_OWNER_ONLY',
+   'a nonowner may not park a shared desk in Bob-owned Library');
   assert.equal((await bob.run('remote bedroom configure library writers')).ok,true);
   assert.equal((await cora.run('remote bedroom configure canopy nightglass')).ok,true);
   assert.equal((await dina.run('remote bedroom configure studio music')).ok,true);

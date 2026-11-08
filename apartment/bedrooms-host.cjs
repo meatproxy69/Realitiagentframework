@@ -107,6 +107,29 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    revision:next.revision,source:'TRUSTED_HOST_VERIFIED_MATRIX',
    contact_minted:false,owner_assigned_by_world:false};
  }
+ // Ownership protects the footprint of *existing shared furniture* too.
+ // Moving a base sofa/desk out of another resident's claimed zone, or moving
+ // it into that zone, must not bypass the bedroom item permission checks.
+ function protectSharedFurniture(actor,name,x,y){
+  const state=ensure(),f=actor.session.window.REALITI_APARTMENT_FURNITURE_V1;
+  const id=f?.view()?.fixtures?.[name]?.id;
+  const entity=id&&actor.session.window.REALITI_MATRIX_V1.entities()[id];
+  if(!entity)return fail('SHARED_SCENE_UNKNOWN_FIXTURE');
+  const half=entity.shape?.kind==='BOX'?entity.shape.halfExtents:
+   entity.shape?.kind==='SPHERE'?[entity.shape.radius,entity.shape.radius]:null;
+  if(!half)return fail('SHARED_SCENE_UNKNOWN_FOOTPRINT');
+  const intersects=(cx,cy,b)=>cx+half[0]>b[0]&&cx-half[0]<b[1]&&
+    cy+half[1]>b[2]&&cy-half[1]<b[3];
+  for(const room of ROOMS){
+   const owner=state.rooms[room].owner;
+   if(owner===null||owner===actor.id)continue;
+   const box=SPEC.rooms[room].bounds;
+   if(intersects(entity.pose.position[0],entity.pose.position[1],box)||
+      intersects(x,y,box))
+    return fail('SHARED_FURNITURE_BEDROOM_OWNER_ONLY',{bedroom:room,owner});
+  }
+  return {ok:true};
+ }
  function handle(actor,raw){
   const cmd=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
   if(cmd==='bedrooms'||cmd==='bedroom status'||cmd==='decor list')return view();
@@ -181,6 +204,6 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   const saved=changed(current,next);
   return saved.ok?{...saved,...operation}:saved;
  }
- return Object.freeze({ensure,validate,apply,view,catalog,handle});
+ return Object.freeze({ensure,validate,apply,view,catalog,handle,protectSharedFurniture});
 }
 module.exports={createBedroomManager,validateBedroomCheckpoint:validate};
