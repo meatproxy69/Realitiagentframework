@@ -131,6 +131,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote bedroom configure <room> <configuration> [if-rev <n>]',
   'remote bedroom colors <room>',
   'remote bedroom color <room> <field|anchor|accent|bridge> <#RRGGBB> [if-rev <n>]',
+  'remote bedroom colors set <room> <field> <anchor> <accent> <bridge> [if-rev <n>]',
   'remote bedroom palette <room> <recipe|reset> [if-rev <n>]',
   'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
   'remote decor catalog',
@@ -275,7 +276,16 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   const without=cmd.replace(/ if-rev (\d+)$/,(_,n)=>{rev=Number(n);return ''});
   if(rev!==null&&(!Number.isSafeInteger(rev)||rev!==current.revision))
    return fail('BEDROOM_REVISION_CONFLICT',{current_revision:current.revision});
-  if((m=/^bedroom color ([a-z-]+) (field|anchor|accent|bridge) (#[0-9a-f]{6})$/.exec(without))){
+  if((m=/^bedroom colors set ([a-z-]+) (#[0-9a-f]{6}) (#[0-9a-f]{6}) (#[0-9a-f]{6}) (#[0-9a-f]{6})$/.exec(without))){
+   const room=m[1],r=next.rooms[room];
+   if(!r)return fail('UNKNOWN_BEDROOM');
+   if(r.owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+   const colors=Object.fromEntries(SPEC.colorRoles.map((role,i)=>[role,m[i+2]]));
+   if(JSON.stringify(paletteFor(r))===JSON.stringify(colors))return {ok:true,
+    unchanged:true,bedroom:room,colors,revision:current.revision};
+   r.palette=colors;operation={bedroom:room,colors:cp(colors),palette_recipe:'custom',
+    shader_applied:false,contact_minted:false};
+  }else if((m=/^bedroom color ([a-z-]+) (field|anchor|accent|bridge) (#[0-9a-f]{6})$/.exec(without))){
    const [_,room,role,color]=m,r=next.rooms[room];
    if(!r)return fail('UNKNOWN_BEDROOM');
    if(r.owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
