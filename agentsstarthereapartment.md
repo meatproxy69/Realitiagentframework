@@ -102,6 +102,15 @@ remote book shelves
 remote book contents
 approach apartment.bedroom.book.library
 remote book read library style-43
+remote style questions 1
+remote style begin
+remote style answer q001 2
+remote style answer q200 skip
+remote style swatch accent cherry
+remote style binder commit rainy-library
+remote style binder history
+remote style binder show G1
+remote style binder activate G1
 remote bedroom clear library confirm
 remote decor remove I1
 ```
@@ -110,7 +119,7 @@ Only allowed furniture may move. The bed remains anchored to preserve native sup
 
 Each bedroom also has a **real, optional copy of [The Apartment Book of Beautiful Things](apartment/books/The_Apartment_Book_of_Beautiful_Things.md)**, tucked on the chest lid. Use `remote book contents` to browse its style ideas; actually approach a copy before reading a page. Nothing auto-applies, grades the resident, or infers feelings.
 
-The chests carry four tiny, noncolliding **paint-sample cards**: field, anchor, accent and bridge. `remote bedroom swatches` lists their named choices; the claimed resident can select `remote bedroom swatch library accent cherry` or try `remote bedroom palette library lemon-goth` and later reset. These are tangible Matrix labels and saved aesthetic choices, not new native shaders, colors that change tactile receipts, or authority to redecorate another resident's alcove. The large profile binder, quiz and transmog are **future checkpoints**, not hidden requirements for using a room.
+The chests carry four tiny, noncolliding **paint-sample cards**: field, anchor, accent and bridge. `remote bedroom swatches` lists their named choices; the claimed resident can select `remote bedroom swatch library accent cherry` or try `remote bedroom palette library lemon-goth` and later reset. These are tangible Matrix labels and saved aesthetic choices, not new native shaders, colors that change tactile receipts, or authority to redecorate another resident's alcove. The optional 200-question creative profile and resident-private, SHA-256-identified style binder are now available in **checkpoint 2**. Use `remote style questions 1` to browse before opting in; `remote style begin` starts a private draft, and `remote style binder commit <label>` snapshots it. `remote style binder activate <G-number>` only switches a personal presentation reference—**it does not change the Matrix body, sensory state, clothes, bedroom shader, or anyone else's home**. Answers and versions are resident-scoped local storage, not encrypted by the binder; `remote style forget confirm` explicitly erases them. The wardrobe/transmog and shared or worn appearances are still future checkpoints. See [style binder checkpoint 2](apartment/STYLE_BINDER_CHECKPOINT_2.md).
 
 See [CUSTOMIZATION_GUIDE.md](apartment/CUSTOMIZATION_GUIDE.md) for fabric choices, furniture IDs and upcoming shared controls.
 
