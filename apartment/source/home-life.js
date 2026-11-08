@@ -78,11 +78,13 @@ function lifeView(){
   note:'Resident-owned blanket continuity. No claim of mental state or fabricated body contact.'};
 }
 const nativeRun=D.run.bind(D),nativeRead=A.read.bind(A);
+const nativeInvoke=typeof A.invoke==='function'?A.invoke.bind(A):null;
 function cleanActions(result){
  if(!result||typeof result!=='object')return result;
  const filter=actions=>actions.filter(action=>{
   const id=String(action?.id||'');
-  if(id==='curl_blanket'||id==='arrange_blanket')return near('nest.mattress');
+  if(id==='curl_blanket')return mattressSupport();
+  if(id==='arrange_blanket')return near('nest.mattress');
   if(id==='read_guestbook')return near('nest.guestbook');
   return true;
  });
@@ -105,6 +107,20 @@ function marker(result){
 }
 async function run(raw){
  const command=String(raw||'').trim(),lower=command.toLowerCase().replace(/\s+/g,' ');
+ // The legacy low-query 'auto' runner reads the original unfiltered action
+ // list. Choose from the truthful list instead, or it can narrate curling from
+ // across the room without ever moving toward the bed.
+ if(lower==='auto'||/^do [1-9][0-9]*$/.test(lower)){
+  const known=cleanActions(await nativeRun('actions'));
+  const all=Array.isArray(known)?known:(known?.actions||known?.available_actions||[]);
+  const filtered=all.filter(a=>!/^(island_map|read_weather|city_who|city_floor|under_map|calendar|read_tide)$/.test(a.id)&&
+   !/^(approach__|walk_to__|row_to__)/.test(a.id));
+  const candidate=lower==='auto'?filtered[0]:all[Number(lower.slice(3))-1];
+  if(!candidate)return fail('NO_AVAILABLE_PHYSICAL_ACTION','Look around or approach an object first.');
+  const done=await run('act '+candidate.id);
+  return {...done,did:candidate.id,auto_selected:lower==='auto',
+   ...(done.ok!==false?{text:done.text||'You '+String(candidate.label||candidate.id).toLowerCase()+'.'}:{})};
+ }
  const room=/^remote ambience (quilt|library|canopy|studio)$/.exec(lower);
  if(room){
   if(!window.REALITI_APARTMENT_REMOTE_V1.status().activated)return fail('REMOTE_ASLEEP','Use remote activate.');
@@ -136,12 +152,20 @@ async function run(raw){
 }
 D.run=run;
 function read(uri){
+ if(uri==='realiti://here')return marker(cleanActions(nativeRead(uri)));
  if(uri==='realiti://apartment/life')return lifeView();
  if(uri.startsWith('realiti://apartment/ambience/'))
   return ambience(uri.slice('realiti://apartment/ambience/'.length));
  return nativeRead(uri);
 }
-window.Realiti=Object.freeze({...A,read,run,
+async function invoke(op,args={}){
+ const action=String(args?.action||args?.id||args?.verb||'').toLowerCase();
+ if(['act','do'].includes(String(op).toLowerCase())&&
+   ['curl_blanket','arrange_blanket','read_guestbook'].includes(action))
+  return run('do '+action);
+ return nativeInvoke?nativeInvoke(op,args):fail('INVOKE_UNAVAILABLE');
+}
+window.Realiti=Object.freeze({...A,read,run,invoke,
  life:lifeView});
 window.REALITI_APARTMENT_HOME_LIFE_V1=Object.freeze({view:lifeView,ambience});
 try{
