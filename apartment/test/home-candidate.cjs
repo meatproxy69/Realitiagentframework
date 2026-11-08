@@ -39,6 +39,8 @@ function clean(w){
  assert.ok(w.Realiti.read('realiti://soma/harness'));
  const topology=w.Realiti.read('realiti://apartment/topology');
  assert.equal(topology.home_first_candidate,true);
+ assert.equal(topology.candidate_version,'4.3.0-beta.1');
+ assert.equal(topology.public_beta_version,'4.0.0-beta.1');
  assert.equal(topology.native_single_chart_initialization,true);
  assert.equal(topology.initial_charts_at_boot,1);
  assert.equal(topology.retired_at_boot,0);
@@ -57,7 +59,8 @@ function clean(w){
  assert.equal(manifest.expected_legacy_station_count,0);
  assert.equal(manifest.native_single_chart_initialization,true);
  assert.equal(manifest.no_post_startup_pruning_required,true);
- assert.equal(manifest.version,'4.0.0-beta.1');
+ assert.equal(manifest.version,'4.3.0-beta.1');
+ assert.equal(manifest.public_distribution,'SOURCE_BUILD_ONLY_UNRELEASED_CANDIDATE');
  assert.equal(manifest.bedroom_layout,'SOUTHWEST_QUIET_ALCOVE_V4');
  assert.equal(manifest.layout_checkpoint_migration_approved,false);
  const originalWorld=fs.readFileSync(path.resolve(__dirname,'../../source/scripts/58d-matrix-world.js'));
