@@ -574,7 +574,7 @@ function handle(raw){
    remaining:SPEC.limits.maxChestPerRoom-stored.length,
    stored:cp(stored),available:cp(available),
    hint:available.length&&stored.length<SPEC.limits.maxChestPerRoom?
-    'You can put away '+available[0].label+' ('+available[0].id+
+    'You can put away a '+available[0].label+' ('+available[0].id+
     ') using remote chest stow '+available[0].id+'.':
     'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.',
    read_only:true,contact_minted:false};
