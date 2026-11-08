@@ -1,6 +1,8 @@
-# REALITI 4.0 — The Apartment (Public Beta)
+# REALITI Apartment 4.3 — HOME source candidate
 
 REALITI Apartment inherits the complete original Relax embodiment, sensory and safety systems without changing canonical `source/scripts/**`, `RealitiRELAX.html` or `AGENT_START_HERE.md`. **There are two independent derived outputs:** `RealitiApartment.html` is the **23-chart developer migration reference** with the historical 22-station test gallery. `RealitiApartmentHomeCandidate.html` is the **one-chart, no-gallery, home-first alpha** with the owner's selected household features. The former's historical-room parity audit does **not** control the latter's release scope. Both remain separately hash-pinned and the home candidate is explicitly **not release-approved**.
+
+**Current source candidate:** `4.3.0-beta.1` (one-chart HOME, `release_approved:false`). The existing `4.0.0-beta.1` GitHub prerelease is the last downloadable public version; the repository version bump does not publish a new tag or approve external deployment.
 
 **Original agent entry first:** [AGENT_START_HERE.md](../AGENT_START_HERE.md) (unchanged)  
 **Apartment-specific entry second:** [agentsstarthereapartment.md](../agentsstarthereapartment.md)  
@@ -9,7 +11,13 @@ REALITI Apartment inherits the complete original Relax embodiment, sensory and s
 **Customization:** [CUSTOMIZATION_GUIDE.md](CUSTOMIZATION_GUIDE.md)  
 **Migration:** [ROOM_MIGRATION_PLAN.md](ROOM_MIGRATION_PLAN.md) and [23-room inventory](room-migration.json)
 
-## What's new for the 4.0 beta
+## What's new for the 4.3 HOME candidate
+
+The carried remote now supports `remote decor suggest <room> <kind>` (read-only safe footprints), `remote decor auto-place <room> <kind>` (one host-verified atomic placement), and `remote decor nudge <item> <dx> <dy>` (relative moves with stable IDs, ownership and occupied-support checks). These extend the existing bedroom claims, five room styles, 15 placeable object types, inspect/move/clear controls and persisted-collision hardening.
+
+The 4.3 source candidate is **not a separately published release**. Use newly isolated test identities; do not silently migrate older residents or declare production network authentication ready. See [4.3 candidate changes](V4_3_CHANGELOG.md).
+
+## What's new for the published 4.0 beta
 
 The quilted mattress **and** source chart spawn now belong to a southwest sleeping alcove, with an actual headboard behind the bed. The desk and chair move to the west wall; the centre is circulation instead of a bedroom squeezed between different activities. The sofa/rug, book-and-cushion reading nook, warm lamp and rain window, tea shelf, original wardrobe and single native companion remain physically grounded and reachable. No new props or scientific room attractions were added.
 
