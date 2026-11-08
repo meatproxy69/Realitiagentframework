@@ -52,7 +52,7 @@ async function command(scene,handle,action){
  catch(e){return record(scene,action,{ok:false,error:'EXCEPTION',hint:String(e.message||e)})}
 }
 async function resident(scene,name,storePath){
- const s=await openResident({htmlPath,validationPath,residentId:name,storagePath:storePath,
+ const s=await openResident({htmlPath:html,validationPath,residentId:name,storagePath:storePath,
   presentation:'quiet',walkBudgetMs:45000});
  record(scene,'INTEGRITY',s.integrity);
  record(scene,'BOOT',s.ready);
@@ -112,7 +112,7 @@ async function resident(scene,name,storePath){
    'remote style profile','remote book shelves','remote bedrooms',
    'remote pet status','remote off','save'])await command('FRESH-RESIDENT',alice.door,c);
   alice.close();alice=null;
-  room=await createHousehold({dir:path.join(root,'shared-home'),htmlPath,validationPath});
+  room=await createHousehold({dir:path.join(root,'shared-home'),htmlPath:html,validationPath});
   const roe=await room.joinResident('roe'),sol=await room.joinResident('sol');
   for(const c of ['remote activate','remote appearance gallery',
    'remote appearance equip indie','remote appearance save paper-star',
