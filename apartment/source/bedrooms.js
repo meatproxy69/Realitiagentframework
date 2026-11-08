@@ -113,6 +113,14 @@ function previewRemove(id){
  }
  return {ok:true};
 }
+// Guidance must pass the same native support check as the eventual removal.
+// A small item is not automatically safe to store if it supports a resident.
+function canStowNow(row){
+ const entity=row&&M.entities()[PREFIX+row.id];
+ return !!row&&row.owner===rid&&row.stored!==true&&
+  SPEC.storableKinds.includes(row.kind)&&entity?.chart===HOME&&
+  previewRemove(row.id).ok===true;
+}
 function checked(s){
  if(!s||s.schema!=='REALITI_APARTMENT_BEDROOMS_STORE_V1'||!Number.isSafeInteger(s.revision)||
    s.revision<0||!Number.isSafeInteger(s.next_id)||s.next_id<1||
@@ -358,7 +366,9 @@ function soloAction(raw){
    const remaining=SPEC.limits.maxChestPerRoom-
     next.items.filter(row=>row.room===item.room&&row.stored===true).length;
    const alternative=remaining>0?next.items.find(row=>row.room===item.room&&
-    row.owner===rid&&row.stored!==true&&SPEC.storableKinds.includes(row.kind)):null;
+    canStowNow(row)):null;
+   const smaller=next.items.some(row=>row.room===item.room&&row.owner===rid&&
+    row.stored!==true&&SPEC.storableKinds.includes(row.kind));
    const suggestedAction=alternative?'remote chest stow '+alternative.id:null;
    return error('DECOR_TOO_LARGE_FOR_CHEST',{
     room:item.room,kind:item.kind,storable_kinds:SPEC.storableKinds.slice(),
@@ -368,7 +378,8 @@ function soloAction(raw){
      (remaining<=0?'The chest is full; make some room first.':
       alternative?'The '+SPEC.items[alternative.kind].label+' ('+alternative.id+
        ') fits instead. Try '+suggestedAction+'.':
-       'Try remote chest suggest '+item.room+' to see what fits, or place something smaller.')});
+       smaller?'The smaller belongings cannot be moved safely right now. Try again when they are free.':
+        'Try remote chest suggest '+item.room+' to see what fits, or place something smaller.')});
   }
   if(next.items.filter(row=>row.room===item.room&&row.stored===true).length>=SPEC.limits.maxChestPerRoom)
    return error('CHEST_FULL');
@@ -569,18 +580,25 @@ function handle(raw){
    return error('CHEST_OWNER_ONLY');
   const stored=current.items.filter(row=>row.room===room&&row.stored===true)
    .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
-  const available=current.items.filter(row=>row.room===room&&row.stored!==true&&
-   SPEC.storableKinds.includes(row.kind))
-   .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label}));
+  const remaining=SPEC.limits.maxChestPerRoom-stored.length;
+  const small=current.items.filter(row=>row.room===room&&row.owner===rid&&
+   row.stored!==true&&SPEC.storableKinds.includes(row.kind));
+  const available=remaining>0?small.filter(canStowNow)
+   .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label})):[];
+  const blocked=small.filter(row=>!canStowNow(row))
+   .map(({id,kind})=>({id,kind,label:SPEC.items[kind].label,
+    reason:M.entities()[PREFIX+id]?.chart===HOME?
+     'DECOR_ITEM_IN_USE':'DECOR_NATIVE_ITEM_MISSING'}));
   return {ok:true,schema:chest[1]==='suggest'?
    'REALITI_APARTMENT_CHEST_SUGGEST_V1':'REALITI_APARTMENT_CHEST_INSPECT_V1',
    room,entity_id:CHEST+room,owner:rid,capacity:SPEC.limits.maxChestPerRoom,
-   remaining:SPEC.limits.maxChestPerRoom-stored.length,
-   stored:cp(stored),available:cp(available),
-   hint:available.length&&stored.length<SPEC.limits.maxChestPerRoom?
+   remaining,stored:cp(stored),available:cp(available),blocked:cp(blocked),
+   hint:available.length?
     'You can put away a '+available[0].label+' ('+available[0].id+
     ') using remote chest stow '+available[0].id+'.':
-    (stored.length?'The chest holds a '+stored[0].label+' ('+stored[0].id+
+    (remaining<=0?'The chest is full. Take out an item before storing anything else.':
+    blocked.length?'The smaller belongings are in use or unavailable right now. Try again when they are free.':
+    stored.length?'The chest holds a '+stored[0].label+' ('+stored[0].id+
     '). You can retrieve it with remote chest auto-take '+stored[0].id+'.':
     'Nothing small is ready to store here. Add a book stack, lantern or another small decor item first.'),
    read_only:true,contact_minted:false};
