@@ -9,10 +9,10 @@ const STYLES=Object.keys(SPEC.configurations),MAX=SPEC.limits.maxTotal;
 const cp=x=>JSON.parse(JSON.stringify(x)),fail=(error,detail={})=>({ok:false,error,...detail});
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 const validId=x=>typeof x==='string'&&/^[a-z][a-z0-9-]{1,30}$/.test(x);
-const hex=x=>typeof x==='string'&&/^#[0-9a-f]{6}$/.test(x);
+const swatch=x=>typeof x==='string'&&own(SPEC.swatches,x);
 const validPalette=x=>x&&typeof x==='object'&&!Array.isArray(x)&&
  Object.keys(x).length===SPEC.colorRoles.length&&
- SPEC.colorRoles.every(role=>own(x,role)&&hex(x[role]));
+ SPEC.colorRoles.every(role=>own(x,role)&&swatch(x[role]));
 const paletteFor=r=>cp(r.palette||SPEC.colorDefaults[r.configuration]);
 const empty=()=>({schema:SCHEMA,revision:0,next_id:1,rooms:Object.fromEntries(
  ROOMS.map(id=>[id,{owner:null,configuration:'cozy'}])),items:[]});
@@ -122,7 +122,8 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
    items:cp(SPEC.items),bedrooms:cp(SPEC.rooms),
    chests:cp(SPEC.chests),storable_kinds:SPEC.storableKinds.slice(),
    configurations:cp(SPEC.configurations),
-   color_roles:SPEC.colorRoles.slice(),palette_recipes:cp(SPEC.aestheticPalettes),
+   color_roles:SPEC.colorRoles.slice(),swatches:cp(SPEC.swatches),
+    palette_recipes:cp(SPEC.aestheticPalettes),
    max_per_room:SPEC.limits.maxPerRoom,
    note:'Items are real finite native Matrix geometry. Configurations set configurationName; choose positions to place physical items.'});
  const help=()=>({ok:true,commands:[
@@ -130,8 +131,8 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote bedroom release <room> [if-rev <n>]',
   'remote bedroom configure <room> <configuration> [if-rev <n>]',
   'remote bedroom colors <room>',
-  'remote bedroom color <room> <field|anchor|accent|bridge> <#RRGGBB> [if-rev <n>]',
-  'remote bedroom colors set <room> <field> <anchor> <accent> <bridge> [if-rev <n>]',
+  'remote bedroom swatch <room> <field|anchor|accent|bridge> <sample-name> [if-rev <n>]',
+  'remote bedroom swatches set <room> <field> <anchor> <accent> <bridge> [if-rev <n>]',
   'remote bedroom palette <room> <recipe|reset> [if-rev <n>]',
   'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
   'remote decor catalog',
@@ -234,8 +235,9 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   if(cmd==='bedrooms'||cmd==='bedroom status'||cmd==='decor list')return view();
   if(cmd==='decor catalog'||cmd==='bedroom configurations')return catalog();
   if(cmd==='bedroom help'||cmd==='decor help')return help();
-  if(cmd==='bedroom palette catalog')return {ok:true,schema:'REALITI_APARTMENT_PALETTES_V1',
-   roles:SPEC.colorRoles.slice(),recipes:cp(SPEC.aestheticPalettes),read_only:true};
+  if(cmd==='bedroom palette catalog'||cmd==='bedroom swatches')return {ok:true,schema:'REALITI_APARTMENT_PALETTES_V1',
+   roles:SPEC.colorRoles.slice(),swatches:cp(SPEC.swatches),
+   recipes:cp(SPEC.aestheticPalettes),read_only:true};
   const colors=/^bedroom colors ([a-z-]+)$/.exec(cmd);
   if(colors){
    const state=ensure(),r=state.rooms[colors[1]];
@@ -276,19 +278,21 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   const without=cmd.replace(/ if-rev (\d+)$/,(_,n)=>{rev=Number(n);return ''});
   if(rev!==null&&(!Number.isSafeInteger(rev)||rev!==current.revision))
    return fail('BEDROOM_REVISION_CONFLICT',{current_revision:current.revision});
-  if((m=/^bedroom colors set ([a-z-]+) (#[0-9a-f]{6}) (#[0-9a-f]{6}) (#[0-9a-f]{6}) (#[0-9a-f]{6})$/.exec(without))){
+  if((m=/^bedroom swatches set ([a-z-]+) ([a-z-]+) ([a-z-]+) ([a-z-]+) ([a-z-]+)$/.exec(without))){
    const room=m[1],r=next.rooms[room];
    if(!r)return fail('UNKNOWN_BEDROOM');
    if(r.owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
    const colors=Object.fromEntries(SPEC.colorRoles.map((role,i)=>[role,m[i+2]]));
+   if(!validPalette(colors))return fail('UNKNOWN_SWATCH');
    if(JSON.stringify(paletteFor(r))===JSON.stringify(colors))return {ok:true,
     unchanged:true,bedroom:room,colors,revision:current.revision};
    r.palette=colors;operation={bedroom:room,colors:cp(colors),palette_recipe:'custom',
     shader_applied:false,contact_minted:false};
-  }else if((m=/^bedroom color ([a-z-]+) (field|anchor|accent|bridge) (#[0-9a-f]{6})$/.exec(without))){
+  }else if((m=/^bedroom swatch ([a-z-]+) (field|anchor|accent|bridge) ([a-z-]+)$/.exec(without))){
    const [_,room,role,color]=m,r=next.rooms[room];
    if(!r)return fail('UNKNOWN_BEDROOM');
    if(r.owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+   if(!swatch(color))return fail('UNKNOWN_SWATCH');
    const palette=paletteFor(r);
    if(palette[role]===color)return {ok:true,unchanged:true,bedroom:room,
     colors:palette,revision:current.revision};
