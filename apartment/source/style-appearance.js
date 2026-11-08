@@ -95,7 +95,7 @@ function depiction(look){
   tuning:cp(d),
   text:preset.label+' — '+preset.silhouette+' in '+names.field+' and '+names.anchor+
    ', picked out with '+names.accent+'. '+detail[0].toUpperCase()+detail.slice(1)+
-   ' detailing, '+contrast+' contrast, a '+trim+' finish, and '+preset.accessory+'.',
+   ' detailing, '+contrast+' contrast, a '+trim+' finish, and '+(/^(?:enamel|enameled)/i.test(preset.accessory)?'an ':'a ')+preset.accessory+'.',
   category:'RESIDENT_CHOSEN_PRESENTATION_ONLY',rendered_shader:false,
   native_clothing:false,physical_contact_minted:false};
 }
