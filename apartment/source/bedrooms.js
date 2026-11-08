@@ -213,6 +213,25 @@ function catalog(){return {ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1'
   configurations:cp(SPEC.configurations),max_per_room:SPEC.limits.maxPerRoom,
   note:'All objects are actual native Matrix entities, not Blender assets, and have finite collision/size. A preset changes metadata; owners place individual objects.'};
 }
+// Solo floor-finding uses the same finite Matrix collision preview as manual place.
+ // Suggestions describe alternative positions; they do not reserve a layout.
+function findSoloSpots(room,kind){
+ if(!own(SPEC.rooms,room)||!own(SPEC.items,kind))return error('UNKNOWN_BEDROOM_OR_ITEM');
+ if(solo.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
+ if(solo.items.length>=SPEC.limits.maxTotal||
+    solo.items.filter(row=>row.room===room).length>=SPEC.limits.maxPerRoom)
+  return error('BEDROOM_ITEM_CAPACITY');
+ const bounds=SPEC.rooms[room].bounds,[hx,hy]=SPEC.items[kind].half,spots=[];
+ for(let y=bounds[3]-hy-.16;y>=bounds[2]+hy+.16&&spots.length<3;y-=.4)
+  for(let x=bounds[1]-hx-.16;x>=bounds[0]+hx+.16&&spots.length<3;x-=.4){
+   const px=+x.toFixed(2),py=+y.toFixed(2);
+   if(spots.some(p=>Math.hypot(p.x-px,p.y-py)<.75))continue;
+   if(preview(kind,room,px,py).ok)spots.push({x:px,y:py});
+  }
+ return spots.length?{ok:true,schema:'REALITI_APARTMENT_DECOR_SUGGEST_V1',
+  room,kind,suggestions:spots,revision:solo.revision,read_only:true,
+  contact_minted:false}:error('BEDROOM_NO_SAFE_FOOTPRINT',{room,kind});
+}
 function soloAction(raw){
  if(role==='guest')return error('GUEST_BEDROOM_READ_ONLY');
  if(connected())return error('BEDROOM_HOST_OWNERSHIP_REQUIRED');
@@ -285,6 +304,14 @@ function soloAction(raw){
   return {...p,schema:'REALITI_APARTMENT_DECOR_PREVIEW_V1',read_only:true,
    revision:solo.revision,position:p.ok?[p.x,p.y]:undefined};
  }
+ if((m=/^decor (suggest|auto-place) (quilt|library|canopy|studio) ([a-z-]+)$/.exec(s))){
+  const found=findSoloSpots(m[2],m[3]);
+  if(!found.ok)return found;
+  if(m[1]==='suggest')return found;
+  const spot=found.suggestions[0];
+  const placed=soloAction('decor place '+m[2]+' '+m[3]+' '+spot.x+' '+spot.y);
+  return placed.ok?{...placed,automatic:true}:placed;
+ }
  if((m=/^decor place (quilt|library|canopy|studio) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(s))){
   const [_,room,kind]=m;
   if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
@@ -296,11 +323,13 @@ function soloAction(raw){
   next.items.push({id,room,kind,owner:rid,x:p.x,y:p.y});next.revision++;
   return {...persist(next),placed:id,room,kind,position:[p.x,p.y],contact_minted:false};
  }
- if((m=/^decor move (I[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/i.exec(s))){
-  const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
+ if((m=/^decor (move|nudge) (I[1-9][0-9]*) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/i.exec(s))){
+  const id=m[2].toUpperCase(),item=next.items.find(row=>row.id===id);
   if(!item)return error('UNKNOWN_DECOR_ITEM');
   if(item.owner!==rid)return error('DECOR_NOT_OWNED');
-  const x=num(m[2]),y=num(m[3]);
+  const relative=m[1]==='nudge';
+  const x=relative?item.x+num(m[3]):num(m[3]);
+  const y=relative?item.y+num(m[4]):num(m[4]);
   if(item.x===+x.toFixed(2)&&item.y===+y.toFixed(2))
    return {ok:true,unchanged:true,item:id,position:[item.x,item.y],revision:solo.revision};
   const inUse=previewRemove(id);
@@ -308,7 +337,8 @@ function soloAction(raw){
   const proposed=preview(item.kind,item.room,x,y,PREFIX+id);
   if(!proposed.ok)return proposed;
   item.x=proposed.x;item.y=proposed.y;next.revision++;
-  return {...persist(next),moved:id,room:item.room,position:[item.x,item.y],contact_minted:false};
+  return {...persist(next),moved:id,room:item.room,position:[item.x,item.y],
+   ...(relative?{nudged:true}:{}),contact_minted:false};
  }
  if((m=/^bedroom clear (quilt|library|canopy|studio) confirm$/.exec(s))){
   const room=m[1];
@@ -338,8 +368,10 @@ function commands(){return [
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
  'decor preview <room> <kind> <x> <y>',
+ 'decor suggest <room> <kind>','decor auto-place <room> <kind>',
  'decor place <room> <kind> <x> <y>',
  'decor inspect <I-number>','decor move <I-number> <x> <y>',
+ 'decor nudge <I-number> <dx> <dy>',
  'decor remove <I-number>','bedroom clear <room> confirm'];}
 function handle(raw){
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
