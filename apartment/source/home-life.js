@@ -54,6 +54,23 @@ const voice={
  botanical:'a corner for planters, stands and the slow business of keeping things',
  music:'a tiny creative corner waiting for records, instruments and the next experiment'
 };
+const numbers={2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven',8:'eight'};
+function describeKinds(items,catalog){
+ const counts=new Map();
+ for(const row of items)counts.set(row.kind,(counts.get(row.kind)||0)+1);
+ return [...counts].map(([kind,n])=>{
+  const label=catalog[kind]?.label||kind;
+  if(n===1)return 'a '+label;
+  if(kind==='book-stack')return (numbers[n]||n)+' small stacks of books';
+  const plural=label.replace(/\b(\w+)$/,(_,last)=>last.endsWith('s')?last:last+'s');
+  return (numbers[n]||n)+' '+plural;
+ });
+}
+function naturalJoin(parts){
+ return parts.length<2?parts[0]||'':
+  parts.length===2?parts.join(' and '):
+  parts.slice(0,-1).join(', ')+', and '+parts[parts.length-1];
+}
 function ambience(room){
  const view=B.view(),bedroom=view?.bedrooms?.[room];
  if(!bedroom)return fail('UNKNOWN_BEDROOM');
@@ -63,10 +80,17 @@ function ambience(room){
    position:[row.x,row.y]}));
  const chest=M.entities()['apartment.bedroom.chest.'+room];
  const count=view.chests?.[room]?.stored_count||0;
- const placed=objects.length?objects.map(o=>'a '+o.label).join(', '):'no added furniture yet';
+ const grouped=describeKinds(items.filter(row=>!!M.entities()['apartment.bedroom.item.'+row.id]),catalog.items);
+ const placed=grouped.length?naturalJoin(grouped):'no added furniture yet';
+ const swatches=B.spec().swatches,palette=bedroom.palette||B.spec().colorDefaults[bedroom.configuration];
+ const cards=palette?' Four small cardstock samples on the chest name '+
+  swatches[palette.field].label+' as the field, '+
+  swatches[palette.anchor].label+' as the anchor, '+
+  swatches[palette.accent].label+' as the accent, and '+
+  swatches[palette.bridge].label+' as the bridge. These are chosen samples, not room shaders.':'';
  const text='The '+bedroom.label+' is '+voice[bedroom.configuration]+
   '. You can see '+placed+'. '+(chest?'At the edge of the alcove: '+chest.label+'.':'')+
-  (count?' '+count+' item'+(count===1?' is':'s are')+' stored in its chest.':'');
+  (count?' '+count+' item'+(count===1?' is':'s are')+' stored in its chest.':'')+cards;
  return {ok:true,schema:'REALITI_APARTMENT_BEDROOM_AMBIENCE_V1',room,
   configuration:bedroom.configuration,owner:bedroom.owner,
   objects,chest_present:!!chest,chest_stored_count:count,read_only:true,
@@ -112,14 +136,18 @@ function marker(result){
   const local=(snapshot.items||[]).filter(row=>row.room===region&&
    !!M.entities()['apartment.bedroom.item.'+row.id]);
   const catalog=B.catalog().items;
-  const objects=local.slice(0,3).map(row=>'a '+(catalog[row.kind]?.label||row.kind));
-  const placed=objects.length===1?objects[0]+' is still where it was placed.':
-   objects.slice(0,-1).join(', ')+(objects.length>2?', and ':' and ')+
-   objects[objects.length-1]+' are still where they were placed.';
+  const objects=describeKinds(local.slice(0,5),catalog);
+  const placed=naturalJoin(objects)+
+   (local.length===1?' is still where it was placed.':
+    ' are still where they were placed.');
   notes.push('Here in '+(rooms[region].owner===rid?'your ':'the ')+
    rooms[region].label+': '+(objects.length?placed:
     'the '+(M.entities()['apartment.bedroom.chest.'+region]?.label||
     'storage chest')+' is where you left it.'));
+  const palette=rooms[region]?.palette,colors=B.spec().swatches;
+  if(palette&&M.entities()['apartment.bedroom.sample.'+region+'.accent']&&
+   colors[palette.accent])
+   notes.push('The accent sample on the chest is '+colors[palette.accent].label+'.');
   if(near('apartment.bedroom.book.'+region,1.25))
    notes.push('The Apartment Book of Beautiful Things is close enough to open on the chest.');
   else if(near('apartment.bedroom.chest.'+region,.95))
