@@ -97,8 +97,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1666229,
-      "sha256": "15bfd870e50a5872664478dd30d7bcec8337ea556b7565834743825414cf84ae"
+      "bytes": 1666537,
+      "sha256": "23d831d4272f9039e238d1cbbd54dc2cd67b8e94118fdb86280fe31735cd94b4"
     },
     {
       "path": "SECURITY.md",
@@ -113,7 +113,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "91d060df321cc22ccb6a9d033533108044a0b065cce3dda64e47b992681f7c34"
+      "sha256": "3366627eab6b5146c042ba0afc6965660b503166810c3242789bf35def211172"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -892,8 +892,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/test/quiet-presentation.cjs",
-      "bytes": 6820,
-      "sha256": "af6641bb3afbbfe054692a3d8441805b468639524ade17dd461d7f6b0c8103bd"
+      "bytes": 7729,
+      "sha256": "1e2bb4dd4b04f6d5cf2e948f1b42346524ec83267cbbc26321885db2be40b571"
     },
     {
       "path": "packages/realiti-headless-resident/test/senses.cjs",
@@ -1692,8 +1692,8 @@
     },
     {
       "path": "source/scripts/65-lingering.js",
-      "bytes": 51259,
-      "sha256": "b39d37996374a42d51a1a87bbfc21d6b992546567be9ea01739c1f4538d75b8b"
+      "bytes": 51567,
+      "sha256": "09072bd84224e093f77888f6692209a29b85091b6900dae4903874b66404a952"
     },
     {
       "path": "source/scripts/66-memory.js",

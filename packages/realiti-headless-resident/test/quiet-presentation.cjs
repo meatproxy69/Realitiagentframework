@@ -52,6 +52,12 @@ function digest(s){const w=s.window;return JSON.stringify({clock:+Number(w.eval(
    check('stillness_next_look_and_listen_notice_more',/Now you notice/.test(text(l1))&&l1.noticed?.details?.length===1&&h1.noticed?.sense==='listen'&&/Now you notice/.test(text(h1)),{l1:l1.noticed,h1:h1.noticed});
    check('stillness_is_bounded_at_two',l2.noticed?.details?.length===2&&l3.noticed?.details?.length===2&&!/Now you notice/.test(text(l3)),{l2:l2.noticed});
    check('stillness_resets_when_you_move',!l4.noticed,text(l4).slice(-100));
+   // Codex review on #91: coming back to the spot without staying again does not resurrect the old level.
+   await q.door.run('stay');await q.door.run('stay');await q.door.run('move forward 4');await q.door.run('turn around');await q.door.run('move forward 4');const back=await q.door.run('look');
+   check('stillness_is_spent_when_you_leave_and_come_back',!back.noticed,text(back).slice(-120));
+   // ...and the words never promise a reach the world will refuse.
+   let bad=[];for(const room of ['CLOUD_NINE_NEST','POCKET_FAMILIAR_HOUSE','KITE_FIELD','SIDE_BY_SIDE_FIRESIDE']){await q.door.run('go '+room);const sp=q.publicApi.read('realiti://space'),lk=text(await q.door.run('look'));for(const n of (sp.nearby||[]))if(n.in_reach===false&&lk.includes(`${n.label}, within reach`))bad.push(room+': '+n.label+' '+n.distance_m)}
+   check('quiet_look_never_promises_reach_the_world_refuses',bad.length===0,bad);
    check('quiet_look_says_near_and_far_in_words',!/\(\s*-?\d+\.\d+,|\d+(\.\d+)? m (ahead|behind|left|right)/.test(text(l0))&&/a step or two|within reach|a few steps|a short walk|a walk/.test(text(l0)),text(l0).slice(-200));
   }finally{q.close()}
   const m=await fresh();
