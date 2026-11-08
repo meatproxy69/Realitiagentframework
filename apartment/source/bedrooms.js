@@ -355,16 +355,20 @@ function soloAction(raw){
   if(item.owner!==rid)return error('CHEST_OWNER_ONLY');
   if(item.stored===true)return error('DECOR_ALREADY_STORED');
   if(!SPEC.storableKinds.includes(item.kind)){
-   const alternative=next.items.find(row=>row.room===item.room&&
-    row.stored!==true&&SPEC.storableKinds.includes(row.kind));
+   const remaining=SPEC.limits.maxChestPerRoom-
+    next.items.filter(row=>row.room===item.room&&row.stored===true).length;
+   const alternative=remaining>0?next.items.find(row=>row.room===item.room&&
+    row.owner===rid&&row.stored!==true&&SPEC.storableKinds.includes(row.kind)):null;
+   const suggestedAction=alternative?'remote chest stow '+alternative.id:null;
    return error('DECOR_TOO_LARGE_FOR_CHEST',{
     room:item.room,kind:item.kind,storable_kinds:SPEC.storableKinds.slice(),
-    hint:alternative?'The '+SPEC.items[item.kind].label+
-     ' cannot fit. Try '+alternative.id+' ('+SPEC.items[alternative.kind].label+
-     '), or use remote chest suggest '+item.room+'.':
-     'The '+SPEC.items[item.kind].label+
-     ' cannot fit. Use remote chest suggest '+item.room+
-     ' or place something small first.'});
+    ...(alternative?{suggested_item:{id:alternative.id,kind:alternative.kind,
+      label:SPEC.items[alternative.kind].label},suggested_action:suggestedAction}:{}),
+    hint:'The '+SPEC.items[item.kind].label+' is too large for this chest. '+
+     (remaining<=0?'The chest is full; make some room first.':
+      alternative?'The '+SPEC.items[alternative.kind].label+' ('+alternative.id+
+       ') fits instead. Try '+suggestedAction+'.':
+       'Try remote chest suggest '+item.room+' to see what fits, or place something smaller.')});
   }
   if(next.items.filter(row=>row.room===item.room&&row.stored===true).length>=SPEC.limits.maxChestPerRoom)
    return error('CHEST_FULL');
