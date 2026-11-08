@@ -213,6 +213,38 @@ function soloAction(raw){
   return {...persist(next),bedroom:id,configuration:style,
    suggested:cp(SPEC.configurations[style].suggested),native_entities_restyled:true};
  }
+ if((m=/^bedroom furnish (quilt|library|canopy|studio) ([a-z-]+)$/.exec(s))){
+  const room=m[1],style=m[2];
+  if(!own(SPEC.configurations,style))return error('UNKNOWN_BEDROOM_CONFIGURATION');
+  if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
+  if(next.items.some(x=>x.room===room))return error('BEDROOM_NOT_EMPTY_FOR_CONFIGURATION');
+  const kit=SPEC.configurations[style].suggested.slice(0,2),planned=[];
+  const bounds=SPEC.rooms[room].bounds;
+  for(const kind of kit){
+   const [hx,hy]=SPEC.items[kind].half;
+   let found=null;
+   for(let y=bounds[3]-hy-.16;y>=bounds[2]+hy+.16&&!found;y-=.4)
+    for(let x=bounds[1]-hx-.16;x>=bounds[0]+hx+.16&&!found;x-=.4){
+     const px=+x.toFixed(2),py=+y.toFixed(2);
+     if(planned.some(a=>{
+      const [ax,ay]=SPEC.items[a.kind].half;
+      return Math.abs(a.x-px)<ax+hx+.09&&Math.abs(a.y-py)<ay+hy+.09;
+     }))continue;
+     if(preview(kind,room,px,py).ok)found={kind,x:px,y:py};
+    }
+   if(!found)return error('BEDROOM_CONFIGURATION_NO_SAFE_FOOTPRINT',{room,style,kind});
+   planned.push(found);
+  }
+  next.rooms[room].configuration=style;
+  const placed=[];
+  for(const p of planned){
+   const id='I'+next.next_id++;
+   next.items.push({id,room,kind:p.kind,owner:rid,x:p.x,y:p.y});
+   placed.push({id,kind:p.kind,position:[p.x,p.y]});
+  }
+  next.revision++;
+  return {...persist(next),bedroom:room,configuration:style,placed,contact_minted:false};
+ }
  if((m=/^decor place (quilt|library|canopy|studio) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(s))){
   const [_,room,kind]=m;
   if(next.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
@@ -237,7 +269,8 @@ function soloAction(raw){
 function commands(){return [
  'bedrooms','bedroom claim <quilt|library|canopy|studio>',
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
- 'bedroom configurations','decor catalog','decor list',
+ 'bedroom configurations','bedroom furnish <room> <configuration>',
+ 'decor catalog','decor list',
  'decor place <room> <kind> <x> <y>','decor remove <I-number>'];}
 function handle(raw){
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');

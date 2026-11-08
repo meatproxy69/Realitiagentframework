@@ -37,6 +37,14 @@ async function solo(){
   assert.equal((await D('remote bedroom configure library nightglass')).configuration,'nightglass');
   assert.equal((await D('remote decor place library book-stack 0 0')).error,'OUTSIDE_OWNED_BEDROOM');
   assert.equal((await D('remote decor place studio book-stack 2 -4')).error,'BEDROOM_NOT_OWNED');
+  assert.equal((await D('remote bedroom claim studio')).ok,true);
+  const kit=await D('remote bedroom furnish studio music');
+  assert.equal(kit.ok,true,fmt(kit));
+  assert.equal(kit.placed.length,2,'a room configuration creates two physically verified native props');
+  for(const row of kit.placed)
+   assert.ok(geom(w).entities()['apartment.bedroom.item.'+row.id]);
+  assert.equal((await D('remote bedroom furnish studio writers')).error,
+   'BEDROOM_NOT_EMPTY_FOR_CONFIGURATION');
   let spot=null;
   const bounds=SPEC.rooms.library.bounds;
   for(let y=bounds[3]-.25;y>bounds[2]+.25&&!spot;y-=.4)
@@ -73,7 +81,7 @@ async function solo(){
   const restored=a.window.REALITI_APARTMENT_BEDROOMS_V1.view();
   assert.equal(restored.bedrooms.library.owner,'bedroom-solo-a');
   assert.equal(restored.bedrooms.library.configuration,'writers');
-  assert.equal(restored.items.length,1);
+  assert.equal(restored.items.length,3,'one manual mat plus a two-object music layout survives restart');
   assert.ok(geom(a.window).entities()['apartment.bedroom.item.'+out.placed]);
   b=await openResident(opts('bedroom-solo-b'));
   assert.equal(b.window.REALITI_APARTMENT_BEDROOMS_V1.view().items.length,0);
@@ -112,6 +120,11 @@ async function household(){
   assert.equal((await bob.run('remote bedroom configure library writers')).ok,true);
   assert.equal((await cora.run('remote bedroom configure canopy nightglass')).ok,true);
   assert.equal((await dina.run('remote bedroom configure studio music')).ok,true);
+  const furnished=await dina.run('remote bedroom furnish studio music');
+  assert.equal(furnished.ok,true,fmt(furnished));
+  assert.equal(furnished.placed.length,2,'trusted host validates and places a two-item native kit');
+  assert.equal(bob.read('realiti://apartment/bedrooms').items.length,2);
+  assert.equal((await bob.run('remote bedroom furnish studio writers')).error,'BEDROOM_NOT_OWNED');
   const wrong=await bob.run('remote bedroom configure library botanical if-rev 0');
   assert.equal(wrong.error,'BEDROOM_REVISION_CONFLICT');
   assert.equal((await bob.run('remote decor place studio book-stack 2.6 -4.7')).error,'BEDROOM_NOT_OWNED');
@@ -125,7 +138,7 @@ async function household(){
   assert.ok(placed,'one library position must be Matrix-validated in every resident copy');
   assert.equal(placed.verified_participants,4);
   assert.equal(placed.contact_minted,false);
-  assert.equal(alice.read('realiti://apartment/bedrooms').items.length,1);
+  assert.equal(alice.read('realiti://apartment/bedrooms').items.length,3);
   assert.equal(cora.read('realiti://apartment/bedrooms').items[0].owner,'bob');
   assert.equal(alice.read('realiti://apartment/bedrooms').bedrooms.library.configuration,'writers');
   assert.equal((await cora.run('remote decor remove '+placed.placed)).error,'DECOR_NOT_OWNED');
@@ -146,7 +159,8 @@ async function household(){
   assert.equal((await alice.run('remote decor remove '+placed.placed)).error,'REMOTE_ASLEEP');
   assert.equal((await bob.run('remote decor remove '+placed.placed)).removed,placed.placed);
   assert.equal((await bob.run('remote bedroom release library')).released,'library');
-  assert.equal(bob.read('realiti://apartment/bedrooms').items.length,0);
+  assert.equal(bob.read('realiti://apartment/bedrooms').items.length,2,
+   'Dina-owned music kit remains when Bob removes his private books');
   assert.equal(host.status().owned_bedrooms,3);
   await host.close();host=null;
   // A correctly hashed but unauthorized bedroom owner remains rejected:

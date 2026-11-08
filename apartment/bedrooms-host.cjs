@@ -93,7 +93,8 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   'remote bedrooms','remote bedroom claim <room> [if-rev <n>]',
   'remote bedroom release <room> [if-rev <n>]',
   'remote bedroom configure <room> <configuration> [if-rev <n>]',
-  'remote bedroom configurations','remote decor catalog',
+  'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
+  'remote decor catalog',
   'remote decor place <room> <kind> <x> <y> [if-rev <n>]',
   'remote decor remove <I-number> [if-rev <n>]'
  ],note:'One owner per bedroom, one bedroom per household resident. One Matrix HOME chart; no room locks.'});
@@ -170,6 +171,43 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     return {ok:true,unchanged:true,bedroom:room,configuration:style,revision:current.revision};
    next.rooms[room].configuration=style;
    operation={bedroom:room,configuration:style,suggested:cp(SPEC.configurations[style].suggested)};
+  }else if((m=/^bedroom furnish ([a-z-]+) ([a-z-]+)$/.exec(without))){
+   const [_,room,style]=m;
+   if(!ROOMS.includes(room))return fail('UNKNOWN_BEDROOM');
+   if(!STYLES.includes(style))return fail('UNKNOWN_BEDROOM_CONFIGURATION');
+   if(next.rooms[room].owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+   if(next.items.some(item=>item.room===room))return fail('BEDROOM_NOT_EMPTY_FOR_CONFIGURATION');
+   const kit=SPEC.configurations[style].suggested.slice(0,2);
+   const planned=[],members=participants(),bounds=SPEC.rooms[room].bounds;
+   for(const entry of members)apply(entry);
+   for(const kind of kit){
+    const [hx,hy]=SPEC.items[kind].half;
+    let found=null;
+    for(let y=bounds[3]-hy-.16;y>=bounds[2]+hy+.16&&!found;y-=.4){
+     for(let x=bounds[1]-hx-.16;x>=bounds[0]+hx+.16&&!found;x-=.4){
+      const px=+x.toFixed(2),py=+y.toFixed(2);
+      const paired=planned.some(a=>{
+       const [ax,ay]=SPEC.items[a.kind].half;
+       return Math.abs(a.x-px)<ax+hx+.09&&Math.abs(a.y-py)<ay+hy+.09;
+      });
+      if(paired)continue;
+      if(members.every(entry=>bridge(entry).preview(kind,room,px,py).ok))
+       found={kind,x:px,y:py};
+     }
+    }
+    if(!found)return fail('BEDROOM_CONFIGURATION_NO_SAFE_FOOTPRINT',{room,style,kind});
+    planned.push(found);
+   }
+   if(next.items.length+planned.length>MAX)return fail('BEDROOM_ITEM_CAPACITY');
+   next.rooms[room].configuration=style;
+   const placed=[];
+   for(const p of planned){
+    const id='I'+next.next_id++;
+    next.items.push({id,room,kind:p.kind,owner:actor.id,x:p.x,y:p.y});
+    placed.push({id,kind:p.kind,position:[p.x,p.y]});
+   }
+   operation={bedroom:room,configuration:style,placed,
+    verified_participants:members.length,world_contact_minted:false};
   }else if((m=/^decor place ([a-z-]+) ([a-z-]+) (-?(?:\d+(?:\.\d+)?|\.\d+)) (-?(?:\d+(?:\.\d+)?|\.\d+))$/.exec(without))){
    const [_,room,kind]=m;
    if(!ROOMS.includes(room)||!KINDS.includes(kind))return fail('UNKNOWN_BEDROOM_OR_ITEM');

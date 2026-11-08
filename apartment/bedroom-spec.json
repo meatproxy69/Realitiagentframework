@@ -377,5 +377,5 @@
     "maxClaimsPerResident": 1
   },
   "coordinateUnits": "native_matrix_metres",
-  "setup": "Owner selects a configuration; suggested furniture is placed through the separate checked drop-in action."
+  "setup": "Owners can pick a semantic configuration or use bedroom furnish <room> <style> to atomically place two suggested items in verified free native Matrix floor space."
 }
