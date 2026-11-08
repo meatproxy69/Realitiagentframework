@@ -41,6 +41,8 @@ async function solo(){
   assert.equal(suggested.available.some(v=>v.id===books&&v.kind==='book-stack'),true);
   assert.equal(suggested.available.some(v=>v.id===table),false);
   assert.match(suggested.hint,new RegExp(books));
+  assert.match(suggested.hint,/put away a small stack of books/,
+   'resident chest advice must read like a natural suggestion');
   assert.equal(a.window.REALITI_APARTMENT_BEDROOMS_V1.view().revision,initial);
   const oversized=await run('remote chest stow '+table);
   assert.equal(oversized.error,'DECOR_TOO_LARGE_FOR_CHEST');
@@ -59,8 +61,8 @@ async function solo(){
   const seen=await run('look');
   assert.match(seen.text,/Here in your Library Bedroom:/,
    'HOME glance should name the room actually occupied');
-  assert.match(seen.text,/small stack of books/,
-   'HOME glance should mention real local furniture rather than inventing a prop');
+  assert.match(seen.text,/a round wooden side table and a small stack of books are still where they were placed/,
+   'HOME glance should describe actual local items with grammatical articles');
   const now=M.state().residents['resident:self'].pose.position;
   assert.ok(now[0]>=-5.65&&now[0]<=-1.85&&now[1]>=1.95&&now[1]<=5.65,
    'the current bedroom statement must match native resident coordinates');
