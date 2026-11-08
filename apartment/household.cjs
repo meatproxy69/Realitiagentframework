@@ -150,7 +150,10 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
 
    const feed={schema:FEED,connected:true,capacity:MAX_RESIDENTS,revision:data.revision,
     residents:summary.residents,guests:summary.visitors,board:cp(data.board.slice(-64)),
-    scene:scene.view(),bedrooms:cp(data.bedrooms),physics:physics.publicView(receiver),
+    scene:scene.view(),
+     bedrooms:{...cp(data.bedrooms),
+      items:cp(data.bedrooms.items.filter(row=>row.stored!==true))},
+     physics:physics.publicView(receiver),
     pet:sharedPet.status(),
     law:'Host-verified native colliding capsules, shared bedroom ownership and position-checked decor. No private resident memories, body state or keys replicated.'};
    // A limited, immutable display snapshot, never a host mutation port.
@@ -266,7 +269,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     // as household furniture: claims, configurations and Matrix placement are
     // serialized and never admitted through a resident-local Javascript API.
     if(lower==='remote bedrooms'||lower.startsWith('remote bedroom ')||
-       lower.startsWith('remote decor ')){
+       lower.startsWith('remote decor ')||lower.startsWith('remote chest ')){
       if(!entry.session.window.REALITI_APARTMENT_REMOTE_V1.status().activated)
        return refusal('REMOTE_ASLEEP');
       const result=bedrooms.handle(entry,raw.slice('remote '.length));
