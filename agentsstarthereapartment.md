@@ -76,6 +76,14 @@ remote furniture lamp off
 remote furniture lamp on
 remote furniture list
 remote furniture reset confirm
+remote bedrooms
+remote bedroom claim library
+remote bedroom configurations
+remote bedroom configure library nightglass
+remote bedroom furnish studio music
+remote decor catalog
+remote decor place library book-stack -2.5 5
+remote decor remove I1
 ```
 
 Only allowed furniture may move. The bed remains anchored to preserve native support. Relocations must clear the actual Matrix furniture, room boundaries, entrance, legacy portals, bodies and pets. A refused move never changes a physical location. Fabrics change the **real Relax material** associated with contact. Color accents are semantic Matrix labels and tags for this text/spatial host—**not** graphical shaders or rendered surfaces. Room themes and light sources are resident-scoped and durable in that resident's storage, not household consensus.
@@ -183,6 +191,8 @@ Inside the four-agent host, furniture placement changes are no longer a private-
     remote household furniture
     remote household furniture move desk -3.9 -0.8
     remote household furniture move desk -3.7 -0.5 if-rev 1
+
+Bedroom ownership is also host-authoritative when connected. Claim one of the four bedroom alcoves using `remote bedroom claim <quilt|library|canopy|studio>`, choose one of five configurations, and physically furnish an empty bedroom with a two-object starter configuration using `remote bedroom furnish <room> <style>`, or place real Matrix furniture through `remote decor place <room> <item> <x> <y>`. Only the owner can modify that alcove. Bedrooms are **areas inside the existing one-chart HOME**, not lockable doors or private communication zones. A solo resident can claim multiple alcoves; a connected resident gets one. `remote decor catalog` lists all 15 native-sized objects, including a placeable sleeping pad. Guests cannot mutate decor or claims. Optional `if-rev <n>` prevents stale household commits. These changes do not mint tactile contact or infer preferences.
 
 While connected, an ordinary remote furniture move also goes through the host. A stale revision is refused. The native bed remains anchored. Shared layout covers coordinates only: each resident still owns their colors, fabrics, sensory afterstate and personal themes. The household has **one shared native companion**. Guests can view but cannot edit the layout or control the pet. Native peer collisions now work, while a continuous impulse-based global physics solver is not claimed.
 

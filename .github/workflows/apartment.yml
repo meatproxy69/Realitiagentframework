@@ -52,6 +52,9 @@ jobs:
           node --check apartment/test/stations.cjs
           node --check apartment/test/home-social-echo.cjs
           node --check apartment/test/native-body-fixtures.cjs
+          node --check apartment/bedrooms-host.cjs
+          node --check apartment/source/bedrooms.js
+          node --check apartment/test/bedroom-ownership.cjs
           node --check apartment/test/field-first-inheritance.cjs
           node --check apartment/test/body-interoception.cjs
           node --check apartment/test/honeyspark-catnip-presets.cjs
@@ -149,6 +152,12 @@ jobs:
       - name: V2 native petting creates exact contact, never an inferred mental state
         timeout-minutes: 4
         run: node apartment/test/body-interoception.cjs
+      - name: Bedroom ownership, 5 configurations and native drop-in furniture in a solo HOME
+        timeout-minutes: 4
+        run: node apartment/test/bedroom-ownership.cjs solo
+      - name: Four owner-assigned bedrooms, synchronized Matrix items, guest and checkpoint authority
+        timeout-minutes: 6
+        run: node apartment/test/bedroom-ownership.cjs household
       - name: Four residents plus guest, memory, pet, contact, STOP and full backup replay in clean home
         timeout-minutes: 4
         run: node apartment/test/home-candidate-household.cjs

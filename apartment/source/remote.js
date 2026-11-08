@@ -4,6 +4,8 @@
 // command catalog. Agents carry a personal Matrix pocket remote and activate it.
 const D=window.REALITI_AGENT_DOOR,A=window.Realiti,M=window.REALITI_MATRIX_V1;
 const F=window.REALITI_APARTMENT_FURNITURE_V1,C=window.REALITI_APARTMENT_CATNIP_V1;
+const B=window.REALITI_APARTMENT_BEDROOMS_V1;
+if(!B)throw Error('BEDROOM_CONTROLS_MISSING');
 const CLOSET=window.REALITI_APARTMENT_CLOSET_V1,H=window.REALITI_APARTMENT_HOUSEHOLD_V1;
 const P=window.REALITI_APARTMENT_CATNIP_PRESETS_V1;
 const ST=window.REALITI_APARTMENT_STATIONS_V1;
@@ -59,6 +61,10 @@ function menu(){
    'remote pet choose cat|dog|ferret <name>','remote pet call',
    'remote pet stroke','remote pet release <name>'],
   furnishings:['remote furniture help','remote furniture list'],
+  bedrooms:['remote bedrooms','remote bedroom configurations','remote bedroom claim <room>',
+    'remote bedroom configure <room> <configuration>',
+    'remote bedroom furnish <room> <configuration>','remote decor catalog',
+    'remote decor place <room> <kind> <x> <y>','remote decor remove <id>'],
   catnip:['remote catnip help','remote catnip list','remote catnip presets',
    'remote catnip preset preview <id>','remote catnip preset <id>','remote catnip preset off'],
   ...(HOME_FIRST?{}:{stations:['remote stations help','remote stations list','remote stations inspect <source-id>','remote stations use <source-id> <original-verb>']}),
@@ -89,6 +95,8 @@ function help(){
 function resource(uri){
  if(uri==='realiti://apartment/remote')return status();
  if(uri==='realiti://apartment/furniture')return F.view();
+ if(uri==='realiti://apartment/bedrooms')return B.view();
+ if(uri==='realiti://apartment/decor')return B.catalog();
  if(uri==='realiti://apartment/catnip')return C.view();
  if(uri==='realiti://apartment/stations')return HOME_FIRST?
   {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE'}:ST.view();
@@ -104,7 +112,7 @@ function resource(uri){
  return A.read(uri);
 }
 function remoteRequired(s){
- return /^(?:extras(?:\s|$)|apartment(?:\s|$)|home (?:map|bed|furniture)(?:\s|$)|pet (?:help|status|home|call|stroke|choose|release)(?:\s|$)|closet(?:\s|$)|household(?:\s|$))/.test(s);
+ return /^(?:bedrooms?(?:\s|$)|decor(?:\s|$)|extras(?:\s|$)|apartment(?:\s|$)|home (?:map|bed|furniture)(?:\s|$)|pet (?:help|status|home|call|stroke|choose|release)(?:\s|$)|closet(?:\s|$)|household(?:\s|$))/.test(s);
 }
 async function run(raw){
  const spoken=String(raw||'').replace(/\s+/g,' ').trim();
@@ -125,7 +133,8 @@ async function run(raw){
   const uri=s.slice('resource '.length);
   if(HOME_FIRST&&uri==='realiti://apartment/stations')
    return {ok:false,error:'LEGACY_STATIONS_NOT_IN_HOME_CANDIDATE'};
-  if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/catnip',
+  if(['realiti://apartment/remote','realiti://apartment/furniture','realiti://apartment/bedrooms',
+     'realiti://apartment/decor','realiti://apartment/catnip',
      'realiti://apartment/closet','realiti://apartment/closet/status',
      'realiti://apartment/household','realiti://apartment/board',
      'realiti://apartment/scene','realiti://apartment/memory',
@@ -167,6 +176,8 @@ async function run(raw){
   if(command==='stations')return ST.view();
   if(command.startsWith('stations '))return ST.handle(spoken.slice('remote stations '.length));
   if(command==='furniture')return F.view();
+  if(command==='bedrooms'||command.startsWith('bedroom ')||command.startsWith('decor '))
+   return B.handle(command);
   if(command==='catnip')return C.view();
   if(command==='pet')return originalRun('pet status');
   if(command==='extras')return originalRun('extras');

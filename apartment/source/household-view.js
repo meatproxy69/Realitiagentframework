@@ -3,7 +3,7 @@
 // Read-only projection of the host-owned shared apartment. The host injects only
 // verified spatial facts and publicly posted board notes; no mutation ports here.
 const empty=Object.freeze({schema:'REALITI_APARTMENT_HOUSEHOLD_FEED_V1',connected:false,
- capacity:4,residents:[],guests:[],board:[],scene:null,physics:null,pet:null,revision:0,
+ capacity:4,residents:[],guests:[],board:[],scene:null,bedrooms:null,physics:null,pet:null,revision:0,
  law:'No household host connected; a solo Apartment instance is not four resident cohabitation.'});
 const copy=x=>JSON.parse(JSON.stringify(x));
 function snapshot(){
@@ -19,6 +19,7 @@ function view(){
   chart:'CLOUD_NINE_NEST',
   shared_board_count:(v.board||[]).length,
   scene_revision:v.scene?.revision||0,shared_scene_connected:!!v.scene?.connected,
+  bedroom_revision:v.bedrooms?.revision||0,claimed_bedrooms:Object.values(v.bedrooms?.rooms||{}).filter(x=>x.owner).length,
   native_peer_collision:!!v.physics?.swept_sdf_collision,
   live_companion:v.pet?.pet||null,
   law:'Connected bodies are host-verified Matrix positions, not descriptions in chat or memory. Residents cannot access another resident private SOMA, keys or Pocket.'};
