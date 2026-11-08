@@ -1,0 +1,381 @@
+{
+  "schema": "REALITI_APARTMENT_BEDROOM_SPEC_V1",
+  "version": 1,
+  "chart": "CLOUD_NINE_NEST",
+  "policy": "Four claimable sleeping alcoves inside one native 12m x 12m HOME chart. Ownership authorizes decoration, not physical exclusion, consent, or privacy.",
+  "rooms": {
+    "quilt": {
+      "name": "Quilt Alcove",
+      "bounds": [
+        -5.65,
+        -1.85,
+        -5.65,
+        -1.95
+      ],
+      "note": "Original layered mattress and warm reading nook"
+    },
+    "library": {
+      "name": "Library Bedroom",
+      "bounds": [
+        -5.65,
+        -1.85,
+        1.95,
+        5.65
+      ],
+      "note": "Northwest books and writing corner"
+    },
+    "canopy": {
+      "name": "Canopy Bedroom",
+      "bounds": [
+        1.85,
+        5.65,
+        1.95,
+        5.65
+      ],
+      "note": "Northeast light and soft sofa corner"
+    },
+    "studio": {
+      "name": "Studio Bedroom",
+      "bounds": [
+        1.85,
+        5.65,
+        -5.65,
+        -1.95
+      ],
+      "note": "Southeast small creative corner"
+    }
+  },
+  "configurations": {
+    "cozy": {
+      "label": "Cozy Nest",
+      "accent": "amber",
+      "notes": "Warm blanket textures and a soft resting corner",
+      "suggested": [
+        "sleeping-pad",
+        "nightstand",
+        "floor-pillow"
+      ]
+    },
+    "nightglass": {
+      "label": "Nightglass",
+      "accent": "midnight",
+      "notes": "Dark cozy work and reading with a small lamp",
+      "suggested": [
+        "floor-lamp",
+        "mini-synth",
+        "record-crate"
+      ]
+    },
+    "writers": {
+      "label": "Writer's Den",
+      "accent": "plum",
+      "notes": "Books, pages and a quiet desk",
+      "suggested": [
+        "side-table",
+        "book-stack",
+        "writing-desk"
+      ]
+    },
+    "botanical": {
+      "label": "Botanical",
+      "accent": "moss",
+      "notes": "Soft green decor with actual physical planters",
+      "suggested": [
+        "planter",
+        "plant-stand",
+        "floor-pillow"
+      ]
+    },
+    "music": {
+      "label": "Music Nook",
+      "accent": "teal",
+      "notes": "Decorative studio instruments; no fabricated sound",
+      "suggested": [
+        "mini-synth",
+        "record-crate",
+        "floor-mat"
+      ]
+    }
+  },
+  "items": {
+    "sleeping-pad": {
+      "label": "folded sleeping pad",
+      "half": [
+        0.66,
+        0.83,
+        0.16
+      ],
+      "material": "blanket",
+      "collision": true,
+      "tags": [
+        "bed",
+        "support",
+        "sleep"
+      ],
+      "affordances": [
+        "lie",
+        "sit",
+        "touch"
+      ]
+    },
+    "nightstand": {
+      "label": "compact bedside stand",
+      "half": [
+        0.3,
+        0.3,
+        0.3
+      ],
+      "material": "wood",
+      "collision": true,
+      "tags": [
+        "storage",
+        "table"
+      ],
+      "affordances": [
+        "touch"
+      ]
+    },
+    "floor-pillow": {
+      "label": "soft floor pillow",
+      "half": [
+        0.32,
+        0.32,
+        0.14
+      ],
+      "material": "blanket",
+      "collision": true,
+      "tags": [
+        "soft",
+        "support",
+        "seat"
+      ],
+      "affordances": [
+        "sit",
+        "touch"
+      ]
+    },
+    "floor-lamp": {
+      "label": "slim floor lamp",
+      "half": [
+        0.16,
+        0.16,
+        0.9
+      ],
+      "material": "metal",
+      "collision": true,
+      "tags": [
+        "lamp",
+        "light",
+        "decor"
+      ],
+      "affordances": [
+        "watch",
+        "touch"
+      ]
+    },
+    "mini-synth": {
+      "label": "decorative compact synth",
+      "half": [
+        0.37,
+        0.24,
+        0.25
+      ],
+      "material": "wood",
+      "collision": true,
+      "tags": [
+        "music",
+        "decor",
+        "instrument"
+      ],
+      "affordances": [
+        "inspect",
+        "touch"
+      ]
+    },
+    "record-crate": {
+      "label": "record storage crate",
+      "half": [
+        0.24,
+        0.24,
+        0.26
+      ],
+      "material": "wood",
+      "collision": true,
+      "tags": [
+        "music",
+        "storage"
+      ],
+      "affordances": [
+        "inspect",
+        "touch"
+      ]
+    },
+    "side-table": {
+      "label": "round wooden side table",
+      "half": [
+        0.35,
+        0.35,
+        0.43
+      ],
+      "material": "wood",
+      "collision": true,
+      "tags": [
+        "table",
+        "furniture"
+      ],
+      "affordances": [
+        "touch"
+      ]
+    },
+    "book-stack": {
+      "label": "small stack of books",
+      "half": [
+        0.18,
+        0.22,
+        0.15
+      ],
+      "material": "paper",
+      "collision": true,
+      "tags": [
+        "books",
+        "decor"
+      ],
+      "affordances": [
+        "inspect",
+        "touch"
+      ]
+    },
+    "writing-desk": {
+      "label": "narrow writing desk",
+      "half": [
+        0.65,
+        0.33,
+        0.45
+      ],
+      "material": "wood",
+      "collision": true,
+      "tags": [
+        "desk",
+        "writing"
+      ],
+      "affordances": [
+        "touch"
+      ]
+    },
+    "planter": {
+      "label": "leafy ceramic planter",
+      "half": [
+        0.3,
+        0.3,
+        0.56
+      ],
+      "material": "clay",
+      "collision": true,
+      "tags": [
+        "plant",
+        "decor"
+      ],
+      "affordances": [
+        "inspect",
+        "touch"
+      ]
+    },
+    "plant-stand": {
+      "label": "small plant stand",
+      "half": [
+        0.24,
+        0.24,
+        0.54
+      ],
+      "material": "wood",
+      "collision": true,
+      "tags": [
+        "plant",
+        "decor",
+        "furniture"
+      ],
+      "affordances": [
+        "inspect",
+        "touch"
+      ]
+    },
+    "floor-mat": {
+      "label": "soft patterned mat",
+      "half": [
+        0.43,
+        0.43,
+        0.02
+      ],
+      "material": "blanket",
+      "collision": false,
+      "tags": [
+        "rug",
+        "soft",
+        "decor"
+      ],
+      "affordances": [
+        "touch"
+      ]
+    },
+    "cat-tree": {
+      "label": "compact cat scratching tree",
+      "half": [
+        0.36,
+        0.34,
+        0.8
+      ],
+      "material": "string",
+      "collision": true,
+      "tags": [
+        "cat",
+        "pet",
+        "play"
+      ],
+      "affordances": [
+        "touch"
+      ]
+    },
+    "mirror": {
+      "label": "leaning dressing mirror",
+      "half": [
+        0.22,
+        0.12,
+        0.83
+      ],
+      "material": "glass",
+      "collision": true,
+      "tags": [
+        "mirror",
+        "decor"
+      ],
+      "affordances": [
+        "watch"
+      ]
+    },
+    "lantern": {
+      "label": "small decorative lantern",
+      "half": [
+        0.19,
+        0.18,
+        0.29
+      ],
+      "material": "metal",
+      "collision": true,
+      "tags": [
+        "light",
+        "decor"
+      ],
+      "affordances": [
+        "watch",
+        "touch"
+      ]
+    }
+  },
+  "limits": {
+    "maxPerRoom": 8,
+    "maxTotal": 32,
+    "maxClaimsPerResident": 1
+  },
+  "coordinateUnits": "native_matrix_metres",
+  "setup": "Owner selects a configuration; suggested furniture is placed through the separate checked drop-in action."
+}
