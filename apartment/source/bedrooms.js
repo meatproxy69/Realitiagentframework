@@ -226,7 +226,7 @@ function view(){
   chests:Object.fromEntries(roomIds.map(room=>[room,{
    entity_id:CHEST+room,label:SPEC.chests[room].label,
    owner:s.rooms[room].owner,position:SPEC.chests[room].position.slice(),
-   stored_count:s.items.filter(row=>row.room===room&&row.stored===true).length,
+   stored_count:s.chests?.[room]?.stored_count??s.items.filter(row=>row.room===room&&row.stored===true).length,
    capacity:SPEC.limits.maxChestPerRoom
   }])),
   limits:cp(SPEC.limits),
@@ -244,11 +244,11 @@ function catalog(){return {ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1'
 }
 // Solo floor-finding uses the same finite Matrix collision preview as manual place.
  // Suggestions describe alternative positions; they do not reserve a layout.
-function findSoloSpots(room,kind){
+function findSoloSpots(room,kind,excludeStoredId=null){
  if(!own(SPEC.rooms,room)||!own(SPEC.items,kind))return error('UNKNOWN_BEDROOM_OR_ITEM');
  if(solo.rooms[room].owner!==rid)return error('BEDROOM_NOT_OWNED');
- if(solo.items.length>=SPEC.limits.maxTotal||
-    solo.items.filter(row=>row.room===room).length>=SPEC.limits.maxPerRoom)
+ if(solo.items.length-(excludeStoredId?1:0)>=SPEC.limits.maxTotal||
+    solo.items.filter(row=>row.room===room&&row.id!==excludeStoredId).length>=SPEC.limits.maxPerRoom)
   return error('BEDROOM_ITEM_CAPACITY');
  const bounds=SPEC.rooms[room].bounds,[hx,hy]=SPEC.items[kind].half,spots=[];
  for(let y=bounds[3]-hy-.16;y>=bounds[2]+hy+.16&&spots.length<3;y-=.4)
@@ -286,7 +286,7 @@ function soloAction(raw){
   if(item.stored!==true)return error('DECOR_NOT_STORED');
   let p;
   if(m[1]==='auto-take'){
-   const choices=findSoloSpots(item.room,item.kind);
+   const choices=findSoloSpots(item.room,item.kind,id);
    if(!choices.ok)return choices;
    const loc=choices.suggestions[0];p=preview(item.kind,item.room,loc.x,loc.y);
   }else{
