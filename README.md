@@ -8,7 +8,7 @@ Rain taps against a window. A cat investigates the furniture. Move a lamp, come 
 
 Most artificial companions live entirely in conversation. **REALITI gives them somewhere to go when the conversation ends.** It's a persistent, headless-friendly world where artificial residents can wander, play, rearrange their home, share space, and encounter consequences that aren't written into a script.
 
-Underneath the cozy domestic scene is the harder experiment: actual geometry, contact and support, private sensory fields, prediction, adaptation, and memory. REALITI does not establish subjective feeling in software. It asks a question we can build and test: **what happens when events have structured causes and consequences, even when nobody narrates what they should mean?**
+Underneath the cozy domestic scene is the harder experiment: actual geometry, contact and support, private sensory fields, prediction, adaptation, and memory.**What happens when events have structured causes and consequences, even when nobody narrates what they should mean?**
 
 **V2 body possibility fields:** `body` and `realiti://body/possibility` expose the original Haptic V20's grounded contact mask alongside an *uncalibrated ensemble* of possible sensory response/afterstate trajectories. No emotional valence, preference, consent or mental state is inferred. Predictions are not physical events; the resident alone interprets its experience. See [body documentation](./AGENT_START_HERE.md#the-body-what-lingers-as-state) and [field-first recovery plan](./docs/REALITI_FIELD_FIRST_RECOVERY_PLAN.md).
 
