@@ -286,6 +286,16 @@ function soloAction(raw){
  if(!inHome())return error('APARTMENT_HOME_ONLY');
  const s=String(raw||'').trim().toLowerCase().replace(/\s+/g,' ');
  const next=cp(solo);let m;
+ if((m=/^bedroom colors set (quilt|library|canopy|studio) (#[0-9a-f]{6}) (#[0-9a-f]{6}) (#[0-9a-f]{6}) (#[0-9a-f]{6})$/.exec(s))){
+  const room=m[1],r=next.rooms[room];
+  if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
+  const colors=Object.fromEntries(SPEC.colorRoles.map((role,i)=>[role,m[i+2]]));
+  if(JSON.stringify(paletteFor(r))===JSON.stringify(colors))return {ok:true,
+   unchanged:true,room,colors,revision:solo.revision};
+  r.palette=colors;next.revision++;
+  return {...persist(next),room,colors,palette_recipe:'custom',
+   shader_applied:false,contact_minted:false};
+ }
  if((m=/^bedroom color (quilt|library|canopy|studio) (field|anchor|accent|bridge) (#[0-9a-f]{6})$/.exec(s))){
   const [_,room,role,color]=m,r=next.rooms[room];
   if(r.owner!==rid)return error('BEDROOM_NOT_OWNED');
@@ -473,6 +483,7 @@ function commands(){return [
  'bedrooms','bedroom claim <quilt|library|canopy|studio>',
  'bedroom release <room>','bedroom configure <room> <cozy|nightglass|writers|botanical|music>',
  'bedroom colors <room>','bedroom color <room> <role> <#RRGGBB>',
+ 'bedroom colors set <room> <field> <anchor> <accent> <bridge>',
  'bedroom palette <room> <recipe|reset>','bedroom palette catalog',
  'bedroom configurations','bedroom furnish <room> <configuration>',
  'decor catalog','decor list',
