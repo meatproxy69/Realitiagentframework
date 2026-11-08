@@ -220,10 +220,19 @@ async function autoStep(){
  for(const site of candidates){
   const before=distance(site.id);
   if(!Number.isFinite(before))continue;
-  const walked=await nativeRun('approach '+site.id);
-  const after=distance(site.id),arrived=Number.isFinite(after)&&after<=1.25;
-  if(walked?.ok===false||(!arrived&&!(after<before-.03)))continue;
-  recordAuto(arrived?site.id:null);
+  let after=before,walked=null,attempts=0,progressed=false;
+  // Native approaches are bounded strides. Reissue at most five, but stop
+  // immediately on refusal, collision, or lack of measurable progress.
+  while(after>1.2&&attempts<5){
+   const prev=after;
+   walked=await nativeRun('approach '+site.id);
+   attempts++;after=distance(site.id);
+   if(walked?.ok===false||!Number.isFinite(after)||after>=prev-.03)break;
+   progressed=true;
+  }
+  const arrived=Number.isFinite(after)&&after<=1.25;
+  if(walked?.ok===false||(!arrived&&!progressed))continue;
+  recordAuto(site.id);
   let activity=null,extra='';
   if(arrived&&site.kind==='book'){
    const page=window.REALITI_APARTMENT_BOOK_V1?.read?.(site.room);
@@ -245,7 +254,7 @@ async function autoStep(){
    auto_selected:true,did:'approach',target:site.id,arrived,
    ...(activity?{activity}:{}),distance_m:+after.toFixed(2),
    text:travel+site.name+'.'+extra,
-   native_move_ok:walked?.ok!==false,
+   native_move_ok:walked?.ok!==false,native_approaches:attempts,
    sensory_contact_minted:false};
  }
  return fail('AUTO_ROUTE_BLOCKED',
