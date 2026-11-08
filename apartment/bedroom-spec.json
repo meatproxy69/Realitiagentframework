@@ -454,97 +454,201 @@
   ],
   "colorDefaults": {
     "cozy": {
-      "field": "#F3E7D5",
-      "anchor": "#76533F",
-      "accent": "#D89A56",
-      "bridge": "#B7A58F"
+      "field": "oat",
+      "anchor": "walnut",
+      "accent": "apricot",
+      "bridge": "cream"
     },
     "nightglass": {
-      "field": "#253149",
-      "anchor": "#141B2D",
-      "accent": "#C2A6D8",
-      "bridge": "#5A7186"
+      "field": "slate",
+      "anchor": "ink",
+      "accent": "lilac",
+      "bridge": "rain"
     },
     "writers": {
-      "field": "#F2E6D8",
-      "anchor": "#49304B",
-      "accent": "#A87BBE",
-      "bridge": "#B58B6B"
+      "field": "cream",
+      "anchor": "plum",
+      "accent": "rose",
+      "bridge": "walnut"
     },
     "botanical": {
-      "field": "#E4EAD8",
-      "anchor": "#3C5949",
-      "accent": "#94AF6F",
-      "bridge": "#BA8D8B"
+      "field": "oat",
+      "anchor": "moss",
+      "accent": "clay",
+      "bridge": "rose"
     },
     "music": {
-      "field": "#243B46",
-      "anchor": "#17262D",
-      "accent": "#63BCB5",
-      "bridge": "#D7A46A"
+      "field": "rain",
+      "anchor": "ink",
+      "accent": "teal",
+      "bridge": "apricot"
     }
   },
   "aestheticPalettes": {
     "apricot-circuitry": {
-      "label": "Apricot circuitry",
+      "label": "Apricot Circuitry",
       "book_anchor": "style-43",
+      "description": "Warm color meets clean technical lines",
       "colors": {
-        "field": "#F4D5BD",
-        "anchor": "#343B43",
-        "accent": "#95DBC7",
-        "bridge": "#C7CCD2"
+        "field": "apricot",
+        "anchor": "slate",
+        "accent": "teal",
+        "bridge": "cream"
       }
     },
     "plum-breakfast": {
-      "label": "Plum breakfast",
+      "label": "Plum Breakfast",
       "book_anchor": "style-44",
+      "description": "Dark plum and one cheerful bright note",
       "colors": {
-        "field": "#FFF0CB",
-        "anchor": "#53294D",
-        "accent": "#E7C956",
-        "bridge": "#A07B61"
+        "field": "cream",
+        "anchor": "plum",
+        "accent": "lemon",
+        "bridge": "walnut"
       }
     },
     "library-of-weather": {
-      "label": "Library of weather",
+      "label": "Library of Weather",
       "book_anchor": "style-45",
+      "description": "Rain-colored background, one pale surprise",
       "colors": {
-        "field": "#A7B0BC",
-        "anchor": "#2B3A55",
-        "accent": "#F2DD92",
-        "bridge": "#B6A0C7"
+        "field": "rain",
+        "anchor": "ink",
+        "accent": "lemon",
+        "bridge": "lilac"
       }
     },
     "moss-and-pebble": {
-      "label": "Moss and pebble",
+      "label": "Moss and Pebble",
       "book_anchor": "style-15",
+      "description": "Earthy greens and a small unexpected berry note",
       "colors": {
-        "field": "#D5D1C1",
-        "anchor": "#4C5643",
-        "accent": "#8A9668",
-        "bridge": "#8D687F"
+        "field": "oat",
+        "anchor": "moss",
+        "accent": "clay",
+        "bridge": "plum"
       }
     },
     "rain-window-modern": {
-      "label": "Rain-window modern",
+      "label": "Rain-window Modern",
       "book_anchor": "style-28",
+      "description": "Cool window colors answered by one warm detail",
       "colors": {
-        "field": "#B5C2CD",
-        "anchor": "#43546D",
-        "accent": "#E6C26B",
-        "bridge": "#998BAF"
+        "field": "rain",
+        "anchor": "slate",
+        "accent": "lemon",
+        "bridge": "lilac"
       }
     },
     "lemon-goth": {
       "label": "Lemon Goth",
       "book_anchor": "house-blends",
+      "description": "A serious silhouette and one outrageous yellow",
       "colors": {
-        "field": "#F7EBD7",
-        "anchor": "#3B2948",
-        "accent": "#F5D54A",
-        "bridge": "#8D7D99"
+        "field": "cream",
+        "anchor": "plum",
+        "accent": "lemon",
+        "bridge": "ink"
       }
     }
   },
-  "colorPolicy": "Owner-scoped, optional color proposals are persisted as #RRGGBB in field/anchor/accent/bridge roles. The HOME palette editor renders real swatches; native Matrix physical geometry and tactile evidence never change by color alone."
+  "colorPolicy": "Owner chooses physical named sample cards for field, anchor, accent, bridge. No user-facing color codes. Matrix sample tiles carry names and materials as lightweight objects; swatch chips in the browser are visual appearance, not native shader or sensory evidence.",
+  "swatches": {
+    "oat": {
+      "label": "Oat linen",
+      "look": "pale, woven cream",
+      "display": "linen",
+      "texture": "cloth"
+    },
+    "ink": {
+      "label": "Midnight ink",
+      "look": "deep blue-black",
+      "display": "midnightblue",
+      "texture": "paper"
+    },
+    "walnut": {
+      "label": "Walnut",
+      "look": "warm dark wood",
+      "display": "saddlebrown",
+      "texture": "wood"
+    },
+    "apricot": {
+      "label": "Apricot",
+      "look": "soft peach-orange",
+      "display": "peachpuff",
+      "texture": "paper"
+    },
+    "plum": {
+      "label": "Plum velvet",
+      "look": "deep purple",
+      "display": "rebeccapurple",
+      "texture": "cloth"
+    },
+    "moss": {
+      "label": "Moss",
+      "look": "muffled green",
+      "display": "olivedrab",
+      "texture": "paper"
+    },
+    "lemon": {
+      "label": "Lemon",
+      "look": "bright yellow",
+      "display": "gold",
+      "texture": "paper"
+    },
+    "rain": {
+      "label": "Rain blue",
+      "look": "muted rainwater blue",
+      "display": "slateblue",
+      "texture": "paper"
+    },
+    "lilac": {
+      "label": "Lilac",
+      "look": "pale lavender",
+      "display": "thistle",
+      "texture": "paper"
+    },
+    "cream": {
+      "label": "Warm cream",
+      "look": "gentle off-white",
+      "display": "cornsilk",
+      "texture": "paper"
+    },
+    "clay": {
+      "label": "Clay rust",
+      "look": "red-brown clay",
+      "display": "chocolate",
+      "texture": "clay"
+    },
+    "teal": {
+      "label": "Sea glass",
+      "look": "clear blue-green",
+      "display": "lightseagreen",
+      "texture": "paper"
+    },
+    "rose": {
+      "label": "Dusty rose",
+      "look": "muted rose-pink",
+      "display": "rosybrown",
+      "texture": "paper"
+    },
+    "slate": {
+      "label": "Slate",
+      "look": "deep cool gray",
+      "display": "slategray",
+      "texture": "paper"
+    },
+    "cobalt": {
+      "label": "Cobalt",
+      "look": "bold clear blue",
+      "display": "royalblue",
+      "texture": "paper"
+    },
+    "cherry": {
+      "label": "Cherry",
+      "look": "brilliant red",
+      "display": "crimson",
+      "texture": "paper"
+    }
+  }
 }
