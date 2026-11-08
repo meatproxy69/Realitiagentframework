@@ -152,7 +152,10 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     residents:summary.residents,guests:summary.visitors,board:cp(data.board.slice(-64)),
     scene:scene.view(),
      bedrooms:{...cp(data.bedrooms),
-      items:cp(data.bedrooms.items.filter(row=>row.stored!==true))},
+      items:cp(data.bedrooms.items.filter(row=>row.stored!==true)),
+      chests:Object.fromEntries(Object.keys(data.bedrooms.rooms).map(room=>[room,{
+       stored_count:data.bedrooms.items.filter(row=>row.room===room&&row.stored===true).length
+      }]))},
      physics:physics.publicView(receiver),
     pet:sharedPet.status(),
     law:'Host-verified native colliding capsules, shared bedroom ownership and position-checked decor. No private resident memories, body state or keys replicated.'};
