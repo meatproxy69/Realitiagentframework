@@ -445,5 +445,106 @@
     "floor-mat",
     "floor-pillow"
   ],
-  "chestPolicy": "Every alcove contains one fixed, colliding Matrix chest. Only its claimed owner can store and retrieve previously placed small decor. IDs stay stable; stored decor has no world geometry, contact, or occupancy."
+  "chestPolicy": "Every alcove contains one fixed, colliding Matrix chest. Only its claimed owner can store and retrieve previously placed small decor. IDs stay stable; stored decor has no world geometry, contact, or occupancy.",
+  "colorRoles": [
+    "field",
+    "anchor",
+    "accent",
+    "bridge"
+  ],
+  "colorDefaults": {
+    "cozy": {
+      "field": "#F3E7D5",
+      "anchor": "#76533F",
+      "accent": "#D89A56",
+      "bridge": "#B7A58F"
+    },
+    "nightglass": {
+      "field": "#253149",
+      "anchor": "#141B2D",
+      "accent": "#C2A6D8",
+      "bridge": "#5A7186"
+    },
+    "writers": {
+      "field": "#F2E6D8",
+      "anchor": "#49304B",
+      "accent": "#A87BBE",
+      "bridge": "#B58B6B"
+    },
+    "botanical": {
+      "field": "#E4EAD8",
+      "anchor": "#3C5949",
+      "accent": "#94AF6F",
+      "bridge": "#BA8D8B"
+    },
+    "music": {
+      "field": "#243B46",
+      "anchor": "#17262D",
+      "accent": "#63BCB5",
+      "bridge": "#D7A46A"
+    }
+  },
+  "aestheticPalettes": {
+    "apricot-circuitry": {
+      "label": "Apricot circuitry",
+      "book_anchor": "style-43",
+      "colors": {
+        "field": "#F4D5BD",
+        "anchor": "#343B43",
+        "accent": "#95DBC7",
+        "bridge": "#C7CCD2"
+      }
+    },
+    "plum-breakfast": {
+      "label": "Plum breakfast",
+      "book_anchor": "style-44",
+      "colors": {
+        "field": "#FFF0CB",
+        "anchor": "#53294D",
+        "accent": "#E7C956",
+        "bridge": "#A07B61"
+      }
+    },
+    "library-of-weather": {
+      "label": "Library of weather",
+      "book_anchor": "style-45",
+      "colors": {
+        "field": "#A7B0BC",
+        "anchor": "#2B3A55",
+        "accent": "#F2DD92",
+        "bridge": "#B6A0C7"
+      }
+    },
+    "moss-and-pebble": {
+      "label": "Moss and pebble",
+      "book_anchor": "style-15",
+      "colors": {
+        "field": "#D5D1C1",
+        "anchor": "#4C5643",
+        "accent": "#8A9668",
+        "bridge": "#8D687F"
+      }
+    },
+    "rain-window-modern": {
+      "label": "Rain-window modern",
+      "book_anchor": "style-28",
+      "colors": {
+        "field": "#B5C2CD",
+        "anchor": "#43546D",
+        "accent": "#E6C26B",
+        "bridge": "#998BAF"
+      }
+    },
+    "lemon-goth": {
+      "label": "Lemon Goth",
+      "book_anchor": "house-blends",
+      "colors": {
+        "field": "#F7EBD7",
+        "anchor": "#3B2948",
+        "accent": "#F5D54A",
+        "bridge": "#8D7D99"
+      }
+    }
+  },
+  "colorPolicy": "Owner-scoped, optional color proposals are persisted as #RRGGBB in field/anchor/accent/bridge roles. The HOME palette editor renders real swatches; native Matrix physical geometry and tactile evidence never change by color alone."
 }
