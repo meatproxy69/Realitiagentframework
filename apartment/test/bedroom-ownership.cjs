@@ -217,7 +217,25 @@ async function household(){
    /BEDROOMS_INVALID_ROOM_OWNER/);
   assert.equal(fs.existsSync(path.join(tampered,'host.lock')),false,
    'a rejected ownership checkpoint must not strand the writer lock');
-  console.log('BEDROOM HOUSEHOLD PASS: four exclusive owners, five configurations, host-authored native items, no nonowner edits, guests, saved restart, rev checks, checksum-valid permission tamper refusal');
+  // A valid-hash payload also must not force an object into existing Matrix
+  // furniture. Host startup audits real geometry before recreating the prop.
+  const forgedPath=path.join(dir,'geometry-tampered-host');
+  fs.cpSync(root,forgedPath,{recursive:true,errorOnExist:true,force:false});
+  const forgedFile=path.join(forgedPath,'household.json');
+  const forged=JSON.parse(fs.readFileSync(forgedFile,'utf8'));
+  const fakeId='I'+forged.bedrooms.next_id++;
+  forged.bedrooms.items.push({id:fakeId,room:'canopy',kind:'book-stack',
+   owner:'cora',x:3.3,y:2.4});
+  const {sha256:discarded,...body2}=forged;
+  forged.sha256=crypto.createHash('sha256').update(JSON.stringify(body2)).digest('hex');
+  fs.writeFileSync(forgedFile,JSON.stringify(forged));
+  const forgedHost=await createHousehold({dir:forgedPath,htmlPath:html,validationPath});
+  try{
+   await assert.rejects(forgedHost.joinResident('alice'),
+    /BEDROOM_UNSAFE_HOST_GEOMETRY/,
+    'host refuses a checksum-valid prop that would collide with the existing sofa');
+  }finally{await forgedHost.close()}
+    console.log('BEDROOM HOUSEHOLD PASS: four exclusive owners, five configurations, host-authored native items, no nonowner edits, guests, saved restart, rev checks, checksum-valid permission tamper refusal');
  }finally{if(host)await host.close();}
 }
 (async()=>{
