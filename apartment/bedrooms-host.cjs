@@ -9,6 +9,11 @@ const STYLES=Object.keys(SPEC.configurations),MAX=SPEC.limits.maxTotal;
 const cp=x=>JSON.parse(JSON.stringify(x)),fail=(error,detail={})=>({ok:false,error,...detail});
 const own=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
 const validId=x=>typeof x==='string'&&/^[a-z][a-z0-9-]{1,30}$/.test(x);
+const hex=x=>typeof x==='string'&&/^#[0-9a-f]{6}$/.test(x);
+const validPalette=x=>x&&typeof x==='object'&&!Array.isArray(x)&&
+ Object.keys(x).length===SPEC.colorRoles.length&&
+ SPEC.colorRoles.every(role=>own(x,role)&&hex(x[role]));
+const paletteFor=r=>cp(r.palette||SPEC.colorDefaults[r.configuration]);
 const empty=()=>({schema:SCHEMA,revision:0,next_id:1,rooms:Object.fromEntries(
  ROOMS.map(id=>[id,{owner:null,configuration:'cozy'}])),items:[]});
 function validate(checkpoint,members=[]){
@@ -24,6 +29,7 @@ function validate(checkpoint,members=[]){
  for(const roomId of ROOMS){
   const r=x.rooms[roomId];
   if(!r||!own(r,'owner')||!STYLES.includes(r.configuration)||
+      (own(r,'palette')&&!validPalette(r.palette))||
       (r.owner!==null&&(!validId(r.owner)||!members.includes(r.owner)))||
       (r.owner!==null&&claims.has(r.owner)))
    throw Error('BEDROOMS_INVALID_ROOM_OWNER');
@@ -95,6 +101,7 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
     label:SPEC.rooms[id].name,bounds:SPEC.rooms[id].bounds.slice(),
     note:SPEC.rooms[id].note,
     owner:s.rooms[id].owner,configuration:s.rooms[id].configuration,
+    palette:paletteFor(s.rooms[id]),palette_source:own(s.rooms[id],'palette')?'custom':'configuration',
     item_count:s.items.filter(row=>row.room===id).length
    }])),
    items:cp(s.items.filter(row=>row.stored!==true)),
@@ -114,12 +121,17 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
  const catalog=()=>({ok:true,schema:'REALITI_APARTMENT_DROP_IN_CATALOG_V1',
    items:cp(SPEC.items),bedrooms:cp(SPEC.rooms),
    chests:cp(SPEC.chests),storable_kinds:SPEC.storableKinds.slice(),
-   configurations:cp(SPEC.configurations),max_per_room:SPEC.limits.maxPerRoom,
+   configurations:cp(SPEC.configurations),
+   color_roles:SPEC.colorRoles.slice(),palette_recipes:cp(SPEC.aestheticPalettes),
+   max_per_room:SPEC.limits.maxPerRoom,
    note:'Items are real finite native Matrix geometry. Configurations set configurationName; choose positions to place physical items.'});
  const help=()=>({ok:true,commands:[
   'remote bedrooms','remote bedroom claim <room> [if-rev <n>]',
   'remote bedroom release <room> [if-rev <n>]',
   'remote bedroom configure <room> <configuration> [if-rev <n>]',
+  'remote bedroom colors <room>',
+  'remote bedroom color <room> <field|anchor|accent|bridge> <#RRGGBB> [if-rev <n>]',
+  'remote bedroom palette <room> <recipe|reset> [if-rev <n>]',
   'remote bedroom configurations','remote bedroom furnish <room> <configuration> [if-rev <n>]',
   'remote decor catalog',
   'remote decor preview <room> <kind> <x> <y> [if-rev <n>]',
@@ -221,6 +233,16 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   if(cmd==='bedrooms'||cmd==='bedroom status'||cmd==='decor list')return view();
   if(cmd==='decor catalog'||cmd==='bedroom configurations')return catalog();
   if(cmd==='bedroom help'||cmd==='decor help')return help();
+  if(cmd==='bedroom palette catalog')return {ok:true,schema:'REALITI_APARTMENT_PALETTES_V1',
+   roles:SPEC.colorRoles.slice(),recipes:cp(SPEC.aestheticPalettes),read_only:true};
+  const colors=/^bedroom colors ([a-z-]+)$/.exec(cmd);
+  if(colors){
+   const state=ensure(),r=state.rooms[colors[1]];
+   return r?{ok:true,schema:'REALITI_APARTMENT_BEDROOM_COLORS_V1',
+    room:colors[1],owner:r.owner,colors:paletteFor(r),
+    source:own(r,'palette')?'custom':'configuration',read_only:true,shader_applied:false}
+    :fail('UNKNOWN_BEDROOM');
+  }
   const inspect=/^decor inspect (i[1-9][0-9]*)$/.exec(cmd);
   if(inspect){
    const item=ensure().items.find(x=>x.id===inspect[1].toUpperCase());
@@ -253,7 +275,30 @@ function createBedroomManager({getData,persist,participants,atHome}={}){
   const without=cmd.replace(/ if-rev (\d+)$/,(_,n)=>{rev=Number(n);return ''});
   if(rev!==null&&(!Number.isSafeInteger(rev)||rev!==current.revision))
    return fail('BEDROOM_REVISION_CONFLICT',{current_revision:current.revision});
-  if((m=/^chest stow (i[1-9][0-9]*)$/.exec(without))){
+  if((m=/^bedroom color ([a-z-]+) (field|anchor|accent|bridge) (#[0-9a-f]{6})$/.exec(without))){
+   const [_,room,role,color]=m,r=next.rooms[room];
+   if(!r)return fail('UNKNOWN_BEDROOM');
+   if(r.owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+   const palette=paletteFor(r);
+   if(palette[role]===color)return {ok:true,unchanged:true,bedroom:room,
+    colors:palette,revision:current.revision};
+   palette[role]=color;r.palette=palette;
+   operation={bedroom:room,colors:cp(palette),changed_role:role,
+    shader_applied:false,contact_minted:false};
+  }else if((m=/^bedroom palette ([a-z-]+) ([a-z0-9-]+)$/.exec(without))){
+   const [_,room,recipe]=m,r=next.rooms[room];
+   if(!r)return fail('UNKNOWN_BEDROOM');
+   if(r.owner!==actor.id)return fail('BEDROOM_NOT_OWNED');
+   if(recipe==='reset'){if(!own(r,'palette'))return {ok:true,unchanged:true,
+    bedroom:room,colors:paletteFor(r),revision:current.revision};
+    delete r.palette;
+   }else{
+    if(!own(SPEC.aestheticPalettes,recipe))return fail('UNKNOWN_PALETTE_RECIPE');
+    r.palette=cp(SPEC.aestheticPalettes[recipe].colors);
+   }
+   operation={bedroom:room,colors:paletteFor(r),palette_recipe:recipe,
+    shader_applied:false,contact_minted:false};
+  }else if((m=/^chest stow (i[1-9][0-9]*)$/.exec(without))){
    const id=m[1].toUpperCase(),item=next.items.find(row=>row.id===id);
    if(!item)return fail('UNKNOWN_DECOR_ITEM');
    if(item.owner!==actor.id)return fail('CHEST_OWNER_ONLY');
