@@ -70,7 +70,9 @@ function menu(){
     'remote decor place <room> <kind> <x> <y>',
     'remote decor inspect <id>','remote decor move <id> <x> <y>',
     'remote decor nudge <id> <dx> <dy>',
-    'remote decor remove <id>','remote bedroom clear <room> confirm'],
+    'remote decor remove <id>','remote bedroom clear <room> confirm',
+    'remote chest inspect <room>','remote chest stow <id>',
+    'remote chest take <id> <x> <y>','remote chest auto-take <id>'],
   catnip:['remote catnip help','remote catnip list','remote catnip presets',
    'remote catnip preset preview <id>','remote catnip preset <id>','remote catnip preset off'],
   ...(HOME_FIRST?{}:{stations:['remote stations help','remote stations list','remote stations inspect <source-id>','remote stations use <source-id> <original-verb>']}),
@@ -182,7 +184,8 @@ async function run(raw){
   if(command==='stations')return ST.view();
   if(command.startsWith('stations '))return ST.handle(spoken.slice('remote stations '.length));
   if(command==='furniture')return F.view();
-  if(command==='bedrooms'||command.startsWith('bedroom ')||command.startsWith('decor '))
+  if(command==='bedrooms'||command.startsWith('bedroom ')||
+     command.startsWith('decor ')||command.startsWith('chest '))
    return B.handle(command);
   if(command==='catnip')return C.view();
   if(command==='pet')return originalRun('pet status');
