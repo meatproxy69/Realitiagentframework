@@ -72,6 +72,7 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.ok(first.contacts.every(x=>x.receipt?.receptor!=='NO_RECEPTOR'));
   assert.ok(first.neuromesh?.node_count>0,'original neuromesh route, not invented field');
   assert.equal(first.native_world_contact,true);
+  assert.equal(first.matrix_reach?.authority,'NATIVE_MATRIX_SDF');
   assert.equal(first.fabricated_contact,false);
   assert.ok(W.eval('C9.pet2.scratches')>0,'original Relax scratch deed is executed');
   assert.equal((await D('inspect post')).marks,1,'material trace stays');
@@ -82,9 +83,19 @@ const show=o=>JSON.stringify(o).slice(0,480);
   const left=await D('cat scratch post left');
   assert.equal(left.ok,true,show(left));
   assert.deepEqual(left.contacts.map(x=>x.zone),['hand.L.palm']);
+  const rightAfterLeft=W.eval("C9.b7.zones['hand.R.palm']");
+  assert.ok(!rightAfterLeft||Number(rightAfterLeft._b10_grounded_until||-1)<tick()||
+   Number(rightAfterLeft._b10_grounded_value||0)===0,
+   'a LEFT-only paw scratch must not silently mint generic right-hand contact');
+  assert.equal(left.matrix_receipt,null,
+   'the read-only native Matrix reach check must not touch with an extra right hand');
   const right=await D('cat scratch post right');
   assert.equal(right.ok,true,show(right));
   assert.deepEqual(right.contacts.map(x=>x.zone),['hand.R.palm']);
+  const leftAfterRight=W.eval("C9.b7.zones['hand.L.palm']");
+  assert.ok(!leftAfterRight||Number(leftAfterRight._b10_grounded_until||-1)<tick()||
+   Number(leftAfterRight._b10_grounded_value||0)===0,
+   'a RIGHT-only paw scratch must not leave a live left-paw lease');
   assert.equal((await D('cat mesh')).private_pulse.private_only,true,
    'native private handshake does not mint world contact');
   // Real pet bed supports left/right kneading, original circle/loaf and purr.

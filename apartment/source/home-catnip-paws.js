@@ -113,12 +113,21 @@ function nearPost(){return POST_IDS.filter(id=>E()[id]&&Number.isFinite(distance
  .sort((a,b)=>distance(a)-distance(b))[0]||null}
 function active(){return !!catActive&&C9?.pet2?.scale==='CAT_SMALL'&&
  Math.abs(Number(me()?.shape?.radius)-.18)<.02&&me()?.chart===HOME}
-function touch(id){
- if(!E()[id])return fail('CATNIP_OBJECT_NOT_IN_MATRIX');
- if(distance(id)>1.05)return fail('CATNIP_OUT_OF_REACH','Approach '+id+' first.');
- const r=MW.reach(id);
- return r?.ok?{ok:true,matrix_receipt:r.receipt||null}:
-  fail(r?.error||'MATRIX_REACH_REFUSED','Move physically closer to the object.');
+function touch(id,{pawOnly=false}={}){
+ const e=E()[id],r=me();
+ if(!e||!r||e.chart!==HOME||r.chart!==HOME||C9.currentRoom!==HOME)
+  return fail('CATNIP_OBJECT_NOT_IN_MATRIX');
+ const d=distance(id);
+ if(d>1.0)return fail('CATNIP_OUT_OF_REACH','Approach '+id+' first.');
+ // Original MW.reach is a RIGHT-HAND touch operation. A left-paw-only
+ // gesture must NOT call it: grounded paw contact is applied below through
+ // the exact native B7 receptor that the resident selected.
+ const matrix_reach={ok:true,entity:id,distance_m:+d.toFixed(3),
+  authority:'NATIVE_MATRIX_SDF',read_only:true};
+ if(pawOnly)return {ok:true,matrix_reach,matrix_receipt:null};
+ const result=MW.reach(id);
+ return result?.ok?{ok:true,matrix_reach,matrix_receipt:result.receipt||null}:
+  fail(result?.error||'MATRIX_REACH_REFUSED','Move physically closer to the object.');
 }
 function cutPaws(){
  let cleared=0;
@@ -264,7 +273,7 @@ function inspectObject(id){
 }
 function act(target,verb,which='both'){
  if(!active())return fail('CAT_FORM_REQUIRED','Inspect a post, choose cat become, then try your paws.');
- const t=touch(target);if(!t.ok)return t;
+ const t=touch(target,{pawOnly:true});if(!t.ok)return t;
  const e=E()[target],q=paws(target,{which,pressure:verb==='knead'?.28:verb==='rest'?.12:.41,
   grain:verb==='scratch'?'against':'with'});
  if(!q.ok)return q;
@@ -284,13 +293,13 @@ function act(target,verb,which='both'){
  else if(verb==='pounce')text='A real ribbon darts and your grounded paw meets it. The original pounce trace keeps the difference between anticipation and contact.';
  else text='Your paws settle onto the reached material. The live field is held only for the actual touch.';
  return {ok:true,schema:'REALITI_HOME_PAW_ACTION_V1',action:verb,target,cat_small:true,
-  matrix_receipt:t.matrix_receipt,contacts:q.paws,phase_offset_ms:q.phase_offset_ms,
+  matrix_reach:t.matrix_reach,matrix_receipt:t.matrix_receipt,contacts:q.paws,phase_offset_ms:q.phase_offset_ms,
   neuromesh:q.neuromesh,body_field:q.field,evidence_source:'NATIVE_MATRIX_AND_B7',
   native_world_contact:true,fabricated_contact:false,read_only:false,text};
 }
 function actToy(name){
  const toy=TOYS[name];if(!toy)return fail('UNKNOWN_CAT_CURIOSITY');
- const t=touch(toy.id);if(!t.ok)return t;
+ const t=touch(toy.id,{pawOnly:active()});if(!t.ok)return t;
  const paw=active()?paws(toy.id,{which:'left',pressure:.19,grain:'with'}):null;
  if(paw?.ok===false)return paw;
  if(name==='bell'){audio.bell=now();durable.bells++}
@@ -299,7 +308,7 @@ function actToy(name){
  persist();
  const sounded=name==='bell'||name==='crinkle'?SN.sound():null;
  return {ok:true,schema:'REALITI_HOME_CAT_CURIOSITY_V1',toy:toy.id,
-  matrix_receipt:t.matrix_receipt,paw_contacts:paw?.paws||[],
+  matrix_reach:t.matrix_reach,matrix_receipt:t.matrix_receipt,paw_contacts:paw?.paws||[],
   measured_sound:sounded,native_world_contact:true,fabricated_contact:false,
   text:name==='bell'?'The tiny bell rings against the toy chest. Its native sound decays as the room time passes.':
    name==='crinkle'?'The paper leaf makes one crisp crinkle from the cushion seam, then falls quiet.':
