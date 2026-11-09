@@ -62,8 +62,10 @@ const opts={htmlPath:html,validationPath,residentId:'bed-ocean-resident',
   assert.equal((await W.REALITI_APARTMENT_NATIVE_PILLOW_V1.engage('dive')).error,
    'CLOUD_OCEAN_REQUIRES_REAL_BED_SUPPORT','cannot bypass the switch via native bridge');
   assert.equal((await D('cloud on')).ok,true);
-  assert.equal((await D('do stand')).ok,true);
-  assert.equal(O.status().active,false,'standing cuts Cloud Ocean immediately');
+  const directMove=await W.Realiti.invoke('move',{local:[0,2,0]});
+  assert.equal(directMove.ok,true,'direct REALITI API movement must remain supported');
+  assert.equal(O.status().active,false,'direct API movement out of bed must cut Cloud Ocean');
+  assert.equal(W.REALITI_DYNAMICS_V1.state().wave,null);
   assert.equal((await D('cloud on')).error,'CLOUD_OCEAN_REQUIRES_REAL_BED_SUPPORT');
   assert.equal((await D('remote cloud status')).error,'REMOTE_ASLEEP');
   assert.equal((await D('remote activate')).activated,true);

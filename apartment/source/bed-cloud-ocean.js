@@ -10,6 +10,7 @@ const M=window.REALITI_MATRIX_V1,B=window.REALITI_APARTMENT_BEDROOMS_V1,
 if(!M||!B||!D||!A||!DYN||!NP?.engage||!NP?.release)
  throw Error('CLOUD_OCEAN_REQUIRES_NATIVE_RELAX_PILLOW_AND_MATRIX');
 const priorRun=D.run.bind(D),priorRead=A.read.bind(A),priorHelp=D.help.bind(D);
+const priorInvoke=typeof A.invoke==='function'?A.invoke.bind(A):null;
 let activeBed=null,mode=null,sequence=0;
 const fail=(error,hint)=>({ok:false,error,...(hint?{hint}:{})});
 const resident=()=>M.state().residents?.['resident:self'];
@@ -158,10 +159,17 @@ function read(uri='realiti://here'){
  if(uri==='realiti://apartment/cloud-ocean')return status();
  return priorRead(uri);
 }
+async function invoke(op,args={}){
+ if(!priorInvoke)return fail('INVOKE_UNAVAILABLE');
+ const result=await priorInvoke(op,args);
+ if(activeBed&&!isActiveSupported())release('left_bed');
+ reconcile();updateButton();
+ return result;
+}
 D.run=run;
 D.help=()=>{const h=priorHelp()||{};return {...h,commands:[...new Set([...(h.commands||[]),'cloud [on|off|switch|dive|burrow|bounce|wave|mesh|status]'])],
  cloud_ocean:'Opt in only while physically supported by an existing bed. This is original Relax pressure and R&R, not an added room.'};};
-window.Realiti=Object.freeze({...A,read,run,help:D.help});
+window.Realiti=Object.freeze({...A,read,run,invoke,help:D.help});
 window.REALITI_APARTMENT_BED_CLOUD_V1=Object.freeze({version:'1.0',isActiveSupported,waveSource,canRunPressure,status,off:release,reconcile});
 reconcile();
 if(typeof document!=='undefined'&&!window.REALITI_HEADLESS){

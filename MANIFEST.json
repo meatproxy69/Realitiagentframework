@@ -137,8 +137,8 @@
     },
     {
       "path": "apartment/source/bed-cloud-ocean.js",
-      "bytes": 10582,
-      "sha256": "e7061936d3d6fef6a78561637de6cf4d84978de0cc479dee0259a58a402e2a7c"
+      "bytes": 10892,
+      "sha256": "73278b7d100dcbff3d5785a3c81ca9f130774a57020e7742a7d7e003719cec34"
     },
     {
       "path": "apartment/source/home-field-notes.js",
@@ -157,13 +157,18 @@
     },
     {
       "path": "apartment/test/bed-cloud-ocean.cjs",
-      "bytes": 6233,
-      "sha256": "ff9308a7c56dcebe692e144232681de2e74f494511fd51a21fe14e1eaa4fe954"
+      "bytes": 6412,
+      "sha256": "e6d82f1a27ac6b88dbc5ecaf440ff2fd7fc95860ad7ec8110612ae9e44b9495d"
     },
     {
       "path": "apartment/test/home-inspect.cjs",
       "bytes": 5994,
       "sha256": "b6e30a2717f87068afdb97df660f2916e668776f6885bd161ad3640cdabd00f8"
+    },
+    {
+      "path": "apartment/test/honeyspark-catnip-presets.cjs",
+      "bytes": 8969,
+      "sha256": "a701435a52e58e146b5d0aff70ccaffd056fc0ec0f147f76e74d673d2e776f89"
     },
     {
       "path": "build.mjs",

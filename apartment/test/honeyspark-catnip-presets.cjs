@@ -48,7 +48,7 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   const sourceRoutes=w.REALITI_NEURO_RESTORATION_V1.presets().presets;
   assert.equal(sourceRoutes.length,10);
   assert.deepEqual(library.native_moonwire.map(p=>p.id),
-   sourceRoutes.map(p=>p.id.replace(/^realiti\\.moonwire\\./,'')));
+   sourceRoutes.map(p=>p.id.replace(/^realiti\.moonwire\./,'')));
   assert.ok(library.native_moonwire.every(p=>p.source==='REALITI_NEURO_RESTORATION_V1.presets'));
   for(const p of library.native_moonwire){
    const dry=await door('remote catnip preset preview '+p.id);
