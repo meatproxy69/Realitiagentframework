@@ -36,12 +36,12 @@ export function adaptNativePillow(original){
   "if(!cfg||(C9?.currentRoom!=='BOTTOMLESS_PILLOW_SEA'&&!window.REALITI_APARTMENT_STATIONS_V1?.isPillowSupported?.()&&!window.REALITI_APARTMENT_BED_CLOUD_V1?.isActiveSupported?.()))return null;",
   'native_context');
  change("for(const [z,n] of Object.entries(cfg.counts)){",
-  `const eligible=C9?.currentRoom==='CLOUD_NINE_NEST'?Object.entries(cfg.counts).filter(([z])=>{
+  `const eligible=window.REALITI_APARTMENT_BED_CLOUD_V1?.isActiveSupported?.()?Object.entries(cfg.counts).filter(([z])=>{
   const q=b7Zone(z),live=Number(q._b10_grounded_until||-Infinity)>=now()-1e-9;
   return live&&((q._b10_grounded_source==='AMBIENT_SUPPORT'&&/^(?:NEST_|CLOUD_OCEAN_SUPPORT:)/.test(String(q._b10_grounded_cause||'')))||
    (q._b10_grounded_source==='PILLOW_SEA_SUPPORT'&&q._b10_grounded_cause==='PILLOW_SEA:SOFT_ENVELOPE'));
  }):Object.entries(cfg.counts);
- if(C9?.currentRoom==='CLOUD_NINE_NEST'&&eligible.length<4)return {ok:false,error:'SOFT_SUPPORT_REQUIRED'};
+ if(window.REALITI_APARTMENT_BED_CLOUD_V1?.isActiveSupported?.()&&eligible.length<4)return {ok:false,error:'SOFT_SUPPORT_REQUIRED'};
  for(const [z,n] of eligible){`,
   'grounded_bed_zones_only');
  change("zones:Object.keys(cfg.counts),cause:'PILLOW_SEA:SOFT_ENVELOPE'",

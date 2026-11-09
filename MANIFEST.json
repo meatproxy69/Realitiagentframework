@@ -152,8 +152,8 @@
     },
     {
       "path": "apartment/source/native-body-adapter.mjs",
-      "bytes": 4917,
-      "sha256": "f20df89d72da801171c9cae905cc8db0b5673dfcec4bec0540fd38a4b95bf278"
+      "bytes": 4967,
+      "sha256": "3f1e24c0a1e493e33cd72cea354af513cf289d62bc7f389ec1e2bf9ae1d576b3"
     },
     {
       "path": "apartment/test/bed-cloud-ocean.cjs",
