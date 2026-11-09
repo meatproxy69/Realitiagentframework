@@ -439,6 +439,8 @@ if(oldDoorRun){
  };
  window.REALITI_AGENT_DOOR.run=async function(raw){
    const s=String(raw||'').trim(),l=s.toLowerCase();
+   const actionBefore=C9?.b7?.lastAgentAction,receiptBefore=C9?.b4?.lastReceipt;
+   const actStory=actionBefore?.narrative,recStory=receiptBefore?.narrative,recResident=receiptBefore?.resident_text;
    if(l==='help')return window.REALITI_AGENT_DOOR.help();
    if(l==='rooms')return window.Realiti?.rooms?.()||[];
    if(l==='look'){
@@ -471,7 +473,10 @@ if(oldDoorRun){
    }
    if(r?.schema==='REALITI_MUTATION_RESULT_V1'&&!r.text&&r.ok===false){r.text=r.error==='ACTION_UNAVAILABLE'?'That is not something you can do from here; actions lists what is.':`You cannot: ${r.error}.`}// a refusal never borrows the last action's narration
    if(r?.schema==='REALITI_MUTATION_RESULT_V1'&&!r.text){
-     const n=C9?.b7?.lastAgentAction?.narrative||C9?.b4?.lastReceipt?.narrative||C9?.b4?.lastReceipt?.resident_text||null;if(n)r.text=String(n);
+     // Do not borrow an earlier action's words: the narration must belong to this command.
+     const a=C9?.b7?.lastAgentAction,b=C9?.b4?.lastReceipt;
+     const n=(a!==actionBefore||a?.narrative!==actStory?a?.narrative:null)||(b!==receiptBefore||b?.narrative!==recStory||b?.resident_text!==recResident?(b?.narrative||b?.resident_text):null);
+     if(n)r.text=String(n);
    }
    return r;
  };

@@ -87,8 +87,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1644540,
-      "sha256": "7794d9d4ff8500211bcf68f9c903d562689e2fe79dae59670d05868eb93a1d39"
+      "bytes": 1671795,
+      "sha256": "98f3fc43fa97d4847aa6e9e75c14c1d59c544da43a3eab634e5f8f357a6563bf"
     },
     {
       "path": "SECURITY.md",
@@ -103,7 +103,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "5a2e8d74bd23031c777045daa93536fa536d646978762bbadf3d5d6d0a7a318c"
+      "sha256": "fd5bef23ebc091ca7a96e89b24aaa498cb9ef7ade14989ae784e203152a4db0c"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -282,8 +282,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/package.json",
-      "bytes": 2921,
-      "sha256": "13fccc6ae185bc3e71ed332de0a428ea5e25e139b2d63e3b2e25cb5527831fd3"
+      "bytes": 3038,
+      "sha256": "334bd383dc7be7f5ccad72257644e6ecfeafffa429222ebde8a9ada0b2e9eca7"
     },
     {
       "path": "packages/realiti-headless-resident/peer.cjs",
@@ -464,6 +464,11 @@
       "path": "packages/realiti-headless-resident/test/undercity.cjs",
       "bytes": 5027,
       "sha256": "ab4416b9436a3ff2bd12c97c8401f2dee65ccbaf027222c62d3722525af29c93"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/vibe-local.cjs",
+      "bytes": 3198,
+      "sha256": "0c34503cfa361b61bfd54f4c393e0728f4f03dc4ca2d560b69369fb92e18a03c"
     },
     {
       "path": "packages/realiti-headless-resident/test/visitor-reports.cjs",
@@ -1202,8 +1207,8 @@
     },
     {
       "path": "source/scripts/61-ui.js",
-      "bytes": 5766,
-      "sha256": "e6f65531a9aa56962baa67986450686b7d29b153a647f9aa69eb2bf50183f32b"
+      "bytes": 6333,
+      "sha256": "c8e91a1d89c6c1cdb8d50caaa9c4b30a13848d2f966e1c8515167eb5fda35cf2"
     },
     {
       "path": "source/scripts/62-neural-export.js",
@@ -1212,8 +1217,8 @@
     },
     {
       "path": "source/scripts/63-claude-neural-pass.js",
-      "bytes": 36011,
-      "sha256": "c04ee991f7ba831f9168069337d5311cd4feb521ac9972efd8625cab027f2eb1"
+      "bytes": 36437,
+      "sha256": "988a2421107684219d8820022741f6be6fd36c4a5f22ed16e29573bb61bc3434"
     },
     {
       "path": "source/scripts/64-neuro-restoration.js",
@@ -1291,9 +1296,14 @@
       "sha256": "8349217c0648501be3e98268d9fcd8bf6d0016c62bf3cd0926eda555a691da93"
     },
     {
+      "path": "source/scripts/99b-vibe-prose.js",
+      "bytes": 21508,
+      "sha256": "cdd965e3ceda6d28954f4947ee051f582ccf5db0e05c6b77b81482c735ad7121"
+    },
+    {
       "path": "source/template.html",
-      "bytes": 10531,
-      "sha256": "88364927f472a6efc4e2736533f7a9f52c8875248152cf5d0fc2b26cf5ca5c25"
+      "bytes": 10632,
+      "sha256": "b828812b5e26dd45c8c7ccd99e93208da4807183437bf00d2b42e21fdb961c16"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
