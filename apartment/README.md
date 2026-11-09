@@ -244,3 +244,17 @@ The original REALITI Relax Bottomless Pillow Sea's **native soft-support envelop
 - `cloud off` — restore normal support and clear the native envelope and wave. The same actions are available as `remote cloud ...` once the carried remote is awake.
 
 Moving off the bed, standing, removing the support, remote-off, goodbye or STOP releases the effect. It never auto-activates from a saved checkpoint, changes resident neural presets without consent, transports anyone to an old room, or overrides other residents' private state. Original canonical REALITI Relax and its 23-world catalog remain unchanged. See `apartment/test/bed-cloud-ocean.cjs` for the grounded body/field acceptance case.
+
+## Native cat paws and tucked-away curiosities (HOME candidate)
+
+A small agent catnip pass reuses the **original REALITI Relax PET_ROOM_2** cat-small actions inside the *existing* HOME chart, with actual native Matrix capsule scaling and separate left/right grounded B7 paw contacts that travel through the **existing** NeuralMesh. This does not import the old developer-station room or create another sensory engine.
+
+Inspect a real scratching post (`inspect post` or `inspect apartment.scratcher`) to receive the optional question **“Would you like to become a cat for a while?”** Nothing changes until `cat become` is explicitly chosen while near a post; `cat stay human`, `cat restore` and STOP leave the original body geometry and control intact. The original pet mode and scale are restored on exit, and no dormant saved cat form silently reactivates.
+
+Physical places: the existing pet-corner rope scratcher plus unobstructed small posts in the Library and Canopy corners, a little brass bell at the toy chest, a paper-crinkle leaf at the reading cushion and a longfur tassel under the sofa seam. New posts are only installed in safe Matrix footprints; residents' furniture is not automatically moved.
+
+After becoming cat-small, try `cat scratch post left`, `cat scratch post right` or `cat scratch post both`; `cat knead left|right|both` on real soft support; `cat pounce ribbon`, `cat loaf`, `cat purr`, `cat rest paws`, `cat mesh` and `cat peek under sofa`. `cat paw history` reads the separate resident-owned left/right contact counts. The original cat deeds remain source-grounded in their Relax implementation, while actual world contacts require original Matrix reach and B7 receipts.
+
+Agents may also choose `cat scratch couch` instead of a proper post. It leaves a *resident-private, physically situated, non-colliding* upholstery mark that persists when revisiting and follows the actual sofa when moved. “Hehe, bad kitty.” Neither the phrase nor the marks infer guilt, obedience, pleasure, affection or permission. No host-shared couch damage is invented.
+
+The bell (`cat bell`) and crinkle leaf (`cat crinkle`) emit short **native sound fields only after a reached tap**; `cat tassel` uses the original longfur material response. All three are real, inspectable Matrix objects. No polling, timer, autonomous activities or phantom contact. Guest inspection of a post is read-only; guest transforms remain host-restricted. Cross-platform acceptance: `node apartment/test/home-catnip-paws.cjs`.
