@@ -16,23 +16,13 @@ The renderer is a **consumer of existing Matrix truth**, never an authority over
 
 No render, camera movement, screenshot or mouse click may mint a Matrix contact, SOMA sensory event, movement receipt or new world object.
 
-## 2. Correct build target and isolation
-There are two distinct Apartment artifacts:
-1. `apartment/RealitiApartment.html` is the developer migration reference; it retains historical charts and stations.
-2. `apartment/RealitiApartmentHomeCandidate.html` comes from `apartment/build-home-candidate.mjs`, natively registers one HOME chart, has no historical gallery, and is the **only** input to this experiment.
+## 2. Direct HOME source build — no 23-chart dependency
 
-Create **an additional experimental output**, provisionally `apartment/RealitiApartmentVisualExperiment.html`, through a separate `apartment/build-visual-experiment.mjs`. It must require and verify `HOME_CANDIDATE_VALIDATION.json` and its source hashes before deriving any output. Keep the normal developer and HOME artifacts and their manifests byte-for-byte unchanged. Give the experimental derivative its own manifest and SHA-256. Do not update release metadata or versions, create a tag, alter user README, move saved residents or touch real Pocket keys.
+**Owner correction:** The 23-chart Apartment is retired migration scaffolding and must not be the source or a prerequisite for this experiment. Build directly from canonical `RealitiRELAX.html` using its original Matrix/SOMA and embodiment libraries. Apply Apartment-native features in order, and replace the registered native WORLD catalogue with the one `CLOUD_NINE_NEST` chart at source time; portal creation and old maze registration are bypassed. Historical world packages are not loaded as physical charts. The home-only layout retains the southwest real mattress and native collision geometry.
 
-Proposed source layout (not created by this plan):
-- `apartment/visual/scene-projection.cjs` — pure, testable, trusted read-only serializer/validator.
-- `apartment/visual/browser-adapter.js` — local HOME bridge, no raw native object exposed to visual consumers.
-- `apartment/visual/viewer.js` — Three.js scene, two camera modes, event-driven rendering.
-- `apartment/visual/visual.css` — tiny opt-in overlay.
-- `apartment/build-visual-experiment.mjs` — derives a separate artifact, pins packaged code and optional assets.
-- `apartment/test/visual-projection.cjs`, `apartment/test/visual-matrix-parity.cjs`, `apartment/test/visual-security.cjs` — Node-only contract tests.
-- `apartment/test/visual-browser.*` — optional local Playwright/Chromium pixel and GPU smoke tests, not required for ordinary headless builds.
+**Independent build:** `node build.mjs && node apartment/build-visual-experiment.mjs` produces `apartment/RealitiApartmentVisualExperiment.html` and `apartment/VISUAL_EXPERIMENT_VALIDATION.json`. It never reads `RealitiApartment.html`, `apartment/VALIDATION.json` or the old HOME candidate. The original Relax and all older artifacts remain untouched, with no data migrations or releases. A later standalone refactor can strip archived non-HOME library code too, after proving parity.
 
-Only create files as each milestone is implemented; these paths are proposed, not already-present APIs.
+**M1 now:** the direct experiment includes `visual/scene-projection.cjs`, which reads only registered native Matrix HOME geometry and resident position. The snapshot is a detached, read-only visual data contract, not an extra sensory system. Three.js, WebGL and model vision are not enabled at this checkpoint.
 
 ## 3. Scene contract: Matrix -> sanitized snapshot -> Three.js
 First implement and test a scene-projection contract **without importing Three.js**. A proposed `REALITI_APARTMENT_VISUAL_SCENE_V0` snapshot contains:
@@ -111,7 +101,7 @@ Run locally against disposable identities. Existing baseline commands:
 ```sh
 node build.mjs
 node apartment/build.mjs
-node apartment/build-home-candidate.mjs
+node apartment/build-visual-experiment.mjs
 npm test --prefix packages/realiti-matrix
 node apartment/test/home-candidate.cjs
 node apartment/test/home-candidate-household.cjs
