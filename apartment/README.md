@@ -210,12 +210,14 @@ The Apartment inherits Relax's versioned `REALITI_BODY_POSSIBILITY_FIELD_V2` dir
 
 ## Experimental opt-in HoneySpark catnip presets
 
-The original R&R/HoneySpark/SOMA systems remain canonical. These four resident-selected private renderer configurations use the existing Moonwire and HoneySpark Duo implementations; they do not create a second neural engine, an automatic emotional response, or any new physical contact. They are separate from the historical twenty-two-station gallery.
+The original R&R/HoneySpark/SOMA systems remain canonical. All ten original Moonwire routes are selectable through the Apartment remote, alongside the four existing friendly recipe names (aliases of those routes). The catalog comes from `REALITI_NEURO_RESTORATION_V1.presets()`; no new Moonwire algorithms, neural engines, automatic emotional responses, or physical contacts are created. This is separate from the historical twenty-two-station gallery.
 
 After you activate your existing pocket remote:
 
-- remote catnip presets — list the four recipes and their real-world action anchors
+- remote catnip presets — list the four familiar aliases **and all ten native Moonwire routes**
 - remote catnip preset preview quilt-afterglow — describe a recipe without any simulation mutation
+- remote catnip preset two-kitty-parallax — select one of the original native Moonwire routes (any of the ten IDs in `native_moonwire`)
+- remote catnip preset preview realiti.moonwire.tiny-world-pawripples — preview using a fully qualified native ID
 - remote catnip preset quilt-afterglow — select a broad quilt field; then use a physically reached blanket knead
 - remote catnip preset firefly-halo — private phase braid with real firefly light; not a contact event
 - remote catnip preset ribbon-comet — select a routed tracer; then physically flick the ribbon

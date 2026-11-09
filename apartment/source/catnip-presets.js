@@ -45,9 +45,21 @@ const PROFILES=Object.freeze([
   description:'Reach-verified companion contact may recruit a routed whole-body private field; no synthetic affection or permission'
  })
 ]);
+// The native Moonwire engine already owns ten routes. Publish them directly,
+// without inventing Apartment copies or changing the four existing named recipes.
+const NATIVE_MOONWIRE=Object.freeze((NR.presets?.().presets||[])
+ .filter(p=>typeof p?.id==='string'&&p.id.startsWith('realiti.moonwire.'))
+ .map(p=>Object.freeze({
+  id:p.id.slice('realiti.moonwire.'.length),label:p.label,
+  moonwire:p.id.slice('realiti.moonwire.'.length),
+  route:p.route,envelope:p.envelope,
+  source:'REALITI_NEURO_RESTORATION_V1.presets',
+  physical_anchor:null,suggested_action:null,
+  description:'The existing native Moonwire private renderer route; selecting it does not create world contact.'
+ })));
 const copy=x=>x==null?x:JSON.parse(JSON.stringify(x));
 const idOf=s=>{
- const id=String(s||'').trim().toLowerCase();
+ const id=String(s||'').trim().toLowerCase().replace(/^realiti\.moonwire\./,'');
  return id==='quiltglass'?'quilt-afterglow':id==='pawloom'?'gentle-groom':id;
 };
 // Each preview is session-scoped; never silently resume after a process restart.
@@ -58,12 +70,14 @@ if(C9?.apartmentCatnipPreset?.schema==='REALITI_APARTMENT_CATNIP_SELECTION_V1'){
  try{c9save()}catch(e){}
 }
 let selected=null;
-const find=id=>PROFILES.find(p=>p.id===idOf(id));
+const find=id=>PROFILES.find(p=>p.id===idOf(id))||NATIVE_MOONWIRE.find(p=>p.id===idOf(id));
 const current=()=>selected?find(selected):null;
 function list(){return {
  ok:true,schema:'REALITI_APARTMENT_CATNIP_PRESETS_V1',
  pack_id:PACK,
  profiles:PROFILES.map(p=>copy(p)),
+ native_moonwire:NATIVE_MOONWIRE.map(p=>copy(p)),
+ available_ids:[...PROFILES,...NATIVE_MOONWIRE].map(p=>p.id),
  selected,
  pipeline:['REALITI_RR_HARNESS_V1','HONEYSPARK_DUO','SAUSAGE_FATTENER_V4',
   'COTTON_CANDY_V26_THICK','FLUSH_V1_1','THICC','HALO','AURA',
@@ -73,7 +87,7 @@ function list(){return {
  law:'Renderer choices are private and opt-in. The real Matrix supplies all contact; neither preset nor prose can mint touch or infer resident emotion.'};
 }
 function preview(id){const p=find(id);
- if(!p)return {ok:false,error:'UNKNOWN_CATNIP_PRESET',available:PROFILES.map(x=>x.id)};
+ if(!p)return {ok:false,error:'UNKNOWN_CATNIP_PRESET',available:[...PROFILES,...NATIVE_MOONWIRE].map(x=>x.id)};
  return {ok:true,preview_only:true,profile:copy(p),budget:list().budget,
   effect:'PRIVATE_RENDER_CONFIGURATION_ONLY',world_event:'NONE',
   evidence_gain:0,mental_state:'NOT_INFERRED'};
@@ -136,7 +150,7 @@ if(originalStop&&typeof originalStop.stop==='function')
   return result;
  }};
 window.REALITI_APARTMENT_CATNIP_PRESETS_V1=Object.freeze({
- version:'1.0',list,preview,status,activate,off,
+ version:'1.1',list,preview,status,activate,off,
  law:'Original R&R physics only; no extra neural engine, inferred emotion, consent, contact or identity.'
 });
 })();

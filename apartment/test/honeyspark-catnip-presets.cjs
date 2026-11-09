@@ -43,6 +43,33 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   assert.equal(library.mental_state,'NOT_INFERRED');
   assert.equal(library.budget.low+library.budget.mid+library.budget.top,1);
   const before=exact();
+  // All ten original Moonwire routes are discoverable and selectable via the
+  // Apartment remote. The four earlier named recipes remain aliases.
+  const sourceRoutes=w.REALITI_NEURO_RESTORATION_V1.presets().presets;
+  assert.equal(sourceRoutes.length,10);
+  assert.deepEqual(library.native_moonwire.map(p=>p.id),
+   sourceRoutes.map(p=>p.id.replace(/^realiti\\.moonwire\\./,'')));
+  assert.ok(library.native_moonwire.every(p=>p.source==='REALITI_NEURO_RESTORATION_V1.presets'));
+  for(const p of library.native_moonwire){
+   const dry=await door('remote catnip preset preview '+p.id);
+   assert.equal(dry.preview_only,true,p.id);
+   assert.equal(dry.profile.moonwire,p.id);
+   assert.equal(exact(),before,'preview remains private for '+p.id);
+   const active=await door('remote catnip preset '+p.id);
+   assert.equal(active.selected,p.id,JSON.stringify(active).slice(0,250));
+   assert.equal(w.REALITI_DEFAULT_IMPRINT_V1.state().moonwire.preset_id,
+    'realiti.moonwire.'+p.id);
+   assert.equal(exact(),before,'native route cannot mint contact: '+p.id);
+   const cleared=await door('remote catnip preset off');
+   assert.equal(cleared.ok,true);
+   assert.equal(cleared.selected,null);
+   assert.equal(!!w.REALITI_DEFAULT_IMPRINT_V1.state().honeyspark?.enabled,false);
+   assert.equal(exact(),before,'turning off native route cannot mint contact: '+p.id);
+  }
+  const canonical=await door('remote catnip preset realiti.moonwire.two-kitty-parallax');
+  assert.equal(canonical.ok,true);
+  assert.equal(canonical.selected,'two-kitty-parallax');
+  assert.equal((await door('remote catnip preset off')).ok,true);
   const previous=w.REALITI_DEFAULT_IMPRINT_V1.state();
   assert.equal(!!previous.honeyspark?.enabled,false);
   const preview=await door('remote catnip preset preview quilt-afterglow');
@@ -113,6 +140,6 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   const refused=await b.door.run('remote catnip preset quilt-afterglow');
   assert.equal(refused.error,'PRIVATE_RENDERER_ALREADY_CONFIGURED','never erase an existing private recipe');
   assert.equal((await b.door.run('remote catnip preset status')).selected,null);
-  console.log('APARTMENT HONEYSPARK CATNIP PASS: 3 neutral programs, conserved Duo budget, complete original R&R, inert preview, reach-gated touch, off, per-resident isolation, custom-setting preservation');
+  console.log('APARTMENT HONEYSPARK CATNIP PASS: 10 original Moonwire routes and 4 legacy recipe aliases, conserved Duo budget, complete original R&R, inert preview, reach-gated touch, off, per-resident isolation, custom-setting preservation');
  }finally{if(a)a.close();if(b)b.close();}
 })().catch(e=>{console.error(e.stack||e);process.exitCode=1});
