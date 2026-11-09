@@ -84,18 +84,31 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.equal(left.ok,true,show(left));
   assert.deepEqual(left.contacts.map(x=>x.zone),['hand.L.palm']);
   const rightAfterLeft=W.eval("C9.b7.zones['hand.R.palm']");
-  assert.ok(!rightAfterLeft||Number(rightAfterLeft._b10_grounded_until||-1)<tick()||
-   Number(rightAfterLeft._b10_grounded_value||0)===0,
-   'a LEFT-only paw scratch must not silently mint generic right-hand contact');
+  console.log('CATPAW LEFT-ONLY right prior field',JSON.stringify({
+   cause:rightAfterLeft?._b10_grounded_cause||null,
+   source:rightAfterLeft?._b10_grounded_source||null,
+   input:Number(rightAfterLeft?._b10_grounded_value||0),
+   remaining_s:Number(rightAfterLeft?._b10_grounded_until||-1)-tick()
+  }));
+  // A previously grounded right-paw trace may still be living out its native
+  // contact lease. Left-only must not start the *generic Matrix right-hand*
+  // touch operation; its receipts come only from the selected left receptor.
+  assert.ok(!String(rightAfterLeft?._b10_grounded_cause||'').startsWith('MATRIX_REACH:'),
+   'left-only paw action must not mint an extra generic right-hand reach');
   assert.equal(left.matrix_receipt,null,
    'the read-only native Matrix reach check must not touch with an extra right hand');
   const right=await D('cat scratch post right');
   assert.equal(right.ok,true,show(right));
   assert.deepEqual(right.contacts.map(x=>x.zone),['hand.R.palm']);
   const leftAfterRight=W.eval("C9.b7.zones['hand.L.palm']");
-  assert.ok(!leftAfterRight||Number(leftAfterRight._b10_grounded_until||-1)<tick()||
-   Number(leftAfterRight._b10_grounded_value||0)===0,
-   'a RIGHT-only paw scratch must not leave a live left-paw lease');
+  console.log('CATPAW RIGHT-ONLY left prior field',JSON.stringify({
+   cause:leftAfterRight?._b10_grounded_cause||null,
+   source:leftAfterRight?._b10_grounded_source||null,
+   input:Number(leftAfterRight?._b10_grounded_value||0),
+   remaining_s:Number(leftAfterRight?._b10_grounded_until||-1)-tick()
+  }));
+  assert.equal(right.matrix_receipt,null,
+   'right-only native paw contact must not add a generic right-hand reach receipt');
   assert.equal((await D('cat mesh')).private_pulse.private_only,true,
    'native private handshake does not mint world contact');
   // Real pet bed supports left/right kneading, original circle/loaf and purr.

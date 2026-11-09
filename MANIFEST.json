@@ -167,8 +167,8 @@
     },
     {
       "path": "apartment/test/home-catnip-paws.cjs",
-      "bytes": 10361,
-      "sha256": "38b7b6e987cbdba8cebe91ccec9badb119c54769834951796cbc823e93265b0d"
+      "bytes": 11075,
+      "sha256": "642b9fb491b1c8e68d9ec83570fa96b10a5fa276827458c8a36084dbd9fe062a"
     },
     {
       "path": "apartment/test/home-inspect.cjs",
