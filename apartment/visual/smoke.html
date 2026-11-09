@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>REALITI HOME WebGL + Matrix smoke</title>
+<style>body{margin:0;background:#111827;color:#f0eaff;font:14px system-ui}header,pre{padding:14px 18px}h1{font-size:19px;margin:0}pre{white-space:pre-wrap}pre.good{color:#7be79a}pre.bad{color:#ff9d9d}</style>
+<script>window.C9={matrix:{schema:'REALITI_MATRIX_STATE_V1',revision:0,world:{id:'VISUAL_TEST',units:'meters',coordinateSystem:'REALITI_COORDINATE_V1'},residents:{}}};</script>
+<script src="../../source/scripts/57.js"></script>
+<script>
+(()=>{
+const M=window.REALITI_MATRIX_V1,H='CLOUD_NINE_NEST';
+if(!M)throw Error('NATIVE_MATRIX_UNAVAILABLE');
+M.define(H,{bounds:{kind:'BOX',center:[0,0,1.5],halfExtents:[6,6,1.5]},spawn:{position:[0,0,.85],rotation:[0,0,0,1]}});
+const box=(id,pos,half,mat,tags)=>M.addEntity({id,chart:H,position:pos,shape:{kind:'BOX',halfExtents:half},tags,material:mat,collision:true,label:id});
+M.addEntity({id:H+'.floor',chart:H,position:[0,0,0],shape:{kind:'PLANE'},tags:['floor'],material:'wood',collision:true});
+box(H+'.wall.east',[6.125,0,1.5],[.125,6.125,1.5],'wood',['wall']);
+box(H+'.wall.west',[-6.125,0,1.5],[.125,6.125,1.5],'wood',['wall']);
+box(H+'.wall.north',[0,6.125,1.5],[6.125,.125,1.5],'wood',['wall']);
+box(H+'.wall.south',[0,-6.125,1.5],[6.125,.125,1.5],'wood',['wall']);
+box('nest.mattress',[-1,-3.2,.35],[1.5,2,.35],'blanket',['mattress','support']);
+box('nest.backrest',[-1,-5.5,.6],[1.2,.3,.6],'blanket',['support']);
+box('apartment.sofa',[3.3,2.4,.4],[1.1,.65,.4],'blanket',['furniture','accent:teal']);
+box('apartment.desk',[-4.4,-.85,.46],[1,.55,.46],'wood',['furniture','desk']);
+box('apartment.desk-chair',[-4.4,-2,.28],[.45,.45,.28],'wood',['chair']);
+box('apartment.bookcase',[-5,4.35,1.1],[.45,.8,1.1],'wood',['furniture','books']);
+M.enter(H);window.REALITI_TEST_MATRIX=M;
+})();
+</script>
+<script src="./scene-projection.cjs"></script><script src="./reference-cameras.cjs"></script>
+<script>window.REALITI_APARTMENT_VISUAL_V0=Object.freeze({snapshot:()=>window.REALITI_APARTMENT_VISUAL_PROJECTION_V0.projectNative(window.REALITI_TEST_MATRIX)});</script>
+<script src="./dist/viewer.js"></script>
+</head><body><header><h1>REALITI HOME · Native Matrix WebGL smoke</h1>Actual Matrix kernel and prebuilt Three.js, isolated furniture fixture (NOT the full Apartment or private resident state).</header>
+<pre id="checks">Starting WebGL smoke…</pre>
+<script>
+(()=>{
+const out=document.getElementById('checks');
+function finish(){
+ const imgs=[...document.querySelectorAll('#realiti-visual figure img')],s=window.REALITI_APARTMENT_VISUAL_V0.snapshot();
+ const passed=imgs.length===4&&imgs.every(x=>x.naturalWidth===640&&x.naturalHeight===400)&&!s.contact_minted;
+ out.className=passed?'good':'bad';
+ out.textContent='HOME chart: '+s.chart+'\nMatrix entities: '+s.entities.length+
+ '\nReference PNGs: '+imgs.length+'\nImage sizes: '+imgs.map(x=>x.naturalWidth+'x'+x.naturalHeight).join(', ')+
+ '\nContact minted: '+s.contact_minted+'\nRESULT: '+(passed?'PASS':'FAIL');
+ document.documentElement.dataset.smoke=passed?'pass':'fail';
+}
+try{
+ window.REALITI_APARTMENT_THREE_V0.mount();
+ const b=[...document.querySelectorAll('#realiti-visual button')].find(x=>x.textContent==='4 reference views');
+ if(!b)throw Error('FOUR_CAMERA_BUTTON_MISSING');
+ b.click();setTimeout(finish,650);
+}catch(e){out.className='bad';out.textContent='RESULT: FAIL – '+e;document.documentElement.dataset.smoke='fail'}
+})();
+</script></body></html>
