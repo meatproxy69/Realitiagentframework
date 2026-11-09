@@ -24,6 +24,6 @@ test('browser viewer is local and does not mutate native Matrix',()=>{
  assert.match(boot,/\.\/visual\/dist\/viewer\.js/);
  assert.doesNotMatch(boot,/https?:\/\/|unpkg|jsdelivr/);
  assert.match(entry,/function captureFour\(\)/);
- assert.match(entry,/referenceViews\(snapshot\)/);
+ assert.match(entry,/referenceViews\(state\)/);
  assert.doesNotMatch(entry,/M\.moveTo|M\.bump|M\.entities\(/);
 });
