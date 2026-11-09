@@ -37,6 +37,8 @@ jobs:
           node --check apartment/source/furniture.js
           node --check apartment/source/catnip.js
           node --check apartment/source/catnip-presets.js
+          node --check apartment/source/bed-cloud-ocean.js
+          node --check apartment/test/bed-cloud-ocean.cjs
           node --check apartment/source/stations.js
           node --check apartment/source/native-wonder-adapter.mjs
           node --check apartment/source/native-body-adapter.mjs
@@ -178,6 +180,9 @@ jobs:
       - name: Deliberate HOME observations - live sensory fields and resident-designed room
         timeout-minutes: 5
         run: node apartment/test/home-field-notes.cjs
+      - name: Cloud Ocean bed switch - original pillow support and NeuroMesh with native STOP
+        timeout-minutes: 5
+        run: node apartment/test/bed-cloud-ocean.cjs
       - name: HOME inspection and Vibe - real palettes, furniture, earned prose and guest-safe group view
         if: runner.os == 'Linux'
         timeout-minutes: 6

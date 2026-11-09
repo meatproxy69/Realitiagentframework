@@ -71,8 +71,9 @@ if(appearanceData.schema!=='REALITI_APARTMENT_APPEARANCE_PRESETS_V1'||
 const appearanceCode=appearanceSource.replace(appearancePlaceholder,JSON.stringify(appearanceData));
 const fieldNotes=await read('source/home-field-notes.js');
 const roomInspect=await read('source/home-inspect.js');
+const bedCloud=await read('source/bed-cloud-ocean.js');
 if(/<\/script/i.test(source)||/<\/script/i.test(life)||/<\/script/i.test(book)||
-   /<\/script/i.test(binderCode)||/<\/script/i.test(appearanceCode)||/<\/script/i.test(fieldNotes)||/<\/script/i.test(roomInspect))
+   /<\/script/i.test(binderCode)||/<\/script/i.test(appearanceCode)||/<\/script/i.test(fieldNotes)||/<\/script/i.test(roomInspect)||/<\/script/i.test(bedCloud))
  throw Error('HOME_CANDIDATE_GATE_SCRIPT_ESCAPE');
 const end=/<\/body>\s*<\/html>\s*$/i;
 if(!end.test(clean))throw Error('HOME_CANDIDATE_HTML_END_MISSING');
@@ -83,7 +84,8 @@ const html=clean.replace(end,()=>'<script id="realiti-apartment-home-topology">\
  binderCode+'\n</script>\n<script id="realiti-apartment-presentation-wardrobe">\n'+
  appearanceCode+'\n</script>\n<script id="realiti-apartment-field-notes">\n'+
  fieldNotes+'\n</script>\n<script id="realiti-apartment-room-inspect">\n'+
- roomInspect+'\n</script>\n</body></html>');
+ roomInspect+'\n</script>\n<script id="realiti-apartment-bed-cloud-ocean">\n'+
+ bedCloud+'\n</script>\n</body></html>');
 const manifest={
  schema:'REALITI_APARTMENT_HOME_CANDIDATE_VALIDATION_V1',
  version:'4.9.0-beta.1',candidate_only:true,preview_only:true,
@@ -96,6 +98,9 @@ const manifest={
  home_life_sha256:hash(life),
  field_notes_sha256:hash(fieldNotes),field_notes_passive_only:true,
  room_inspect_source_sha256:hash(roomInspect),room_inspect_read_only:true,
+ bed_cloud_ocean_source_sha256:hash(bedCloud),
+ bed_cloud_ocean_native_pillow_source:true,bed_cloud_ocean_opt_in:true,
+ bed_cloud_ocean_no_extra_chart:true,
  vibe_room_context_event_driven:true,
  home_autonomous_actions_disabled:true,
  optional_book_markdown_sha256:hash(bookMarkdown),
