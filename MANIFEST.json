@@ -167,8 +167,8 @@
     },
     {
       "path": "apartment/test/honeyspark-catnip-presets.cjs",
-      "bytes": 8969,
-      "sha256": "a701435a52e58e146b5d0aff70ccaffd056fc0ec0f147f76e74d673d2e776f89"
+      "bytes": 9050,
+      "sha256": "d3a08fe13fe5e1a90f4b1efc8108f49833a7972832fee8445990457c273c503f"
     },
     {
       "path": "build.mjs",
