@@ -6,14 +6,25 @@ function mount(){
  if(document.getElementById('realiti-visual'))return;
  const read=window.REALITI_APARTMENT_VISUAL_V0?.snapshot;
  const refs=window.REALITI_APARTMENT_REFERENCE_CAMERAS_V0;
- if(!read||!refs)throw Error('MATRIX_VISUAL_READER_REQUIRED');
+ const actionAPI=window.REALITI_APARTMENT_VISUAL_INPUT_V0;
+ if(!read||!refs||!actionAPI)throw Error('MATRIX_VISUAL_READER_REQUIRED');
+ const controller=actionAPI.createController({door:window.REALITI_AGENT_DOOR,snapshot:read});
  let state=read();if(state.chart!=='CLOUD_NINE_NEST')throw Error('ONE_HOME_REQUIRED');
  const panel=document.createElement('section');panel.id='realiti-visual';
  panel.style.cssText='position:fixed;inset:3vh 3vw;z-index:99999;background:#141b2a;color:#f7efff;border:1px solid #777;border-radius:14px;padding:12px;display:flex;flex-direction:column;font:13px system-ui';
  const bar=document.createElement('div'),surface=document.createElement('div'),gallery=document.createElement('div');
  surface.style.cssText='flex:1;min-height:260px;overflow:hidden';
  gallery.style.cssText='display:none;grid-template-columns:1fr 1fr;gap:8px;overflow:auto';
- panel.append(bar,surface,gallery);document.body.append(panel);
+ const explorer=document.createElement('div'),targets=document.createElement('select');
+ const approach=document.createElement('button'),feedback=document.createElement('span');
+ explorer.hidden=true;explorer.style.cssText='padding:7px 0;display:flex;align-items:center;gap:7px;flex-wrap:wrap';
+ targets.setAttribute('aria-label','Matrix object to approach');
+ targets.style.cssText='background:#27334b;color:#f7eefa;padding:6px;max-width:240px;border:1px solid #737b92;border-radius:7px';
+ approach.textContent='Approach';approach.type='button';
+ approach.style.cssText='padding:7px;background:#344567;color:white;border-radius:8px;cursor:pointer';
+ feedback.setAttribute('role','status');feedback.style.cssText='font-size:12px;color:#d1c7d9';
+ explorer.append(targets,approach,feedback);
+ panel.append(bar,surface,explorer,gallery);document.body.append(panel);
  let renderer;
  try{renderer=new WebGLRenderer({antialias:true,preserveDrawingBuffer:true,powerPreference:'low-power'})}
  catch(e){panel.remove();throw Error('WEBGL_UNAVAILABLE:'+e.message)}
@@ -36,10 +47,10 @@ function mount(){
  const palette={wood:'#99765b',blanket:'#bea4b5',glass:'#73bacb',cardboard:'#b68d67',
   longfur:'#b7ada7',paper:'#ded4ba',metal:'#b0b4bd',teal:'#64aba7',
   rose:'#cf95a9',plum:'#94709b',moss:'#78946d',midnight:'#414968',amber:'#e4b66c'};
- function material(e){
+ function material(e,spectator=true){
   const accent=e.tags.find(t=>t.startsWith('accent:'))?.slice(7);
   const shade=palette[accent]||palette[e.material]||'#b1aaa4';
-  const opacity=e.tags.includes('wall')?.23:e.material==='glass'?.44:1;
+  const opacity=e.tags.includes('wall')?(spectator?.23:1):e.material==='glass'?.44:1;
   const key=shade+':'+opacity;
   if(!materialCache.has(key))materialCache.set(key,new MeshStandardMaterial({
    color:shade,roughness:.85,transparent:opacity!==1,opacity,
@@ -47,9 +58,17 @@ function mount(){
   return materialCache.get(key);
  }
  function apply(snapshot){
+  const chosen=targets.value;
+  targets.replaceChildren();
+  for(const e of snapshot.entities){
+   if(e.tags.some(x=>['floor','wall','ceiling','portal','doorway'].includes(x)))continue;
+   const option=document.createElement('option');
+   option.value=e.id;option.textContent=e.label||e.id;targets.append(option);
+  }
+  if([...targets.options].some(x=>x.value===chosen))targets.value=chosen;
+  else if([...targets.options].some(x=>x.value==='nest.window'))targets.value='nest.window';
   const seen=new Set();
   for(const e of snapshot.entities){
-   if(e.tags.includes('ceiling'))continue;
    seen.add(e.id);
    const key=JSON.stringify(e.shape),old=objects.get(e.id);
    let item=old;
@@ -63,6 +82,7 @@ function mount(){
    item.mesh.position.copy(vec(e.position));
    item.mesh.quaternion.set(...e.rotation);
    item.mesh.material=material(e);
+   item.entity=e;
   }
   for(const [id,item] of objects)if(!seen.has(id)){scene.remove(item.mesh);objects.delete(id)}
  }
@@ -86,8 +106,16 @@ function mount(){
   ortho.updateProjectionMatrix();ortho.position.copy(vec(ref.position));
   ortho.lookAt(vec(ref.target));return ortho;
  }
+ function visualMaterials(mode){
+  for(const item of objects.values()){
+   const e=item.entity;
+   item.mesh.visible=!(mode!=='resident'&&e.tags.includes('ceiling'));
+   item.mesh.material=material(e,mode!=='resident');
+  }
+ }
  function render(){
   if(!renderer||document.hidden)return;
+  visualMaterials(selection);
   const w=Math.max(1,surface.clientWidth),h=Math.max(1,surface.clientHeight);
   renderer.setSize(w,h,false);renderer.render(scene,viewCamera(selection,w/h));
  }
@@ -99,7 +127,34 @@ function mount(){
   if(marker===signature)return;
   signature=marker;state=next;apply(next);render();
  }
- function choose(id){selection=id;gallery.style.display='none';render()}
+ function choose(id){
+  selection=id;gallery.style.display='none';
+  explorer.hidden=id!=='resident';explorer.style.display=id==='resident'?'flex':'none';
+  feedback.textContent=id==='resident'
+   ?'W/S or arrows to walk · A/D to turn · Matrix resolves all movement'
+   :'Spectator camera only — resident position unchanged';
+  render();
+ }
+ async function act(promise){
+  const outcome=await promise;
+  feedback.textContent=outcome.ok
+   ?(outcome.changed?'Matrix updated · revision '+outcome.matrix_revision:'No Matrix movement')
+   :('Refused: '+(outcome.reason||outcome.error||'UNKNOWN'));
+  refresh();
+ }
+ function keyboard(e){
+  if(e.key==='Escape'){close();return}
+  if(selection!=='resident'||e.repeat||e.ctrlKey||e.altKey||e.metaKey)return;
+  if(/^(?:INPUT|TEXTAREA|SELECT)$/.test(e.target?.tagName||'')||e.target?.isContentEditable)return;
+  if(!actionAPI.keyCommand(e.key))return;
+  e.preventDefault();
+  if(controller.busy())return;
+  act(controller.key(e.key));
+ }
+ approach.addEventListener('click',()=>{
+  if(controller.busy()||selection!=='resident')return;
+  act(controller.approach(targets.value));
+ });
  function captureFour(){
   refresh();
   const pixel=renderer.getPixelRatio(),w=surface.clientWidth,h=surface.clientHeight;
@@ -108,6 +163,7 @@ function mount(){
    renderer.setPixelRatio(1);
    for(const ref of refs.referenceViews(state)){
     renderer.setSize(ref.frame.width,ref.frame.height,false);
+    visualMaterials(ref.id);
     renderer.render(scene,viewCamera(ref.id,ref.frame.width/ref.frame.height));
     shots.push({id:ref.id,label:ref.label,png:renderer.domElement.toDataURL('image/png')});
    }
@@ -126,6 +182,7 @@ function mount(){
  function close(){
   clearInterval(poll);window.removeEventListener('resize',render);
   document.removeEventListener('visibilitychange',visible);
+  window.removeEventListener('keydown',keyboard);
   for(const g of geometryCache.values())g?.dispose();
   for(const m of materialCache.values())m.dispose();
   renderer.dispose();renderer.forceContextLoss();renderer=null;panel.remove();
@@ -144,6 +201,7 @@ function mount(){
  info.textContent='One Matrix scene. Reference cameras are spectator-only, not resident vision.';
  panel.append(info);
  window.addEventListener('resize',render);
+ window.addEventListener('keydown',keyboard);
  document.addEventListener('visibilitychange',visible);
  refresh();render();
  poll=setInterval(refresh,750); // No GPU frames at unchanged world state.

@@ -131,3 +131,9 @@ Keep the experiment **branch-only**. No version tag, no public release, no migra
 
 ## 10. First implementation PR scope (after plan review)
 Submit a small PR **to the experimental branch only** containing the scene projection and its tests (M1). No Three.js bundle, WebGL, gameplay controls, screenshot model hook, CI workflow modification, or `main` merge in that first code change. Once Matrix projection is verified, develop and measure the lightweight Three.js viewer as a separate follow-up.
+
+## M2 resident exploration implementation note (Nov 8)
+
+The optional 3D viewer now uses **public Agent Door commands** for keyboard movement and object approach rather than setting Matrix poses from mouse coordinates. W/S and A/D translate into bounded 0.75 m movement or 30-degree turn commands, while approaching a selected registered object is resolved through normal native Matrix travel. Busy/refused operations are surfaced and do not become fictional visual arrivals. A native-walls browser test is included as `apartment/test/visual-chromium-smoke.cjs`. Human spectator cameras can fade walls; resident-eye view keeps structural walls and ceiling opaque. The prebuilt script must be SHA-paired to the current viewer and control sources.
+
+This is source-level and simulated browser-contract testing; software/hardware GPU evidence and full Apartment browser startup remain outstanding until the local Chromium smoke and HOME acceptance tests pass on a machine with a functioning WebGL context. Do not promote to `main` solely on mocked rendering checks.

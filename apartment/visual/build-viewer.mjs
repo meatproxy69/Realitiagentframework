@@ -13,8 +13,12 @@ await build({entryPoints:[path.join(dir,'viewer-entry.js')],outfile:out,
 const bytes=await fs.readFile(out),gz=zlib.gzipSync(bytes,{level:9});
 if(gz.length>250*1024)throw Error('REALITI_VIEWER_JS_BUDGET_EXCEEDED:'+gz.length);
 const sha=crypto.createHash('sha256').update(bytes).digest('hex');
+const shaFile=async p=>crypto.createHash('sha256').update(await fs.readFile(path.join(dir,p))).digest('hex');
+const viewerEntrySha256=await shaFile('viewer-entry.js');
+const controlSha256=await shaFile('observer-controls.cjs');
 await fs.writeFile(path.join(dir,'dist','manifest.json'),
  JSON.stringify({schema:'REALITI_LOCAL_THREE_VIEWER_V0',file:'viewer.js',
- sha256:sha,bytes:bytes.length,gzip_bytes:gz.length,
+ sha256:sha,viewer_entry_sha256:viewerEntrySha256,
+ visual_control_sha256:controlSha256,bytes:bytes.length,gzip_bytes:gz.length,
  external_cdns:0,renderers_per_session:1,reference_views:4},null,2)+'\n');
 console.log('Local Three.js viewer',bytes.length,'bytes;',gz.length,'gzip bytes',sha);

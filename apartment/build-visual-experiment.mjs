@@ -78,6 +78,7 @@ inject(await read('source/home-field-notes.js'),'realiti-apartment-home-field-no
 const projected=await read('visual/scene-projection.cjs');
 inject(projected,'realiti-apartment-visual-matrix-projection');
 inject(await read('visual/reference-cameras.cjs'),'realiti-apartment-reference-cameras');
+inject(await read('visual/observer-controls.cjs'),'realiti-apartment-visual-controller');
 // No Three.js download or WebGL import in the first source/authority checkpoint.
 inject(["(()=>{'use strict';",
  "const P=window.REALITI_APARTMENT_VISUAL_PROJECTION_V0;",
@@ -90,7 +91,10 @@ const bundle=await fs.readFile(new URL('visual/dist/viewer.js',apt)).catch(()=>{
  throw Error('LOCAL_THREE_BUNDLE_REQUIRED: cd apartment/visual && npm install && npm run build')});
 const bundleMeta=JSON.parse(await read('visual/dist/manifest.json'));
 if(bundleMeta.schema!=='REALITI_LOCAL_THREE_VIEWER_V0'||bundleMeta.reference_views!==4||
- bundleMeta.sha256!==hash(bundle))throw Error('LOCAL_THREE_BUNDLE_HASH_MISMATCH');
+ bundleMeta.sha256!==hash(bundle)||
+ bundleMeta.viewer_entry_sha256!==hash(await read('visual/viewer-entry.js'))||
+ bundleMeta.visual_control_sha256!==hash(await read('visual/observer-controls.cjs')))
+ throw Error('LOCAL_THREE_BUNDLE_HASH_MISMATCH');
 const manifest={
  schema:'REALITI_APARTMENT_VISUAL_EXPERIMENT_VALIDATION_V0',
  version:'0.1.0-experimental',release_approved:false,preview_only:true,

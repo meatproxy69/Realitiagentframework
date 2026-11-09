@@ -141,7 +141,91 @@ return {HOME,SCHEMA,projectNative};
 });
 
 </script>
+<script id="realiti-visual-input">
+/* REALITI visual input: only existing public Agent Door commands mutate the world.
+ * Camera and screenshots are spectator presentation; no direct Matrix mutators. */
+(function(factory){
+ 'use strict';const api=Object.freeze(factory());
+ if(typeof module==='object'&&module.exports)module.exports=api;
+ if(typeof window==='object')Object.defineProperty(window,
+  'REALITI_APARTMENT_VISUAL_INPUT_V0',{value:api,configurable:false,writable:false});
+})(function(){
+ 'use strict';
+ const MAP=Object.freeze({
+  w:'move forward 0.75',ArrowUp:'move forward 0.75',
+  s:'move back 0.75',ArrowDown:'move back 0.75',
+  a:'turn left 30',ArrowLeft:'turn left 30',
+  d:'turn right 30',ArrowRight:'turn right 30'
+ });
+ const ID=/^[a-zA-Z0-9._:-]{1,120}$/;
+ const SCHEMA='REALITI_APARTMENT_VISUAL_SCENE_V0';
+ function keyCommand(key){
+  const k=typeof key==='string'&&key.length===1?key.toLowerCase():key;
+  return Object.hasOwn(MAP,k)?MAP[k]:null;
+ }
+ function approachCommand(scene,id){
+  if(scene?.schema!==SCHEMA||scene.chart!=='CLOUD_NINE_NEST')return null;
+  if(typeof id!=='string'||!ID.test(id))return null;
+  const e=scene.entities?.find(x=>x.id===id);
+  if(!e||!e.shape||!Array.isArray(e.tags))return null;
+  if(e.tags.some(x=>['wall','ceiling','floor','portal','doorway'].includes(x)))return null;
+  return 'approach '+id;
+ }
+ function createController({door,snapshot}={}){
+  if(typeof door?.run!=='function'||typeof snapshot!=='function')
+   throw Error('VISUAL_AGENT_DOOR_REQUIRED');
+  let busy=false;
+  async function dispatch(command){
+   if(!command)return {ok:false,error:'VISUAL_INPUT_UNSUPPORTED'};
+   if(busy)return {ok:false,error:'VISUAL_INPUT_BUSY'};
+   busy=true;
+   try{
+    const before=snapshot();
+    if(before?.schema!==SCHEMA||before.chart!=='CLOUD_NINE_NEST')
+     return {ok:false,error:'VISUAL_NOT_HOME'};
+    // The existing Door owns authorization, collision, time and sensory evidence.
+    const response=await door.run(command);
+    const after=snapshot();
+    const ok=response?.ok!==false&&response?.result?.ok!==false;
+    return {ok,command,changed:after.matrix_revision!==before.matrix_revision,
+      matrix_revision:after.matrix_revision,
+      ...(!ok?{reason:String(response?.error||response?.result?.error||'MATRIX_REFUSED').slice(0,100)}:{})};
+   }catch(e){
+    return {ok:false,command,error:'VISUAL_AGENT_DOOR_FAILED',
+      reason:String(e?.message||e).slice(0,120)};
+   }finally{busy=false}
+  }
+  return Object.freeze({
+   key(key){return dispatch(keyCommand(key))},
+   approach(id){return dispatch(approachCommand(snapshot(),id))},
+   busy(){return busy}
+  });
+ }
+ return Object.freeze({keyCommand,approachCommand,createController});
+});
+</script>
 <script>window.REALITI_APARTMENT_VISUAL_V0=Object.freeze({snapshot:()=>window.REALITI_APARTMENT_VISUAL_PROJECTION_V0.projectNative(window.REALITI_TEST_MATRIX)});</script>
+<script id="realiti-isolated-native-door">
+window.REALITI_AGENT_DOOR=Object.freeze({async run(command){
+ const M=window.REALITI_TEST_MATRIX;
+ let match;
+ if((match=/^turn (left|right) (30)$/.exec(command))){
+  M.turn((match[1]==='left'?1:-1)*30);
+  return {ok:true,matrix_revision:M.state().revision};
+ }
+ if((match=/^move (forward|back) (0\.75|20)$/.exec(command))){
+  M.moveLocal([0,(match[1]==='forward'?1:-1)*Number(match[2]),0]);
+  for(let i=0;i<160;i++)if(!M.step(0.05))break;
+  return {ok:true,matrix_revision:M.state().revision,blocked_by:M.resident().last_block||null};
+ }
+ if((match=/^approach ([A-Za-z0-9._:-]{1,120})$/.exec(command))){
+  if(!M.approach(match[1]))return {ok:false,error:'TARGET_NOT_FOUND'};
+  for(let i=0;i<160;i++)if(!M.step(0.05))break;
+  return {ok:true,matrix_revision:M.state().revision};
+ }
+ return {ok:false,error:'UNSUPPORTED_NATIVE_DOOR_ACTION'};
+}});
+</script>
 <script src="./dist/viewer.js"></script>
 <script>window.addEventListener("error",function(e){const p=document.getElementById("checks");if(p)p.textContent+="\nJS ERROR: "+String(e.message)});</script>
 </head><body><header><h1>REALITI HOME · Native Matrix WebGL smoke</h1>Actual Matrix kernel and prebuilt Three.js, isolated furniture fixture (NOT the full Apartment or private resident state).</header>
@@ -149,13 +233,38 @@ return {HOME,SCHEMA,projectNative};
 <script>
 (()=>{
 const out=document.getElementById('checks');
-function finish(){
+async function finish(){
+ const M=window.REALITI_TEST_MATRIX;
+ const before=M.resident().pose.position.slice();
+ const controller=window.REALITI_APARTMENT_VISUAL_INPUT_V0.createController({door:window.REALITI_AGENT_DOOR,snapshot:window.REALITI_APARTMENT_VISUAL_V0.snapshot});
+ const movement=await controller.key('w');
+ const after=M.resident().pose.position.slice();
+ const walked=movement.ok&&after[1]>before[1]+.01;
+ M.face('CLOUD_NINE_NEST.wall.north');
+ const beforeWall=M.resident().pose.position.slice();
+ const wallCheck=await window.REALITI_AGENT_DOOR.run('move forward 20');
+ const wallPos=M.resident().pose.position.slice();
+ const stopped=wallCheck.ok&&wallPos[1]<6.0&&Math.hypot(wallPos[0]-beforeWall[0],wallPos[1]-beforeWall[1])<8.0;
  const imgs=[...document.querySelectorAll('#realiti-visual figure img')],s=window.REALITI_APARTMENT_VISUAL_V0.snapshot();
- const passed=imgs.length===4&&imgs.every(x=>x.naturalWidth===640&&x.naturalHeight===400)&&!s.contact_minted;
+ await Promise.all(imgs.map(img=>img.decode?.().catch(()=>{})||Promise.resolve()));
+ const detail=imgs.length===4&&imgs.every(img=>{
+  if(img.naturalWidth!==640||img.naturalHeight!==400)return false;
+  const canvas=document.createElement('canvas');
+  canvas.width=640;canvas.height=400;
+  const g=canvas.getContext('2d');if(!g)return false;
+  g.drawImage(img,0,0);
+  const pixels=g.getImageData(0,0,640,400).data,seen=new Set();
+  for(let y=20;y<380;y+=19)for(let x=20;x<620;x+=19){
+   const i=4*(y*640+x);
+   seen.add(((pixels[i]>>4)<<8)|((pixels[i+1]>>4)<<4)|(pixels[i+2]>>4));
+  }
+  return seen.size>=7;
+ });
+ const passed=detail&&!s.contact_minted&&walked&&stopped;
  out.className=passed?'good':'bad';
  out.textContent='HOME chart: '+s.chart+'\nMatrix entities: '+s.entities.length+
  '\nReference PNGs: '+imgs.length+'\nImage sizes: '+imgs.map(x=>x.naturalWidth+'x'+x.naturalHeight).join(', ')+
- '\nContact minted: '+s.contact_minted+'\nRESULT: '+(passed?'PASS':'FAIL');
+ '\nContact minted: '+s.contact_minted+'\nImage detail: '+detail+'\nDoor walking: '+walked+'\nNative wall collision: '+stopped+'\nRESULT: '+(passed?'PASS':'FAIL');
  document.documentElement.dataset.smoke=passed?'pass':'fail';
 }
 try{
