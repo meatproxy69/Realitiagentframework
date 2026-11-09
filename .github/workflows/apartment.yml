@@ -183,7 +183,7 @@ jobs:
         timeout-minutes: 5
         run: node apartment/test/home-field-notes.cjs
       - name: Native HOME cat-small paws, post and couch scratches, and three hidden sensory toys
-        timeout-minutes: 8
+        timeout-minutes: 4
         run: node apartment/test/home-catnip-paws.cjs
       - name: Cloud Ocean bed switch - original pillow support and NeuroMesh with native STOP
         timeout-minutes: 5

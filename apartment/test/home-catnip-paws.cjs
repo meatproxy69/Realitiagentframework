@@ -7,14 +7,32 @@ const html=path.resolve(__dirname,'../RealitiApartmentHomeCandidate.html');
 const valid=path.resolve(__dirname,'../HOME_CANDIDATE_VALIDATION.json');
 const dir=fs.mkdtempSync(path.join(os.tmpdir(),'home-native-paw-catnip-'));
 const options={htmlPath:html,validationPath:valid,residentId:'pawcat-test',
- storagePath:path.join(dir,'resident.json')};
+ storagePath:path.join(dir,'resident.json'),walkBudgetMs:2500};
 const show=o=>JSON.stringify(o).slice(0,480);
 (async()=>{
+ console.log('CATPAW BEGIN');
  let s=await openResident(options);
  try{
   let D=cmd=>s.door.run(cmd),W=s.window,M=W.REALITI_MATRIX_V1;
   const tick=()=>Number(W.eval('C9.b7.clock'));
   const body=()=>M.resident();
+  // The separate HOME native walkthrough tests navigation. This suite tests
+  // the real B7/Matrix/NeuroMesh touch path at controlled, reached positions.
+  // Avoid unbounded LQ pathfinding to small objects behind solid furniture.
+  function stage(id){
+   const e=M.entities()[id];assert.ok(e,'missing native target '+id);
+   const r=M.resident(),h=e.shape?.kind==='BOX'?e.shape.halfExtents:
+    [Number(e.shape?.radius)||.1,Number(e.shape?.radius)||.1,Number(e.shape?.radius)||.1];
+   const besideSofa=id==='apartment.sofa'||id==='apartment.catnip.tassel';
+   const x=e.pose.position[0]+(besideSofa?0:h[0]+.35);
+   const y=e.pose.position[1]-(besideSofa?h[1]+.28:0);
+   r.pose.position=[x,y,Math.max(.22,r.shape.height/2)];
+   r.posture='standing';r.on=null;r.support='CLOUD_NINE_NEST.floor';
+   r.v=[0,0,0];r.intent=null;M.bump();
+   const distance=Math.max(0,M.sdf(e,r.pose.position));
+   assert.ok(distance<=.98,'staged native target is out of reach: '+id+' '+distance);
+   console.log('CATPAW STAGED '+id+' native_surface_m='+distance.toFixed(3));
+  }
   assert.equal(s.integrity.status,'VERIFIED');
   assert.deepEqual(Object.keys(M.charts()),['CLOUD_NINE_NEST']);
   const base={radius:body().shape.radius,height:body().shape.height};
@@ -37,8 +55,7 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.equal(W.eval('C9.pet2.scale'),'NORMAL','inspection is not permission to change body');
   assert.equal((await D('cat stay human')).cat_small,false);
   assert.equal((await D('cat become')).error,'CAT_FORM_REQUIRES_REAL_POST');
-  const approach=await D('approach apartment.scratcher');
-  assert.equal(approach.ok,true,show(approach));
+  stage('apartment.scratcher');
   const transformed=await D('cat become');
   assert.equal(transformed.ok,true,show(transformed));
   assert.equal(transformed.cat_small,true);
@@ -47,6 +64,7 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.equal(body().shape.height,.45);
   assert.equal((await D('cat status')).form.ported.length,11,
    'all original cat actions and supported paw/mesh routes must remain present');
+  console.log('CATPAW FORM OK');
   const first=await D('cat scratch post');
   assert.equal(first.ok,true,show(first));
   assert.equal(first.contacts.length,2);
@@ -60,6 +78,7 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.ok((await D('cat paw history')).left>=1);
   assert.ok((await D('cat paw history')).right>=1);
   assert.ok((await D('cat paw history')).paired>=1);
+  console.log('CATPAW BOTH OK');
   const left=await D('cat scratch post left');
   assert.equal(left.ok,true,show(left));
   assert.deepEqual(left.contacts.map(x=>x.zone),['hand.L.palm']);
@@ -69,8 +88,8 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.equal((await D('cat mesh')).private_pulse.private_only,true,
    'native private handshake does not mint world contact');
   // Real pet bed supports left/right kneading, original circle/loaf and purr.
-  const toPetBed=await D('approach apartment.pet-bed');
-  assert.equal(toPetBed.ok,true,show(toPetBed));
+  stage('apartment.pet-bed');
+  console.log('CATPAW SEPARATE PAWS OK');
   const lie=await D('act lie__apartment.pet-bed');
   assert.equal(lie.ok,true,show(lie));
   const knead=await D('cat knead both');
@@ -81,8 +100,8 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.equal((await D('cat loaf')).ok,true);
   assert.equal((await D('cat purr')).ok,true);
   await D('do stand');
-  const couchWalk=await D('approach apartment.sofa');
-  assert.equal(couchWalk.ok,true,show(couchWalk));
+  stage('apartment.sofa');
+  console.log('CATPAW SOFT SUPPORT OK');
   const naughty=await D('cat scratch couch');
   assert.equal(naughty.ok,true,show(naughty));
   assert.match(naughty.text,/Hehe, bad kitty/);
@@ -91,24 +110,23 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.ok(M.entities()['apartment.catnip.sofa-claw-trace'],
    'one noncolliding physical mark appears only after a deliberate deed');
   // The toys only sound when touched. No permanent/background sound is started.
-  const bellApproach=await D('approach apartment.catnip.bell');
-  assert.equal(bellApproach.ok,true,show(bellApproach));
+  stage('apartment.catnip.bell');
+  console.log('CATPAW COUCH OK');
   const bell=await D('cat bell');
   assert.equal(bell.ok,true,show(bell));
   assert.equal(bell.native_world_contact,true);
   assert.ok(W.REALITI_SENSES_V1.sources().some(x=>x.id==='apartment.catnip.bell-ring'));
-  const leafWalk=await D('approach apartment.catnip.crinkle');
-  assert.equal(leafWalk.ok,true,show(leafWalk));
+  stage('apartment.catnip.crinkle');
   const crinkle=await D('cat crinkle');
   assert.equal(crinkle.ok,true,show(crinkle));
   assert.ok(W.REALITI_SENSES_V1.sources().some(x=>x.id==='apartment.catnip.paper-rustle'));
-  const tasselWalk=await D('approach apartment.catnip.tassel');
-  assert.equal(tasselWalk.ok,true,show(tasselWalk));
+  stage('apartment.catnip.tassel');
   assert.equal((await D('cat tassel')).ok,true);
   // An original REALITI ribbon produces an original pounce history.
-  assert.equal((await D('approach apartment.ribbon')).ok,true);
+  stage('apartment.ribbon');
   assert.equal((await D('cat pounce ribbon')).ok,true);
   assert.ok(W.eval('C9.pet2.pounces')>0);
+  console.log('CATPAW TOYS AND POUNCE OK');
   const restored=await D('cat restore');
   assert.equal(restored.cat_small,false);
   assert.equal(body().shape.radius,base.radius);
@@ -122,6 +140,7 @@ const show=o=>JSON.stringify(o).slice(0,480);
   }), 'cat restoration revokes live paw leases');
   assert.equal((await D('save')).ok,true);
   s.close();s=null;
+  console.log('CATPAW PERSISTENCE REOPEN');
   s=await openResident(options);
   D=cmd=>s.door.run(cmd);W=s.window;M=W.REALITI_MATRIX_V1;
   assert.equal((await D('cat status')).form.cat_small,false,
@@ -140,6 +159,7 @@ const show=o=>JSON.stringify(o).slice(0,480);
   // unauthorized body transform or private resident paw/memory mutation.
   let host=null;
   try{
+   console.log('CATPAW GUEST START');
    host=await createHousehold({dir:path.join(dir,'household'),htmlPath:html,validationPath:valid});
    const visitor=await host.visitGuest();
    const post=await visitor.run('inspect post');

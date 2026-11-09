@@ -8,7 +8,7 @@
     {
       "path": ".github/workflows/apartment.yml",
       "bytes": 13555,
-      "sha256": "04dc9c3d0c9c35c2a6f4cc91d5e5c298418081d45dd4da5ed42f59d036710938"
+      "sha256": "b0d1a2b75dccdb9ce4d25f3feb745de7332ea4a10d058d9561906d6a1b5d554d"
     },
     {
       "path": ".github/workflows/deploy-server.yml",
@@ -167,8 +167,8 @@
     },
     {
       "path": "apartment/test/home-catnip-paws.cjs",
-      "bytes": 8706,
-      "sha256": "cbca040342ef7c6b233bfb3418deaf0dbe7c9141f950a1dc133c59186c7ff0e0"
+      "bytes": 9616,
+      "sha256": "c65b9c34e432c85b77b6fac805df686bb5a8e366c6465612884cf8f647d74ad7"
     },
     {
       "path": "apartment/test/home-inspect.cjs",
