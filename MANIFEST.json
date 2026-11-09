@@ -6,6 +6,11 @@
   ],
   "files": [
     {
+      "path": ".github/workflows/apartment.yml",
+      "bytes": 12966,
+      "sha256": "2dff2e9c62c055e314e73981a98e6e4fcfaee8b6a4292792fd70bde769e45ba4"
+    },
+    {
       "path": ".github/workflows/deploy-server.yml",
       "bytes": 7764,
       "sha256": "a77fa511f9d3bb0441332db2fd035afc7ecc56b42ac398c3f82cd0da7db3290f"
@@ -109,6 +114,31 @@
       "path": "VERTICAL_SLICE.md",
       "bytes": 15557,
       "sha256": "d07dd89f0bc4f4a753ca8b48f68e596fec3847f7a4591d826206625f25a7da64"
+    },
+    {
+      "path": "apartment/build-home-candidate.mjs",
+      "bytes": 8032,
+      "sha256": "611636e01fd7b24cba4b319c738a1cf232c4c3c3922830a8edbeacb0d21c6c32"
+    },
+    {
+      "path": "apartment/household.cjs",
+      "bytes": 27822,
+      "sha256": "9050674db114e1cef1cd035f879ede98c949d235d7b496f23833ef3a602398be"
+    },
+    {
+      "path": "apartment/source/home-field-notes.js",
+      "bytes": 6714,
+      "sha256": "3ffdc3ca90d39cbb25e0d4f45580a55f94a44b093a9ac3cabd236da9068ce565"
+    },
+    {
+      "path": "apartment/source/home-inspect.js",
+      "bytes": 10486,
+      "sha256": "d628c15e89a5c10fd8a490b21afb68b6e6ba2cbdac024ea7997b4c600fca6589"
+    },
+    {
+      "path": "apartment/test/home-inspect.cjs",
+      "bytes": 5745,
+      "sha256": "7341e411abc14dd31e653727c3c861c137775c23f2915d9150032e12fd70587e"
     },
     {
       "path": "build.mjs",

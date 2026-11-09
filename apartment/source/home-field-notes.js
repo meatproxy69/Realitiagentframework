@@ -102,7 +102,7 @@ async function run(raw){
   const local=cues();
   // One modest aside, only if an actually measured, nearby detail is present.
   if(local.length)return {...result,text:result.text.trimEnd()+' '+local[0].text,
-   field_note:{id:local[0].id,field_source:local[0].field_source,
+   field_note:{id:local[0].id,text:local[0].text,field_source:local[0].field_source,
     distance_m:local[0].distance_m,contact_minted:false}};
  }
  return result;
