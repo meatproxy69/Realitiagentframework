@@ -92,8 +92,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1671795,
-      "sha256": "98f3fc43fa97d4847aa6e9e75c14c1d59c544da43a3eab634e5f8f357a6563bf"
+      "bytes": 1671827,
+      "sha256": "7b2a5182544e017fcd6dec8db10f75ed42c05ed0280c24cc4f7a246aadffb6a0"
     },
     {
       "path": "SECURITY.md",
@@ -108,7 +108,7 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "fd5bef23ebc091ca7a96e89b24aaa498cb9ef7ade14989ae784e203152a4db0c"
+      "sha256": "a3692c4f05f55da4bcb6523cb600968894aa39b86100d380eb28f21341296689"
     },
     {
       "path": "VERTICAL_SLICE.md",
@@ -132,13 +132,13 @@
     },
     {
       "path": "apartment/source/home-inspect.js",
-      "bytes": 10486,
-      "sha256": "d628c15e89a5c10fd8a490b21afb68b6e6ba2cbdac024ea7997b4c600fca6589"
+      "bytes": 10503,
+      "sha256": "95bef75a59285d4f7b5a726569bbf2120f5c1d5cbd5a04efd6c125023d4801cf"
     },
     {
       "path": "apartment/test/home-inspect.cjs",
-      "bytes": 5745,
-      "sha256": "7341e411abc14dd31e653727c3c861c137775c23f2915d9150032e12fd70587e"
+      "bytes": 5994,
+      "sha256": "b6e30a2717f87068afdb97df660f2916e668776f6885bd161ad3640cdabd00f8"
     },
     {
       "path": "build.mjs",
@@ -1237,8 +1237,8 @@
     },
     {
       "path": "source/scripts/61-ui.js",
-      "bytes": 6333,
-      "sha256": "c8e91a1d89c6c1cdb8d50caaa9c4b30a13848d2f966e1c8515167eb5fda35cf2"
+      "bytes": 6365,
+      "sha256": "fc13edf8640cba13a51b6b0a9b3b0d1fe14a3cfa61941ed2f5d5e4efe593c3a1"
     },
     {
       "path": "source/scripts/62-neural-export.js",

@@ -78,7 +78,7 @@ async function run(raw){const cmd=String(raw||'').trim().toLowerCase().replace(/
 }
 D.run=run;
 D.help=()=>{const h=help0()||{};return {...h,commands:[...new Set([...(h.commands||[]),'inspect [room]','inspect colors'])],inspection:'Read-only furniture, chosen palette samples, local posture and host-verified company. No simulated contact, private look disclosure, time advance, background requests or room shader.'}};
-function read(uri){if(uri==='realiti://apartment/inspect')return inspect();if(uri.startsWith('realiti://apartment/inspect/'))return inspect(uri.slice('realiti://apartment/inspect/'.length));return read0(uri)}
+function read(uri='realiti://here'){if(uri==='realiti://apartment/inspect')return inspect();if(uri.startsWith('realiti://apartment/inspect/'))return inspect(uri.slice('realiti://apartment/inspect/'.length));return read0(uri)}
 window.Realiti=Object.freeze({...A,read,run,help:D.help});
 window.REALITI_APARTMENT_ROOM_INSPECT_V1=Object.freeze({inspect,currentRoom:region,version:'1.0',read_only:true});
 if(typeof document!=='undefined'&&!window.REALITI_HEADLESS){

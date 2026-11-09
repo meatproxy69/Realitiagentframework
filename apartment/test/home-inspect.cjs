@@ -17,6 +17,10 @@ async function solo(){
  try{
   const D=cmd=>s.door.run(cmd),W=s.window;
   assert.equal(s.integrity.status,'VERIFIED');
+  const defaultHere=W.Realiti.read();
+  assert.equal(defaultHere?.room?.id,'CLOUD_NINE_NEST',
+   'No-argument Realiti.read must remain compatible with the browser shell.');
+  assert.equal(W.Realiti.read('realiti://here').room.id,'CLOUD_NINE_NEST');
   assert.equal((await D('inspect')).scope,'home');
   assert.equal((await D('remote inspect library')).error,'REMOTE_ASLEEP');
   assert.equal((await D('remote activate')).activated,true);
