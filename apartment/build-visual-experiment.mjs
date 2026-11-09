@@ -77,6 +77,7 @@ inject(replaceOne(await read('source/style-appearance.js'),
 inject(await read('source/home-field-notes.js'),'realiti-apartment-home-field-notes');
 const projected=await read('visual/scene-projection.cjs');
 inject(projected,'realiti-apartment-visual-matrix-projection');
+inject(await read('visual/reference-cameras.cjs'),'realiti-apartment-reference-cameras');
 // No Three.js download or WebGL import in the first source/authority checkpoint.
 inject(["(()=>{'use strict';",
  "const P=window.REALITI_APARTMENT_VISUAL_PROJECTION_V0;",
@@ -84,6 +85,12 @@ inject(["(()=>{'use strict';",
  "Object.defineProperty(window,'REALITI_APARTMENT_VISUAL_V0',",
  " {value:Object.freeze({snapshot:()=>P.projectNative(window.REALITI_MATRIX_V1)})});",
  "})();"].join('\n'),'realiti-apartment-visual-reader');
+inject(await read('visual/viewer-boot.js'),'realiti-apartment-viewer-boot');
+const bundle=await fs.readFile(new URL('visual/dist/viewer.js',apt)).catch(()=>{
+ throw Error('LOCAL_THREE_BUNDLE_REQUIRED: cd apartment/visual && npm install && npm run build')});
+const bundleMeta=JSON.parse(await read('visual/dist/manifest.json'));
+if(bundleMeta.schema!=='REALITI_LOCAL_THREE_VIEWER_V0'||bundleMeta.reference_views!==4||
+ bundleMeta.sha256!==hash(bundle))throw Error('LOCAL_THREE_BUNDLE_HASH_MISMATCH');
 const manifest={
  schema:'REALITI_APARTMENT_VISUAL_EXPERIMENT_VALIDATION_V0',
  version:'0.1.0-experimental',release_approved:false,preview_only:true,
@@ -92,9 +99,12 @@ const manifest={
  expected_chart_ids:['CLOUD_NINE_NEST'],expected_portal_count:0,
  native_single_chart_initialization:true,native_relax_harness_reused:true,
  extra_sensory_stack_created:false,visual_only:true,
- three_js_bundled:false,ai_vision_requests:0,
+ three_js_lazy_local_bundle:true,four_fixed_reference_views:true,
+ browser_renderer_required:true,ai_vision_requests:0,
  original_engine_hashes:upstream,derived_engine_hashes:derived,
  bedroom_spec_sha256:hash(bedroomRaw),visual_projection_sha256:hash(projected),
+ local_viewer_sha256:bundleMeta.sha256,
+ local_viewer_gzip_bytes:bundleMeta.gzip_bytes,
  single_html_sha256:hash(html)
 };
 await fs.writeFile(new URL('RealitiApartmentVisualExperiment.html',apt),html);

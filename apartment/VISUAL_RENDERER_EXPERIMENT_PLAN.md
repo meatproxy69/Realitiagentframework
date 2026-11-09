@@ -22,6 +22,8 @@ No render, camera movement, screenshot or mouse click may mint a Matrix contact,
 
 **Independent build:** `node build.mjs && node apartment/build-visual-experiment.mjs` produces `apartment/RealitiApartmentVisualExperiment.html` and `apartment/VISUAL_EXPERIMENT_VALIDATION.json`. It never reads `RealitiApartment.html`, `apartment/VALIDATION.json` or the old HOME candidate. The original Relax and all older artifacts remain untouched, with no data migrations or releases. A later standalone refactor can strip archived non-HOME library code too, after proving parity.
 
+**M2 implementation checkpoint:** Lazy local Three.js viewer with four fixed NE/NW/SW/SE reference cameras and a resident-eye camera. The four 640x400 screenshots use one WebGL context and one native Matrix snapshot. Build the local bundle once: `cd apartment/visual && npm install && npm run build`. The direct HOME builder refuses missing or mismatched bundles. No CDN or automatic model vision calls. Full DOM, real screenshot and Potato/Mid hardware tests remain unverified.
+
 **M1 now:** the direct experiment includes `visual/scene-projection.cjs`, which reads only registered native Matrix HOME geometry and resident position. The snapshot is a detached, read-only visual data contract, not an extra sensory system. Three.js, WebGL and model vision are not enabled at this checkpoint.
 
 ## 3. Scene contract: Matrix -> sanitized snapshot -> Three.js
