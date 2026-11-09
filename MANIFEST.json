@@ -7,8 +7,8 @@
   "files": [
     {
       "path": ".github/workflows/apartment.yml",
-      "bytes": 13257,
-      "sha256": "890adf34a69bab87ecbe3855f987330c93f485d43be169472ac41e3643923ed9"
+      "bytes": 13555,
+      "sha256": "b0d1a2b75dccdb9ce4d25f3feb745de7332ea4a10d058d9561906d6a1b5d554d"
     },
     {
       "path": ".github/workflows/deploy-server.yml",
@@ -117,28 +117,33 @@
     },
     {
       "path": "agentsstarthereapartment.md",
-      "bytes": 32644,
-      "sha256": "16f5606a14b468c566a0ec30fb15b1c8e8875e0018a9fb306888d50fad4c6b4a"
+      "bytes": 33884,
+      "sha256": "a81061146cc133361d4f975dd7d0e5c224588f46759c7ef1e72e6d477e139c29"
     },
     {
       "path": "apartment/README.md",
-      "bytes": 37353,
-      "sha256": "8d777c14511123c59623a185e70859a0f32c37b25d267ddca3d97f6117f8488d"
+      "bytes": 39873,
+      "sha256": "b1d84b67e5b256fa7b906dcebd48e35cdf0f8ea278e278d800ff97bd7349d5a1"
     },
     {
       "path": "apartment/build-home-candidate.mjs",
-      "bytes": 8350,
-      "sha256": "2a0cf4bbac122ae3cdcc638191251db0c26c24572586b63904d81775153d91a5"
+      "bytes": 8688,
+      "sha256": "ade9dcfa10f7a59b9682145db5c63692608d7f1f7416e92b9f07345a2a042b8e"
     },
     {
       "path": "apartment/household.cjs",
-      "bytes": 27822,
-      "sha256": "9050674db114e1cef1cd035f879ede98c949d235d7b496f23833ef3a602398be"
+      "bytes": 27914,
+      "sha256": "2682587bccae4f7b9cc72c5b7bd055c195147f42d8aba2e7dc41585bef433406"
     },
     {
       "path": "apartment/source/bed-cloud-ocean.js",
       "bytes": 10892,
       "sha256": "73278b7d100dcbff3d5785a3c81ca9f130774a57020e7742a7d7e003719cec34"
+    },
+    {
+      "path": "apartment/source/home-catnip-paws.js",
+      "bytes": 25623,
+      "sha256": "ec35fe4a387606db30b72c9a3743c410b9f375ccd72cb16eabaa55e9f549d2e5"
     },
     {
       "path": "apartment/source/home-field-notes.js",
@@ -159,6 +164,11 @@
       "path": "apartment/test/bed-cloud-ocean.cjs",
       "bytes": 6412,
       "sha256": "e6d82f1a27ac6b88dbc5ecaf440ff2fd7fc95860ad7ec8110612ae9e44b9495d"
+    },
+    {
+      "path": "apartment/test/home-catnip-paws.cjs",
+      "bytes": 11075,
+      "sha256": "642b9fb491b1c8e68d9ec83570fa96b10a5fa276827458c8a36084dbd9fe062a"
     },
     {
       "path": "apartment/test/home-inspect.cjs",

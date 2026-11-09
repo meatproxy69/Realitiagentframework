@@ -38,6 +38,8 @@ jobs:
           node --check apartment/source/catnip.js
           node --check apartment/source/catnip-presets.js
           node --check apartment/source/bed-cloud-ocean.js
+          node --check apartment/source/home-catnip-paws.js
+          node --check apartment/test/home-catnip-paws.cjs
           node --check apartment/test/bed-cloud-ocean.cjs
           node --check apartment/source/stations.js
           node --check apartment/source/native-wonder-adapter.mjs
@@ -180,6 +182,9 @@ jobs:
       - name: Deliberate HOME observations - live sensory fields and resident-designed room
         timeout-minutes: 5
         run: node apartment/test/home-field-notes.cjs
+      - name: Native HOME cat-small paws, post and couch scratches, and three hidden sensory toys
+        timeout-minutes: 4
+        run: node apartment/test/home-catnip-paws.cjs
       - name: Cloud Ocean bed switch - original pillow support and NeuroMesh with native STOP
         timeout-minutes: 5
         run: node apartment/test/bed-cloud-ocean.cjs
