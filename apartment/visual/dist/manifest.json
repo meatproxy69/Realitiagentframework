@@ -1,0 +1,21 @@
+{
+  "schema": "REALITI_LOCAL_THREE_VIEWER_V0",
+  "file": "viewer.js",
+  "version": "0.187.0",
+  "source_tag": "r187",
+  "origin": "https://github.com/mrdoob/three.js",
+  "license": "MIT",
+  "sha256": "0de90c5c5faef2024d2b7fd1eb725711ddee8496842facf3bbb9b0ccec0f8c54",
+  "bytes": 2130000,
+  "gzip_bytes": null,
+  "prebuilt": true,
+  "offline_ready": true,
+  "external_cdns": 0,
+  "renderers_per_session": 1,
+  "reference_views": 4,
+  "upstream_blobs": {
+    "core": "0ee9b6d588348c3177b91d6093cfe8b167778db8",
+    "webgl": "4dc5bcedc5dc72dabb37a3da0a98bbaa05321a8a"
+  },
+  "build": "inlined r187 ESM core and WebGL definitions with Apartment viewer entry as one browser IIFE"
+}
