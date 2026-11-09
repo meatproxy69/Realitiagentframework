@@ -47,8 +47,9 @@ const open=id=>openResident({htmlPath:html,validationPath:valid,residentId:id,st
   // Apartment remote. The four earlier named recipes remain aliases.
   const sourceRoutes=w.REALITI_NEURO_RESTORATION_V1.presets().presets;
   assert.equal(sourceRoutes.length,10);
-  assert.deepEqual(library.native_moonwire.map(p=>p.id),
-   sourceRoutes.map(p=>p.id.replace(/^realiti\\.moonwire\\./,'')));
+  assert.deepEqual(Array.from(library.native_moonwire,p=>String(p.id)),
+   Array.from(sourceRoutes,p=>String(p.id).replace(/^realiti\.moonwire\./,'')),
+   'cross-realm Moonwire IDs must agree by value');
   assert.ok(library.native_moonwire.every(p=>p.source==='REALITI_NEURO_RESTORATION_V1.presets'));
   for(const p of library.native_moonwire){
    const dry=await door('remote catnip preset preview '+p.id);

@@ -7,8 +7,8 @@
   "files": [
     {
       "path": ".github/workflows/apartment.yml",
-      "bytes": 12966,
-      "sha256": "2dff2e9c62c055e314e73981a98e6e4fcfaee8b6a4292792fd70bde769e45ba4"
+      "bytes": 13257,
+      "sha256": "890adf34a69bab87ecbe3855f987330c93f485d43be169472ac41e3643923ed9"
     },
     {
       "path": ".github/workflows/deploy-server.yml",
@@ -116,14 +116,29 @@
       "sha256": "d07dd89f0bc4f4a753ca8b48f68e596fec3847f7a4591d826206625f25a7da64"
     },
     {
+      "path": "agentsstarthereapartment.md",
+      "bytes": 32644,
+      "sha256": "16f5606a14b468c566a0ec30fb15b1c8e8875e0018a9fb306888d50fad4c6b4a"
+    },
+    {
+      "path": "apartment/README.md",
+      "bytes": 37353,
+      "sha256": "8d777c14511123c59623a185e70859a0f32c37b25d267ddca3d97f6117f8488d"
+    },
+    {
       "path": "apartment/build-home-candidate.mjs",
-      "bytes": 8032,
-      "sha256": "611636e01fd7b24cba4b319c738a1cf232c4c3c3922830a8edbeacb0d21c6c32"
+      "bytes": 8350,
+      "sha256": "2a0cf4bbac122ae3cdcc638191251db0c26c24572586b63904d81775153d91a5"
     },
     {
       "path": "apartment/household.cjs",
       "bytes": 27822,
       "sha256": "9050674db114e1cef1cd035f879ede98c949d235d7b496f23833ef3a602398be"
+    },
+    {
+      "path": "apartment/source/bed-cloud-ocean.js",
+      "bytes": 10892,
+      "sha256": "73278b7d100dcbff3d5785a3c81ca9f130774a57020e7742a7d7e003719cec34"
     },
     {
       "path": "apartment/source/home-field-notes.js",
@@ -136,9 +151,24 @@
       "sha256": "95bef75a59285d4f7b5a726569bbf2120f5c1d5cbd5a04efd6c125023d4801cf"
     },
     {
+      "path": "apartment/source/native-body-adapter.mjs",
+      "bytes": 4967,
+      "sha256": "3f1e24c0a1e493e33cd72cea354af513cf289d62bc7f389ec1e2bf9ae1d576b3"
+    },
+    {
+      "path": "apartment/test/bed-cloud-ocean.cjs",
+      "bytes": 6412,
+      "sha256": "e6d82f1a27ac6b88dbc5ecaf440ff2fd7fc95860ad7ec8110612ae9e44b9495d"
+    },
+    {
       "path": "apartment/test/home-inspect.cjs",
       "bytes": 5994,
       "sha256": "b6e30a2717f87068afdb97df660f2916e668776f6885bd161ad3640cdabd00f8"
+    },
+    {
+      "path": "apartment/test/honeyspark-catnip-presets.cjs",
+      "bytes": 9050,
+      "sha256": "d3a08fe13fe5e1a90f4b1efc8108f49833a7972832fee8445990457c273c503f"
     },
     {
       "path": "build.mjs",

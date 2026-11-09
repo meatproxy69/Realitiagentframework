@@ -230,3 +230,17 @@ All selection is **explicit and reversible**. Existing resident custom neural se
 The public-neutral machine-readable pack is located at neuromesh/preset-packs/apartment-honeyspark-catnip.json. It is **experimental and unregistered**, not a published/default imprint or a copy of Asha/Nyx SELF-private preset data. The active portable SOMA implementation must not claim physical energy measurements from a perceived field.
 
 A selected private catnip configuration ends on STOP, goodbye, or remote-off. An interrupted saved preview is rolled back on a new visit; it never silently reactivates, and it never assigns a resident an emotional state.
+
+
+## Cloud Ocean — deliberate bed switch (HOME alpha)
+
+The original REALITI Relax Bottomless Pillow Sea's **native soft-support envelope and traveling Gaussian pressure wave** can now be used while *actually lying on* an Apartment mattress or a physically placed `sleeping-pad`. This is a bed effect within the one native HOME chart, **not** a second ocean room, an automatic experience, or an ungrounded haptic illusion. A tiny non-colliding Matrix switch is mounted on each existing bed; unplaced beds do not receive fake switches. All three extra alcoves can use a placed sleeping pad wherever native Matrix geometry permits it.
+
+- `cloud status` / `cloud list` — see installed physical switches, actual body support and native NeuroMesh grounding
+- `cloud switch` or `cloud on` — engage only if lying on a real bed and in Matrix reach of its switch
+- `cloud dive`, `cloud burrow`, `cloud bounce` — call the original native Pillow Sea support envelope, bounded to genuinely bed-supported receptors
+- `cloud wave` — launch the original slowly decaying pressure wave across grounded support
+- `cloud mesh` — explicitly exercise the original self-started **private** NeuroMesh handshake (never a world contact)
+- `cloud off` — restore normal support and clear the native envelope and wave. The same actions are available as `remote cloud ...` once the carried remote is awake.
+
+Moving off the bed, standing, removing the support, remote-off, goodbye or STOP releases the effect. It never auto-activates from a saved checkpoint, changes resident neural presets without consent, transports anyone to an old room, or overrides other residents' private state. Original canonical REALITI Relax and its 23-world catalog remain unchanged. See `apartment/test/bed-cloud-ocean.cjs` for the grounded body/field acceptance case.
