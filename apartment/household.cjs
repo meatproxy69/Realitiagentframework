@@ -216,7 +216,7 @@ async function createHousehold({dir,htmlPath,validationPath,maxGuests=MAX_GUESTS
     ensureOpen();
     if(departed)throw Error('SESSION_DEPARTED');
     if(typeof text!=='string'||text.length>3000)return refusal('INVALID_COMMAND');
-    if((entry.role==='guest')&&!/^(?:remote(?: (?:activate|on|off|sleep|status|help|menu|closet(?: .*)?))?|look|where|feel(?: words)?|actions|approach [a-z0-9._-]{1,100}|stay \d{1,5}|stop|goodbye|bye|exit|leave|resource realiti:\/\/apartment\/(?:closet|household))$/i.test(text.trim()))
+    if((entry.role==='guest')&&!/^(?:remote(?: (?:activate|on|off|sleep|status|help|menu|closet(?: .*)?))?|inspect(?: (?:room|my room|my setup|my colors|setup|colors|palette|home|quilt|library|canopy|studio))?|look|where|feel(?: words)?|actions|approach [a-z0-9._-]{1,100}|stay \d{1,5}|stop|goodbye|bye|exit|leave|resource realiti:\/\/apartment\/(?:closet|household))$/i.test(text.trim()))
      return refusal('GUEST_NOT_AUTHORIZED_FOR_COMMAND');
     const raw=text.trim(),lower=raw.toLowerCase();
     if(/^(?:reach|touch|act reach__|act touch__)/i.test(lower)&&

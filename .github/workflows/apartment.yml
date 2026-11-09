@@ -178,6 +178,10 @@ jobs:
       - name: Deliberate HOME observations - live sensory fields and resident-designed room
         timeout-minutes: 5
         run: node apartment/test/home-field-notes.cjs
+      - name: HOME inspection and Vibe - real palettes, furniture, earned prose and guest-safe group view
+        if: runner.os == 'Linux'
+        timeout-minutes: 6
+        run: node apartment/test/home-inspect.cjs
       - name: Four real bedroom chests - store, owner-only recovery and clean four-resident restart
         timeout-minutes: 6
         run: node apartment/test/bedroom-chests.cjs

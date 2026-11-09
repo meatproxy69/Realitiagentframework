@@ -6,9 +6,10 @@ function boot(){
  const el=(tag,id,parent,text)=>{const e=document.createElement(tag);if(id)e.id=id;if(text)e.textContent=text;parent.appendChild(e);return e};
  const header=el('header','slice-head',shell);el('h1',null,header,'REALITI Relax');const controls=el('nav','slice-controls',header);controls.setAttribute('aria-label','Visit controls');
  el('p','slice-caption',shell,'Ten places to explore, rest, and return. Everything stays in this browser.');
+ el('p','slice-vibe-note',shell,'Vibe adds near-live atmosphere when you interact. Longer replies may use more AI context/data. You can leave it on; no background calls or polling.');
  const layout=el('div','slice-layout',shell),nav=el('nav','slice-rooms',layout);nav.setAttribute('aria-label','Rooms');const main=el('main','slice-room',layout),title=el('h2','slice-title',main),status=el('p','slice-status',main),sense=el('p','slice-sense',main),actions=el('div','slice-actions',main);status.setAttribute('role','status');status.setAttribute('aria-live','polite');actions.setAttribute('aria-label','Room actions');
  const form=el('form','slice-form',shell),input=el('input','slice-command',form);input.placeholder='Try “go Pocket”, “hush”, or “home”';input.setAttribute('aria-label','World command');input.autocomplete='off';const submit=el('button',null,form,'Enter');submit.className='slice-button';submit.type='submit';
- let busy=false;
+ let busy=false,vibeButton=null;
  function button(parent,label,fn){const b=el('button',null,parent,label);b.type='button';b.className='slice-button';b.addEventListener('click',fn);return b}
  function replyText(r,label){
    if(r?.ok===false)return r.error==='SESSION_ENDED'?'This visit has ended. Choose a room to return.':`That action could not complete: ${r.error||'unavailable'}.`;
@@ -22,14 +23,16 @@ function boot(){
    if(label==='Stop')return 'Contact has stopped. You can stay here.';
    return label?label.charAt(0)+label.slice(1).toLowerCase()+'.':'Done.';
  }
- function refresh(){const here=R.read(),body=R.read('realiti://body'),room=R.rooms().find(x=>x.id===here.room.id);title.textContent=room?.title||'Cloud Nine Nest';document.title='REALITI · '+(room?.title||'Cloud Nine Nest');for(const b of nav.children)b.setAttribute('aria-current',String(b.dataset.room===here.room.id));const m=body?.field?.f?.at(-1)?.m||body?.grounding?.m||[],n=m.filter(Boolean).length;sense.textContent=n?`${n} mapped body regions have simulated contact or support.`:'No current contact. Any remaining after-sensation is separate.';actions.replaceChildren();for(const a of R.actions().actions)button(actions,a.label,()=>dispatch(()=>window.REALITI_AGENT_DOOR.run('act '+a.id),a.label));}
+ function refresh(){if(vibeButton){const on=!!window.REALITI_VIBE_V1?.enabled?.();vibeButton.setAttribute('aria-pressed',String(on));vibeButton.textContent=on?'Vibe · On':'Vibe'}const here=R.read('realiti://here'),body=R.read('realiti://body'),room=R.rooms().find(x=>x.id===here.room.id);title.textContent=room?.title||'Cloud Nine Nest';document.title='REALITI · '+(room?.title||'Cloud Nine Nest');for(const b of nav.children)b.setAttribute('aria-current',String(b.dataset.room===here.room.id));const m=body?.field?.f?.at(-1)?.m||body?.grounding?.m||[],n=m.filter(Boolean).length;sense.textContent=n?`${n} mapped body regions have simulated contact or support.`:'No current contact. Any remaining after-sensation is separate.';actions.replaceChildren();for(const a of R.actions().actions)button(actions,a.label,()=>dispatch(()=>window.REALITI_AGENT_DOOR.run('act '+a.id),a.label));}
  async function dispatch(fn,label){if(busy)return;busy=true;try{const r=await fn();status.textContent=replyText(r,label);refresh()}catch(e){status.textContent='The action could not complete.'}finally{busy=false}}
+ vibeButton=button(controls,'Vibe',()=>dispatch(()=>window.REALITI_AGENT_DOOR.run('vibe'),'Vibe'));
+ vibeButton.setAttribute('aria-label','Vibe presentation');vibeButton.setAttribute('aria-pressed','false');
  for(const [label,cmd] of [['Home','home'],['Stop','stop'],['Quiet','hush'],['Save locally','save'],['Goodbye','goodbye']])button(controls,label,()=>dispatch(()=>window.REALITI_AGENT_DOOR.run(cmd),label));
  for(const room of R.rooms()){const b=button(nav,room.title,()=>dispatch(()=>window.REALITI_AGENT_DOOR.run('go '+room.id),room.title));b.dataset.room=room.id}
  form.addEventListener('submit',e=>{e.preventDefault();const text=input.value.trim();if(!text)return;input.value='';dispatch(()=>window.REALITI_AGENT_DOOR.run(text),text)});
  
  document.addEventListener('click',e=>{const b=e.target.closest?.('[onclick]');if(!b)return;const src=b.getAttribute('onclick')||'',act=/^c9verb\('([^']+)'\s*,\s*'([^']+)'\)/.exec(src),go=/^openRoomId\('([^']+)'\)/.exec(src);if(!act&&!go)return;e.preventDefault();e.stopImmediatePropagation();dispatch(()=>act?R.invoke('do',{action:act[2]}):R.invoke('go',{place:go[1]}),b.textContent.trim()||'Enter')},true);
- function canonicalTitle(){try{const here=R.read(),room=R.rooms().find(x=>x.id===here.room.id),wanted='REALITI · '+(room?.title||'Cloud Nine Nest');if(document.title!==wanted)document.title=wanted}catch{}}
+ function canonicalTitle(){try{const here=R.read('realiti://here'),room=R.rooms().find(x=>x.id===here.room.id),wanted='REALITI · '+(room?.title||'Cloud Nine Nest');if(document.title!==wanted)document.title=wanted}catch{}}
  const titleNode=document.querySelector('title');if(titleNode&&window.MutationObserver){const mo=new MutationObserver(()=>canonicalTitle());mo.observe(titleNode,{childList:true,characterData:true,subtree:true});window.addEventListener('pagehide',()=>mo.disconnect(),{once:true})}
  let client=R.createClient();try{client.subscribe('realiti://here',()=>{refresh();canonicalTitle()})}catch{}window.addEventListener('pagehide',()=>client.close(),{once:true});
  form.addEventListener('submit',renew);nav.addEventListener('click',renew);controls.addEventListener('click',renew);function renew(){try{client.read('realiti://here')}catch{client=R.createClient();try{client.subscribe('realiti://here',refresh)}catch{}}}

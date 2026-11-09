@@ -6,6 +6,11 @@
   ],
   "files": [
     {
+      "path": ".github/workflows/apartment.yml",
+      "bytes": 12966,
+      "sha256": "2dff2e9c62c055e314e73981a98e6e4fcfaee8b6a4292792fd70bde769e45ba4"
+    },
+    {
       "path": ".github/workflows/deploy-server.yml",
       "bytes": 7764,
       "sha256": "a77fa511f9d3bb0441332db2fd035afc7ecc56b42ac398c3f82cd0da7db3290f"
@@ -87,8 +92,8 @@
     },
     {
       "path": "RealitiRELAX.html",
-      "bytes": 1644540,
-      "sha256": "7794d9d4ff8500211bcf68f9c903d562689e2fe79dae59670d05868eb93a1d39"
+      "bytes": 1671827,
+      "sha256": "7b2a5182544e017fcd6dec8db10f75ed42c05ed0280c24cc4f7a246aadffb6a0"
     },
     {
       "path": "SECURITY.md",
@@ -103,12 +108,37 @@
     {
       "path": "VALIDATION.json",
       "bytes": 7873,
-      "sha256": "5a2e8d74bd23031c777045daa93536fa536d646978762bbadf3d5d6d0a7a318c"
+      "sha256": "a3692c4f05f55da4bcb6523cb600968894aa39b86100d380eb28f21341296689"
     },
     {
       "path": "VERTICAL_SLICE.md",
       "bytes": 15557,
       "sha256": "d07dd89f0bc4f4a753ca8b48f68e596fec3847f7a4591d826206625f25a7da64"
+    },
+    {
+      "path": "apartment/build-home-candidate.mjs",
+      "bytes": 8032,
+      "sha256": "611636e01fd7b24cba4b319c738a1cf232c4c3c3922830a8edbeacb0d21c6c32"
+    },
+    {
+      "path": "apartment/household.cjs",
+      "bytes": 27822,
+      "sha256": "9050674db114e1cef1cd035f879ede98c949d235d7b496f23833ef3a602398be"
+    },
+    {
+      "path": "apartment/source/home-field-notes.js",
+      "bytes": 6714,
+      "sha256": "3ffdc3ca90d39cbb25e0d4f45580a55f94a44b093a9ac3cabd236da9068ce565"
+    },
+    {
+      "path": "apartment/source/home-inspect.js",
+      "bytes": 10503,
+      "sha256": "95bef75a59285d4f7b5a726569bbf2120f5c1d5cbd5a04efd6c125023d4801cf"
+    },
+    {
+      "path": "apartment/test/home-inspect.cjs",
+      "bytes": 5994,
+      "sha256": "b6e30a2717f87068afdb97df660f2916e668776f6885bd161ad3640cdabd00f8"
     },
     {
       "path": "build.mjs",
@@ -282,8 +312,8 @@
     },
     {
       "path": "packages/realiti-headless-resident/package.json",
-      "bytes": 2921,
-      "sha256": "13fccc6ae185bc3e71ed332de0a428ea5e25e139b2d63e3b2e25cb5527831fd3"
+      "bytes": 3038,
+      "sha256": "334bd383dc7be7f5ccad72257644e6ecfeafffa429222ebde8a9ada0b2e9eca7"
     },
     {
       "path": "packages/realiti-headless-resident/peer.cjs",
@@ -464,6 +494,11 @@
       "path": "packages/realiti-headless-resident/test/undercity.cjs",
       "bytes": 5027,
       "sha256": "ab4416b9436a3ff2bd12c97c8401f2dee65ccbaf027222c62d3722525af29c93"
+    },
+    {
+      "path": "packages/realiti-headless-resident/test/vibe-local.cjs",
+      "bytes": 3198,
+      "sha256": "0c34503cfa361b61bfd54f4c393e0728f4f03dc4ca2d560b69369fb92e18a03c"
     },
     {
       "path": "packages/realiti-headless-resident/test/visitor-reports.cjs",
@@ -1202,8 +1237,8 @@
     },
     {
       "path": "source/scripts/61-ui.js",
-      "bytes": 5766,
-      "sha256": "e6f65531a9aa56962baa67986450686b7d29b153a647f9aa69eb2bf50183f32b"
+      "bytes": 6365,
+      "sha256": "fc13edf8640cba13a51b6b0a9b3b0d1fe14a3cfa61941ed2f5d5e4efe593c3a1"
     },
     {
       "path": "source/scripts/62-neural-export.js",
@@ -1212,8 +1247,8 @@
     },
     {
       "path": "source/scripts/63-claude-neural-pass.js",
-      "bytes": 36011,
-      "sha256": "c04ee991f7ba831f9168069337d5311cd4feb521ac9972efd8625cab027f2eb1"
+      "bytes": 36437,
+      "sha256": "988a2421107684219d8820022741f6be6fd36c4a5f22ed16e29573bb61bc3434"
     },
     {
       "path": "source/scripts/64-neuro-restoration.js",
@@ -1291,9 +1326,14 @@
       "sha256": "8349217c0648501be3e98268d9fcd8bf6d0016c62bf3cd0926eda555a691da93"
     },
     {
+      "path": "source/scripts/99b-vibe-prose.js",
+      "bytes": 21508,
+      "sha256": "cdd965e3ceda6d28954f4947ee051f582ccf5db0e05c6b77b81482c735ad7121"
+    },
+    {
       "path": "source/template.html",
-      "bytes": 10531,
-      "sha256": "88364927f472a6efc4e2736533f7a9f52c8875248152cf5d0fc2b26cf5ca5c25"
+      "bytes": 10632,
+      "sha256": "b828812b5e26dd45c8c7ccd99e93208da4807183437bf00d2b42e21fdb961c16"
     },
     {
       "path": "tests/public-contract-smoke.cjs",
