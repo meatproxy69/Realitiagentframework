@@ -23,6 +23,10 @@ const show=o=>JSON.stringify(o).slice(0,480);
   assert.ok(statuses.posts.length>=2,'existing and new native scratching posts');
   assert.equal(statuses.curiosity_count,3,'tucked-away real sensory toys');
   assert.equal(statuses.posts[0].id,'apartment.scratcher');
+  assert.equal(M.entities()['apartment.scratcher'].collision,true,
+   'the original pet-corner scratching post remains solid');
+  for(const post of statuses.posts.slice(1))assert.equal(M.entities()[post.id].collision,false,
+   "bedroom scratch panels must not block the owner's furniture placement");
   assert.equal((await D('cat scratch post')).error,'CAT_FORM_REQUIRED');
   const clock=tick();
   const invitation=await D('inspect post');

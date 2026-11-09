@@ -61,14 +61,14 @@ function clearFootprint(pos,half){
 }
 const postProps=[
  {id:'apartment.catnip.post.library',p:[-2.28,4.76,.55],half:[.14,.14,.55],
-  label:'a little rope scratching post beside the reading nook'},
+  label:'a slim wall-mounted rope scratch panel beside the reading nook'},
  {id:'apartment.catnip.post.canopy',p:[3.95,4.72,.55],half:[.14,.14,.55],
-  label:'a narrow sisal scratching post in the canopy corner'}
+  label:'a slim wall-mounted sisal scratch panel in the canopy corner'}
 ];
 if(E()['apartment.scratcher']?.chart!==HOME)throw Error('ORIGINAL_HOME_SCRATCHER_MISSING');
 for(const p of postProps)if(clearFootprint(p.p,p.half))
  place(p.id,p.label,p.p,{kind:'BOX',halfExtents:p.half.slice()},'string',
-  ['pet','scratch','scratcher','post','catnip'],true);
+  ['pet','scratch','scratcher','post','catnip','wall-mounted','no-obstruction'],false);
 const original=E()['apartment.scratcher'];
 if(!original.tags.includes('scratch'))original.tags.push('scratch');
 original.affordances=[...new Set([...(original.affordances||[]),'inspect','touch','scratch'])];

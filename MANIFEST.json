@@ -142,8 +142,8 @@
     },
     {
       "path": "apartment/source/home-catnip-paws.js",
-      "bytes": 24953,
-      "sha256": "3fb7feae150e386e945298388ff7f0d741f5bae375d2aa78159f57b6ba07fcd1"
+      "bytes": 25004,
+      "sha256": "07d006ecf97219d157a872fe0265ae4430d740d2ffb02f293516baad3a58cb0b"
     },
     {
       "path": "apartment/source/home-field-notes.js",
@@ -167,8 +167,8 @@
     },
     {
       "path": "apartment/test/home-catnip-paws.cjs",
-      "bytes": 8405,
-      "sha256": "edaa3d2f601f146083780e72ef93c92bce8df1fca023f75af564f6d8db661999"
+      "bytes": 8706,
+      "sha256": "cbca040342ef7c6b233bfb3418deaf0dbe7c9141f950a1dc133c59186c7ff0e0"
     },
     {
       "path": "apartment/test/home-inspect.cjs",
