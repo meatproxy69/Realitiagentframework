@@ -1,0 +1,19 @@
+{
+  "schema": "REALITI_V20_FOUNDATION_LOCK_V1",
+  "source_repository": "meatproxy69/Realitiagentframework",
+  "source_commit": "29409537988f779d78fa04a5d903f599f7154034",
+  "source_artifact": "RealitiRELAX.html",
+  "source_artifact_sha256": "7b2a5182544e017fcd6dec8db10f75ed42c05ed0280c24cc4f7a246aadffb6a0",
+  "source_full_chart_count": 23,
+  "v20_field_source": "source/scripts/31.js",
+  "v20_native_neural_pass_source": "source/scripts/63-claude-neural-pass.js",
+  "original_rooms_source": "source/scripts/58-rooms.js",
+  "original_city_source": "source/scripts/58j-city.js",
+  "original_apartment_source": "apartment/build.mjs",
+  "original_cloud_ocean_source": "apartment/source/bed-cloud-ocean.js",
+  "release_approved": false,
+  "migration_authorized": false,
+  "note": "Exact canonical source pinned; full original Matrix and neural/harness preserved. Realiti 1.0 staging only; no resident checkpoint transfer.",
+  "destination_repository": "meatproxy69/Realitiagentframework",
+  "migration_kind": "reviewed source-only staging"
+}

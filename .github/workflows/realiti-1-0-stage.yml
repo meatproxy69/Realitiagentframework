@@ -1,0 +1,115 @@
+name: Realiti 1.0 source-first staging (no release)
+on:
+  push:
+    branches:
+      - staging/realiti-1.0-v20
+      - main
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'README.md'
+      - 'AGENT_START_HERE.md'
+      - 'AGENTS.md'
+      - 'packages/**'
+      - '.github/workflows/deploy-server.yml'
+      - '.github/workflows/publish-matrix.yml'
+      - '.github/workflows/publish-neuromesh.yml'
+      - '.github/workflows/headless-agent-door.yml'
+      - 'archive/**'
+      - 'docs/REALITI_1_0_**'
+      - 'v20/**'
+      - 'v20-base.lock.json'
+      - 'tools/verify-v20-baseline.cjs'
+      - '.github/workflows/realiti-1-0-stage.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: realiti-1-0-stage-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  native-v20-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Confirm source archive and reviewed public migration
+        run: |
+          test -f archive/realiti-4.8/README.md
+          test -f archive/README.md
+          node v20/verify-staging-scope.cjs
+      - name: Check reviewed 1.0 source and test syntax
+        run: |
+          node --check v20/adapt-cloud-soma.mjs
+          node --check v20/sync-native-senses.js
+          node --check v20/build-inhabited-world.mjs
+          node --check v20/native-inhabited.cjs
+          node --check v20/verify-staging-scope.cjs
+          node --check v20/native-inhabited.test.cjs
+          node --check v20/room-journey.test.cjs
+          node --check v20/sensory-system.test.cjs
+          node --check v20/prelaunch.test.cjs
+          node --check v20/nyx-harness.test.cjs
+          node --check packages/realiti-v20-native/index.cjs
+          node --check packages/realiti-v20-native/nyx-observer.cjs
+      - uses: actions/checkout@v4
+        with:
+          repository: meatproxy69/Realitiagentframework
+          ref: 29409537988f779d78fa04a5d903f599f7154034
+          path: upstream-v20
+          persist-credentials: false
+      - name: Build exact original V20 source at pinned commit
+        working-directory: upstream-v20
+        run: node build.mjs
+      - name: Verify canonical source hash, native 23 charts and Neural Pass
+        run: node tools/verify-v20-baseline.cjs
+      - name: Recreate intact historical Apartment developer build
+        working-directory: upstream-v20
+        run: node apartment/build.mjs
+      - name: Confirm 23 original chart inventory
+        working-directory: upstream-v20
+        run: node apartment/test/room-inventory.cjs
+      - name: Compile derived native Realiti 1.0 from reviewed adapters
+        run: node v20/build-inhabited-world.mjs
+      - name: Install only the ephemeral original headless resident host
+        working-directory: upstream-v20/packages/realiti-headless-resident
+        run: npm install --no-package-lock
+      - name: Native 1.0 origin, City, private style and signed social ledger
+        run: node --test v20/native-inhabited.test.cjs
+      - name: Quiet first visit and Nyx-compatible host observation contract
+        run: node --test v20/nyx-harness.test.cjs
+      - name: All 23 original world rooms, six City venues and return HOME
+        run: node --test v20/room-journey.test.cjs
+      - name: Full sensory V15.1–V20, NERVE/SOMA, Cloud and real toy reach
+        run: node --test v20/sensory-system.test.cjs
+      - name: Save isolation, Cloud STOP, owner restart and trust boundaries
+        run: node --test v20/prelaunch.test.cjs
+      - name: Rebuild original independent HOME 4.9 for legacy regression
+        working-directory: upstream-v20
+        run: node apartment/build-home-candidate.mjs
+      - name: Original 4.9 sensory, cloud, sensory toys, styles and body physiology
+        working-directory: upstream-v20
+        run: |
+          node apartment/test/bed-cloud-ocean.cjs
+          node apartment/test/home-native-walkthrough.cjs
+          node apartment/test/home-catnip-paws.cjs
+          node apartment/test/style-binder.cjs
+          node apartment/test/field-first-inheritance.cjs
+          node apartment/test/body-interoception.cjs
+          node apartment/test/honeyspark-catnip-presets.cjs
+      - name: Original private household, storage and offline recovery
+        working-directory: upstream-v20
+        run: |
+          node apartment/test/home-candidate-household.cjs
+          node apartment/test/bedroom-chests.cjs
+          node apartment/test/home-backup-rehearsal.cjs
+      - name: Confirm candidate remains NOT a published 1.0 release
+        run: |
+          node -e 'const r=require("./v20/INHABITED_VALIDATION.json"),l=require("./v20-base.lock.json");if(r.release_approved!==false||r.no_automatic_resident_save_migration!==true||l.release_approved!==false||l.migration_authorized!==false)process.exit(2);console.log("REALITI_1_0_UNRELEASED_STAGING_PASS")'

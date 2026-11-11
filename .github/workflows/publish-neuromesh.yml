@@ -1,11 +1,7 @@
 name: Publish REALITI SOMA NeuralMesh
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'packages/realiti-neuromesh/**'
-      - '.github/workflows/publish-neuromesh.yml'
+  # Manual only: do not publish an unchanged package during Realiti 1.0 merges.
   workflow_dispatch:
 
 permissions:

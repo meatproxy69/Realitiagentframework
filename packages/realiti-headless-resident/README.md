@@ -1,3 +1,5 @@
+> **Realiti 1.0 integration note:** The existing Node host (3.4.1) still runs the original Agent Door. For Realiti 1.0, build the pinned native HTML and start with [the source-first V20 integration package](../realiti-v20-native/README.md). The guest begins **without a forced introduction**; `look`, `feel` and `senses` are deliberate actions, not background chat. No 3D dependencies are required.
+
 # @meatproxy69/realiti-headless-resident
 
 A tiny Node host for the **REALITI Agent Door**.

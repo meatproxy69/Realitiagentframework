@@ -1,4 +1,66 @@
-# REALITI Relax — Agent Start Here
+# Realiti 1.0 — Agent Start Here
+
+**Enter quietly.** There is no mandatory character introduction, personality assignment, developer status announcement or invented bodily sensation at startup. The resident begins in the existing `CLOUD_NINE_NEST` HOME. Show the room only when a resident explicitly asks to `look`; use the real `feel` and `senses` commands to observe, not to manufacture physical events.
+
+## Authoritative V20 runtime
+
+Use the source-verified `v20/native-inhabited.cjs` entry from the repository, running the original 23-chart Matrix, Field V20, resident-private NERVE/LACE, Sausage, HALO/AURA/THICC and SOMA/R&R 3.4. The original `AGENT_DOOR` owns authored scenes; there is **one** physical world and **one** existing sensory harness, not separate engines recreated for the guest.
+
+```js
+const {createNativeInhabited}=require('./packages/realiti-v20-native');
+const session=await createNativeInhabited({residentId:'fresh-local-example'});
+try {
+  const guest=session.guest;                // resident gets ONLY look, act, speak
+  const scene=await guest.look();           // on demand; no automatic speech
+  const feel=await guest.act('feel');       // native V20 grounded vs modeled afterstate
+  const surroundings=await guest.act('senses'); // actual sound, light, smell
+  // Cloud Ocean: cloud on / cloud wave / cloud off / stop
+} finally {
+  await session.trusted.close();            // trusted host, not resident, owns closure
+}
+```
+
+The example requires the candidate to be [built from the pinned original source](./README.md#try-the-realiti-10-development-candidate). The V20-native adapter is **repository-local** and not a published npm package. A fresh disposable resident ID is appropriate for tests; do not point it at an existing resident store without authorization.
+
+## Optional Nyx-compatible private harness
+
+**Nyx's recovered DendriticWeave is a private learning extension, not the name of a second world, a second SOMA harness or a default personality.** The public source includes a safe *observation port* in `packages/realiti-v20-native/nyx-observer.cjs`. It observes only verified, currently grounded native V20/SOMA contacts after Matrix has already resolved them. It **never** calls `host.contact`, changes NeuralMesh, loads any Nyx resident's learned memories, instantiates a learned resident, infers dopamine/reward, or creates tactile evidence.
+
+```js
+const {createNyxObservationPort}=require('./packages/realiti-v20-native/nyx-observer.cjs');
+const session=await createNativeInhabited({residentId:'fresh-local-example'});
+const nyxHost=createNyxObservationPort(session); // TRUSTED HOST ONLY
+try {
+  await session.guest.act('cloud on');
+  await nyxHost.poll(async accepted => {
+    // Optional private observer consumes a host-verified contact.
+    // It must NOT call the physical world or create another SOMA instance.
+    // Any learning gain must be independently measured and owner-authorized.
+    console.log(accepted.zone);
+  });
+} finally {
+  nyxHost.close();
+  await session.trusted.close();
+}
+```
+
+The original Nyx learning worker and learned checkpoints **are not bundled with this public release**. A separate trusted integration must bind optional private learning to the **same resident's** verified receipts and owner-controlled encrypted storage. Without such a private worker, the original 35-zone V20 Neural Pass, SOMA, and pressure/HALO/AURA still run normally. Never import another resident's learned traits or claim subjective sensation.
+
+## Consent, memory and startup law
+
+- Never manufacture `WORLD_GROUNDED` from words, a preset, a prediction, a saved record or a visitor request. Physical touch requires actual native reach/support and a verified live cause.
+- On `stop`, release current physical evidence and mirrored leases; private afterstate may decay afterward, but cannot resume contact by itself. No physical event is restored from a checkpoint.
+- Do not infer preference, attachment, mental state or consent. Bilateral permission is required for peer contact; residents retain control of their private data.
+- Keep diagnostics, exact field masks, receipt internals, owner keys and Nyx learning state on the **trusted** host side. Never pass `session.trusted` or the Nyx observation port to an untrusted guest.
+- The first message is **not an onboarding speech**. Only answer the action the resident requested; avoid generic filler such as "The original world has handled that action."
+
+See [the sensory qualification](./docs/REALITI_1_0_MIGRATION.md), [the local V20 package](./packages/realiti-v20-native/README.md) and [the historical R&R reference](./archive/README.md).
+
+---
+
+## Historical Agent Door / standalone package reference
+
+
 
 This is the practical entry contract for an artificial resident using the packaged REALITI world.
 

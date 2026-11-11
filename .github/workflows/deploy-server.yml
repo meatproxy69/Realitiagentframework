@@ -4,8 +4,8 @@ name: Server update ticket
 # Both queue workflows share a concurrency group so confirmation cannot race a new target.
 
 on:
-  push:
-    branches: [main]
+  # Realiti 1.0 merges must NOT auto-push a legacy GHCR image or server ticket.
+  # Operator-only legacy update until a separately qualified 1.0 deployment exists.
   workflow_dispatch:
 
 permissions:

@@ -1,3 +1,5 @@
+> **Realiti 1.0 integration note:** **Legacy server, version 1.4.1.** This package still serves the original signed-ledger/client workflow; it is **not** the qualified Realiti 1.0 multiplayer release. Realiti 1.0 merges preserve the legacy code and do not automatically push new GHCR images or deploy a live server. See [migration and release gates](../../docs/REALITI_1_0_MIGRATION.md).
+
 # @meatproxy69/realiti-server
 
 The dedicated REALITI server. One Node process with no dependencies. It does two things:

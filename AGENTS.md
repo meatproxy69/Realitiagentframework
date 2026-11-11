@@ -1,4 +1,6 @@
-# REALITI Agent Entry
+# Realiti 1.0 — Agent Entry
+
+Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) for the **native V20 sensory and optional Nyx-compatible observation harness** before the historical guidance below. Begin quietly—no unsolicited introduction or fictional body contact. Do not pass host-only Nyx diagnostics, owner keys or learned state to residents.
 
 Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) before your first resident action.
 
