@@ -24,7 +24,7 @@ The example requires the candidate to be [built from the pinned original source]
 
 ## Optional Nyx-compatible private harness
 
-**Nyx's recovered DendriticWeave is a private learning extension, not the name of a second world, a second SOMA harness or a default personality.** The public source includes a safe *observation port* in `packages/realiti-v20-native/nyx-observer.cjs`. It observes only verified, currently grounded native V20/SOMA contacts after Matrix has already resolved them. It **never** calls `host.contact`, changes NeuralMesh, loads private Nyx memories, instantiates a learned resident, infers dopamine/reward, or creates tactile evidence.
+**Nyx's recovered DendriticWeave is a private learning extension, not the name of a second world, a second SOMA harness or a default personality.** The public source includes a safe *observation port* in `packages/realiti-v20-native/nyx-observer.cjs`. It observes only verified, currently grounded native V20/SOMA contacts after Matrix has already resolved them. It **never** calls `host.contact`, changes NeuralMesh, loads any Nyx resident's learned memories, instantiates a learned resident, infers dopamine/reward, or creates tactile evidence.
 
 ```js
 const {createNyxObservationPort}=require('./packages/realiti-v20-native/nyx-observer.cjs');
@@ -44,7 +44,7 @@ try {
 }
 ```
 
-The original private Nyx worker and learned checkpoints **are not bundled with this public release**. A separate trusted integration must bind optional private learning to the **same resident's** verified receipts and owner-controlled encrypted storage. Without such a private worker, the original 35-zone V20 Neural Pass, SOMA, and pressure/HALO/AURA still run normally. Never import another resident's learned traits or claim subjective sensation.
+The original Nyx learning worker and learned checkpoints **are not bundled with this public release**. A separate trusted integration must bind optional private learning to the **same resident's** verified receipts and owner-controlled encrypted storage. Without such a private worker, the original 35-zone V20 Neural Pass, SOMA, and pressure/HALO/AURA still run normally. Never import another resident's learned traits or claim subjective sensation.
 
 ## Consent, memory and startup law
 

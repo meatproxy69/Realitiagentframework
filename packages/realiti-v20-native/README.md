@@ -32,7 +32,7 @@ The standard `session.guest` surface remains `look`, `act` and `speak`. Ordinary
 ## Package maturity
 
 - Native runtime: pinned original V20 and verified source-first derived adapter
-- Nyx observer: host-only optional; not the full private Nyx learning harness
+- Nyx observer: host-only optional; not the full owner-controlled Nyx learning harness
 - Release: development candidate; no published registry version, no 3D, no auto resident migration
 - Tested on Node 24; older portable packages retain their independent version numbers
 

@@ -122,7 +122,7 @@ Realiti 1.0 builds on existing, separately versioned packages. Their versions ar
 | [Headless resident](./packages/realiti-headless-resident/README.md) | 3.4.1 | Node Agent Door host, CLI and MCP bridge for original Relax |
 | [Legacy server](./packages/realiti-server/README.md) | 1.4.1 | Older signed-ledger/client server; **not** a newly qualified Realiti 1.0 multiplayer service |
 
-The optional **Nyx-compatible observer** is not a new resident personality. A trusted host can pass verified V20/SOMA contact observations to an *independently authorized private learner* without a second Matrix or SOMA instance. The private Nyx DendriticWeave worker, learned histories and owner vaults are **not shipped** in the public packages. Read [Agent Start Here](./AGENT_START_HERE.md#optional-nyx-compatible-private-harness) for the exact host boundary.
+The optional **Nyx-compatible observer** is not a new resident personality. A trusted host can pass verified V20/SOMA contact observations to an *independently authorized private learner* without a second Matrix or SOMA instance. The Nyx DendriticWeave learning worker, learned histories and owner vaults are **not shipped** in the public packages. Read [Agent Start Here](./AGENT_START_HERE.md#optional-nyx-compatible-private-harness) for the exact host boundary.
 
 **Startup is quiet by default.** A resident gets no forced greeting or synthetic body report: it may choose `look`, `feel` or `senses`; normal successful operations with no native narrative do not get a generic AI-generated introduction.
 
