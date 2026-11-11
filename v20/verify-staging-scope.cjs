@@ -44,5 +44,5 @@ for(const p of scanPaths){
 console.log('REALITI_1_0_STAGING_SAFETY_OK '+JSON.stringify({
  changed_files:changes.length,scanned_new_sources:scanPaths.length,
  original_neural_files_modified:false,keys_or_emails_in_new_sources:false,
- legacy_archive_preserved:true,live_deployment:false,main_unchanged:true
+ legacy_archive_preserved:true,live_deployment:false,canonical_v20_engine_unchanged:true
 }));

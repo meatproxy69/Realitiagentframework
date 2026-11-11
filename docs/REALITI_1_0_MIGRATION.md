@@ -1,10 +1,10 @@
 # Realiti 1.0 — source-first migration and release gate
 
-**Status: staging only, no public release, no merge to main.** This is a working preparation to port verified private-reboot adapters into the original public source repository; the native source and legacy history are retained exactly.
+**Status: source-first headless Realiti 1.0 preview merged into `main` via [PR #95](https://github.com/meatproxy69/Realitiagentframework/pull/95); no public 1.0 release, auto-deployment or resident-save migration.** The verified private-reboot adapters are now part of the original public source repository; original V20 source and legacy history remain intact.
 
 ## Branch and provenance
 
-- Destination staging: `staging/realiti-1.0-v20` in `meatproxy69/Realitiagentframework`.
+- Production source branch: `main` in `meatproxy69/Realitiagentframework`; the historical review branch `staging/realiti-1.0-v20` and merged [PR #95](https://github.com/meatproxy69/Realitiagentframework/pull/95) remain available.
 - Archive: `archive/realiti-4.8-before-1.0`, fixed to the prior public main commit `29409537988f779d78fa04a5d903f599f7154034`.
 - Base source: original `RealitiRELAX.html`, `source/scripts/31.js` Field V20, `63-claude-neural-pass.js`, `98-soma-bridge.js`, Matrix, existing R&R/SOMA harness and Apartment 4.9 modules at that exact SHA.
 - Imported adapter provenance: the source-only verified `v20/` and `tools/verify-v20-baseline.cjs` files from the isolated, private `RealitiRELAX` V20 reboot at commit `065f17f0cbc972e4fd882693b586d6a1ed060f91`.
@@ -37,9 +37,9 @@ The transferred source builds a derived full 23-chart native V20 Apartment/City 
 5. Original independent HOME acceptance tests pass where applicable, and the old working reference source still builds.
 6. Source diff contains **no changes** to `source/`, `apartment/`, `packages/`, `neuromesh/`, original source artifacts, licensing, owner data, or sensitive files.
 
-## Before any main merge or release
+## Before any tagged 1.0 release or external deployment
 
-Review a draft pull request with exact CI evidence. Keep existing 4.x downloadable releases and automated server workflows intact; do not launch them from staging. Decide separately when and how to deprecate old version labels. Require a dedicated security review before authenticated live networking. The 3D renderer and live server migration are **out of scope**; this work is restoring the original sensory system first.
+The Realiti 1.0 source migration has been reviewed and merged in PR #95, with source-first CI. Keep existing 4.x downloadable releases intact; legacy server and package publishing are now explicit operator-dispatch workflows and must not run for ordinary source updates. Decide separately when and how to deprecate old version labels. Require a dedicated security review before authenticated live networking. The 3D renderer and live server migration are **out of scope**; this work is restoring the original sensory system first.
 
 **The branch is public because the destination repository is public.** Do not place secrets, private DendriticWeave checkpoints or real residents' journals into it. The original private reboot is not being mirrored wholesale.
 
