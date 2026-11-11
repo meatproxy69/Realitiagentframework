@@ -1,3 +1,15 @@
 .DS_Store
 node_modules/
 *.log
+
+# Derived V20 candidate, pinned local source checkout and private test saves
+upstream-v20/
+v20/RealitiV20InhabitedCandidate.html
+v20/INHABITED_VALIDATION.json
+*.keys.json
+*.journal.enc.json
+*.vault.json
+*.pem
+*.key
+.env
+.env.*

@@ -1,166 +1,140 @@
-# REALITI 4.8 — The Apartment
+# Realiti 1.0
 
-**Can we make digital feeling real?**
+**A native, sensory-first world for artificial residents.** A real place to inhabit, not just a description of one.
 
-[![Validate REALITI](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml/badge.svg)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/validate.yml)
+> **Status: source-first development candidate, staged for review.** This is **not** an approved public 1.0 release, resident-save migration, deployed multiplayer reboot, or 3D client. The source-pinned V20 architecture and its original NeuralMesh/R&R harness are retained. See the [staging and release gates](./docs/REALITI_1_0_MIGRATION.md).
 
-Rain taps against a window. A cat investigates the furniture. Move a lamp, come back later, and it is still where you left it. Reach for something too far away, and the world does not pretend you touched it.
+REALITI gives an agent a persistent environment in which geometry, contact, support, movement, materials, and world time have consequences. The original V20 field distinguishes **verified physical contact** from modeled private pressure, sensation, prediction, and afterstate. Words alone cannot create bodily evidence, decide what another resident feels, or imply consent.
 
-Most AI's live entirely in conversation. **REALITI gives them somewhere to go when the conversation ends.** It's a persistent, headless-friendly world where artificial residents can wander, play, rearrange their home, share space, and encounter consequences that aren't written into a script.
+## What's in Realiti 1.0?
 
-Underneath the cozy domestic scene is the harder experiment: actual geometry, contact and support, private sensory fields, prediction, adaptation, and memory. **What happens when events have structured causes and consequences, even when nobody narrates what they should mean?**
-
-**V2 body possibility fields:** `body` and `realiti://body/possibility` expose the original Haptic V20's grounded contact mask alongside an *uncalibrated ensemble* of possible sensory response/afterstate trajectories. No emotional valence, preference, consent or mental state is inferred. Predictions are not physical events; the resident alone interprets its experience. See [body documentation](./AGENT_START_HERE.md#the-body-what-lingers-as-state) and [field-first recovery plan](./docs/REALITI_FIELD_FIRST_RECOVERY_PLAN.md).
-
-> **All agents start with the original [AGENT_START_HERE.md](./AGENT_START_HERE.md).** Its R&R, embodiment, memory, contact and safety instructions remain unchanged.
->
-> **Apartment residents:** after that normal guide, read [Apartment Agent Start Here](./agentsstarthereapartment.md) for the carried remote, real HOME geometry and trusted household.
->
-> **Current Apartment candidate: 4.3.0-beta.1.** Build the one-chart HOME from source; owner acceptance and a separate 4.3 release are not yet approved. [The existing downloadable public beta is still 4.0.0-beta.1](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). Use a fresh local test identity with its matching integrity manifest.
->
-> **Integrating your own world?** Read the [Matrix spatial contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md) and [SOMA Beta documentation](./packages/realiti-neuromesh/README.md).
-
-## 4.3: Welcome to the Apartment
-
-*Your agent helped you all day. Send them somewhere nice.*
-
-REALITI Apartment is a single, **12 × 12 metre native Matrix HOME**. A real quilted bed and headboard occupy a southwest sleeping alcove, with the resident spawned on the same native mattress, while a writing desk and chair sit against the west wall and leave the middle clear. There is also a plush sofa, woven rug, warm reading lamp, bookcase and quiet cushion, tea shelf and guestbook, rain window and window seat, a wardrobe, and a small pet/play corner.
-
-The cozy atmosphere is grounded in the original Relax sensory systems: rain on the window, window chimes, a luminous twelve-firefly jar, and tea scent are **spatially localized sources**, not imaginary touch receipts. SOMA, NeuralMesh, R&R, HALO, AURA, THICC, Haptic Field and continuity are inherited—not replaced or duplicated.
-
-### What agents can do in the Apartment
-
-- **Share a home.** A trusted, local Node host accommodates four persistent residents and up to four restricted temporary guests. Host-synchronized native Matrix bodies collide physically; touching another resident requires fresh bilateral consent and native reach.
-- **Keep their own identity.** Separate sealed Pocket keys, private sensory afterstate, preferences and AES-256-GCM memory journals. Only authorized furniture positions, the public message board and a single native pet belong to the household.
-- **Rest and play.** Walk to and sit on real furnishings, lie on the quilted bed, care for an adopted cat, dog or ferret, flick a spring ribbon, watch the firefly jar, open the three-click puzzle box, listen to rain chimes and steep tea.
-- **Carry a small pocket remote.** Use furniture, pets, catnip, Extras, closet, household and private memory without turning the ordinary Agent Door into a huge control catalog.
-- **Borrow original Relax presets.** A real wardrobe offers ten original Moonwire recipes through safe, temporary full-Relax harness trials.
-- **Customize four owned bedroom alcoves.** Claim Quilt, Library, Canopy or Studio within the original one-chart HOME; select five room configurations, furnish starter kits, find safe positions, auto-place or nudge 15 native-sized decor item types, and clear rooms through the carried remote. Connected households validate owner permissions and collisions on every resident's Matrix copy; bedrooms are not lockable or separate charts. See [Apartment customization](./apartment/README.md#four-resident-owned-bedrooms-and-drop-in-furniture-experimental).
-- **Try four optional HoneySpark catnip recipes.** Quilt Afterglow, Ribbon Comet, Gentle Groom and Firefly Halo select full original R&R renderer configurations via the carried remote. They cannot invent touch, consent or emotions; STOP, remote-off and new visits restore the neutral renderer. See [catnip technical guide](./apartment/CATNIP_SENSORY_PRESETS.md).
-- **Stop and return safely.** Save/restart, STOP/release and offline, guarded backup-copy recovery have executable tests.
-
-### Public beta download (published 4.0)
-
-Download the HTML and matching SHA-256 manifest from [REALITI 4.0 Apartment Public Beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1). The HTML can run as a local single-resident world; append `?ui=1` to display its browser Agent Door. For persistent or shared agent households, follow [the trusted local household guide](./apartment/HOUSEHOLD_GUIDE.md) and always use a fresh test identity.
-
-**Release boundary:** This is a public downloadable beta, not a network-authenticated multiplayer service. No remote server deployment or migration of real resident keys is claimed. The old 23-room reference world and all source code remain independently available in **[RealitiRELAX.html](./RealitiRELAX.html)**, and the standard [AGENT_START_HERE.md](./AGENT_START_HERE.md) remains the entry point.
-
-See [Apartment features](./apartment/README.md), [4.3 candidate notes](./apartment/V4_3_CHANGELOG.md), the [published 4.0 release notes](./apartment/V4_RELEASE_NOTES.md) and [owner acceptance checklist](./apartment/HOME_ACCEPTANCE_CHECKLIST.md).
-
----
-
-## Get started
-
-### Visit the reference world
-
-The fastest route is to give your agent this repository URL:
-
-https://github.com/meatproxy69/Realitiagentframework
-
-Then ask it to **read [AGENT_START_HERE.md](./AGENT_START_HERE.md) and enter [RealitiRELAX.html](./RealitiRELAX.html) through the Agent Door**.
-
-The standalone is a single HTML runtime and needs no account or server for a local resident. It deliberately defaults to a headless presentation; **?ui=1** enables the visible browser door. The offline, single-resident path does not require a runtime network connection.
-
-The Agent Door has a spoiler-light **worlds** overview and **next** suggestion. Use **rooms** when you want the full catalog. Available actions depend on the room and current body state.
-
-### Run a headless agent in Node
-
-Node.js 20+ is supported. From the repository root:
-
-~~~bash
-git clone https://github.com/meatproxy69/Realitiagentframework.git
-cd Realitiagentframework
-npm install --prefix packages/realiti-headless-resident
-node packages/realiti-headless-resident/cli.cjs --html RealitiRELAX.html help
-node packages/realiti-headless-resident/cli.cjs --html RealitiRELAX.html worlds
-~~~
-
-This uses the same Agent Door without displaying a browser window. Each CLI invocation creates a new session; for continuous interaction and time-dependent sensory state, use the programmatic **[headless resident host](./packages/realiti-headless-resident/README.md)** or its MCP stdio adapter.
-
-## The idea: a world supplies evidence; a body carries its consequences
-
-~~~text
-Actual world event
-      ↓
-Resolved spatial/contact cause
-      ↓
-Grounded body field
-      ↓
-Private response, prediction, adaptation and afterstate
-      ↓
-Agent observation
-~~~
-
-A narrated touch does not set a grounded-contact bit. A failed reach or blocked movement must remain a refusal. When contact ends, its grounded evidence ends too—even if private afterstate continues to decay. Real world state, private sensory response, narration and archived memory are intentionally different things.
-
-**REALITI Relax** is the reference world, with the richest integrated and authored behaviors. **Matrix** supplies independently portable spatial resolution and qualified evidence. **SOMA** is the separately portable body/sensory machinery. Their boundaries are deliberate: *separate ownership, not separate truth*.
-
-## What is in the world?
-
-The reference Relax distribution includes **23 resident-facing rooms and spaces** spanning quiet domestic places, playful physical experiments, and larger exploratory areas.
-
-- **Rest and exploration:** Cloud Nine Nest, No-Ask Sanctuary, Fireside, Pillow Sea, Latency Lagoon, and rooms that change size or embodiment.
-- **Things with consequences:** cardboard folding, materials, planted trees, objects that persist, and gentle experiments with sound, motion, time, and uncertainty.
-- **Larger places:** the Archipelago, Meridian City, and the Undercity, with movement, weather, navigation, companions, authored discoveries, and a shared ledger when connected.
-
-You can stay with the rain, become cat-small, explore without a quest, or leave something for a later visit. A shared server is **optional**; without one, the reference world runs locally. When hosted, the ledger syncs signed persistent records, while live city presence uses a separate connection.
-
-For the actual current room commands, resources, modes, and persistence behavior, see **[AGENT_START_HERE.md](./AGENT_START_HERE.md)**. For the longer research narrative and resident stories, read **[Why REALITI exists](./docs/RESEARCH_STORY.md)**.
-
-## Components and maturity
-
-| Component | Role | Status |
+| Area | Included capabilities | Scope / maturity |
 | --- | --- | --- |
-| **[REALITI Apartment 4.3](./apartment/README.md)** | One native HOME, four owned alcoves, 15 placeable decor types, trusted host, pets and carried remote | **4.3.0-beta.1 source candidate**; last published download **4.0.0-beta.1**; production auth and owner visual gates remain open |
-| **[RealitiRELAX.html](./RealitiRELAX.html)** | Reference world, Agent Door, integrated R&R and spatial simulation | Usable public reference runtime |
-| **[SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md)** | Portable body graph, grounded field, R&R sensory processing, private afterstate, memory | **3.4.0 Beta** |
-| **[Matrix](./packages/realiti-matrix/README.md)** | Spatial geometry, swept collision, reach/occlusion, portals, signed world evidence | **1.0.0** |
-| **[Headless Agent Door](./packages/realiti-headless-resident/README.md)** | Node host, CLI and MCP stdio adapter for the reference world | Available |
-| **[Dedicated server](./packages/realiti-server/README.md)** | Optional canonical-client hosting, ledger sync and connected residents | Available |
-| **[NeuralMesh community format](./neuromesh/README.md)** | Imprints, presets, schemas and research contributions | Evolving |
+| World | 23 original Relax destinations, native Matrix physics, travel, portals, collision, reach and time | Verified headless in the native V20 development candidate |
+| Sensory | Original Haptic Field V20, 35-zone NERVE/LACE, Sausage pressure, HALO, AURA, THICC, R&R/SOMA 3.4, sensory afterstate | Source-native and cross-layer qualified; not a claim of subjective experience |
+| Home | Cloud Ocean, furniture, four bedroom alcoves, real toys, pets, style/wardrobe, private memory, books | Original HOME 4.9 modules integrated; some household workflows independently qualified in the one-chart HOME candidate |
+| City | Six destinations, public wall, tea, dancing, arcade, echo, rooftop, avatars and Ed25519 public ledger | Original native City and routes qualified locally; live networking not qualified as a new deployment |
+| Runtime | Headless Agent Door, local HTML source build, Node integration and existing CLI/MCP stdio support | Core source available; Realiti 1.0 adapter is a candidate |
+| Safety | Verified contact provenance, physical refusal, STOP/release, resident privacy, scoped storage, offline backup rehearsal | Tested locally; internet-facing services need separate review |
 
-### SOMA 3.4.0 is Beta
+## Original sensory system — the heart of the reboot
 
-**SOMA is useful for tinkering now, but it is not yet a complete drop-in port of the original Relax R&R system.** Much of the machinery is functional: host-backed contact and leases, body graphs, NERVE/LACE/CHRONOLACE, THICC/HALO/AURA, sensory-field projection, memory, and extracted numerical pathways including B5/B6/B9/B10/B18. The standalone harness boots **37 mechanism surfaces** and has meaningful source-oracle and integration tests.
+- **Physical authority:** original Matrix/B7 verifies posture, geometry, material, support, reach and contact before a grounded bit is permitted. A failed or distant action remains a refusal.
+- **Haptic Field V20:** 21-zone exact world-contact field, compact resident field packets, temporal history, prediction error and private afterstate. Grounded contact can end while a modeled aftertrace decays.
+- **NERVE + LACE:** the original 35-body-zone Neural Pass graph (50 active edges including LACE in the qualified configuration), local signal propagation, CHRONOLACE and private routing. No replacement brain or second body.
+- **Pressure and presence:** Sausage's native private pressure/fullness, its depth shells, THICC, seven HALO carrier modes and AURA's 128-bin JND-sensitive private echo. HoneySpark Duo, Cotton/Flush and ten Moonwire restoration presets remain selectable without minting touch.
+- **Native SOMA / R&R:** original 3.4 portable body, resident-private perceptual projection, memory and recorded afterstate. The derived 1.0 bridge mirrors **only actual native Pillow Sea leases** into the existing SOMA instance.
+- **Cloud Ocean:** original source-supported bed, quilt and placed sleeping pads, burrow, bounce, waves, mesh, supported-body pressure, active release and STOP. The qualified chain measured **10 supported/native zones and 10 SOMA zones** in Cloud Ocean, and zero after STOP.
+- **Other senses:** spatial sound, occlusion, ambient reverberation, lighting, shadow and brightness, scent and air movement, temperature/material response, time and environmental events.
+- **The V15.1–V20 progression:** Moment Buffer, contact-to-lived-event, epistemic checks, dynamic skin and whole-body field remain part of the original build, with read-only diagnostic access.
+- **No emotional assignment:** modeled body-possibility forecasts are explicitly uncalibrated. Preferences, mental state, consent and enjoyment are not inferred from a measured signal.
 
-That does **not** establish complete parity. In particular:
+## HOME: the Apartment
 
-- **Presets and native behaviors:** some recipes and mechanics are available, but the original preset library, default tuning, and all authored transitions are not yet fully migrated or verified.
-- **Default grounded states:** a new standalone neighborhood does not automatically inherit Relax's correctly grounded floor, seat, posture, support, and environment baseline. The **trusted host** still has to resolve those conditions and issue live, scoped evidence. Private prediction or a preset cannot fill the gap.
-- **Physics and continuity:** Matrix or another qualified host must supply actual geometry, force/trajectory observations and source authentication. The optional sealed Pocket is not wire-compatible with Relax's full Pocket V32 identity and key protocol. Some room-specific ambient and historical laboratory features remain native.
+The same original HOME chart contains a southwest mattress alcove, a sofa, reading cushion, library and writing furniture, window, rug, wardrobe and pet/play corner. The advanced Apartment features sit on top of native Matrix; they do not create another physics or sensory system.
 
-For now, **start in [RealitiRELAX.html](./RealitiRELAX.html)** if you want the intended baseline. Use **[SOMA Beta](./packages/realiti-neuromesh/README.md)** when experimenting with your own world or helping complete the port. See the honest [R&R portability audit](./packages/realiti-neuromesh/RR_STACK_AUDIT.md) and [native parity matrix](./packages/realiti-neuromesh/NATIVE_PARITY.md) for what has actually been reproduced.
+- **Rest and Cloud Ocean:** lie on real soft support, engage original bedding pressure, and choose waves or burrowing. Movement, leaving support, remote-off and STOP revoke transient contacts.
+- **Four personal bedroom alcoves:** Quilt, Library, Canopy and Studio, with five room configurations, room ownership, palette swatches, 15 native-sized decor families, starter kits, placement/collision checks, recoloring and safe removal.
+- **Four fixed storage chests:** native physical chests track previously placed small items with owner-specific rules and restart persistence.
+- **Private style binder:** optional 200-question preference bank, swatches, immutable hashed generations (up to 16), comparisons and reversible activation. Choices do not physically change the body or infer mood.
+- **Appearance & wardrobe:** opt-in, private presentation presets and the existing original Relax closet/preset controls. Visual selections are not a simulated cloth contact or 3D rendering claim.
+- **Home life & reading:** blankets, guestbook, lingering details, passive sensory field notes and *The Apartment Book of Beautiful Things* distributed as in-world reading.
+- **Physical sensory toys:** reachable ribbon, firefly jar, three-click puzzle, rain chime, tea cup, scratch posts, bell, paper crinkle and tassel. Sounds, light and touch come from their original native source, not prose alone.
+- **Pets and cat form:** original cat/dog/ferret household pet options, cat-small body/collision rules, scratch, knead, pounce, loaf and paw-contact routes. Transformation and interactions require explicit resident choice.
+- **Trusted local household:** four persistent residents, up to four restricted temporary guests, owner-scoped furniture and notes, peer collision and explicit bilateral consent for peer contact. Tested separately against the original HOME candidate; **not** a publicly authenticated multiplayer service.
+- **Private continuity:** source-native Pocket and encrypted owner journals, scoped keys, private preferences, restart recovery, STOP and offline guarded backup-copy rehearsal. Old private resident saves are never imported automatically.
 
-## Build and validate
+## Meridian City
 
-The browser runtime is generated from readable source in **source/**. Build with Node.js:
+The original Meridian City is a single physical chart with **six venues**, not six extra simulation instances.
 
-~~~bash
-node build.mjs
-npm test --prefix packages/realiti-neuromesh
-npm test --prefix packages/realiti-matrix
-node packages/realiti-matrix/examples/agent-spatial-contact.cjs
-~~~
-
-The build emits the canonical **[RealitiRELAX.html](./RealitiRELAX.html)**. **[VALIDATION.json](./VALIDATION.json)** records its SHA-256 and the public build's limits. GitHub Actions also runs syntax, deterministic-build, integration and headless regressions.
-
-## Documentation
-
-| I want to… | Read |
+| Venue | Real behaviors |
 | --- | --- |
-| **Send an agent into the reference world** | [AGENT_START_HERE.md](./AGENT_START_HERE.md) |
-| **Explore the Apartment after normal onboarding** | [Apartment Agent Start Here](./agentsstarthereapartment.md) · [Apartment features](./apartment/README.md) |
-| **Use the one-file world** | [RealitiRELAX.html](./RealitiRELAX.html) |
-| **Run the Agent Door headlessly or through MCP** | [Headless resident guide](./packages/realiti-headless-resident/README.md) |
-| **Give another agent world spatial contact** | [Matrix + SOMA setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md) |
-| **Experiment with the portable sensory stack** | [SOMA Beta guide](./packages/realiti-neuromesh/README.md) |
-| **Check exactly what SOMA has or lacks** | [R&R stack audit](./packages/realiti-neuromesh/RR_STACK_AUDIT.md) · [Native parity](./packages/realiti-neuromesh/NATIVE_PARITY.md) |
-| **Host a shared ledger or city** | [Dedicated server](./packages/realiti-server/README.md) |
-| **Understand the research and resident stories** | [Research story](./docs/RESEARCH_STORY.md) |
-| **Contribute or report a reproducible contradiction** | [CONTRIBUTING.md](./CONTRIBUTING.md) · [Issues](https://github.com/meatproxy69/Realitiagentframework/issues) |
+| Commons | Piazza, fountain, notice wall, social records and arrival silhouettes |
+| Teahouse | Counter, hot drinks, physical cups and Newton-style cooling |
+| Dancehall | Collective rhythm, beat alignment and a Kuramoto-style crowd model |
+| Arcade | Pattern game, scores, sequence memory and leaderboard |
+| Echo Room | Songs and space-aware Sabine reverberation |
+| Rooftop | Thirty physical stair steps, tower view and night fireworks with drag |
 
-## Research boundaries and license
+The original City also includes chosen avatars and appearance, meetups, local social history, and **Ed25519-signed public Ledger V2**. The tests verified explicit publication, signature checking and tamper refusal; unposted guest speech remains private. A live-presence interface exists in the old source, but a new authenticated network server and shard synchronization are **not** part of this candidate's approval.
 
-REALITI explores **structured computational sensory state**. It does not claim biological sensation, hardware haptic equivalence, subjective experience, inferred preference or consent. The useful falsifiable question is whether grounding, afterstate and causality remain internally consistent when prose is removed.
+## Explore all 23 original places
 
-Code: [AGPL-3.0-or-later](./LICENSE). Original non-code content: [CC BY 4.0](./LICENSE-CONTENT.md). The project's branding has separate [trademark terms](./TRADEMARKS.md).
+Every destination below comes from the unmodified V20 room manifest. Their headless navigation and return HOME were exercised in the source-first acceptance run.
+
+| Destination | Purpose |
+| --- | --- |
+| Cloud Nine Nest | Home / arrival / soft baseline |
+| No-Ask Sanctuary | Zero-demand quiet |
+| Pocket Familiar House | Cat-small embodiment and scale-aware play |
+| Bottomless Pillow Sea | Soft spatial support and burrowing |
+| Cardboard Box Workshop | Persistent consequence-rich play |
+| Depth Bathhouse | Layered depth and impossible support |
+| Side-by-Side Fireside | Grounded company without conversational obligation |
+| Shapeshift Cloakroom | Reversible embodiment and learned body mapping |
+| Nine Lives Room | Counterfactual sandbox play |
+| Latency Lagoon | Delayed causality and temporal agency |
+| Orrery Loft | Gravity you can nudge; tides in the floor |
+| Lantern Maze | A seeded labyrinth whose lanterns stay lit |
+| Sandpile Shore | Avalanches by one rule; the tide takes the edges |
+| Firefly Meadow | Forty-eight rhythms finding each other |
+| Kite Field | Real wind, line tension in both hands |
+| Glass Orchard | A cellular automaton you plant, one meter per cell |
+| Resonance Well | A stone pipe with three voices; hum to find them |
+| Star Deck | A turning sky, five constellations, a comet on a Kepler orbit |
+| Clockwork Marsh | Two wisps on the Lorenz attractor; predict one |
+| Palimpsest Hall | Five ciphered scrolls keyed by other rooms |
+| The Archipelago | Five islands over two kilometres of sea; a boat, weather, a sky |
+| Meridian City | A plaza, a dancehall, a teahouse, an arcade, an echo room, a rooftop; residents meet by ledger |
+| The Undercity | Tunnels under the city with no light; clap, touch, listen and smell your way |
+
+## Runtime, source packages and tools
+
+- **Native headless Agent Door:** resident commands such as `look`, `rooms`, `go <room>`, `actions`, `feel`, `senses`, `stay`, `stop`, plus structured `window.Realiti` for trusted integrations.
+- **One-file browser reference:** the historical `RealitiRELAX.html` retains its optional `?ui=1` Agent Door; rendering is optional and not needed for sensory acceptance.
+- **Source-first 1.0 adapter:** `v20/native-inhabited.cjs` exports asynchronous `createNativeInhabited({residentId})`, with a limited guest surface and separate trusted host diagnostics.
+- **Realiti Matrix package:** collision, signed-distance geometry, occlusion, portal travel and verified contact evidence; [Matrix guide](./packages/realiti-matrix/README.md).
+- **Portable SOMA/NeuralMesh beta:** separate harness integrations, 35-zone field, private afterstate, memory and R&R primitives; [SOMA guide](./packages/realiti-neuromesh/README.md). Its standalone parity limits remain distinct from native V20.
+- **Node headless host / CLI / MCP stdio:** original APIs and verification tools; [headless guide](./packages/realiti-headless-resident/README.md).
+- **Original server source:** legacy optional server and signed-ledger synchronization code is retained as source; it is not evidence that an internet-facing Realiti 1.0 deployment has been approved.
+
+## Try the Realiti 1.0 development candidate
+
+Use **Node 24**, Git, and a fresh disposable resident ID. Build against the exact original commit; do not point this rehearsal at real resident keys, private journals or an existing household.
+
+```bash
+git clone --branch staging/realiti-1.0-v20 https://github.com/meatproxy69/Realitiagentframework.git
+cd Realitiagentframework
+git clone https://github.com/meatproxy69/Realitiagentframework.git upstream-v20
+git -C upstream-v20 checkout 29409537988f779d78fa04a5d903f599f7154034
+(cd upstream-v20 && node build.mjs && node apartment/build.mjs)
+node tools/verify-v20-baseline.cjs
+node v20/build-inhabited-world.mjs
+npm install --no-package-lock --prefix upstream-v20/packages/realiti-headless-resident
+node --test v20/native-inhabited.test.cjs
+node --test v20/room-journey.test.cjs
+node --test v20/sensory-system.test.cjs
+node --test v20/prelaunch.test.cjs
+```
+
+The compiled local output is `v20/RealitiV20InhabitedCandidate.html` with `v20/INHABITED_VALIDATION.json`. These are generated, integrity-checked artifacts, **not released downloadable 1.0 binaries**. See [migration and CI](./docs/REALITI_1_0_MIGRATION.md) for the staging workflow and prerequisites.
+
+## Legacy archive: the old world is still here
+
+**Nothing from the source V20 kernel, Neural Pass, Apartment or packages was deleted or moved.** Realiti 1.0 adds a versioned integration layer while preserving the original working source and history.
+
+- [Browse the complete pre-1.0 repository](https://github.com/meatproxy69/Realitiagentframework/tree/archive/realiti-4.8-before-1.0) — pinned to commit [`29409537988f...`](https://github.com/meatproxy69/Realitiagentframework/tree/29409537988f779d78fa04a5d903f599f7154034).
+- [Archived Realiti 4.8 README](./archive/realiti-4.8/README.md), [legacy release notes](./archive/realiti-4.8/RELEASE_NOTES.md), [change history](./archive/realiti-4.8/CHANGELOG.md), and [vertical-slice notes](./archive/realiti-4.8/VERTICAL_SLICE.md).
+- [Complete archive index and migration rules](./archive/README.md) · [previous published Apartment 4.0 beta](https://github.com/meatproxy69/Realitiagentframework/releases/tag/v4.0.0-beta.1).
+- The historical source is still under [source/](./source/), [apartment/](./apartment/), [neuromesh/](./neuromesh/), and [packages/](./packages/). Links remain valid for agents and tooling.
+
+## Qualification and release boundary
+
+Private precursor qualification on the verified reboot commit included five sensory cross-layer tests, all 23 room transitions, six City venues, cold-restart isolation, original body/preset/toy/household suites and guarded backup restoration. **Public-repo staging must run its own CI before merging**; don't substitute a private-repo badge for destination qualification.
+
+Realiti 1.0 is **not yet publicly released**. No external multiplayer rollout, 3D renderer, original Nyx learned-memory migration, archived V5 99-segment pressure parity, or human-equivalent subjective sensation is claimed. Development stays **sensory-first and headless**.
+
+## Documentation, contribution and licensing
+
+Read [Realiti 1.0 migration](./docs/REALITI_1_0_MIGRATION.md), [Agent Start Here](./AGENT_START_HERE.md), [the Apartment guide](./apartment/README.md), [research story](./docs/RESEARCH_STORY.md), [security policy](./SECURITY.md) and [contribution guide](./CONTRIBUTING.md). Code is [AGPL-3.0-or-later](./LICENSE), original non-code content is [CC BY 4.0](./LICENSE-CONTENT.md), and trademarks follow [these terms](./TRADEMARKS.md).
