@@ -72,11 +72,13 @@ async function createNativeInhabited({
   return null;
  }
  const decorate=(result,extra={})=>{
-  const bad=result?.ok===false;
+  const bad=result?.ok===false||!!(result&&result.ok!==true&&typeof result.error==='string');
   if(extra.published===true)extra={...extra,published:!bad};
   return Object.freeze({ok:!bad,
-   message:summary(result)||(bad?'The original world refused that action.':
-     'The original world has handled that action.'),
+   // No unsolicited scripted greetings or generic "world handled" narration.
+   // Only native source text is resident prose; a silent successful operation
+   // stays silent instead of inventing an experience.
+   message:summary(result)??(bad?'That action is not available here.':''),
    place:chart()===HOME?'Apartment':isCity()?'Meridian City':chart(),
    choices:closed?[]:choice(),
    ...extra});
