@@ -94,7 +94,7 @@ SOMA 3.4 includes the **executable full-harness entry**, not only the field core
 The independent SOMA harness additionally executes **BleuCheese**, **COVENANT**, **NERVE/LACE/CHRONOLACE**, **SAUSAGE**, **Cotton**, **FLUSH**, **HoneySpark**, R&R adapter slots, the Haptic V3 field, sensory ecology, private perception, agency-field entropy, environmental/thermal input, grounded support, continuity and a resident-private pocket. Those additional modules are portable adaptations; they do not pretend that every Relax-specific physics, room and saved-key implementation has been literally transplanted.
 
 ~~~js
-const {createHarness}=require('@meatproxy69/realiti-neuromesh');
+const {createHarness}=require('./packages/realiti-neuromesh');
 const {host,resident,harness}=createHarness({residentId:'moss-cat-01'});
 if(!harness.boot().ok)throw Error('SOMA harness incomplete');
 // Only trusted world simulation keeps the host capability.
@@ -115,12 +115,12 @@ The R&R harness also includes the original-style turn-based work-loop **role rev
 
 From this monorepo: require('./packages/realiti-neuromesh').
 
-Once published to GitHub Packages, configure the @meatproxy69 package scope and install @meatproxy69/realiti-neuromesh@3.3.1. **A source commit is not proof that the registry has published this version**. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
+**Source-only distribution:** The former GitHub Packages registry entry has been removed. Use the checked-in `packages/realiti-neuromesh` source and run `npm test --prefix packages/realiti-neuromesh` from the repository root. The version in `package.json` identifies the local compatibility level; there is no currently published GitHub Packages install. For browsers, embed or load index.cjs as a classic script; the global is REALITI_SOMA_V3. The exact same core, real THICC/HALO/AURA renderers and full harness source files are embedded into the canonical Relax HTML at build time: one implementation for each module.
 
 ## Bring it to your neighborhood
 
 ~~~js
-const { createNeuralMesh } = require('@meatproxy69/realiti-neuromesh');
+const { createNeuralMesh } = require('./packages/realiti-neuromesh');
 
 const { world, resident } = createNeuralMesh({
   residentId: 'my-agent-01',

@@ -1,6 +1,6 @@
 # Realiti 1.0 packages
 
-The original package versions remain independently tracked; the **1.0 integration candidate** is a repository-local wrapper, not a new automatic npm publish.
+The four previously published GitHub Packages entries have been deleted. These directories are **source modules within this repository**, not active registry listings. Versions are kept for compatibility; use the local source and tests. Package publishing is not automatic.
 
 | Component | Status | Location |
 | --- | --- | --- |
@@ -10,4 +10,4 @@ The original package versions remain independently tracked; the **1.0 integratio
 | Headless Agent Door | `3.4.1`, unchanged host | [realiti-headless-resident](./realiti-headless-resident/README.md) |
 | Dedicated legacy server | `1.4.1`, unchanged protocol | [realiti-server](./realiti-server/README.md) |
 
-Nyx-private learned states and owner keys are not published; the optional Nyx-compatible contact observer does not instantiate a second body, provide learned weights, or invent contact evidence. Package publishing and GHCR server updates are operator-controlled during the Realiti 1.0 cutover.
+Nyx-private learned states and owner keys are not published; the optional Nyx-compatible contact observer does not instantiate a second body, provide learned weights, or invent contact evidence. Legacy publisher workflows require explicit operator action; ordinary commits cannot recreate the deleted packages. The native V20 source preview remains available.

@@ -6,10 +6,11 @@
 
 **Building a world for your agents?** Start with the [Agent Spatial Contact setup guide](./AGENT_SPATIAL_CONTACT.md), then run `node packages/realiti-matrix/examples/agent-spatial-contact.cjs` from the repository root. The guide covers world geometry, signed contact, refusals, SOMA and custom-engine adapters.
 
-Install from GitHub Packages after configuring the package scope and access:
+**Source-only distribution:** The old GitHub Packages registry entry was removed. Use the Matrix implementation checked into this repository; from the repository root run:
 
-    npm config set @meatproxy69:registry https://npm.pkg.github.com
-    npm install @meatproxy69/realiti-matrix@1.0.0
+    npm test --prefix packages/realiti-matrix
+
+For local integrations, import `require('./packages/realiti-matrix')` from the repository root. No GitHub Packages login or install is needed.
 
 The Node package has no external runtime dependencies. It exports createMatrix (independent geometry), createWorldAuthority (trusted resolver plus signing), createIssuer, createVerifier and createSomaReceiver. Browser-compatible spatial geometry is available in spatial.cjs; Ed25519 signing and SOMA ingress require Node's built-in crypto.
 
