@@ -1,0 +1,74 @@
+name: One-time cleanup of four legacy GitHub Packages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/remove-legacy-packages-once.yml'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  remove-checked-packages:
+    if: github.repository == 'meatproxy69/Realitiagentframework'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Verify package ownership and delete exactly four linked legacy packages
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import json, subprocess, sys
+          from urllib.parse import quote
+          owner = 'meatproxy69'
+          repository = 'meatproxy69/Realitiagentframework'
+          specs = [
+            ('npm', 'realiti-headless-resident'),
+            ('npm', 'realiti-matrix'),
+            ('npm', 'realiti-neuromesh'),
+            ('container', 'realiti-server'),
+          ]
+          def request(method, url):
+              args = ['gh', 'api', '-H', 'Accept: application/vnd.github+json']
+              if method != 'GET': args += ['--method', method]
+              return subprocess.run(args + [url], capture_output=True, text=True)
+          found = []
+          for kind, name in specs:
+              candidates = [f'@{owner}/{name}', name] if kind == 'npm' else [name]
+              matched = None
+              for candidate in candidates:
+                  endpoint = f'/users/{owner}/packages/{kind}/{quote(candidate, safe="")}'
+                  reply = request('GET', endpoint)
+                  if reply.returncode: continue
+                  try: package = json.loads(reply.stdout)
+                  except ValueError: raise RuntimeError('Malformed package metadata')
+                  match = package.get('name', '').split('/')[-1] == name
+                  source = package.get('repository') or {}
+                  linked = source.get('full_name') == repository
+                  if package.get('package_type') != kind or not match or not linked:
+                      raise RuntimeError(f'Refusing unrelated package {kind}/{name}; repository link mismatch')
+                  matched = endpoint
+                  print(f'Preflight verified: {kind}/{name} belongs to {repository}')
+                  break
+              if not matched:
+                  raise RuntimeError(f'Package {kind}/{name} not accessible for verified deletion; no packages deleted')
+              found.append((kind, name, matched))
+          print('All four package metadata checks passed. Beginning requested deletion.')
+          for kind, name, endpoint in found:
+              result = request('DELETE', endpoint)
+              if result.returncode:
+                  print(f'Deletion rejected for {kind}/{name}; stop without touching other packages.', file=sys.stderr)
+                  sys.exit(1)
+              print(f'Deleted {kind}/{name}')
+          for kind, name, endpoint in found:
+              reply = request('GET', endpoint)
+              if reply.returncode == 0:
+                  raise RuntimeError(f'Package remains visible after delete: {kind}/{name}')
+              print(f'No longer accessible: {kind}/{name}')
+          print('GITHUB_PACKAGES_CLEANUP_PASS 4/4')
+          PY
