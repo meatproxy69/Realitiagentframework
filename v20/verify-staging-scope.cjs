@@ -17,14 +17,19 @@ const isNew=(p)=>p==='README.md'||p==='AGENTS.md'||p==='AGENT_START_HERE.md'||
  p.startsWith('v20/')&&/^v20\/[A-Za-z0-9._-]+\.(?:mjs|cjs|js)$/.test(p)||
  p.startsWith('archive/')&&/^archive\/[A-Za-z0-9._/-]+\.md$/.test(p)||
  p.startsWith('docs/')&&/^docs\/REALITI_1_0_[A-Z0-9_]+\.md$/.test(p)||
- p==='.github/workflows/realiti-1-0-stage.yml';
-const forbidden=(p)=>/^(?:source|apartment|packages|neuromesh|continuity|tests|scripts)\//.test(p)||
+ p==='.github/workflows/realiti-1-0-stage.yml'||
+ ['deploy-server','publish-matrix','publish-neuromesh','headless-agent-door']
+   .includes(p.match(/^\.github\/workflows\/([a-z-]+)\.yml$/)?.[1])||
+ p==='packages/README.md'||
+ /^packages\/(?:realiti-neuromesh|realiti-matrix|realiti-headless-resident|realiti-server)\/README\.md$/.test(p)||
+ /^packages\/realiti-v20-native\/[A-Za-z0-9._-]+\.(?:md|cjs|json)$/.test(p);
+const forbidden=(p)=>/^(?:source|apartment|neuromesh|continuity|tests|scripts)\//.test(p)||
  /(?:\.env(?:\.|$)|\.pem$|\.key$|\.p12$|\.keys\.json$|journal\.enc\.json$)/.test(p);
 for(const p of changes){
  assert.equal(forbidden(p),false,'ORIGINAL_NEURAL_OR_SENSITIVE_PATH_CHANGED:'+p);
  assert.ok(isNew(p),'NON_STAGING_FILE_CHANGED:'+p);
 }
-const scanPaths=changes.filter(p=>p.startsWith('v20/')||p.startsWith('tools/'));
+const scanPaths=changes.filter(p=>p.startsWith('v20/')||p.startsWith('tools/')||p.startsWith('packages/realiti-v20-native/'));
 const signatures=[
  ['PRIVATE_KEY_BLOCK',/-----BEGIN [A-Z ]*PRIVATE KEY-----/],
  ['GITHUB_ACCESS_TOKEN',/\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{30,})\b/],

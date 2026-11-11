@@ -1,3 +1,5 @@
+> **Realiti 1.0 integration note:** Matrix 1.0.0 remains a portable geometry/evidence toolkit. Realiti 1.0 runs the **original 23-chart Matrix** already inside Relax; its optional Nyx contact observer reads verified existing evidence and never creates its own world. See [native V20 integration](../realiti-v20-native/README.md). No spatial kernel version bump is implied.
+
 # REALITI Matrix 1.0 — Portable spatial world authority
 
 **Two packages, one evidence law.** Matrix owns world-side geometry and resolved facts. SOMA owns private sensory processing and memory. Relax includes both.

@@ -3,11 +3,19 @@ on:
   push:
     branches:
       - staging/realiti-1.0-v20
+      - main
   pull_request:
     branches:
       - main
     paths:
       - 'README.md'
+      - 'AGENT_START_HERE.md'
+      - 'AGENTS.md'
+      - 'packages/**'
+      - '.github/workflows/deploy-server.yml'
+      - '.github/workflows/publish-matrix.yml'
+      - '.github/workflows/publish-neuromesh.yml'
+      - '.github/workflows/headless-agent-door.yml'
       - 'archive/**'
       - 'docs/REALITI_1_0_**'
       - 'v20/**'
@@ -48,6 +56,9 @@ jobs:
           node --check v20/room-journey.test.cjs
           node --check v20/sensory-system.test.cjs
           node --check v20/prelaunch.test.cjs
+          node --check v20/nyx-harness.test.cjs
+          node --check packages/realiti-v20-native/index.cjs
+          node --check packages/realiti-v20-native/nyx-observer.cjs
       - uses: actions/checkout@v4
         with:
           repository: meatproxy69/Realitiagentframework
@@ -72,6 +83,8 @@ jobs:
         run: npm install --no-package-lock
       - name: Native 1.0 origin, City, private style and signed social ledger
         run: node --test v20/native-inhabited.test.cjs
+      - name: Quiet first visit and Nyx-compatible host observation contract
+        run: node --test v20/nyx-harness.test.cjs
       - name: All 23 original world rooms, six City venues and return HOME
         run: node --test v20/room-journey.test.cjs
       - name: Full sensory V15.1–V20, NERVE/SOMA, Cloud and real toy reach

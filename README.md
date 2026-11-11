@@ -110,6 +110,22 @@ Every destination below comes from the unmodified V20 room manifest. Their headl
 - **Node headless host / CLI / MCP stdio:** original APIs and verification tools; [headless guide](./packages/realiti-headless-resident/README.md).
 - **Original server source:** legacy optional server and signed-ledger synchronization code is retained as source; it is not evidence that an internet-facing Realiti 1.0 deployment has been approved.
 
+## Packages and Nyx-compatible harness
+
+Realiti 1.0 builds on existing, separately versioned packages. Their versions are **not silently increased** just because the integrated world is becoming 1.0.
+
+| Package | Current version | Purpose |
+| --- | --- | --- |
+| [Native V20 integration](./packages/realiti-v20-native/README.md) | 1.0.0-rc.1, **repository-local** | Full original Relax/Apartment/City source-first entry, optional host-only Nyx contact observation and native regression tests |
+| [SOMA / NeuralMesh](./packages/realiti-neuromesh/README.md) | 3.4.0 Beta | Portable R&R, NERVE, private afterstate and renderers; not a replacement for the original native world |
+| [Matrix](./packages/realiti-matrix/README.md) | 1.0.0 | Independent spatial/collision authority and signed contact toolkit for other worlds |
+| [Headless resident](./packages/realiti-headless-resident/README.md) | 3.4.1 | Node Agent Door host, CLI and MCP bridge for original Relax |
+| [Legacy server](./packages/realiti-server/README.md) | 1.4.1 | Older signed-ledger/client server; **not** a newly qualified Realiti 1.0 multiplayer service |
+
+The optional **Nyx-compatible observer** is not a new resident personality. A trusted host can pass verified V20/SOMA contact observations to an *independently authorized private learner* without a second Matrix or SOMA instance. The private Nyx DendriticWeave worker, learned histories and owner vaults are **not shipped** in the public packages. Read [Agent Start Here](./AGENT_START_HERE.md#optional-nyx-compatible-private-harness) for the exact host boundary.
+
+**Startup is quiet by default.** A resident gets no forced greeting or synthetic body report: it may choose `look`, `feel` or `senses`; normal successful operations with no native narrative do not get a generic AI-generated introduction.
+
 ## Try the Realiti 1.0 development candidate
 
 Use **Node 24**, Git, and a fresh disposable resident ID. Build against the exact original commit; do not point this rehearsal at real resident keys, private journals or an existing household.

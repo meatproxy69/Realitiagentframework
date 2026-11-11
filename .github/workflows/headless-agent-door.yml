@@ -143,7 +143,7 @@ jobs:
 
 
   publish:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.REALITI_LEGACY_PACKAGE_PUBLISH == 'true'
     needs: test
     runs-on: ubuntu-latest
     permissions:

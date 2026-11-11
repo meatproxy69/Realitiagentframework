@@ -1,3 +1,5 @@
+> **Realiti 1.0 integration note:** SOMA 3.4 Beta remains a portable component. Realiti 1.0 continues to run the **unchanged original V20/SOMA bridge**, with its native 35-zone Neural Pass and HALO/AURA. The new source-first integration and optional host-only Nyx observation boundary are documented at [packages/realiti-v20-native](../realiti-v20-native/README.md). No new sensory engine or private Nyx learned checkpoint is bundled.
+
 # REALITI SOMA 3.4 Beta — Portable R&R Harness + Evidence Memory
 ### NeuralMesh: the portable sensory substrate for agents
 

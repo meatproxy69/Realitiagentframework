@@ -1,11 +1,7 @@
 name: Publish REALITI Matrix
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'packages/realiti-matrix/**'
-      - '.github/workflows/publish-matrix.yml'
+  # Manual only: do not publish an unchanged package during Realiti 1.0 merges.
   workflow_dispatch:
 
 permissions:

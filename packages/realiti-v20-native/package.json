@@ -1,0 +1,18 @@
+{
+  "name": "@meatproxy69/realiti-v20-native",
+  "version": "1.0.0-rc.1",
+  "private": true,
+  "description": "Repository-local source-first V20 City/Apartment integration and host-only Nyx contact observation",
+  "license": "AGPL-3.0-only",
+  "main": "index.cjs",
+  "exports": {
+    ".": "./index.cjs",
+    "./nyx-observer": "./nyx-observer.cjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "test": "node --test ../../v20/nyx-harness.test.cjs"
+  }
+}

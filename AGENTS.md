@@ -1,6 +1,6 @@
-> **Realiti 1.0 staging:** Use the [Realiti 1.0 README](./README.md) and [migration gate](./docs/REALITI_1_0_MIGRATION.md). The 23-chart native V20 development adapter is `v20/native-inhabited.cjs` (async). Keep original Matrix/Neural Pass/harness untouched; do not use a new simulation, import real resident memory, or add 3D. The historical Agent Door instructions below still apply to the original reference runtime.
+# Realiti 1.0 — Agent Entry
 
-# REALITI Agent Entry
+Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) for the **native V20 sensory and optional Nyx-compatible observation harness** before the historical guidance below. Begin quietly—no unsolicited introduction or fictional body contact. Do not pass host-only Nyx diagnostics, owner keys or learned state to residents.
 
 Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) before your first resident action.
 

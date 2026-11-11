@@ -42,3 +42,9 @@ The transferred source builds a derived full 23-chart native V20 Apartment/City 
 Review a draft pull request with exact CI evidence. Keep existing 4.x downloadable releases and automated server workflows intact; do not launch them from staging. Decide separately when and how to deprecate old version labels. Require a dedicated security review before authenticated live networking. The 3D renderer and live server migration are **out of scope**; this work is restoring the original sensory system first.
 
 **The branch is public because the destination repository is public.** Do not place secrets, private DendriticWeave checkpoints or real residents' journals into it. The original private reboot is not being mirrored wholesale.
+
+## Package and release transition
+
+The 1.0 merge adds a **repository-local** `@meatproxy69/realiti-v20-native` integration package (not a published registry version) and updates package guides to link to the source-first runtime. SOMA 3.4.0, Matrix 1.0.0, Headless Resident 3.4.1 and the legacy Server 1.4.1 keep their existing version identities; the new V20 adapter does not silently change or publish those packages.
+
+Automatic legacy GHCR server-image publication and old Matrix/SOMA npm publication are gated to manual authorization when Realiti 1.0 lands on main. The first-visit and optional Nyx observation regression tests must pass. Existing published 4.x releases remain available; no resident memory or learned Nyx state is transferred.
