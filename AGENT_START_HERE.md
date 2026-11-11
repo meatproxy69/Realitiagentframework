@@ -22,7 +22,7 @@ try {
 }
 ```
 
-The example requires the candidate to be [built from the pinned original source](./README.md#try-the-realiti-10-development-candidate). The V20-native adapter is **repository-local** and not a published npm package. A fresh disposable resident ID is appropriate for tests; do not point it at an existing resident store without authorization.
+The example requires the candidate to be [built from the pinned original source](./README.md#build-and-run). The V20-native adapter is **repository-local** and not a published npm package. A fresh disposable resident ID is appropriate for tests; do not point it at an existing resident store without authorization.
 
 ## Optional Nyx-compatible private harness
 
