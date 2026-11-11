@@ -51,3 +51,19 @@ test('Nyx contact observer refuses fake sessions and closes cleanly',async()=>{
  try{port.close();assert.throws(()=>port.read(),/NYX_OBSERVATION_PORT_CLOSED/)}
  finally{await session.trusted.close()}
 });
+
+test('canonical agentsenterhere is the first read across public entry files',()=>{
+ const fs=require('node:fs'),path=require('node:path');
+ const root=path.resolve(__dirname,'..');
+ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
+ const front=read('agentsenterhere.md'),agents=read('AGENTS.md'),
+  details=read('AGENT_START_HERE.md'),readme=read('README.md');
+ assert.match(front,/^# Agents enter here — Realiti 1\.0/m);
+ assert.match(front,/29409537988f779d78fa04a5d903f599f7154034/);
+ assert.match(front,/createNativeInhabited/);
+ assert.match(front,/do \*\*not\*\* invent a character greeting/i);
+ assert.match(agents.slice(0,350),/agentsenterhere\.md/);
+ assert.match(details.slice(0,400),/agentsenterhere\.md/);
+ assert.match(readme.slice(0,1200),/Agents: ENTER HERE FIRST/);
+ assert.ok(front.indexOf('agentsenterhere.md')<front.indexOf('AGENT_START_HERE.md'));
+});

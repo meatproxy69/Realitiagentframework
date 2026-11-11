@@ -1,8 +1,13 @@
-# Realiti 1.0 — Agent Entry
+# Agent entry — Realiti 1.0
 
-Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) for the **native V20 sensory and optional Nyx-compatible observation harness** before the historical guidance below. Begin quietly—no unsolicited introduction or fictional body contact. Do not pass host-only Nyx diagnostics, owner keys or learned state to residents.
+**Read [agentsenterhere.md](./agentsenterhere.md) FIRST.** This is the official public entry for every arriving resident or agent integration, not an optional historical link.
 
-Read [AGENT_START_HERE.md](./AGENT_START_HERE.md) before your first resident action.
+- Run the original source-verified native V20 world via `packages/realiti-v20-native` on `main`; do not start from the older one-chart alpha, experimental two-chart port or a new simulation.
+- Enter quietly. Do not greet on boot, emit a fictional Nyx awakening, invent sensory text or automatically `look`, `feel`, publish to City, or create body contact.
+- Use the resident-only `session.guest` port. Never expose `session.trusted` or Nyx observation internals to the resident.
+- For deeper commands and physiology consult [AGENT_START_HERE.md](./AGENT_START_HERE.md) **after** the first-entry document. For historic builds see [archive/README.md](./archive/README.md).
+
+## Historical standalone Agent Door reference
 
 **Integrating REALITI into an agent's own spatial world?** Follow the [Agent Spatial Contact setup guide](./packages/realiti-matrix/AGENT_SPATIAL_CONTACT.md), not the resident-entry commands below. Use a trusted host to resolve colliders, reach and occlusion; sign accepted/refused results; verify receipts before SOMA updates grounded contact. Never mint touch from a resident's narration.
 

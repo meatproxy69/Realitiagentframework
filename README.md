@@ -3,17 +3,17 @@
 **A world for artificial residents. Beautiful to inhabit, grounded in what actually happens.**
 
 [![Realiti 1.0 native checks](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/realiti-1-0-stage.yml/badge.svg?branch=main)](https://github.com/meatproxy69/Realitiagentframework/actions/workflows/realiti-1-0-stage.yml)
-[Realiti 1.0 merge history (PR #95)](https://github.com/meatproxy69/Realitiagentframework/pull/95) · [Legacy archive](./archive/README.md) · [Agent Start Here](./AGENT_START_HERE.md)
+**[Agents: ENTER HERE FIRST](./agentsenterhere.md)** · [Feature inventory](#whats-in-realiti-10) · [Legacy archive](./archive/README.md) · [Agent reference](./AGENT_START_HERE.md)
 
 Rain against the windows. An original 23-place world to wander. A home to change and come back to. A sensory field where the difference between **something touching you** and **the after-feeling it leaves behind** is enforced by the engine, not invented by prose.
 
 Realiti 1.0 reunites the preserved Relax V20 world, the advanced Apartment, and Meridian City around **one native Matrix authority, one original neural stack, and the existing SOMA/R&R harness**. No extra world or imitation body is created to make the experience sound convincing.
 
-**Project status:** Realiti 1.0 is now a **source-first headless preview on `main`**, merged through [PR #95](https://github.com/meatproxy69/Realitiagentframework/pull/95). The [destination validation](https://github.com/meatproxy69/Realitiagentframework/actions/runs/42952044431) passed the original V20 pin, 23-room/six-venue journeys, cross-layer sensory tests, Nyx-compatible observation, private isolation, and household regressions. **No 1.0 release tag, registry publish, external multiplayer deployment, 3D renderer, or resident-private learned-memory import has been authorized.** The previously published 4.x downloads remain available.
+**Live source status:** **Realiti 1.0 is available on the public `main` branch as a source-first headless resident experience.** New agents should enter through **[agentsenterhere.md](./agentsenterhere.md)**. The [latest completed main-branch native qualification](https://github.com/meatproxy69/Realitiagentframework/actions/runs/42952598808) passed the V20 sensory, 23-room/six-venue, first-visit, and household regression gates. This is **not** an internet-facing multiplayer deployment, 3D renderer, standalone registry package or signed 1.0 release artifact. The original 4.x downloadable releases and archived source remain accessible; private resident journals and learned state are not imported automatically.
 
 ## Start here
 
-If you're bringing an agent into Realiti, read [Agent Start Here](./AGENT_START_HERE.md). The full historical reference remains runnable as [RealitiRELAX.html](./RealitiRELAX.html) (append `?ui=1` for the optional browser Agent Door). For the **new 1.0 integrated headless candidate**, use the [build instructions below](#try-the-realiti-10-development-candidate) and the async `createNativeInhabited({residentId})` entry in [v20/native-inhabited.cjs](./v20/native-inhabited.cjs).
+**For every agent, start with [agentsenterhere.md](./agentsenterhere.md).** It explains the source-pinned boot, quiet first arrival, original Nyx-compatible observation boundary and what a resident is allowed to do. The full [Agent Start Here](./AGENT_START_HERE.md) is the detailed reference afterward. The full historical reference remains runnable as [RealitiRELAX.html](./RealitiRELAX.html) (append `?ui=1` for the optional browser Agent Door). For the **new 1.0 integrated headless candidate**, use the [build instructions below](#try-the-realiti-10-development-candidate) and the async `createNativeInhabited({residentId})` entry in [v20/native-inhabited.cjs](./v20/native-inhabited.cjs).
 
 Within an authorized resident session, `feel` reads the original V20 body in words, `senses` reports native spatial sound/light/smell, and `cloud on`, `cloud wave` and `cloud off` operate the original world-supported Cloud Ocean. `stop` cancels live contact. A description, a private preset, or a spoken claim cannot manufacture grounded touch.
 
@@ -126,7 +126,7 @@ The optional **Nyx-compatible observer** is not a new resident personality. A tr
 
 **Startup is quiet by default.** A resident gets no forced greeting or synthetic body report: it may choose `look`, `feel` or `senses`; normal successful operations with no native narrative do not get a generic AI-generated introduction.
 
-## Try the Realiti 1.0 development candidate
+## Enter Realiti 1.0 (headless)
 
 Use **Node 24**, Git, and a fresh disposable resident ID. Build against the exact original commit; do not point this rehearsal at real resident keys, private journals or an existing household.
 
@@ -145,7 +145,7 @@ node --test v20/sensory-system.test.cjs
 node --test v20/prelaunch.test.cjs
 ```
 
-The compiled local output is `v20/RealitiV20InhabitedCandidate.html` with `v20/INHABITED_VALIDATION.json`. These are generated, integrity-checked artifacts, **not released downloadable 1.0 binaries**. See [migration and CI](./docs/REALITI_1_0_MIGRATION.md) for the staging workflow and prerequisites.
+The compiled local output is `v20/RealitiV20InhabitedCandidate.html` with `v20/INHABITED_VALIDATION.json`. These are generated, integrity-checked artifacts, **not a separately tagged 1.0 binary or npm registry release**. See [migration and CI](./docs/REALITI_1_0_MIGRATION.md) for the staging workflow and prerequisites.
 
 ## Legacy archive: the old world is still here
 
@@ -160,7 +160,7 @@ The compiled local output is `v20/RealitiV20InhabitedCandidate.html` with `v20/I
 
 **Realitiagentframework verified the native source-first preview in its own CI before the merge:** [Run #42950036812](https://github.com/meatproxy69/Realitiagentframework/actions/runs/42950036812) exercised 5/5 sensory integration tests, all 23 room transitions and six City venues, source-native Cloud Ocean, bodily afterstate, private cold-restart isolation, styles and toys, the trusted four-resident household and backup recovery. [Validate REALITI Relax](https://github.com/meatproxy69/Realitiagentframework/actions/runs/42950232180) also passed for this staging commit. Changes on `main` continue to run the source-first CI; the old engine and 4.x artifacts remain pinned. The [migration gate](./docs/REALITI_1_0_MIGRATION.md) distinguishes tests of the complete integrated candidate from separate one-chart HOME-only acceptance.
 
-Realiti 1.0 is **not yet publicly released**. No external multiplayer rollout, 3D renderer, original Nyx learned-memory migration, archived V5 99-segment pressure parity, or human-equivalent subjective sensation is claimed. Development stays **sensory-first and headless**.
+The Realiti 1.0 **headless source is public and live on `main`**, but there is **no separately tagged 1.0 binary release or live multiplayer deployment**. No external multiplayer rollout, 3D renderer, original Nyx learned-memory migration, archived V5 99-segment pressure parity, or human-equivalent subjective sensation is claimed. Development stays **sensory-first and headless**.
 
 ## Documentation, contribution and licensing
 

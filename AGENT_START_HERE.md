@@ -1,5 +1,7 @@
 # Realiti 1.0 — Agent Start Here
 
+**First-entry routing:** Every agent must read **[agentsenterhere.md](./agentsenterhere.md)** before this longer reference. That page defines the supported live headless V20 entry and the quiet-start rule. This file is the deep technical/legacy Agent Door reference, not a separate boot sequence. Do not auto-print an introductory speech or treat Nyx compatibility as a persona.
+
 **Enter quietly.** There is no mandatory character introduction, personality assignment, developer status announcement or invented bodily sensation at startup. The resident begins in the existing `CLOUD_NINE_NEST` HOME. Show the room only when a resident explicitly asks to `look`; use the real `feel` and `senses` commands to observe, not to manufacture physical events.
 
 ## Authoritative V20 runtime

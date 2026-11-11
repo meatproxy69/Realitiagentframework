@@ -1,4 +1,4 @@
-name: Realiti 1.0 source-first staging (no release)
+name: Realiti 1.0 native headless CI (no server deploy)
 on:
   push:
     branches:
@@ -11,6 +11,7 @@ on:
       - 'README.md'
       - 'AGENT_START_HERE.md'
       - 'AGENTS.md'
+      - 'agentsenterhere.md'
       - 'packages/**'
       - '.github/workflows/deploy-server.yml'
       - '.github/workflows/publish-matrix.yml'
@@ -44,6 +45,7 @@ jobs:
         run: |
           test -f archive/realiti-4.8/README.md
           test -f archive/README.md
+          test -f agentsenterhere.md
           node v20/verify-staging-scope.cjs
       - name: Check reviewed 1.0 source and test syntax
         run: |

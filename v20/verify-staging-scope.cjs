@@ -12,7 +12,7 @@ assert.equal(lock.migration_authorized,false);
 const changes=execFileSync('git',['diff','--name-only',lock.source_commit+'...HEAD'],
  {cwd:root,encoding:'utf8'}).trim().split('\n').filter(Boolean);
 assert.ok(changes.length>=12,'STAGED_SOURCE_TRANSFER_INCOMPLETE');
-const isNew=(p)=>p==='README.md'||p==='AGENTS.md'||p==='AGENT_START_HERE.md'||
+const isNew=(p)=>p==='README.md'||p==='AGENTS.md'||p==='AGENT_START_HERE.md'||p==='agentsenterhere.md'||
  p==='.gitignore'||p==='v20-base.lock.json'||p==='tools/verify-v20-baseline.cjs'||
  p.startsWith('v20/')&&/^v20\/[A-Za-z0-9._-]+\.(?:mjs|cjs|js)$/.test(p)||
  p.startsWith('archive/')&&/^archive\/[A-Za-z0-9._/-]+\.md$/.test(p)||

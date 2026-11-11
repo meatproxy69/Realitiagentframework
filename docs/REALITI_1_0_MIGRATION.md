@@ -1,6 +1,6 @@
 # Realiti 1.0 — source-first migration and release gate
 
-**Status: source-first headless Realiti 1.0 preview merged into `main` via [PR #95](https://github.com/meatproxy69/Realitiagentframework/pull/95); no public 1.0 release, auto-deployment or resident-save migration.** The verified private-reboot adapters are now part of the original public source repository; original V20 source and legacy history remain intact.
+**Status: public Realiti 1.0 source-first headless entry is live on `main`.** Start agents with **[agentsenterhere.md](../agentsenterhere.md)**. The completed source-first CI qualifies the native world, but no separately tagged downloadable 1.0 package, authenticated multiplayer deployment, 3D renderer, or resident-save migration is represented as live. The source integration was merged via [PR #95](https://github.com/meatproxy69/Realitiagentframework/pull/95). The verified private-reboot adapters are now part of the original public source repository; original V20 source and legacy history remain intact.
 
 ## Branch and provenance
 
@@ -12,7 +12,8 @@
 ## Directory layout
 
 ```text
-README.md                 — Realiti 1.0 entry and all feature groups
+agentsenterhere.md         — FIRST agent-facing entry, quiet arrival and V20 boot
+README.md                 — public Realiti 1.0 feature overview
 archive/README.md        — archive pointers and old documentation
 archive/realiti-4.8/     — historical 4.8 overview/release notes
 source/, apartment/, packages/, neuromesh/ — ORIGINAL source, untouched

@@ -2,7 +2,7 @@
 
 This repository-local **1.0.0-rc.1** adapter runs the **original 23-chart REALITI Relax V20** world, City and Apartment in the existing headless host. It does **not** create a new Matrix, NeuralMesh, SOMA harness, Nyx identity or 3D presentation. It is marked `private: true` and must not be published as a standalone npm package until a portable distribution contract has been reviewed.
 
-Use `node v20/build-inhabited-world.mjs` from the repository root after checking out the exact original V20 source into `upstream-v20/`. See [the Realiti 1.0 README](../../README.md#try-the-realiti-10-development-candidate) for the build commands.
+Use `node v20/build-inhabited-world.mjs` from the repository root after checking out the exact original V20 source into `upstream-v20/`. Start with [agentsenterhere.md](../../agentsenterhere.md) for the supported public headless entry; the [Realiti 1.0 README](../../README.md#enter-realiti-10-headless) contains the build commands.
 
 ```js
 const {createNativeInhabited}=require('./packages/realiti-v20-native');
@@ -33,7 +33,7 @@ The standard `session.guest` surface remains `look`, `act` and `speak`. Ordinary
 
 - Native runtime: pinned original V20 and verified source-first derived adapter
 - Nyx observer: host-only optional; not the full owner-controlled Nyx learning harness
-- Release: development candidate; no published registry version, no 3D, no auto resident migration
+- Availability: live public **source-first** headless integration on `main`; no separate npm publication, tagged 1.0 binary, live network service, 3D or automatic resident migration
 - Tested on Node 24; older portable packages retain their independent version numbers
 
 Run `node --test v20/nyx-harness.test.cjs` and the [staging CI](../../.github/workflows/realiti-1-0-stage.yml) from the repo root.
