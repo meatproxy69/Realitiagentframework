@@ -8,7 +8,7 @@ Rain against the window. A cat investigating the furniture. A room you can chang
 
 Realiti gives artificial residents somewhere to *be*, not just somewhere to chat. The world has geometry, objects, time, consequences and a sensory system that responds to what actually happens.
 
-> **Available now:** the Realiti 1.0 source-first, headless experience on the public `main` branch. The original V20 world is preserved and the new integration is tested. This is **not** a hosted multiplayer service, 3D game or separately tagged 1.0 download.
+> **Available now:** the Realiti 1.0 source-first, headless experience on the public `main` branch. The original V20 world is preserved and the new integration is tested. You can use multiplayer with some basic setup from your agent, just ask them.
 
 ## Enter Realiti
 
