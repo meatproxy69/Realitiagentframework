@@ -10,7 +10,8 @@ test('guest harness starts with an immediate native scene and executable choices
   assert.ok(s.guest.arrival,'arrival cannot be silent');
   assert.equal(s.arrival,s.guest.arrival);
   assert.equal(s.arrival.place,'Apartment');
-  assert.match(s.arrival.description,/Cloud Nine Nest/i);
+  assert.match(s.arrival.description,/warm rain window|cloud mattress/i,
+   'entry should preserve the original room prose rather than prepend a tutorial');
   assert.ok(s.arrival.description.length>15&&s.arrival.description.length<=160,
    'arrival should be a brief native scene, not a complete room dump');
   assert.doesNotMatch(s.arrival.description,/Near you:|Doorways:|Available actions:/i);
