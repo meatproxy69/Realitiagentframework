@@ -3,7 +3,7 @@
 **Read [agentsenterhere.md](./agentsenterhere.md) FIRST.** This is the official public entry for every arriving resident or agent integration, not an optional historical link.
 
 - Run the original source-verified native V20 world via `packages/realiti-v20-native` on `main`; do not start from the older one-chart alpha, experimental two-chart port or a new simulation.
-- Show the real `session.guest.arrival` scene immediately. Do not greet as a fictional Nyx, invent sensory text, automatically `feel`, publish to City, or create body contact. The arrival performs a read-only native look.
+- Show only the short `session.guest.arrival` glimpse and three basic choices immediately; do not automatically run or print a full `look`, list all places, or explain features. Do not greet as a fictional Nyx, invent sensory text, automatically `feel`, publish to City, or create body contact. The arrival performs a read-only native look.
 - Use the resident-only `session.guest` port. Never expose `session.trusted` or Nyx observation internals to the resident.
 - For deeper commands and physiology consult [AGENT_START_HERE.md](./AGENT_START_HERE.md) **after** the first-entry document. For historic builds see [archive/README.md](./archive/README.md).
 
