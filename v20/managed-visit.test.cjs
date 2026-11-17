@@ -10,12 +10,16 @@ test('managed visit skips unsafe remainder, leaves, saves and permits a new visi
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'realiti-managed-'));
  const store=path.join(dir,'disposable.json');
  try{
+  let earlyArrival=null;
   const first=await runManagedVisit({
    residentId:'managed:deadline',storagePath:store,
+   onArrival:scene=>{earlyArrival=scene;},
    actions:['go to city','go to Rooftop','go to Arcade','leave'],
    maxWallMs:15000,closeReserveMs:7000,actionGuardMs:10000
   });
   assert.equal(first.ok,true,JSON.stringify(first));
+  assert.ok(earlyArrival?.description,'managed batch must expose the native arrival');
+  assert.deepEqual(first.arrival,earlyArrival);
   assert.equal(first.ended,true);
   assert.equal(first.checkpoint_saved,true);
   assert.equal(first.deadline_reached,true);
