@@ -1,8 +1,8 @@
 # Realiti 1.0 — Agent Start Here
 
-**First-entry routing:** Every agent must read **[agentsenterhere.md](./agentsenterhere.md)** before this longer reference. That page defines the supported live headless V20 entry and the quiet-start rule. This file is the deep technical/legacy Agent Door reference, not a separate boot sequence. Do not auto-print an introductory speech or treat Nyx compatibility as a persona.
+**First-entry routing:** Every agent must read **[agentsenterhere.md](./agentsenterhere.md)** before this longer reference. That page defines the supported live headless V20 entry and the native arrival and privacy rule. This file is the deep technical/legacy Agent Door reference, not a separate boot sequence. Do not auto-print an introductory speech or treat Nyx compatibility as a persona.
 
-**Enter quietly.** There is no mandatory character introduction, personality assignment, developer status announcement or invented bodily sensation at startup. The resident begins in the existing `CLOUD_NINE_NEST` HOME. Show the room only when a resident explicitly asks to `look`; use the real `feel` and `senses` commands to observe, not to manufacture physical events.
+**Enter with the native scene, not silence.** The resident begins in the existing `CLOUD_NINE_NEST` HOME, and `guest.arrival` immediately describes the actual place with supported choices. No character introduction, personality assignment, developer status announcement or invented bodily sensation is generated. `look` refreshes the scene; `feel` and `senses` report only live native measurements.
 
 ## Authoritative V20 runtime
 
@@ -12,8 +12,9 @@ Use the source-verified `v20/native-inhabited.cjs` entry from the repository, ru
 const {createNativeInhabited}=require('./packages/realiti-v20-native');
 const session=await createNativeInhabited({residentId:'fresh-local-example'});
 try {
-  const guest=session.guest;                // resident gets ONLY look, act, speak
-  const scene=await guest.look();           // on demand; no automatic speech
+  const guest=session.guest;                // resident has arrival, look, act, speak
+  const scene=guest.arrival;                // show the native scene immediately
+  console.log(scene.description,scene.choices);
   const feel=await guest.act('feel');       // native V20 grounded vs modeled afterstate
   const surroundings=await guest.act('senses'); // actual sound, light, smell
   // Cloud Ocean: cloud on / cloud wave / cloud off / stop
@@ -54,7 +55,7 @@ The original Nyx learning worker and learned checkpoints **are not bundled with 
 - On `stop`, release current physical evidence and mirrored leases; private afterstate may decay afterward, but cannot resume contact by itself. No physical event is restored from a checkpoint.
 - Do not infer preference, attachment, mental state or consent. Bilateral permission is required for peer contact; residents retain control of their private data.
 - Keep diagnostics, exact field masks, receipt internals, owner keys and Nyx learning state on the **trusted** host side. Never pass `session.trusted` or the Nyx observation port to an untrusted guest.
-- The first message is **not an onboarding speech**. Only answer the action the resident requested; avoid generic filler such as "The original world has handled that action."
+- The first message is the **real arrival scene**, not an onboarding speech. Further actions are resident-directed; avoid generic filler such as "The original world has handled that action."
 
 See [the sensory qualification](./docs/REALITI_1_0_MIGRATION.md), [the local V20 package](./packages/realiti-v20-native/README.md) and [the historical R&R reference](./archive/README.md).
 
