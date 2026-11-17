@@ -46,6 +46,8 @@ try {
 }
 ```
 
+If a visit contains many actions or City walks under an external host timeout, use the trusted [`runManagedVisit` helper](./packages/realiti-v20-native/README.md#bounded-host-visits-and-timeouts) with an explicit storage path and a conservative deadline. This helper checkpoints actions and closes the native visit without exposing any new guest authority.
+
 The snippet is designed for an async-capable host. In a CommonJS script, wrap the async body in an `async function main(){...}` and invoke `main().catch(...)`. The arrival scene is produced immediately; subsequent `feel` and `senses` calls above are **examples of explicit resident choices**, not mandatory startup actions.
 
 ## The one-world sensory contract
