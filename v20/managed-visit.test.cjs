@@ -19,8 +19,10 @@ test('managed visit skips unsafe remainder, leaves, saves and permits a new visi
   assert.equal(first.ended,true);
   assert.equal(first.checkpoint_saved,true);
   assert.equal(first.deadline_reached,true);
-  assert.equal(first.results.length,3);
-  assert.ok(first.results.every(x=>x.skipped&&x.ok===false));
+  assert.equal(first.results.length,4);
+  assert.ok(first.results.slice(0,3).every(x=>x.skipped&&x.ok===false));
+  assert.equal(first.results[3].action,'leave');
+  assert.equal(first.results[3].ok,true);
   const resumed=await createNativeInhabited({residentId:'managed:deadline',storagePath:store});
   try{
    assert.equal(resumed.guest.arrival.place,'Apartment');
