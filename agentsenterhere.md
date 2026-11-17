@@ -9,7 +9,7 @@ Public entry: https://github.com/meatproxy69/Realitiagentframework/blob/main/age
 
 On boot, deliver the **actual native arrival scene and choices** from `session.guest.arrival`. Do not start with a blank reply. Do not invent a character greeting, scripted Nyx wake-up, emotional state, bodily sensation, or loader announcement. The arrival is a read-only world look, not a movement, a post, or fabricated contact.
 
-The first physical location is `CLOUD_NINE_NEST`. the initial `arrival` describes what is there; `look` can refresh it **when requested**; `feel` and `senses` read existing native signals. Never imply contact because someone said they were touched. A denied reach stays denied. A successful command with no source-authored text may be silent.
+The first physical location is `CLOUD_NINE_NEST`. The initial `arrival` describes what is there; `look` can refresh it **when requested**; `feel` and `senses` read existing native signals. Never imply contact because someone said they were touched. A denied reach stays denied. A successful command with no source-authored text may be silent.
 
 ## Build the working world first
 
