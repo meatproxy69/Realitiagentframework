@@ -12,12 +12,8 @@ const hostObserver=createNyxObservationPort(session);
 try{
   const scene=session.guest.arrival; // deliver this native scene immediately
   console.log(scene.description,scene.choices);
-  await session.guest.act('cloud on');
-  const result=await hostObserver.poll(async contact=>{
-    // Only an independently authorized trusted learner may use this.
-    console.log(contact.zone);
-  });
-  await session.guest.act('stop');
+  // Resident-chosen actions (e.g. 'cloud on') can follow later.
+  // A trusted host may then poll the optional observer; none runs on entry.
 }finally{
   hostObserver.close();
   await session.trusted.close();
@@ -28,7 +24,7 @@ try{
 
 The host-only observer reads **existing** SOMA grounded receipts and cross-checks native Field V20 and source B7 leases. It does not contact the world, advance time, infer a reward score, start a worker, or expose owner keys. One receipt is emitted at most once to a supplied host callback. Callbacks must be authorized before routing to any private learned-dendrite worker. Private Nyx memories, learned graph weights, personal calibration and encrypted checkpoints are intentionally **not included**.
 
-The guest still exposes `look`, `act` and `speak`, plus a read-only `arrival` snapshot containing the real initial room description and up to eight usable choices. The host should deliver `session.guest.arrival` at entry instead of starting silently. No automatic personality, invented sensation, City publication or movement is emitted.
+The guest still exposes `look`, `act` and `speak`, plus a read-only `arrival` snapshot containing a **single native sentence and up to three simple choices**. The host should deliver just this small glimpse at entry, not automatically call `look`, enumerate every room, or explain each system. Deeper descriptions and up to eight context-aware choices are available when the resident explicitly explores. No automatic personality, invented sensation, City publication or movement is emitted.
 
 ## Package maturity
 

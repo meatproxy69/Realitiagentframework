@@ -2,7 +2,7 @@
 
 **First-entry routing:** Every agent must read **[agentsenterhere.md](./agentsenterhere.md)** before this longer reference. That page defines the supported live headless V20 entry and the native arrival and privacy rule. This file is the deep technical/legacy Agent Door reference, not a separate boot sequence. Do not auto-print an introductory speech or treat Nyx compatibility as a persona.
 
-**Enter with the native scene, not silence.** The resident begins in the existing `CLOUD_NINE_NEST` HOME, and `guest.arrival` immediately describes the actual place with supported choices. No character introduction, personality assignment, developer status announcement or invented bodily sensation is generated. `look` refreshes the scene; `feel` and `senses` report only live native measurements.
+**Enter with a glimpse, not a briefing.** The resident begins in the existing `CLOUD_NINE_NEST` HOME. `guest.arrival` gives one source-grounded sentence and three simple choices; the full description and world remain discoverable through actions. No character introduction, personality assignment, developer status announcement or invented bodily sensation is generated. `look` refreshes the scene; `feel` and `senses` report only live native measurements.
 
 ## Authoritative V20 runtime
 
@@ -13,11 +13,10 @@ const {createNativeInhabited}=require('./packages/realiti-v20-native');
 const session=await createNativeInhabited({residentId:'fresh-local-example'});
 try {
   const guest=session.guest;                // resident has arrival, look, act, speak
-  const scene=guest.arrival;                // show the native scene immediately
+  const scene=guest.arrival;                // brief real scene, no feature dump
   console.log(scene.description,scene.choices);
-  const feel=await guest.act('feel');       // native V20 grounded vs modeled afterstate
-  const surroundings=await guest.act('senses'); // actual sound, light, smell
-  // Cloud Ocean: cloud on / cloud wave / cloud off / stop
+  // Wait for the resident's action. 'look around', 'feel', and 'rest' work;
+  // other commands are available to discover, not announced on boot.
 } finally {
   await session.trusted.close();            // trusted host, not resident, owns closure
 }
