@@ -11,9 +11,15 @@ test('guest harness starts with an immediate native scene and executable choices
   assert.equal(s.arrival,s.guest.arrival);
   assert.equal(s.arrival.place,'Apartment');
   assert.match(s.arrival.description,/Cloud Nine Nest/i);
-  assert.match(s.arrival.description,/Doorways:/,'native exits may not be cut off at 750 characters');
-  assert.ok(s.arrival.description.length>750);
-  assert.ok(s.arrival.choices.length<=8);
+  assert.ok(s.arrival.description.length>15&&s.arrival.description.length<=160,
+   'arrival should be a brief native scene, not a complete room dump');
+  assert.doesNotMatch(s.arrival.description,/Near you:|Doorways:|Available actions:/i);
+  assert.deepEqual(s.arrival.choices,['look around','feel','rest'],
+   'entry should not spoil remote, Cloud Ocean, or the room catalog');
+  const full=await s.guest.look();
+  assert.ok(full.description.length>750,'full explicit look remains available');
+  assert.match(full.description,/Doorways:/,'full look includes exits');
+  assert.ok(full.choices.includes('cloud on'),'native commands still work after entry');
   const before=Number(s.trusted.native.window.eval('C9.ledger?.records?.length||0'));
   const around=await s.guest.act('look around');
   assert.equal(around.ok,true,around.message);
@@ -52,7 +58,9 @@ test('guest room travel enters the actual destination, and focused look names ob
 test('guest cloud controls follow actual posture and never invent contact',async()=>{
  const s=await createNativeInhabited({residentId:'guest:cloud-choices'});
  try{
-  assert.ok(s.guest.arrival.choices.includes('cloud on'));
+  assert.ok(!s.guest.arrival.choices.includes('cloud on'),
+   'Cloud Ocean is discovered through interaction rather than advertised on entry');
+  assert.ok((await s.guest.look()).choices.includes('cloud on'));
   const on=await s.guest.act('cloud on');
   assert.equal(on.ok,true,on.message);
   assert.ok(on.choices.includes('cloud off'));
