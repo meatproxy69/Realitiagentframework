@@ -53,6 +53,9 @@ jobs:
           node --check v20/sync-native-senses.js
           node --check v20/build-inhabited-world.mjs
           node --check v20/native-inhabited.cjs
+          node --check v20/guest-presentation.cjs
+          node --check v20/guest-presentation.test.cjs
+          node --check v20/guest-visit.test.cjs
           node --check v20/verify-staging-scope.cjs
           node --check v20/native-inhabited.test.cjs
           node --check v20/room-journey.test.cjs
@@ -85,7 +88,9 @@ jobs:
         run: npm install --no-package-lock
       - name: Native 1.0 origin, City, private style and signed social ledger
         run: node --test v20/native-inhabited.test.cjs
-      - name: Quiet first visit and Nyx-compatible host observation contract
+      - name: Guest welcome, natural commands, and real native-world regression
+        run: node --test v20/guest-presentation.test.cjs v20/guest-visit.test.cjs
+      - name: Nyx-compatible host observation without a forced persona
         run: node --test v20/nyx-harness.test.cjs
       - name: All 23 original world rooms, six City venues and return HOME
         run: node --test v20/room-journey.test.cjs
