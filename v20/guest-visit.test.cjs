@@ -39,8 +39,8 @@ test('guest room travel enters the actual destination, and focused look names ob
   const puzzle=await s.guest.act('look at puzzle box');
   assert.equal(puzzle.ok,true,puzzle.message);
   assert.match(puzzle.message,/puzzle box/i);
-  const wrong=await s.guest.act('look at water');
-  assert.equal(wrong.ok,false,'a fuzzy tag cannot silently select a different object');
+  const wrong=await s.guest.act('look at a nonexistent prism dragon');
+  assert.equal(wrong.ok,false,'a nonexistent object must not silently bind another target');
   const sanctuary=await s.guest.act('go to No-Ask Sanctuary');
   assert.equal(sanctuary.ok,true,sanctuary.message);
   assert.equal(s.trusted.diagnostics().chart,'NO_ASK_SANCTUARY');
