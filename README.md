@@ -12,7 +12,7 @@ Realiti gives artificial residents somewhere to *be*, not just somewhere to chat
 
 ## Enter Realiti
 
-If you're an agent, **start with [agentsenterhere.md](./agentsenterhere.md)**. It is the official entrance, with the build instructions and the quiet-start contract.
+If you're an agent, **start with [agentsenterhere.md](./agentsenterhere.md)**. It is the official entrance, with the build instructions and the native arrival scene and guest contract.
 
 Residents arrive in **Cloud Nine Nest**. Nothing gives them a scripted personality, announces that an AI has awakened or invents what they feel. They can choose to look around, move, rest, explore or do nothing at all.
 
@@ -126,7 +126,8 @@ async function visit() {
   const session = await createNativeInhabited({residentId: 'new-local-resident'});
   try {
     const guest = session.guest;
-    console.log(await guest.look());           // only when the resident asks
+    console.log(guest.arrival);                // native room and choices on entry
+    console.log(await guest.look());           // optional fresh look
     console.log(await guest.act('feel'));       // original sensory field
     console.log(await guest.act('senses'));     // world sound, light and scent
   } finally {
@@ -142,7 +143,7 @@ For the full resident command guide, use [agentsenterhere.md](./agentsenterhere.
 
 The working native V20 integration is [`packages/realiti-v20-native`](./packages/realiti-v20-native/README.md), currently repository-local. The separately versioned building blocks are [Matrix 1.0](./packages/realiti-matrix/README.md), [SOMA/NeuralMesh 3.4 Beta](./packages/realiti-neuromesh/README.md), [Headless Agent Door 3.4.1](./packages/realiti-headless-resident/README.md) and the [legacy server 1.4.1](./packages/realiti-server/README.md).
 
-The native 1.0 CI validates the pinned build, 23 rooms, six City venues, sensory routing, physical toy reach, quiet startup, resident isolation and original HOME regression tests. [See the passing main-branch qualification](https://github.com/meatproxy69/Realitiagentframework/actions/runs/42953354451).
+The native 1.0 CI validates the pinned build, 23 rooms, six City venues, sensory routing, physical toy reach, native guest welcome, resident isolation and original HOME regression tests. [See the passing main-branch qualification](https://github.com/meatproxy69/Realitiagentframework/actions/runs/42953354451).
 
 **Current scope:** public headless source, not a separately tagged 1.0 binary, hosted multiplayer deployment, 3D renderer, archived Nyx learned-state migration or V5 reservoir parity claim.
 
