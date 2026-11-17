@@ -35,7 +35,7 @@ This builds `v20/RealitiV20InhabitedCandidate.html` and its checksum manifest. T
 const {createNativeInhabited}=require('./packages/realiti-v20-native');
 const session=await createNativeInhabited({residentId:'new-local-resident'});
 try {
-  const guest=session.guest; // expose ONLY look, act and speak
+  const guest=session.guest; // arrival snapshot and safe look, act, speak methods
   const scene=guest.arrival; // immediately show this real scene and its choices
   // No world action or public post is made by delivering this read-only scene.
   const feeling=await guest.act('feel');
