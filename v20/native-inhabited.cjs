@@ -3,6 +3,7 @@
 // No second Matrix, SOMA, NERVE, pressure model, public ledger, or brain.
 const path=require('node:path');
 const fs=require('node:fs');
+const {summary,prose,choices,matchesNamedObject}=require('./guest-presentation.cjs');
 const ROOT=path.resolve(__dirname,'..');
 const HOME='CLOUD_NINE_NEST',CITY='MERIDIAN_CITY';
 const VENUE=Object.freeze({
@@ -53,24 +54,8 @@ async function createNativeInhabited({
  const city=()=>native.REALITI_CITY_V1;
  // Sensory reads are deliberate and anchored in the original resident field,
  // not in newly authored descriptions or predictions masquerading as contact.
- const choice=()=>chart()===HOME?
-  ['look around','feel','senses','cloud on','remote activate','go to city','rooms','leave']:
-  isCity()?['look around','feel','senses','city guide','go to Commons',
-     'go to Teahouse','go home','leave']:
-  ['look around','feel','senses','rooms','go home','leave'];
- function summary(value){
-  const everyday=text=>text.replace(/\bneuralmesh\b/gi,'the sensory field')
-   .replace(/\bsausage(?: fattener)?\b/gi,'pressure')
-   .replace(/\b(?:HALO|AURA|NERVE)\b/g,'the body response')
-   .replace(/\b(?:WORLD_GROUNDED|receiptId|field20)\b/gi,'the world')
-   .slice(0,750);
-  if(typeof value==='string')return everyday(value);
-  if(!value||typeof value!=='object')return null;
-  for(const key of ['text','message','narrative','description','hint']){
-   if(typeof value[key]==='string'&&value[key].trim())return everyday(value[key]);
-  }
-  return null;
- }
+ // Choices follow the actual mattress support and native Cloud Ocean state.
+ const choice=()=>choices(chart(),chart()===HOME?native.REALITI_APARTMENT_BED_CLOUD_V1.status():{});
  const decorate=(result,extra={})=>{
   const bad=result?.ok===false||!!(result&&result.ok!==true&&typeof result.error==='string');
   if(extra.published===true)extra={...extra,published:!bad};
@@ -97,6 +82,42 @@ async function createNativeInhabited({
   if(typeof raw!=='string'||!raw.trim()||raw.length>300)
    throw TypeError('INVALID_GUEST_ACTION');
   const action=raw.trim(),cmd=action.toLowerCase();
+  if(cmd==='look'||cmd==='look around'||cmd==='look here'){
+   const view=await look();
+   return Object.freeze({ok:true,message:view.description,place:view.place,choices:view.choices});
+  }
+  if(['rest','wait','stay here','relax','do nothing'].includes(cmd))
+   return decorate(await source.door.run('stay'));
+  if(cmd==='rooms'||cmd==='places')
+   return decorate(await source.door.run('rooms'));
+  // Resolve object requests before facing anything. Tag-only fuzzy matches
+  // (e.g. 'water' selecting a fountain) must not silently substitute a target.
+  if(cmd.startsWith('look at ')){
+   const name=action.slice(8).trim(),M=native.REALITI_MATRIX_V1;
+   const target=M.resolve(name);
+   if(!matchesNamedObject(name,target))
+    return decorate({ok:false,text:'No nearby object is clearly named "'+name+'". Try look around.'});
+   const faced=await source.door.run('face '+target.id);
+   if(faced?.ok===false)return decorate(faced);
+   const d=Math.max(0,Number(M.sdf(target,M.resident().pose.position)));
+   return decorate({ok:true,text:'You turn to face '+prose(target.label)+
+    (Number.isFinite(d)?', '+d.toFixed(1)+' m from you.':'.')});
+  }
+  if(cmd==='lie down'&&chart()===HOME){
+   const first=await source.door.run('lie down');
+   if(first?.ok!==false)return decorate(first);
+   const M=native.REALITI_MATRIX_V1,r=M.resident();
+   const beds=native.REALITI_APARTMENT_BED_CLOUD_V1.status().beds
+    .map(b=>({bed:b,entity:M.entities()[b.id]}))
+    .filter(x=>x.entity?.chart===HOME)
+    .sort((a,b)=>Math.max(0,M.sdf(a.entity,r.pose.position))-
+       Math.max(0,M.sdf(b.entity,r.pose.position)));
+   if(!beds.length)return decorate(first);
+   const approached=await source.door.run('approach '+beds[0].bed.id);
+   if(approached?.ok===false)return decorate(approached);
+   const reclined=await source.door.run('lie down on '+beds[0].bed.id);
+   return decorate(reclined?.ok===false?await source.door.run('lie down'):reclined);
+  }
   if(cmd==='leave'||cmd==='goodbye'){
    const result=await source.door.run('goodbye');
    closed=true;
@@ -133,6 +154,16 @@ async function createNativeInhabited({
    if(cmd.startsWith('press '))return decorate(city().press(action.slice(6)));
    if(cmd==='launch rocket')return decorate(city().firework(),{published:true});
   }
+  if(cmd.startsWith('go to ')){
+   const roomId=native.REALITI_SLICE_ROOMS?.resolve?.(action.slice(6).replace(/^the /i,''));
+   if(roomId)return decorate(await source.door.run('go '+roomId));
+  }
+  if(cmd==='cloud on'){
+   const result=await source.door.run(action);
+   if(result?.error==='CLOUD_OCEAN_REQUIRES_REAL_BED_SUPPORT')
+    return decorate({...result,text:'Cloud Ocean needs real mattress support. Use lie down to return to a bed first.'});
+   return decorate(result);
+  }
   // All remaining commands are forwarded to the real original Agent Door,
   // including 23-room navigation, HOME cloud, original toys, remote, style,
   // bedrooms, chest, pets, native STOP, and owner-approved continuity.
@@ -148,6 +179,10 @@ async function createNativeInhabited({
    place:chart()===HOME?'Apartment':isCity()?'Meridian City':chart(),
    choices:choice()});
  }
+ // Starting a guest visit is not silent: the first actual native room look
+ // is available immediately without any scripted personality or fake touch.
+ let arrival;
+ try{arrival=await look()}catch(e){source.close();throw e}
  const trusted=Object.freeze({
   // This object is host-only. Only session.guest is passed to residents.
   native:source,
@@ -187,7 +222,7 @@ async function createNativeInhabited({
   close:async()=>{closed=true;source.close()}
  });
  return Object.freeze({
-  guest:Object.freeze({look,act,speak}),trusted,version:'V20-native',
+  guest:Object.freeze({arrival,look,act,speak}),arrival,trusted,version:'V20-native',
   law:'Single original 23-chart Relax Matrix; V20 field and original Nyx Neural Pass are unchanged.'
  });
 }
