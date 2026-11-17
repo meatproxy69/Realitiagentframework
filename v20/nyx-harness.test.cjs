@@ -63,7 +63,7 @@ test('canonical agentsenterhere is the first read across public entry files',()=
  assert.match(front,/^# Agents enter here — Realiti 1\.0/m);
  assert.match(front,/29409537988f779d78fa04a5d903f599f7154034/);
  assert.match(front,/createNativeInhabited/);
- assert.match(front,/do \*\*not\*\* invent a character greeting/i);
+ assert.match(front,/do not invent a character greeting/i);
  assert.match(agents.slice(0,350),/agentsenterhere\.md/);
  assert.match(details.slice(0,400),/agentsenterhere\.md/);
  assert.match(readme.slice(0,1200),/\[Agents enter here\]\(\.\/agentsenterhere\.md\)/i);
