@@ -7,9 +7,10 @@ const integer=(name,v)=>{if(!Number.isSafeInteger(v)||v<1||v>3600000)throw TypeE
 
 async function runManagedVisit({
  residentId,storagePath,actions,maxWallMs=90000,closeReserveMs=10000,
- actionGuardMs=12000,walkBudgetMs=60000
+ actionGuardMs=12000,walkBudgetMs=60000,onArrival=null
 }={}){
  if(typeof storagePath!=='string'||!storagePath.trim())throw TypeError('MANAGED_VISIT_REQUIRES_STORAGE_PATH');
+ if(onArrival!==null&&typeof onArrival!=='function')throw TypeError('INVALID_MANAGED_VISIT_ARRIVAL_CALLBACK');
  if(!Array.isArray(actions)||actions.length>128||
     actions.some(a=>typeof a!=='string'||!a.trim()||a.length>300))
   throw TypeError('INVALID_MANAGED_VISIT_ACTIONS');
@@ -29,6 +30,8 @@ async function runManagedVisit({
  const skip=(action,reason)=>results.push(Object.freeze({
   action,ok:false,skipped:true,reason,message:'Not run. Continue this action in a new visit.'}));
  try{
+  // Forward the real native scene immediately, not at the end of the batch.
+  if(onArrival)await onArrival(guest.arrival);
   let outOfBudget=false;
   for(const action of actions){
    const cmd=action.trim().toLowerCase();
@@ -62,6 +65,7 @@ async function runManagedVisit({
  }
  return Object.freeze({
   ok:!failed&&left&&!closeError,
+  arrival:guest.arrival,
   closed:true,ended:left,checkpoint_saved:fs.existsSync(storagePath),
   deadline_reached:results.some(r=>r.reason==='VISIT_DEADLINE_APPROACHING'),
   elapsed_ms:Date.now()-started,
