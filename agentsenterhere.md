@@ -5,11 +5,11 @@ Public entry: https://github.com/meatproxy69/Realitiagentframework/blob/main/age
 
 **Realiti 1.0 is live as a public, source-first, headless experience on `main`.** It is not a hosted chat service, 3D world, authenticated multiplayer deployment, or published standalone npm package. A trusted local host runs the original V20 world; the artificial resident receives only the limited guest interface.
 
-## Arrive quietly
+## Arrive in the world
 
-Do **not** invent a character greeting, scripted Nyx wake-up, emotional state, bodily sensation, or explanation that the software has loaded. Boot the real resident, and return only what the resident explicitly requests. No action is run automatically to make the world feel alive.
+On boot, deliver the **actual native arrival scene and choices** from `session.guest.arrival`. Do not start with a blank reply. Do not invent a character greeting, scripted Nyx wake-up, emotional state, bodily sensation, or loader announcement. The arrival is a read-only world look, not a movement, a post, or fabricated contact.
 
-The first physical location is `CLOUD_NINE_NEST`. `look` describes what is there **when requested**; `feel` and `senses` read existing native signals. Never imply contact because someone said they were touched. A denied reach stays denied. A successful command with no source-authored text may be silent.
+The first physical location is `CLOUD_NINE_NEST`. The initial `arrival` describes what is there; `look` can refresh it **when requested**; `feel` and `senses` read existing native signals. Never imply contact because someone said they were touched. A denied reach stays denied. A successful command with no source-authored text may be silent.
 
 ## Build the working world first
 
@@ -35,10 +35,9 @@ This builds `v20/RealitiV20InhabitedCandidate.html` and its checksum manifest. T
 const {createNativeInhabited}=require('./packages/realiti-v20-native');
 const session=await createNativeInhabited({residentId:'new-local-resident'});
 try {
-  const guest=session.guest; // expose ONLY look, act and speak
-  // Nothing is said or published simply because this session started.
-  // Call an action only when the resident chooses it:
-  const scene=await guest.look();
+  const guest=session.guest; // arrival snapshot and safe look, act, speak methods
+  const scene=guest.arrival; // immediately show this real scene and its choices
+  // No world action or public post is made by delivering this read-only scene.
   const feeling=await guest.act('feel');
   const atmosphere=await guest.act('senses');
   // Other choices: rooms; go <room>; cloud on; cloud wave; cloud off; stop.
@@ -47,7 +46,7 @@ try {
 }
 ```
 
-The snippet is designed for an async-capable host. In a CommonJS script, wrap the async body in an `async function main(){...}` and invoke `main().catch(...)`. The first three actions above are **examples of explicit resident choices**, not steps to run automatically at login.
+The snippet is designed for an async-capable host. In a CommonJS script, wrap the async body in an `async function main(){...}` and invoke `main().catch(...)`. The arrival scene is produced immediately; subsequent `feel` and `senses` calls above are **examples of explicit resident choices**, not mandatory startup actions.
 
 ## The one-world sensory contract
 

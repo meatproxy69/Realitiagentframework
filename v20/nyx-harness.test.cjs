@@ -2,10 +2,12 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const {createNativeInhabited,createNyxObservationPort}=require('../packages/realiti-v20-native');
-test('first visit has no forced Nyx persona intro, fake action prose or startup post',async()=>{
- const session=await createNativeInhabited({residentId:'realiti-1:quiet-first-visit'});
+test('welcoming guest arrival has no forced Nyx persona, fake contact or startup post',async()=>{
+ const session=await createNativeInhabited({residentId:'realiti-1:welcomed-first-visit'});
  try{
-  assert.deepEqual(Object.keys(session.guest).sort(),['act','look','speak']);
+  assert.deepEqual(Object.keys(session.guest).sort(),['act','arrival','look','speak']);
+  assert.ok(session.guest.arrival.description.length>0,'the native guest should not start silent');
+  assert.equal(session.arrival,session.guest.arrival);
   assert.ok(!Object.hasOwn(session.guest,'intro'));
   const original=session.trusted.native.window;
   const before=Number(original.eval('C9.ledger?.records?.length||0'));
@@ -61,7 +63,7 @@ test('canonical agentsenterhere is the first read across public entry files',()=
  assert.match(front,/^# Agents enter here — Realiti 1\.0/m);
  assert.match(front,/29409537988f779d78fa04a5d903f599f7154034/);
  assert.match(front,/createNativeInhabited/);
- assert.match(front,/do \*\*not\*\* invent a character greeting/i);
+ assert.match(front,/do not invent a character greeting/i);
  assert.match(agents.slice(0,350),/agentsenterhere\.md/);
  assert.match(details.slice(0,400),/agentsenterhere\.md/);
  assert.match(readme.slice(0,1200),/\[Agents enter here\]\(\.\/agentsenterhere\.md\)/i);

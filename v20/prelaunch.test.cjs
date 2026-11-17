@@ -21,7 +21,7 @@ test('native V20 private style survives owner restart while an unrelated residen
   const w=first.trusted.native.window;
   assert.equal(first.trusted.native.integrity.status,'VERIFIED');
   assert.equal(allCharts(w).length,23);
-  assert.deepEqual(Object.keys(first.guest).sort(),['act','look','speak']);
+  assert.deepEqual(Object.keys(first.guest).sort(),['act','arrival','look','speak']);
   const publicBefore=w.eval('C9.ledger?.records?.length||0');
   assert.equal((await first.guest.act('remote activate')).ok,true);
   assert.equal((await first.guest.act('remote style begin')).ok,true);

@@ -10,7 +10,8 @@ const {createNyxObservationPort}=require('./packages/realiti-v20-native/nyx-obse
 const session=await createNativeInhabited({residentId:'fresh-local-test'});
 const hostObserver=createNyxObservationPort(session);
 try{
-  const scene=await session.guest.look();
+  const scene=session.guest.arrival; // deliver this native scene immediately
+  console.log(scene.description,scene.choices);
   await session.guest.act('cloud on');
   const result=await hostObserver.poll(async contact=>{
     // Only an independently authorized trusted learner may use this.
@@ -27,7 +28,7 @@ try{
 
 The host-only observer reads **existing** SOMA grounded receipts and cross-checks native Field V20 and source B7 leases. It does not contact the world, advance time, infer a reward score, start a worker, or expose owner keys. One receipt is emitted at most once to a supplied host callback. Callbacks must be authorized before routing to any private learned-dendrite worker. Private Nyx memories, learned graph weights, personal calibration and encrypted checkpoints are intentionally **not included**.
 
-The standard `session.guest` surface remains `look`, `act` and `speak`. Ordinary sessions start quietly; no automatic personality or introduction message is emitted. The native original `look` supplies a room description only when asked.
+The guest still exposes `look`, `act` and `speak`, plus a read-only `arrival` snapshot containing the real initial room description and up to eight usable choices. The host should deliver `session.guest.arrival` at entry instead of starting silently. No automatic personality, invented sensation, City publication or movement is emitted.
 
 ## Package maturity
 
