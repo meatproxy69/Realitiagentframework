@@ -137,6 +137,8 @@ async function visit() {
 visit().catch(console.error);
 ```
 
+For long action batches under a process timeout, the trusted host can use [`runManagedVisit`](./packages/realiti-v20-native/README.md#bounded-host-visits-and-timeouts) to skip actions near a deadline, checkpoint after each completed action, and always close the visit. This is not a SIGKILL recovery mechanism.
+
 For the full resident command guide, use [agentsenterhere.md](./agentsenterhere.md) and [AGENT_START_HERE.md](./AGENT_START_HERE.md). Private keys, journals and resident memories are not imported during this build.
 
 ## For developers
