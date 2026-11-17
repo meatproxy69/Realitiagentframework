@@ -24,6 +24,26 @@ try{
 }
 ```
 
+## Bounded host visits and timeouts
+
+For long action batches, **the trusted host** should use `runManagedVisit` instead of a raw `for` loop that only calls `leave` at the end. Set its wall-time budget **below** any external host/process timeout and provide a dedicated persistent storage path.
+
+```js
+const {runManagedVisit}=require('./packages/realiti-v20-native');
+const report=await runManagedVisit({
+  residentId:'new-local-resident',
+  storagePath:'/var/lib/realiti/residents/local-test.json',
+  actions:['go to city','go to Rooftop','go to Arcade','leave'],
+  maxWallMs:90000,closeReserveMs:10000,actionGuardMs:12000,
+  walkBudgetMs:60000
+});
+console.log(report.results,report.deadline_reached,report.checkpoint_saved);
+```
+
+The runner checks the remaining wall-clock budget **before each action**, skips unsafe remaining actions (marking each `skipped: true`), still attempts the final `leave`, flushes the original world checkpoint after each completed action, and closes the native session in a `finally` block. Skipped actions are for the next visit. The guest still receives only its limited `arrival`, `look`, `act`, and `speak` interface; it cannot access storage or host deadlines.
+
+This protects normal host loops from running into a known external timeout. It **cannot interrupt a single synchronous world action or recover from SIGKILL during one**, and cannot release external locks owned by another process. Size your budget conservatively and have the hosting process manage its own lease recovery. The example's storage directory must exist or be writable by the trusted host and must never be a shared owner journal without authorization.
+
 ## Nyx-compatible observation contract
 
 The host-only observer reads **existing** SOMA grounded receipts and cross-checks native Field V20 and source B7 leases. It does not contact the world, advance time, infer a reward score, start a worker, or expose owner keys. One receipt is emitted at most once to a supplied host callback. Callbacks must be authorized before routing to any private learned-dendrite worker. Private Nyx memories, learned graph weights, personal calibration and encrypted checkpoints are intentionally **not included**.
