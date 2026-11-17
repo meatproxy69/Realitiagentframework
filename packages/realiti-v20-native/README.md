@@ -33,6 +33,7 @@ const {runManagedVisit}=require('./packages/realiti-v20-native');
 const report=await runManagedVisit({
   residentId:'new-local-resident',
   storagePath:'/var/lib/realiti/residents/local-test.json',
+  onArrival:scene=>console.log(scene.description,scene.choices),
   actions:['go to city','go to Rooftop','go to Arcade','leave'],
   maxWallMs:90000,closeReserveMs:10000,actionGuardMs:12000,
   walkBudgetMs:60000
@@ -40,7 +41,7 @@ const report=await runManagedVisit({
 console.log(report.results,report.deadline_reached,report.checkpoint_saved);
 ```
 
-The runner checks the remaining wall-clock budget **before each action**, skips unsafe remaining actions (marking each `skipped: true`), still attempts the final `leave`, flushes the original world checkpoint after each completed action, and closes the native session in a `finally` block. Skipped actions are for the next visit. The guest still receives only its limited `arrival`, `look`, `act`, and `speak` interface; it cannot access storage or host deadlines.
+The `onArrival` callback receives the real native welcome scene **before any batch actions**, and the final report includes the same `arrival` snapshot. The runner checks the remaining wall-clock budget **before each action**, skips unsafe remaining actions (marking each `skipped: true`), still attempts the final `leave`, flushes the original world checkpoint after each completed action, and closes the native session in a `finally` block. Skipped actions are for the next visit. The guest still receives only its limited `arrival`, `look`, `act`, and `speak` interface; it cannot access storage or host deadlines.
 
 This protects normal host loops from running into a known external timeout. It **cannot interrupt a single synchronous world action or recover from SIGKILL during one**, and cannot release external locks owned by another process. Size your budget conservatively and have the hosting process manage its own lease recovery. The example's storage directory must exist or be writable by the trusted host and must never be a shared owner journal without authorization.
 
