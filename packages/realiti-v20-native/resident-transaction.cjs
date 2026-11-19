@@ -6,7 +6,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const crypto=require('node:crypto');
-const {keystorePathFor}=require('../realiti-headless-resident/index.cjs');
+const keystorePathFor=p=>String(p).replace(/\\.json$/i,'')+'.keys.json';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const fail=code=>{const e=new Error(code);e.code=code;throw e};
 const exists=p=>fs.existsSync(p);
@@ -56,6 +56,7 @@ function createResidentTransaction(storagePath,lock){
  let ready=false,commits=0;
  function held(){lock.assertHeld()}
  function tidy(){for(const p of paths)safeUnlink(p)}
+ function tidyCommit(){for(const p of [prepare,rollback,rollbackKeys,fresh,freshKeys])safeUnlink(p)}
  function recover(){
   held();
   if(!regular(pending))return false;
@@ -106,7 +107,7 @@ function createResidentTransaction(storagePath,lock){
   if(hadStore!==hadKeys)fail('REALITI_RESIDENT_STORE_KEYSTORE_PAIR_MISSING');
   const originalStore=hadStore?read(store):null,originalKeys=hadKeys?read(keys):null;
   // Stage durable new pair and durable rollback copies BEFORE publishing intent.
-  tidy();
+  tidyCommit();
   writeNew(freshKeys,k);writeNew(fresh,s);
   if(originalStore)writeNew(rollback,originalStore);
   if(originalKeys)writeNew(rollbackKeys,originalKeys);
