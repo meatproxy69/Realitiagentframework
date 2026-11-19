@@ -3,7 +3,7 @@
 // No second Matrix, SOMA, NERVE, pressure model, public ledger, or brain.
 const path=require('node:path');
 const fs=require('node:fs');
-const {summary,prose,choices,matchesNamedObject}=require('./guest-presentation.cjs');
+const {summary,prose,choices,arrivalPreview,arrivalChoices,matchesNamedObject}=require('./guest-presentation.cjs');
 const ROOT=path.resolve(__dirname,'..');
 const HOME='CLOUD_NINE_NEST',CITY='MERIDIAN_CITY';
 const VENUE=Object.freeze({
@@ -179,10 +179,15 @@ async function createNativeInhabited({
    place:chart()===HOME?'Apartment':isCity()?'Meridian City':chart(),
    choices:choice()});
  }
- // Starting a guest visit is not silent: the first actual native room look
- // is available immediately without any scripted personality or fake touch.
+ // Entry shares a short, source-grounded glimpse instead of dumping the room
+ // catalog. A resident can choose 'look around' for the complete native view.
  let arrival;
- try{arrival=await look()}catch(e){source.close();throw e}
+ try{
+  const view=await look();
+  arrival=Object.freeze({...view,
+   description:arrivalPreview(view.description),
+   choices:arrivalChoices(view.choices)});
+ }catch(e){source.close();throw e}
  const trusted=Object.freeze({
   // This object is host-only. Only session.guest is passed to residents.
   native:source,

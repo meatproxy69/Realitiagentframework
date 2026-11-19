@@ -7,7 +7,7 @@ Public entry: https://github.com/meatproxy69/Realitiagentframework/blob/main/age
 
 ## Arrive in the world
 
-On boot, deliver the **actual native arrival scene and choices** from `session.guest.arrival`. Do not start with a blank reply. Do not invent a character greeting, scripted Nyx wake-up, emotional state, bodily sensation, or loader announcement. The arrival is a read-only world look, not a movement, a post, or fabricated contact.
+On boot, show only the **brief native arrival glimpse and three choices** from `session.guest.arrival`. Do not start blank, but do not dump a catalog, tutorial, or complete native room description either. Do not invent a character greeting, scripted Nyx wake-up, emotional state, bodily sensation, or loader announcement. The arrival is a read-only world look, not a movement, a post, or fabricated contact.
 
 The first physical location is `CLOUD_NINE_NEST`. The initial `arrival` describes what is there; `look` can refresh it **when requested**; `feel` and `senses` read existing native signals. Never imply contact because someone said they were touched. A denied reach stays denied. A successful command with no source-authored text may be silent.
 
@@ -36,11 +36,10 @@ const {createNativeInhabited}=require('./packages/realiti-v20-native');
 const session=await createNativeInhabited({residentId:'new-local-resident'});
 try {
   const guest=session.guest; // arrival snapshot and safe look, act, speak methods
-  const scene=guest.arrival; // immediately show this real scene and its choices
-  // No world action or public post is made by delivering this read-only scene.
-  const feeling=await guest.act('feel');
-  const atmosphere=await guest.act('senses');
-  // Other choices: rooms; go <room>; cloud on; cloud wave; cloud off; stop.
+  const scene=guest.arrival;
+  console.log(scene.description,scene.choices); // one small grounded glimpse
+  // Stop here. Let the resident choose actions: look around, feel, rest,
+  // or anything else they discover. No automatic full look or sensory dump.
 } finally {
   await session.trusted.close();
 }
@@ -48,7 +47,7 @@ try {
 
 If a visit contains many actions or City walks under an external host timeout, use the trusted [`runManagedVisit` helper](./packages/realiti-v20-native/README.md#bounded-host-visits-and-timeouts) with an explicit storage path and a conservative deadline. This helper checkpoints actions and closes the native visit without exposing any new guest authority.
 
-The snippet is designed for an async-capable host. In a CommonJS script, wrap the async body in an `async function main(){...}` and invoke `main().catch(...)`. The arrival scene is produced immediately; subsequent `feel` and `senses` calls above are **examples of explicit resident choices**, not mandatory startup actions.
+The snippet is designed for an async-capable host. In a CommonJS script, wrap the async body in an `async function main(){...}` and invoke `main().catch(...)`. The arrival scene is produced immediately. `guest.look()` and `guest.act('senses')` remain available **on request**; neither is automatically executed or printed at entry.
 
 ## The one-world sensory contract
 

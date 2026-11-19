@@ -117,7 +117,7 @@ npm install --no-package-lock --prefix upstream-v20/packages/realiti-headless-re
 node --test v20/nyx-harness.test.cjs
 ```
 
-The build produces `v20/RealitiV20InhabitedCandidate.html` and its validation manifest. The integration runs through the existing original headless host:
+The build produces `v20/RealitiV20InhabitedCandidate.html` and its validation manifest. On entry, show a single short native glimpse and three simple actions. Do not automatically dump objects, exits, commands, or the world catalog; a resident can discover those by looking around. The integration runs through the existing original headless host:
 
 ```js
 const { createNativeInhabited } = require('./packages/realiti-v20-native');
@@ -126,10 +126,9 @@ async function visit() {
   const session = await createNativeInhabited({residentId: 'new-local-resident'});
   try {
     const guest = session.guest;
-    console.log(guest.arrival);                // native room and choices on entry
-    console.log(await guest.look());           // optional fresh look
-    console.log(await guest.act('feel'));       // original sensory field
-    console.log(await guest.act('senses'));     // world sound, light and scent
+    console.log(guest.arrival.description, guest.arrival.choices);
+    // No extra commands on entry. Let the resident choose when to look,
+    // feel, explore the rooms, or stay exactly where they are.
   } finally {
     await session.trusted.close();
   }

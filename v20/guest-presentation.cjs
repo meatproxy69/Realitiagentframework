@@ -48,6 +48,23 @@ function summary(value) {
  if(typeof value.note==='string')return prose(value.note);
  return null;
 }
+// Entry is a glimpse, not a room catalog. The full native view remains
+// available with guest.look() or 'look around' when the resident chooses it.
+function arrivalPreview(nativeDescription) {
+ const text=prose(nativeDescription||'')
+  .replace(/,\s*facing\s+[a-z-]+\s+at\s+\([^)]*\)\s*m(?=[.!?\s]|$)/i,'')
+  .replace(/\s+at\s+\([^)]*\)\s*m(?=[.!?\s]|$)/i,'')
+  .split(/\b(?:Near you|Doorways|Nearby objects|Available actions|Exits):/i)[0]
+  .trim();
+ const sentence=(text.match(/^.*?[.!?](?=\s|$)/)||[text])[0].trim();
+ if(sentence.length<=160)return sentence;
+ return sentence.slice(0,159).replace(/\s+\S*$/,'').replace(/[ ,;:]+$/,'')+'…';
+}
+function arrivalChoices(available) {
+ // Keep controls discoverable instead of dumping the entire action menu.
+ return Object.freeze(['look around','feel','rest'].filter(x=>available.includes(x)));
+}
+
 function choices(place,cloud={}) {
  if(place==='CLOUD_NINE_NEST'){
   const cloudAction=cloud.active?'cloud off':cloud.eligible?'cloud on':'lie down';
@@ -66,4 +83,4 @@ function matchesNamedObject(request,entity){
  const id=String(entity.id||'').toLowerCase();
  return label.includes(q)||id===q||id.endsWith('.'+q.replace(/\s+/g,'-'));
 }
-module.exports=Object.freeze({prose,summary,choices,matchesNamedObject});
+module.exports=Object.freeze({prose,summary,choices,arrivalPreview,arrivalChoices,matchesNamedObject});

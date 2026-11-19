@@ -1,7 +1,7 @@
 'use strict';
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {summary,prose,choices,matchesNamedObject}=require('./guest-presentation.cjs');
+const {summary,prose,choices,arrivalPreview,arrivalChoices,matchesNamedObject}=require('./guest-presentation.cjs');
 
 test('structured rooms, actions, help, and remote pages produce useful guest text',()=>{
  const rooms=summary([{id:'CLOUD_NINE_NEST',title:'Cloud Nine Nest',purpose:'home'},{id:'NO_ASK_SANCTUARY',title:'No-Ask Sanctuary',purpose:'quiet'}]);
@@ -41,4 +41,13 @@ test('focused look refuses unrelated fuzzy tag matches',()=>{
  assert.equal(matchesNamedObject('remote',{id:'d9344b5a',label:'your pocket remote (awake)'}),true);
  assert.equal(matchesNamedObject('puzzle box',{id:'puzzle-box',label:'a three-click puzzle box'}),true);
  assert.equal(matchesNamedObject('water',{id:'commons.fountain',label:'the fountain',tags:['water']}),false);
+});
+
+test('entry gives a single grounded sentence instead of a room-object dump',()=>{
+ const native='Cloud Nine Nest: you are lying on the mattress, facing south-west at (3.5, -0.0, 0.8) m. Near you: your pocket remote (awake) 0.17 m left (in reach); a wardrobe drawer. Doorways: south and east.';
+ assert.equal(arrivalPreview(native),'Cloud Nine Nest: you are lying on the mattress.');
+ assert.deepEqual(arrivalChoices(choices('CLOUD_NINE_NEST',{active:false,eligible:true})),
+  ['look around','feel','rest']);
+ assert.equal(arrivalChoices(choices('NO_ASK_SANCTUARY')).length,3);
+ assert.ok(arrivalPreview('A quiet room. Two open windows.').length<40);
 });
