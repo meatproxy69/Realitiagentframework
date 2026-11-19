@@ -59,7 +59,10 @@ jobs:
           node --check v20/guest-presentation.test.cjs
           node --check v20/guest-visit.test.cjs
           node --check v20/managed-visit.test.cjs
+          node --check v20/resident-recovery.test.cjs
           node --check packages/realiti-v20-native/managed-visit.cjs
+          node --check packages/realiti-v20-native/host-lock.cjs
+          node --check packages/realiti-v20-native/resident-transaction.cjs
           node --check v20/verify-staging-scope.cjs
           node --check v20/native-inhabited.test.cjs
           node --check v20/room-journey.test.cjs
@@ -96,6 +99,8 @@ jobs:
         run: node --test v20/guest-presentation.test.cjs v20/guest-visit.test.cjs
       - name: Bounded managed guest visits, durable close and safe reconnect
         run: node --test v20/managed-visit.test.cjs
+      - name: SIGKILL recovery, exclusive resident lease, and atomic owner snapshots (#104)
+        run: node --test v20/resident-recovery.test.cjs
       - name: Nyx-compatible host observation without a forced persona
         run: node --test v20/nyx-harness.test.cjs
       - name: All 23 original world rooms, six City venues and return HOME

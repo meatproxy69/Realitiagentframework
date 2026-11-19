@@ -3,6 +3,7 @@
 // No second Matrix, SOMA, NERVE, pressure model, public ledger, or brain.
 const path=require('node:path');
 const fs=require('node:fs');
+const {acquireResidentLock}=require('../packages/realiti-v20-native/host-lock.cjs');
 const {summary,prose,choices,arrivalPreview,arrivalChoices,matchesNamedObject}=require('./guest-presentation.cjs');
 const ROOT=path.resolve(__dirname,'..');
 const HOME='CLOUD_NINE_NEST',CITY='MERIDIAN_CITY';
@@ -39,15 +40,19 @@ async function createNativeInhabited({
  if(!fs.existsSync(packagePath)||!fs.existsSync(htmlPath)||!fs.existsSync(validationPath))
   throw Error('V20_PINNED_RUNTIME_NOT_BUILT');
  const {openResident}=require(packagePath);
- const source=await openResident({
+ // Every persistent native session holds the same kernel lock as managed visits.
+ // The OS drops it when the owning process is killed, without a stale TTL.
+ const lease=storagePath?await acquireResidentLock(storagePath):null;
+ let source;
+ try{source=await openResident({
   residentId,htmlPath,validationPath,storagePath:storagePath||undefined,
   walkBudgetMs
- });
- let closed=false;
+ })}catch(e){await lease?.release();throw e}
+ let closed=false,hostClosed=false;
  const live=()=>{if(closed)throw Error('V20_VISIT_CLOSED')};
  let M;
  try{M=bootContract(source.window)}
- catch(e){source.close();throw e}
+ catch(e){try{source.close()}finally{await lease?.release()}throw e}
  const native=source.window;
  const chart=()=>M.resident()?.chart||null;
  const isCity=()=>chart()===CITY;
@@ -187,7 +192,7 @@ async function createNativeInhabited({
   arrival=Object.freeze({...view,
    description:arrivalPreview(view.description),
    choices:arrivalChoices(view.choices)});
- }catch(e){source.close();throw e}
+ }catch(e){try{source.close()}finally{await lease?.release()}throw e}
  const trusted=Object.freeze({
   // This object is host-only. Only session.guest is passed to residents.
   native:source,
@@ -224,7 +229,14 @@ async function createNativeInhabited({
     authority:'NATIVE_WORLD_ONLY'
    });
   },
-  close:async()=>{closed=true;source.close()}
+  close:async()=>{
+   if(hostClosed)return;
+   hostClosed=true;
+   closed=true;
+   // Guest 'leave' blocks further guest commands but must not skip trusted
+   // source close, checkpoint flush or release of the persistent lock.
+   try{source.close()}finally{await lease?.release()}
+  }
  });
  return Object.freeze({
   guest:Object.freeze({arrival,look,act,speak}),arrival,trusted,version:'V20-native',
