@@ -28,7 +28,7 @@ async function waitChild(child,signal,ms=15000){
  });
 }
 async function killed(child){
- if(child.exitCode!==null)return;
+ if(child.exitCode!==null||child.signalCode!==null)return;
  const ended=new Promise(resolve=>child.once('exit',resolve));
  child.kill('SIGKILL');
  await ended;
