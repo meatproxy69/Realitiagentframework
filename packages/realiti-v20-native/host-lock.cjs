@@ -23,13 +23,15 @@ async function acquireResidentLock(storagePath){
   'printf "REALITI_VISIT_LOCK_READY\\n"; cat >/dev/null'],{
   stdio:['pipe','pipe','pipe'],windowsHide:true
  });
+ // A fast nonblocking refusal can close stdin before the parent writes.
+ child.stdin.on('error',()=>{});
  let released=false,stdout='',stderr='',exitCode=null;
  child.stderr.on('data',b=>{stderr=(stderr+String(b)).slice(-300)});
  const ended=new Promise(resolve=>{
   child.once('exit',(code,signal)=>{exitCode=code??signal;resolve()});
   child.once('error',e=>{exitCode=e.code||'SPAWN_ERROR';resolve()});
  });
- const acquired=await new Promise((resolve,reject)=>{
+ await new Promise((resolve,reject)=>{
   let done=false;
   const timeout=setTimeout(()=>finish(error('REALITI_LOCK_HELPER_TIMEOUT')),5000);
   function finish(e){
@@ -45,7 +47,7 @@ async function acquireResidentLock(storagePath){
   ended.then(()=>finish(error(exitCode===75?'REALITI_RESIDENT_IN_USE':
    'REALITI_LOCK_HELPER_FAILED'+(stderr?': '+stderr:''))));
  });
- if(!acquired && child.exitCode!==null)throw error('REALITI_LOCK_HELPER_FAILED');
+ if(child.exitCode!==null)throw error('REALITI_LOCK_HELPER_FAILED');
  const assertHeld=()=>{
   if(released||exitCode!==null||child.exitCode!==null||child.signalCode!==null)
    throw error('REALITI_RESIDENT_LOCK_LOST');
@@ -54,10 +56,11 @@ async function acquireResidentLock(storagePath){
   if(released)return;
   released=true;
   child.stdin.end();
-  await Promise.race([
+  let timeout;
+  try{await Promise.race([
    ended,
-   new Promise(resolve=>setTimeout(()=>{child.kill('SIGTERM');resolve()},2000))
-  ]);
+   new Promise(resolve=>{timeout=setTimeout(()=>{child.kill('SIGTERM');resolve()},2000);timeout.unref?.()})
+  ])}finally{clearTimeout(timeout)}
   // The lockfile remains on disk. Kernel release (not age/PID matching)
   // is the sole authority for another process to acquire its inode.
  };
