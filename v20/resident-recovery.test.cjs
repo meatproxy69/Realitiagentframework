@@ -42,7 +42,9 @@ if(process.argv[2]==='--crash-worker'){
   onCheckpoint:({action})=>{
    if(action==='go to city'){
     process.stdout.write('CITY_CHECKPOINT_COMMITTED\n');
-    return new Promise(()=>{}); // host is SIGKILLed before leave/close
+    if(process.argv[4]!=='move')return new Promise(()=>{}); // kill while idle
+    // Move mode starts the expensive synchronous Rooftop walk immediately.
+    // The parent SIGKILLs this process before that walk can commit.
    }
   }
  }).catch(e=>{console.error(e);process.exitCode=1});
@@ -167,6 +169,29 @@ if(process.argv[2]==='--crash-worker'){
    const current=JSON.parse(fs.readFileSync(store));
    assert.equal(sha(JSON.stringify(current.data)),current.sha256);
    assert.equal(fs.readdirSync(dir).filter(s=>s.startsWith('.realiti-work-')).length,0);
+  }finally{await killed(child);fs.rmSync(dir,{recursive:true,force:true})}
+ });
+ test('SIGKILL during a Rooftop walk retains the last completed City checkpoint',async()=>{
+  const dir=temp(),store=path.join(dir,'resident.json');
+  const child=spawn(process.execPath,[__filename,'--crash-worker',store,'move'],
+   {stdio:['ignore','pipe','pipe']});
+  try{
+   await waitChild(child,'CITY_CHECKPOINT_COMMITTED',20000);
+   const committed=fs.readFileSync(store);
+   const committedKeys=fs.readFileSync(keysPath(store));
+   // The worker is now executing its next native movement. No canonical
+   // writes should occur until that action returns and is checkpointed.
+   await pause(40);
+   await killed(child);
+   assert.deepEqual(fs.readFileSync(store),committed,
+    'a killed in-progress Rooftop action must not alter the canonical state');
+   assert.deepEqual(fs.readFileSync(keysPath(store)),committedKeys,
+    'a killed action must not replace resident identity keys');
+   const resumed=await runManagedVisit({
+    residentId:'managed:hard-kill',storagePath:store,
+    actions:['look around','leave'],maxWallMs:30000,closeReserveMs:3000,actionGuardMs:1000
+   });
+   assert.equal(resumed.ok,true,JSON.stringify(resumed));
   }finally{await killed(child);fs.rmSync(dir,{recursive:true,force:true})}
  });
 }
