@@ -3,7 +3,7 @@
 // Function.toString() places these reviewed functions inside the original City closure.
 
 function cityNavObstacles(){
- return Object.values(ent()).filter(e=>e.chart===CITY&&e.collision&&e.shape&&
+ return Object.values(ent()).filter(e=>e.chart===CITY&&e.collision&&!e.resident&&e.shape&&
    !e.tags.includes('floor')&&!e.id.startsWith('city.edge.'));
 }
 function cityNavFree(p,obstacles){
