@@ -109,6 +109,18 @@ if(process.argv[2]==='--crash-worker'){
    recovery.finish();
   }finally{fs.rmSync(dir,{recursive:true,force:true})}
  });
+ test('guest goodbye must still permit trusted close to release the kernel lock',async()=>{
+  const dir=temp(),store=path.join(dir,'resident.json');
+  try{
+   const session=await createNativeInhabited({residentId:'lock:goodbye',storagePath:store});
+   const leave=await session.guest.act('leave');
+   assert.equal(leave.ok,true,leave.message);
+   await session.trusted.close(); // previously skipped when guest 'leave' set closed=true
+   await session.trusted.close(); // idempotent trusted close
+   const lease=await acquireResidentLock(store);
+   await lease.release();
+  }finally{fs.rmSync(dir,{recursive:true,force:true})}
+ });
  test('persistent direct native sessions cannot overlap managed sessions',async()=>{
   const dir=temp(),store=path.join(dir,'resident.json');
   try{
