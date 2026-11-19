@@ -101,10 +101,13 @@ function cityNavGroundMove(goal,tol=1.2,done=null){
    for(let part=1;part<=parts&&!reached()&&walkSpent<CITY_BUDGET_MS;part++){
     const p=[start[0]+(waypoint[0]-start[0])*part/parts,
              start[1]+(waypoint[1]-start[1])*part/parts];
+    // Waypoints already within tolerance require no new Matrix move.
+    if(dist2(p,r.pose.position)<=.7)continue;
     const before=r.pose.position.slice();
-    cityNavMoveLeg(p,1.2);
-    if(dist2(before,r.pose.position)>.3)moved=true;
-    if(r.last_block||dist2(before,r.pose.position)<.3){blocked=true;break}
+    cityNavMoveLeg(p,.65);
+    const travelled=dist2(before,r.pose.position);
+    if(travelled>.3)moved=true;
+    if(r.last_block||(travelled<.3&&dist2(p,r.pose.position)>1.2)){blocked=true;break}
    }
    if(blocked)break;
   }
