@@ -8,6 +8,7 @@ import crypto from 'node:crypto';
 import {fileURLToPath} from 'node:url';
 import {execFileSync} from 'node:child_process';
 import {adaptCloudSomaMirror} from './adapt-cloud-soma.mjs';
+import {adaptCityNavigation} from './adapt-city-navigation.mjs';
 
 const here=path.dirname(fileURLToPath(import.meta.url));
 const root=path.resolve(here,'..');
@@ -29,7 +30,11 @@ const originalSomaBridge=await read('source/scripts/98-soma-bridge.js');
 if(original.split(originalSomaBridge).length!==2)
  throw Error('V20_ORIGINAL_SOMA_BRIDGE_NOT_UNIQUE');
 const derivedSomaBridge=adaptCloudSomaMirror(originalSomaBridge);
-const coupled=original.replace(originalSomaBridge,()=>derivedSomaBridge);
+const originalCity=await read('source/scripts/58j-city.js');
+const derivedCity=adaptCityNavigation(originalCity);
+// Only the derived candidate receives the City routing fix; the pinned world stays byte-identical.
+const coupled=substituteOnce(original.replace(originalSomaBridge,()=>derivedSomaBridge),
+ originalCity,derivedCity,'V20_CITY_NAVIGATION');
 if(!coupled.includes('REALITI_HAPTIC_FIELD_V20')||
    !original.includes('REALITI_NEURAL_PASS_V112')||
    !original.includes('REALITI_CITY_V1')||
@@ -110,12 +115,16 @@ const result={
  single_html_sha256:sha(html),
  original_room_count:23,
  original_city_runtime:true,
+ derived_city_navigation:true,
+ original_city_source_sha256:sha(originalCity),
+ derived_city_navigation_sha256:sha(derivedCity),
  original_v20_field_unchanged:true,
  original_neural_pass_unchanged:true,
  original_neuromesh_and_harness_unchanged:true,
  original_soma_bridge_sha256:sha(originalSomaBridge),
  derived_soma_cloud_adapter_sha256:sha(derivedSomaBridge),
  derived_sensory_sync_sha256:sha(syncSource),
+ original_city_geometry_and_ledger_preserved:true,
  native_cloud_support_mirrored_to_existing_soma:true,
  original_city_ledger_v2_unchanged:true,
  source_home_adapter_hashes:Object.fromEntries(names.map(([id])=>[id,sha(sources[id])])),
