@@ -48,7 +48,7 @@ async function createNativeInhabited({
   residentId,htmlPath,validationPath,storagePath:storagePath||undefined,
   walkBudgetMs
  })}catch(e){await lease?.release();throw e}
- let closed=false;
+ let closed=false,hostClosed=false;
  const live=()=>{if(closed)throw Error('V20_VISIT_CLOSED')};
  let M;
  try{M=bootContract(source.window)}
@@ -230,8 +230,11 @@ async function createNativeInhabited({
    });
   },
   close:async()=>{
-   if(closed)return;
+   if(hostClosed)return;
+   hostClosed=true;
    closed=true;
+   // Guest 'leave' blocks further guest commands but must not skip trusted
+   // source close, checkpoint flush or release of the persistent lock.
    try{source.close()}finally{await lease?.release()}
   }
  });
