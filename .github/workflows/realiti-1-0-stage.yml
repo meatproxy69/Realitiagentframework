@@ -50,6 +50,8 @@ jobs:
       - name: Check reviewed 1.0 source and test syntax
         run: |
           node --check v20/adapt-cloud-soma.mjs
+          node --check v20/adapt-city-navigation.mjs
+          node --check v20/city-navigation.test.cjs
           node --check v20/sync-native-senses.js
           node --check v20/build-inhabited-world.mjs
           node --check v20/native-inhabited.cjs
@@ -98,6 +100,8 @@ jobs:
         run: node --test v20/nyx-harness.test.cjs
       - name: All 23 original world rooms, six City venues and return HOME
         run: node --test v20/room-journey.test.cjs
+      - name: Rooftop descent, City collision-safe venue walks and distance consistency (#105)
+        run: node --test v20/city-navigation.test.cjs
       - name: Full sensory V15.1–V20, NERVE/SOMA, Cloud and real toy reach
         run: node --test v20/sensory-system.test.cjs
       - name: Save isolation, Cloud STOP, owner restart and trust boundaries
