@@ -6,7 +6,7 @@
 const fs=require('node:fs');
 const path=require('node:path');
 const crypto=require('node:crypto');
-const keystorePathFor=p=>String(p).replace(/\\.json$/i,'')+'.keys.json';
+const keystorePathFor=p=>String(p).replace(/\.json$/i,'')+'.keys.json';
 const hash=b=>crypto.createHash('sha256').update(b).digest('hex');
 const fail=code=>{const e=new Error(code);e.code=code;throw e};
 const exists=p=>fs.existsSync(p);
@@ -47,16 +47,29 @@ function replaceFromBytes(p,bytes){
 }
 function createResidentTransaction(storagePath,lock){
  const store=path.resolve(storagePath),keys=keystorePathFor(store);
- const work=store+'.visit-work.json',workKeys=keystorePathFor(work);
+ const workPrefix='.realiti-work-'+hash(store).slice(0,16)+'-';
+ let workDir=null,work=null,workKeys=null;
  const pending=store+'.visit-pending.json',prepare=pending+'.prepare';
  const rollback=store+'.visit-rollback.json',rollbackKeys=keys+'.visit-rollback';
  const fresh=store+'.visit-new.json',freshKeys=keys+'.visit-new';
  const dir=path.dirname(store);
- const paths=[work,workKeys,prepare,rollback,rollbackKeys,fresh,freshKeys];
  let ready=false,commits=0;
  function held(){lock.assertHeld()}
- function tidy(){for(const p of paths)safeUnlink(p)}
  function tidyCommit(){for(const p of [prepare,rollback,rollbackKeys,fresh,freshKeys])safeUnlink(p)}
+ function tidyStaleWork(){
+  // The store's lock has been acquired, so no earlier visit for this store
+  // can still be using its private staged directory.
+  for(const name of fs.readdirSync(dir)){
+   if(!name.startsWith(workPrefix))continue;
+   const p=path.join(dir,name),s=fs.lstatSync(p);
+   if(!s.isDirectory()||s.isSymbolicLink())fail('REALITI_UNSAFE_WORK_DIRECTORY');
+   fs.rmSync(p,{recursive:true,force:true});
+  }
+ }
+ function tidy(){
+  tidyCommit();
+  if(workDir){fs.rmSync(workDir,{recursive:true,force:true});workDir=null}
+ }
  function recover(){
   held();
   if(!regular(pending))return false;
@@ -86,7 +99,12 @@ function createResidentTransaction(storagePath,lock){
   held();
   fs.mkdirSync(dir,{recursive:true});
   const restored=recover();
-  tidy();
+  tidyCommit();
+  tidyStaleWork();
+  workDir=fs.mkdtempSync(path.join(dir,workPrefix));
+  fs.chmodSync(workDir,0o700);
+  work=path.join(workDir,'resident.json');
+  workKeys=keystorePathFor(work);
   const hasStore=regular(store),hasKeys=regular(keys);
   if(hasStore!==hasKeys)fail('REALITI_RESIDENT_STORE_KEYSTORE_PAIR_MISSING');
   if(hasStore){
